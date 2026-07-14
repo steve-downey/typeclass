@@ -3,6 +3,23 @@
 Pins each repo's state at each coordination decision. Append-only;
 newest entry first.
 
+## 2026-07-13 (entry 2) — [S-1..4] resolved; direct verbs implemented
+
+Decisions (Steve): [S-1] direct verbs are `fold_with`/`unfold_with`;
+[S-2] `fold_map` primary spelling takes combine + identity as plain
+parameters (no Monoid trait in the primary API); [S-3] fringe tree goes
+in `include/`; [S-4] everything publishes on sdowney.org — repo blog
+dirs are where code and text come together, so drafting location is
+logistics, not a venue decision.
+
+Work: `fold_with`/`unfold_with` implemented in tree_algorithms
+`recursion_schemes.hpp` with equivalence-law static_asserts, nonce-tree
+tests (move-only `unique_ptr` carrier), adapter-vs-direct agreement law,
+and `examples/nonce_tree_direct.cpp`. Also fixed a pre-existing
+fetch-content configure defect (Catch2 extras/module-path recovery in
+`tests/beman/tree_algorithms/CMakeLists.txt`). All on branch
+worktree-bright-ray-n44x, uncommitted.
+
 ## 2026-07-13 — fold family to Paper D; Monad acknowledged out-of-band
 
 Decisions: (1) `fold_map` + monoid proposed in Paper D, not Paper A;

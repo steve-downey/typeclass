@@ -5,18 +5,22 @@ repo's document (linked). Order within each repo is execution order.
 
 ## Decisions needed from Steve (unblock markers: [S-n])
 
-- [S-1] Direct-verb names for Paper D (`fold_tree` / `fold_with` /
-  `fold_from`; not `recursive_fold`, not `*_fix`). Blocks nothing from
-  starting (placeholder allowed) but blocks paper text and headers
-  freezing.
-- [S-2] Explicit-monoid fold spelling: `(monoid, tree)` vs
-  `(combine, identity, tree)`.
-- [S-3] Fringe tree location: `include/` (recommended) vs `examples/`.
-- [S-4] Essay venue: sdowney.org post vs transpose blog entry six (or
-  both); publish before papers cite it.
 - [S-5] Existing punch-list items (paper number request, repo owner
   swap, clang-18 floor, modules ship/waive) —
   `tree_algorithms/docs/notes/punch-list.md`.
+
+Resolved 2026-07-13 (see SYNC.md entry 2):
+
+- [S-1] **`fold_with` / `unfold_with`** — fold/unfold with an explicitly
+  supplied project/embed. Note: coheres with transpose's `*_with`
+  convention read as "the ingredient you'd otherwise look up is passed
+  inline" (there: a typeclass instance; here: the projection).
+- [S-2] **combine + identity** as plain parameters; no Monoid trait in
+  the primary API.
+- [S-3] **`include/`** for the fringe tree.
+- [S-4] **sdowney.org** is where everything publishes; the repo blog
+  dirs are where code and text come together, so draft wherever
+  convenient and export as usual.
 
 ## tree_algorithms (Paper D) — plan: `docs/notes/extraction-plan.md`
 
