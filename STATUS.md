@@ -24,20 +24,28 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
 
 ## tree_algorithms (Paper D) — plan: `docs/notes/extraction-plan.md`
 
-1. Direct verbs: project/embed wrappers over `refold`, placeholder
-   names; equivalence-law tests (`≡ fold_fix` via `unwrap_fix`;
-   adapter-vs-direct agreement on BinaryTree); nonce-tree example.
-   Needs [S-1] to freeze.
+1. ~~Direct verbs~~ **DONE 2026-07-14** (commit 6cba179, merged to main):
+   `fold_with`/`unfold_with`, equivalence-law static_asserts, nonce-tree
+   tests + example, adapter-vs-direct agreement law. 61/61 tests green.
 2. Fringe tree port from `trees/main/src/smd/tree/fringe_tree.hpp`;
-   direct-verb exercise; cached-measure invariant tests. Needs [S-3].
-3. Fold family: `fold_map` explicit-monoid primary + lookup convenience;
-   instances (ExprF, BinaryTree, FringeTree); derivation-from-`fold_fix`;
-   non-commutative-monoid tests (DEV-01). Needs [S-2].
-4. Paper edits (extraction-plan §8): new sections, synopsis + anchors,
-   companion-relationships expansion, Monad acknowledgment. After 1–3
-   and [S-4].
+   direct-verb exercise; cached-measure invariant tests; its layer_fold
+   instance for fold_map.
+3. Fold family — explicit tier **DONE 2026-07-14** (commit e5939d2,
+   merged to main): `fold_map` over Fix and over projected trees,
+   `BinaryTreeLayerFoldMap` in-order instance, derivation law pinned at
+   compile time, string-concat DEV-01 tests. Remaining: lookup-based
+   convenience overloads (extend the P3200-consumer header with
+   foldable/monoid lookup) and the ExprF + FringeTree instances.
+4. Paper edits (extraction-plan §8): new sections, synopsis + anchors
+   (three new anchored regions exist: fold_with, unfold_with, fold_map
+   x2, BinaryTreeLayerFoldMap), companion-relationships expansion, Monad
+   acknowledgment. After 2–3 remainder and [S-4].
 5. Relationships essay draft (extraction-plan §7a) — draft in
    `tree-coordination/essay/`, publish per [S-4].
+6. Push main to GitHub (steve-downey/tree_algorithms) when Steve is
+   ready; local main is ahead at e5939d2. Note: a superseded local
+   Catch2 fix attempt was stashed in `~/src/tree_algorithms/main`
+   ("superseded local Catch2 module-path attempt").
 
 ## transpose (Paper A) — worklist: `docs/coordination-worklist-2026-07-13.md`
 
