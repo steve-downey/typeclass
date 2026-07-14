@@ -40,10 +40,15 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    BinaryTree, FringeTree, and ExprF (constants-sum 6 vs eval 9
    contrast, compile-time pinned). DECISIONS.md carries the dated
    scope amendment. 68/68 tests green, 17 headers verify.
-4. Paper edits (extraction-plan §8): new sections, synopsis + anchors
-   (three new anchored regions exist: fold_with, unfold_with, fold_map
-   x2, BinaryTreeLayerFoldMap), companion-relationships expansion, Monad
-   acknowledgment. After 2–3 remainder and [S-4].
+4. ~~Paper edits~~ **DONE 2026-07-14** (commit ddbab20, merged to main):
+   the DnnnnR0 draft now proposes the six-verb family — new §Trees you
+   don't own and §Folding and traversing trees, synopsis mirrors all
+   anchored regions (re-diff ledger updated), fold_with naming table,
+   four-representation implementation experience with the non-monoid
+   test-policy anecdote, Monad-absence acknowledgment. Remaining paper
+   work is external-input only: real paper number ([S-5]), essay URL
+   for the companion citation, and the MEASURE re-measurement flags
+   carried on the punch list.
 5. Relationships essay — specified in `tree-coordination/essay/SPEC.md`
    (r2, exhibit-driven): six transcluded code exhibits carry the piece,
    prose ≤ 1,200 words as captions, code ≤ 90 lines from UUID-anchored
