@@ -33,12 +33,13 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    cached-measure invariant via branch(); 67/67 tests green. Notable
    for the paper: same-sequence-different-shape folds equal — the
    monoid-law payoff test.
-3. Fold family — explicit tier **DONE 2026-07-14** (commit e5939d2,
-   merged to main): `fold_map` over Fix and over projected trees,
-   `BinaryTreeLayerFoldMap` in-order instance, derivation law pinned at
-   compile time, string-concat DEV-01 tests. Remaining: lookup-based
-   convenience overloads (extend the P3200-consumer header with
-   foldable/monoid lookup) and the ExprF + FringeTree instances.
+3. ~~Fold family~~ **DONE 2026-07-14** (commits e5939d2 + 225af3c,
+   merged to main): explicit tier and lookup tier both shipped.
+   Four-argument everyday spelling resolves layer_fold_typeclass /
+   project_typeclass / functor_typeclass; instances registered for
+   BinaryTree, FringeTree, and ExprF (constants-sum 6 vs eval 9
+   contrast, compile-time pinned). DECISIONS.md carries the dated
+   scope amendment. 68/68 tests green, 17 headers verify.
 4. Paper edits (extraction-plan §8): new sections, synopsis + anchors
    (three new anchored regions exist: fold_with, unfold_with, fold_map
    x2, BinaryTreeLayerFoldMap), companion-relationships expansion, Monad
