@@ -33,13 +33,15 @@ these repos.
   Rationale: `fold_map`'s motivation is structures that aren't ranges —
   tree-shaped, not transpose-shaped; `ranges::fold_left` already covers
   flat sequences.
-- **Monad is deliberately unproposed everywhere** — the "missing Paper
-  B." `bind` is sequential; the motivating domains (SIMD, batched
-  senders) need applicative independence; C++ already chose member
-  spellings (`and_then`/`or_else`/`transform`, `let_value`). The slot is
-  acknowledged explicitly out-of-band (relationships essay, extraction
-  plan §7a), and D3200R0 carries a "Why not Monad" section. Never let a
-  paper go silent on it again.
+- **Monad is deferred, not rejected** — the open "Paper B" slot
+  (framing refined 2026-07-14). The typeclass design leads to a
+  consistent generic name for sequential composition eventually
+  (per-type members `and_then`/`transform`/`let_value` are not
+  generic), and `monad.hpp` proves the mechanism carries it. It is
+  unproposed only because nothing currently proposed calls `bind`.
+  Never frame the absence as rejection of the abstraction, and never
+  let a paper go silent on it: D3200R0 carries "Why not Monad," and
+  the essay acknowledges the open slot.
 - **Repo surface ≠ paper surface.** A beman repo may ship more than its
   paper proposes (beman.transpose ships `fold.hpp` and `monad.hpp`;
   D3200R0 proposes neither), but every unproposed component must be

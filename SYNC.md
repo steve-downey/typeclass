@@ -3,6 +3,27 @@
 Pins each repo's state at each coordination decision. Append-only;
 newest entry first.
 
+## 2026-07-14 (entry 4) — Monad framing refined: deferred, not rejected
+
+Ruling (Steve): the Why-not-Monad argument must not read as rejection.
+The typeclass design leads to a consistent generic name for sequential
+composition eventually (per-type members are not generic — that is the
+gap typeclasses close), and `monad.hpp` proves the mechanism carries it;
+Monad is unproposed only because nothing currently proposed calls
+`bind`. "For now." Reframed in: D3200R0 "Why not Monad", monad.hpp
+header note, Paper D companion text, skill (both copies), transpose
+worklist item 1, essay SPEC exhibit E6, trees addendum, provenance.
+
+Also this session (transpose repo, branch remove-pure-apply-forms in
+`~/src/transpose/apply-removal`): pure/apply removal executed per entry
+3 — apply/ap/terminating_partial/applicative_eval deleted, Monad's
+synthesized apply removed, dual-core instances (zip_list, array,
+simd_lanes) reduced to the invoke core, laws restated invoke-form,
+absence of apply forms pinned per instance, fold.hpp/monad.hpp evidence
+labels, Traversable no-Foldable-superclass pin, D3200R0 gains "Why not
+apply"/"Why not Monad" + non-goals, provenance entry. Build/test pending
+merge.
+
 ## 2026-07-13 (entry 3) — pure/apply forms removed from the design
 
 Ruling (Steve): the classic `apply` formulation (callable-in-context,

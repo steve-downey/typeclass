@@ -71,12 +71,15 @@ Caption claim: where structure and context pay off in one concrete,
 production-shaped container. → Paper C.
 
 **E6 — The holes, shown not argued.** Two fragments side by side:
-`opt.and_then(...)` — C++ already spelled monadic composition, so
-there is nothing to propose (the "Paper B" slot stays open on purpose);
-and the `invoke(f, a, b, c)` call that works for `std::simd::vec` where
-`vec<callable>` is not even a type — `apply` was never the primitive.
-Caption claim: the omissions are decisions with citable rationale.
-→ P3200's "Why not Monad" / "why not apply" sections.
+`monad.hpp`'s `bind`/`join` signatures from the reference tree —
+evidence the mechanism carries Monad without strain, captioned
+"deferred, not rejected: a consistent generic name is where typeclasses
+lead, and nothing proposed needs it yet"; and the `invoke(f, a, b, c)`
+call that works for `std::simd::vec` where `vec<callable>` is not even
+a type — `apply` was never the primitive.
+Caption claim: the omissions are decisions with citable rationale, and
+one of them is an open slot.
+→ P3200's "Why not Monad" / "Why not `apply`" sections.
 
 ## Structure
 
