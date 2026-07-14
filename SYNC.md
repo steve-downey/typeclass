@@ -3,6 +3,19 @@
 Pins each repo's state at each coordination decision. Append-only;
 newest entry first.
 
+## 2026-07-13 (entry 3) — pure/apply forms removed from the design
+
+Ruling (Steve): the classic `apply` formulation (callable-in-context,
+curried application) is a Haskell artifact and a misunderstanding in
+C++; all such forms (`apply`, `ap`, currying helpers, monad-synthesized
+`apply`) are removed from public surfaces. Applicative primitives are
+`pure` + n-ary `invoke`; laws restated in invoke form. Epicenter:
+transpose `apply.hpp` + instance headers + `monad.hpp`; mirrors in
+fingertree `typeclass/applicative.hpp` and trees/main pedagogy Part 6;
+fixpoint sweeps opportunistically. tree_algorithms unaffected
+(functor-only surface). Work scheduled in transpose worklist item 5;
+repo SHAs unchanged from entry 2.
+
 ## 2026-07-13 (entry 2) — [S-1..4] resolved; direct verbs implemented
 
 Decisions (Steve): [S-1] direct verbs are `fold_with`/`unfold_with`;

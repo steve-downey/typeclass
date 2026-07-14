@@ -58,6 +58,13 @@ these repos.
   identifiers everywhere in Paper D's repo, even as deprecated aliases.
 - `transpose`, not `sequence`; `invoke` as the user-facing applicative
   verb; "recursive fold"/"recursive build" are prose, never identifiers.
+- **The pure/apply forms are removed** (ruling 2026-07-13): `apply`,
+  `ap`, and currying helpers are banned from public surfaces everywhere
+  in the set — curried application of a callable-in-context is a Haskell
+  artifact, and `std::simd::vec` (which cannot form `vec<callable>`)
+  proves `apply` was never the primitive. Applicative primitives are
+  `pure` + n-ary `invoke`; laws are stated in invoke form. Do not
+  reintroduce apply-shaped API in new instances or papers.
 - Monoid operations are spelled `identity()` and `combine()` — in
   transpose AND fingertree AND anything new. Renaming is a multi-repo
   sweep, not a local edit.

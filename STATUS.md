@@ -46,7 +46,11 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    provenance.md, non-goals).
 3. Verify + pin: Traversable has no Foldable superclass requirement.
 4. Cite essay when published (blocked on [S-4]).
-5. Standing: BinaryTree example cross-check with tree_algorithms.
+5. Remove pure/apply forms (`apply`, `ap`, currying helpers,
+   monad-synthesized `apply`); primitives become `pure` + n-ary
+   `invoke`; laws restated in invoke form; D3200R0 gains "why not
+   apply" (ruling 2026-07-13, SYNC entry 3; worklist item 5).
+6. Standing: BinaryTree example cross-check with tree_algorithms.
 
 ## fingertree (Paper C) — worklist: `docs/coordination-worklist-2026-07-13.md`
 
