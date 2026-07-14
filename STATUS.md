@@ -40,8 +40,14 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    (three new anchored regions exist: fold_with, unfold_with, fold_map
    x2, BinaryTreeLayerFoldMap), companion-relationships expansion, Monad
    acknowledgment. After 2–3 remainder and [S-4].
-5. Relationships essay draft (extraction-plan §7a) — draft in
-   `tree-coordination/essay/`, publish per [S-4].
+5. Relationships essay — specified in `tree-coordination/essay/SPEC.md`
+   (r2, exhibit-driven): six transcluded code exhibits carry the piece,
+   prose ≤ 1,200 words as captions, code ≤ 90 lines from UUID-anchored
+   CI-covered source only. Skim test, hallway/hand-sell test, truth
+   test. Prerequisites: P3200's "Why not Monad"/"why not apply" sections
+   (transpose items 1, 5) and exhibit anchors confirmed in transpose and
+   fingertree repos (E1, E5 — anchors may need creating there). Publish
+   per [S-4].
 6. Push main to GitHub (steve-downey/tree_algorithms) when Steve is
    ready; local main is ahead at e5939d2. Note: a superseded local
    Catch2 fix attempt was stashed in `~/src/tree_algorithms/main`
