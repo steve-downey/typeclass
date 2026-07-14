@@ -27,9 +27,12 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
 1. ~~Direct verbs~~ **DONE 2026-07-14** (commit 6cba179, merged to main):
    `fold_with`/`unfold_with`, equivalence-law static_asserts, nonce-tree
    tests + example, adapter-vs-direct agreement law. 61/61 tests green.
-2. Fringe tree port from `trees/main/src/smd/tree/fringe_tree.hpp`;
-   direct-verb exercise; cached-measure invariant tests; its layer_fold
-   instance for fold_map.
+2. ~~Fringe tree port~~ **DONE 2026-07-14** (commit 061c7fc, merged to
+   main): direct-only adapter (no Fix, no Box — children by value),
+   project/embed, Functor instance, layer_fold; embed maintains the
+   cached-measure invariant via branch(); 67/67 tests green. Notable
+   for the paper: same-sequence-different-shape folds equal — the
+   monoid-law payoff test.
 3. Fold family — explicit tier **DONE 2026-07-14** (commit e5939d2,
    merged to main): `fold_map` over Fix and over projected trees,
    `BinaryTreeLayerFoldMap` in-order instance, derivation law pinned at
