@@ -64,16 +64,22 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
 
 ## transpose (Paper A) — worklist: `docs/coordination-worklist-2026-07-13.md`
 
-1. "Why not Monad" section in D3200R0 (+ P0798/P2505 references).
-2. Label `fold.hpp`/`monad.hpp` as unproposed evidence (headers,
-   provenance.md, non-goals).
-3. Verify + pin: Traversable has no Foldable superclass requirement.
+1. ~~"Why not Monad"~~ **DONE 2026-07-14** (commit b21e8da): deferred-
+   not-rejected framing per SYNC entry 4, with P0798/P2505 citations.
+2. ~~Evidence labels~~ **DONE** (same commit): fold.hpp/monad.hpp
+   header notes, provenance entry, non-goals bullets.
+3. ~~Traversable superclass pin~~ **DONE** (same commit): documented
+   deliberate constraint in traverse.hpp.
 4. Cite essay when published (blocked on [S-4]).
-5. Remove pure/apply forms (`apply`, `ap`, currying helpers,
-   monad-synthesized `apply`); primitives become `pure` + n-ary
-   `invoke`; laws restated in invoke form; D3200R0 gains "why not
-   apply" (ruling 2026-07-13, SYNC entry 3; worklist item 5).
-6. Standing: BinaryTree example cross-check with tree_algorithms.
+5. ~~Pure/apply removal~~ **DONE** (same commit): apply/ap/currying
+   helpers/applicative_eval/monad-apply all deleted; dual-core
+   instances reduced to the invoke core; binary tree example rewritten
+   as shape-aware n-ary invoke (broadcast-and-intersect); laws
+   invoke-form; absence pinned per instance. 54/54 tests.
+6. Standing: BinaryTree example cross-check with tree_algorithms —
+   NOTE: semantics now stated n-ary; tree_algorithms' copy unaffected
+   (it has no applicative instance) but any future one follows the
+   n-ary formulation.
 
 ## fingertree (Paper C) — worklist: `docs/coordination-worklist-2026-07-13.md`
 
