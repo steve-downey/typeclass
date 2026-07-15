@@ -71,11 +71,13 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
 3. ~~Traversable superclass pin~~ **DONE** (same commit): documented
    deliberate constraint in traverse.hpp.
 4. Cite essay when published (blocked on [S-4]).
-5. ~~Pure/apply removal~~ **DONE** (same commit): apply/ap/currying
-   helpers/applicative_eval/monad-apply all deleted; dual-core
-   instances reduced to the invoke core; binary tree example rewritten
-   as shape-aware n-ary invoke (broadcast-and-intersect); laws
-   invoke-form; absence pinned per instance. 54/54 tests.
+5. ~~Pure/apply ruling~~ **SETTLED 2026-07-14** (commits b21e8da then
+   b77b4cd, after two refinements — SYNC entry 5): `ap` is a supported
+   *basis* (`pure`+`invoke` or `pure`+`ap`, base derives the other) and
+   a secondary operation; `invoke` is the sole user-facing interface;
+   the spelling `apply` is gone. Binary tree example restored as the
+   ap-basis exemplar; laws invoke-form with basis-coherence checks;
+   simd invoke-only pin is the interface argument. 54/54 tests.
 6. Standing: BinaryTree example cross-check with tree_algorithms —
    NOTE: semantics now stated n-ary; tree_algorithms' copy unaffected
    (it has no applicative instance) but any future one follows the

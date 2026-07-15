@@ -3,6 +3,22 @@
 Pins each repo's state at each coordination decision. Append-only;
 newest entry first.
 
+## 2026-07-14 (entry 5) — settled: ap is a basis, invoke is the interface
+
+Two refinements from Steve landed the pure/apply ruling in its final
+form. First, one-step application is a reasonable implementation detail
+(not banished from implementation space); second, `ap` is "a perfectly
+cromulent basis function for Applicative and should be supported that
+way." Final design, in beman.transpose main at b77b4cd (54/54 tests):
+instances opt in with `pure` + `invoke` OR `pure` + `ap`; the base
+derives the missing direction (currying confined to the derivation);
+`ap` is also a secondary derived operation where the context can hold
+callables; the user-facing verb everywhere is n-ary `invoke`; the name
+`apply` stays gone. The binary tree example is restored as the living
+ap-basis exemplar. D3200R0's section is now "`ap` as basis, `invoke`
+as interface." Skill invariant updated (third and final wording);
+memory updated.
+
 ## 2026-07-14 (entry 4) — Monad framing refined: deferred, not rejected
 
 Ruling (Steve): the Why-not-Monad argument must not read as rejection.
