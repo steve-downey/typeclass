@@ -6,7 +6,7 @@ Meta-repository coordinating the intertwined tree-standardization work:
 |---|---|---|
 | `~/src/transpose/transpose` | beman.transpose — mechanism + Applicative/Traversable | Paper A / P3200 (D3200R0) |
 | `~/src/fingertree/main` | beman.fingertree — persistent measured sequence | Paper C (unnumbered) |
-| `~/src/tree_algorithms/tree_algorithms.git` | beman.tree_algorithms — the fold family + direct verbs | Paper D (`DnnnnR0`) |
+| `~/src/tree_algorithms/tree_algorithms.git` | beman.tree_algorithms — the fold family + direct verbs | Paper D (`D4322R0`) |
 | `~/src/fixpoint/main` | smd::fixpoint — recursion-scheme catalog, evidence only | never proposed |
 | `~/src/trees/main` | origin/pedagogy (CppNow26); one-way extraction source | — |
 

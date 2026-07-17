@@ -1,13 +1,26 @@
 # STATUS — cross-repo work board
 
-Updated: 2026-07-13. One line per open item; details live in the owning
+Updated: 2026-07-17. One line per open item; details live in the owning
 repo's document (linked). Order within each repo is execution order.
 
 ## Decisions needed from Steve (unblock markers: [S-n])
 
-- [S-5] Existing punch-list items (paper number request, repo owner
-  swap, clang-18 floor, modules ship/waive) —
-  `tree_algorithms/docs/notes/punch-list.md`.
+- [S-5] Existing punch-list items (repo owner swap, clang-18 floor,
+  modules ship/waive) — `tree_algorithms/docs/notes/punch-list.md`.
+  Partially resolved 2026-07-17 (Steve): the paper number is **D4322** —
+  draft lives at `papers/algorithms-for-trees.md`, title
+  "Algorithms for Trees"; the DnnnnR0 placeholder file is removed and
+  cross-references updated. The other three punch-list decisions remain
+  open.
+- [S-6] Sequence-quotient surface: status of fringe `view_l`/`view_r` +
+  the five-operation quotient interface (D evidence vs D proposed vs
+  Paper C's generic face), "quotient" as paper/essay vocabulary,
+  FringeTree `operator==`, and the remaining placeholder names — all
+  detailed in
+  `tree_algorithms/docs/notes/representations-and-sequence-interfaces.md` §4.
+  Partially resolved 2026-07-17 (Steve): `fold_left` is Foldable's
+  derived operation, one definition from `fold_map`; trees reach it by
+  being Foldable, never via a parallel view-based definition.
 
 Resolved 2026-07-13 (see SYNC.md entry 2):
 
@@ -49,7 +62,18 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    work is external-input only: real paper number ([S-5]), essay URL
    for the companion citation, and the MEASURE re-measurement flags
    carried on the punch list.
-5. Relationships essay — specified in `tree-coordination/essay/SPEC.md`
+5. Representation round per Steve's 2026-07-16 direction — **in working
+   tree 2026-07-17, uncommitted**: Fix-native BST example
+   (`examples/search_tree_on_fix.cpp` — verbs where they fit, plain
+   wrap/unwrap recursion where they don't), rose tree
+   (`include/rose_tree.hpp` + tests; Fix-native, no Box, pre-order
+   contract; pins that in-order is binary-only, not generic), fringe
+   `view_l`/`view_r` mirroring Paper C's View vocabulary +
+   `examples/sequence_algorithms.cpp` (quotient-interface derivations),
+   design note `docs/notes/representations-and-sequence-interfaces.md`,
+   anchor inventory extended. Opens [S-6]. Paper delta drafted in the
+   2026-07-17 documentation pass (next item).
+6. Relationships essay — specified in `tree-coordination/essay/SPEC.md`
    (r2, exhibit-driven): six transcluded code exhibits carry the piece,
    prose ≤ 1,200 words as captions, code ≤ 90 lines from UUID-anchored
    CI-covered source only. Skim test, hallway/hand-sell test, truth
@@ -57,7 +81,7 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    (transpose items 1, 5) and exhibit anchors confirmed in transpose and
    fingertree repos (E1, E5 — anchors may need creating there). Publish
    per [S-4].
-6. Push main to GitHub (steve-downey/tree_algorithms) when Steve is
+7. Push main to GitHub (steve-downey/tree_algorithms) when Steve is
    ready; local main is ahead at e5939d2. Note: a superseded local
    Catch2 fix attempt was stashed in `~/src/tree_algorithms/main`
    ("superseded local Catch2 module-path attempt").

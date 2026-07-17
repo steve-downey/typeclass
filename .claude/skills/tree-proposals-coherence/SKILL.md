@@ -15,7 +15,7 @@ these repos.
 
 | Repo | Role | Authoritative documents |
 |------|------|------------------------|
-| `~/src/tree_algorithms/tree_algorithms.git` (this repo) | **Paper D** — recursive tree algorithms: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters across representations | `docs/DECISIONS.md` (frozen), `papers/DnnnnR0-recursive-tree-algorithms.md`, `docs/notes/extraction-plan.md`, `docs/notes/punch-list.md`, `docs/notes/anchor-inventory.md` |
+| `~/src/tree_algorithms/tree_algorithms.git` (this repo) | **Paper D** — recursive tree algorithms: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters across representations | `docs/DECISIONS.md` (frozen), `papers/algorithms-for-trees.md`, `docs/notes/extraction-plan.md`, `docs/notes/punch-list.md`, `docs/notes/anchor-inventory.md` |
 | `~/src/transpose/transpose` | **Paper A / P3200 (D3200R0)** — traversal, transposition, bundled customization. Owns the mechanism: typeclass-object lookup, Functor/Foldable/Applicative/Traversable/Monad bases, `traverse`/`transpose`/`invoke`, `Monoid` | `papers/wg21/D3200R0.md`, `docs/provenance.md`, `docs/typeclass-object-pattern.md` |
 | `~/src/fingertree/main` | **Paper C** (unnumbered) — persistent measured sequence. Owns the container, measures, allocator/PMR story | `docs/allocator-design.md`, `docs/compile-time-design.md`, `docs/measure-based-splitting.md` |
 | `~/src/fixpoint/main` | **Evidence only, never proposed** — full recursion-scheme catalog (para/apo/zygo/histo/futu/…, distributive laws, gcata/gana/ghylo) proving the three verbs are the stable primitive layer | `docs/recursion-schemes-design.md` (D1–D11), `ops/DEVIATIONS.md` (DEV-01..04), `ops/PLAN.md` |
@@ -54,6 +54,15 @@ these repos.
 - No normative dependence between Papers C and D in either direction.
 - The exotic scheme catalog stays in the fixpoint repo. Nothing from it
   ships in a proposal; it is cited as evidence only.
+- **Public text stands alone** (ruling, Steve 2026-07-17): papers and
+  blog posts must not cite internal planning identifiers — decision-log
+  numbers (D5, D8, DEV-01), status markers ([S-n]), SYNC entries, or
+  note filenames — in running text. Describe the reason or the effect
+  instead, or say nothing; a reader must never need a second document
+  open to follow the text. Real paper numbers (P3200, D4322R0) and
+  repo file paths in implementation-experience sections are fine.
+  Internal docs and worklists should cross-reference freely, with
+  actual links preferred.
 
 **Naming (frozen).**
 - `fold_fix`/`unfold_fix`/`refold`; `cata`/`ana`/`hylo` are banned as
@@ -147,9 +156,16 @@ change, and keep `docs/notes/anchor-inventory.md` current.
   sdowney.org or transpose's blog series): all three papers cite it
   rather than re-explaining the set; keep its claims in sync when any
   paper's scope shifts, and add its URL to this skill's map table.
-- **Paper numbers in flux**: `DnnnnR0` is a placeholder; Paper C is
+- **Paper numbers in flux**: Paper D is D4322R0 ("Algorithms for Trees",
+  assigned 2026-07-17; `DnnnnR0` was the placeholder); Paper C is
   unnumbered; P3200 is reserved for Paper A. Verify wg21.link references
   before publication.
+- **Paper files are named by name, not number** (ruling, Steve
+  2026-07-17): e.g. `papers/algorithms-for-trees.md`, never
+  `papers/D4322R0-....md`. The WG21 upload system renames what is
+  uploaded; names find things later and extend better (a Wording tex
+  sub-doc factors out alongside). Numbers live in the YAML front matter
+  and prose only.
 - **fingertree pencils in `recursive_fold.hpp`/`recursive_build.hpp`** in
   its extraction memo; that interface design is owned HERE (direct
   verbs, extraction-plan §5) and the working names will change.
