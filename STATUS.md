@@ -83,10 +83,9 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    per [S-4].
 7. ~~Push main to GitHub~~ **DONE 2026-07-17**: pushed through 8d02a60
    (representation round + docs pass). This meta-repo also now has a
-   GitHub home: `steve-downey/tree-coordination` (private). Note: a
-   superseded local Catch2 fix attempt remains stashed in
-   `~/src/tree_algorithms/main` ("superseded local Catch2 module-path
-   attempt").
+   GitHub home: `steve-downey/tree-coordination` (private). The
+   "superseded Catch2 stash" note turned out stale — the stash list is
+   empty; nothing to drop.
 
 ## transpose (Paper A) — worklist: `docs/coordination-worklist-2026-07-13.md`
 
