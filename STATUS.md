@@ -81,10 +81,12 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    (transpose items 1, 5) and exhibit anchors confirmed in transpose and
    fingertree repos (E1, E5 — anchors may need creating there). Publish
    per [S-4].
-7. Push main to GitHub (steve-downey/tree_algorithms) when Steve is
-   ready; local main is ahead at e5939d2. Note: a superseded local
-   Catch2 fix attempt was stashed in `~/src/tree_algorithms/main`
-   ("superseded local Catch2 module-path attempt").
+7. ~~Push main to GitHub~~ **DONE 2026-07-17**: pushed through 8d02a60
+   (representation round + docs pass). This meta-repo also now has a
+   GitHub home: `steve-downey/tree-coordination` (private). Note: a
+   superseded local Catch2 fix attempt remains stashed in
+   `~/src/tree_algorithms/main` ("superseded local Catch2 module-path
+   attempt").
 
 ## transpose (Paper A) — worklist: `docs/coordination-worklist-2026-07-13.md`
 
