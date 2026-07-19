@@ -1,0 +1,197 @@
+#+TITLE: Trees, Transposition, and a new Container for C++29
+#+AUTHOR: Steve Downey
+#+DATE: {{{modification-time(%Y-%m-%d, VC)}}}
+#+TAGS: algorithms, typeclass, text, C++
+#+OPTIONS: toc:t
+
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:nil arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
+#+options: html5-fancy:t
+
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+DESCRIPTION:
+#+KEYWORDS:
+#+STARTUP: showall
+#+OPTIONS: html-link-use-abs-url:nil html-postamble:nil html-preamble:t
+#+OPTIONS: html-scripts:n html-style:nil html5-fancy:nil tex:t
+#+HTML_DOCTYPE: xhtml-strict
+#+HTML_CONTAINER: div
+#+DESCRIPTION:
+#+KEYWORDS:
+#+HTML_LINK_HOME:
+#+HTML_LINK_UP:
+#+HTML_MATHJAX:
+#+HTML_HEAD:
+#+HTML_HEAD_EXTRA:
+#+SUBTITLE:
+#+INFOJS_OPT:
+
+* Abstract
+I am on a campaign to improve support in C++ for contemporary algorithms.
+By contemporary I mean more recent than the Sedgewick C++ Algorithms  book I used back in the 90s.
+There has been extraordinary work done in programming language and algorithmic research in the last 30 years.
+Much of it even well understood and codified enough to be standardized.
+
+It's not one huge paper, though, although a couple are shaping up to be beefy.
+They are intended to be independent enough to be evaluated and survive on their own merits, although they do lean on each other, and extend or reuse some machinery.
+Each is intended to solve a real problem that working C++ programmers face, give support for common generic domains, and provide generic vocabulary for algorithm writers, as well as to provide the facilities for users to connect their existing types in.
+# {{{TEASER_END}}}
+
+
+* Not Quite What I Set Out To Do
+To be very honest, one of the main use cases I set out to solve with all of this turned out better to not be done at all.
+The particular problem of Unicode normalization can require many small insertions and deletions of code points in the middle of strings, and is a worst-case scenario for vector, and string.
+I was originally envisioning Text types that would maintain a normalization as an invariant as the text is manipulated.
+
+That turns out to be unnecessary.
+
+While I still believe that a Unicode Text type would be a valuable addition to the standard, simply maintaining well-formedness of the underlying UTF encoded data is sufficient to support Unicode algorithms and interoperability with facilities and languages, such as Python3, that have well-formed UTF-8 as a hard requirement for bringing data into their string types.
+Normalization is best done once, as needed, at the boundaries of the system.
+Normalization never changes the meaning of text, simply some details of representation.
+Unicode algorithms generally just do not care.
+
+I will still be bringing the Container I had planned, since it's both very widely useful, available in several different languages already, and can solve many real world problems efficiently and safely.
+Just not as a necessary part of Text.
+Instead as one of many Containers that Text could be an adapter for.
+
+A Text adapter is, also, not on my core road map for Unicode in C++29.
+Access to the primary algorithms defined by the Unicode standard is much more important, and would be, in any case, the underpinnings for a Text type.
+
+* Enough About What It Isn't.
+Let's talk about what I do want.
+
+I want excellent support in the standard for algorithms that are not just processing a sequence.
+
+I want to take what we have learned from the STL, from std::ranges, and from std::execution, and extend the capabilities to more classes of structures.
+
+I want C++ to be as expressive as Python, Rust, Swift, or Haskell.
+
+I want idiomatic C++ to be as correct and as sound as OCaml.
+
+I want idiomatic C++ to be as, or more, performant than NumPy or Rust.
+
+I want to package into the standard the tools, facilities, and vocabulary that make all of this accessible to working programmers.
+
+Without having to go back to University and get a Maths degree specializing in Category Theory and Programming Languages.
+
+* "Only be sure always to call it please 'Research'" - Tom Lehrer
+
+The core ideas that run through all of this work are
+1. Higher Order Functions
+1.  Internal Iteration
+1. Typeclasses
+
+None are at all novel.
+
+  Higher order functions, functions that take functions as arguments, or return functions, are the central mechanism of Ranges and Senders, as well as being in Stepanov's STL.
+  Separation of the mechanism, or shape,  of an algorithm from the operation the algorithm performs is table stakes these days.
+
+  Iteration is also a central concern of the STL.
+   Applying functions to or inspecting each element in some collection in some manner defined by the structure --- abstracted away from the algorithm that applies a user operation --- was Stepanov's key insight in defining Generic Programming.
+   The STL exposes the iteration externally, making Iterators a key component. Algorithms, Iterators,  and Containers are the triad that define the STL.
+   Ranges provides a bridge to internal iteration, where the iteration is not necessarily exposed.
+
+   It has turned out that external iteration, using pointers or indices, is a source of needless safety problems.
+   Moving the details of unsafe operations, such as checking if an iterator is valid, or dereferenceable, into small and reused blocks of code improves safety, and correctness.
+   It has also turned out that there is little to no loss of performance.
+   Sometimes even performance improvements because the compiler can see it is lowering known safe code to unsafe implementation and can elide checks it might otherwise need to do.
+   Compiler middle and back ends have learned an astonishing number of tricks --- often driven by other languages that have made safety a priority.
+
+   Typeclasses are more novel in C++ as an organizing principle, but not at all as an implementation technique.
+   They are merely a record that collects a coherent set of named operations together.
+   In a language with first class support for them the compiler or runtime will arrange to make these names available to functions constrained on them.
+
+   I am not proposing a language extension for typeclasses.
+
+   I am proposing pure and efficient library mechanisms for discovering and forwarding the bundle of named operations.
+   Structs, with named operations.
+   No other required indirection.
+   No required virtual functions.
+   No required inheritance.
+   Everything visible to the compiler --- available for inlining and defunctionalization.
+
+   The compiler's middle and back ends are extremely happy with them.
+
+   I am proposing some more complicated machinery to help write a typeclass instance, machinery that will derive operations based on a few core, essential, operations, but consumers of a typeclass instance do not care.
+   All they look for is how to perform one of the named operations the typeclass provides, not how the operation is provided.
+   Purely duck typing.
+
+* The Papers
+** P3200 -- Shape-Preserving Traversal and Transposition for Contextual Computations
+C++ has vocabulary types and computational contexts that are individually well understood, but it lacks a uniform way to traverse a structure while producing contextual results and then *transpose* the result into a single outer context.
+This problem appears today in combinations such as containers of `optional`s, containers of senders, and lanewise or zipped structured computation.
+
+This paper proposes a shape-preserving traversal facility together with `transpose` operations that convert a structure of contextual values into a contextual structure.
+The proposal is based on *independent contextual composition* rather than on general sequential dependence.
+
+The paper also proposes a bundled customization model.
+That mechanism is included because current trait-only and per-operation customization techniques are not strong enough to bundle applicative primitives and derived operations coherently.
+
+** P4322 -- Algorithms for Trees
+Recursive tree structures are common in parsing, transformation pipelines, symbolic representations, and hierarchical data processing, but the standard library offers little direct support for generic algorithms centered on recursive structure rather than on flat external iteration.
+
+** P4325 -- A Persistent Measured Sequence for the Standard Library
+The standard library provides strong support for mutable flat sequences, but it does not provide a persistent sequence abstraction that combines efficient front and back operations, concatenation, and splitting or searching by accumulated measure.
+
+Standard containers primarily assume destructive update: mutation invalidates existing views of the value unless the user pays with copying, coordination,or bespoke sharing schemes.
+
+This paper proposes a persistent measured sequence abstraction with efficient concatenation, prefix-based search, and split operations. The design emphasizes semantic capabilities rather than a single implementation name, while drawing on the long-studied literature and practice behind finger-tree-like structures.
+
+** P4307 -- An Infix Operator and a Keyword Escape for C++
+We propose two uses for one character: the backtick, the last printable ASCII character the language can still claim.
+One makes any callable a binary operator; the other lets a keyword be escaped for use as an ordinary identifier.
+Each is independently motivated, and each is defined by rewrite into something the language already has.
+They are proposed together, with equal standing, because they share the token --- two independent claims on one character, designed separately, end in contradiction.
+
+
+* What?
+- https://github.com/steve-downey/transpose :: Transpose Context and Structure
+- https://github.com/steve-downey/tree_algorithms :: Algorithms for Trees
+- https://github.com/steve-downey/fingertree :: Hinze's Fingertrees
+- https://github.com/steve-downey/llvm-project/tree/backtick :: Backticks in LLVM
+- https://github.com/steve-downey/gcc/tree/backtick :: Backticks in GCC
+
+** Transpose
+You have a ~vector<sender<int>>~ and you need a ~sender<vector<int>>~. Or you need to swap array of struct to struct of array for lane-wise SIMD processing. And you don't want to write that loop one more time.
+
+This is actually what McBride invented Applicative and Transpose *for*.
+
+Also, Applicative has almost nothing to do with partial application or currying.
+It is all about applying a pure function to arguments in contexts.
+
+** Algorithms for Trees
+Some times you don't want to flatten everything to a sequence.
+You want to preserve the shape of the structure.
+
+It also turns out there are *efficient* tools for building recursive data structures out of flat templated types, then folding them in to a value, unfolding a value into a structure, and fusing the two so the structure is never materialized.
+
+We should standardize those tools, and provide the hooks so your current handwritten binary tree can use all the same algorithms.
+
+** Fingertrees
+A twenty year old data structure.
+
+It's "purely functional" and "persistent" which means that operations on the tree return a new tree rather than mutating the original tree.
+Nonetheless, by clever sharing of state, it is still very efficient.
+
+Further, by clever annotation of the interior nodes, many other data structures can be efficiently modeled, using the magic of ~monoids~, types with associative binary operations.
+
+** Backticks For Infix
+~a `f` b~ == ~f(a, b)~
+
+This is apparently either something you have always desired, or you have no idea why anyone would ever need such a thing.
+
+It's not the same as the ~pizza~ operator, ~|>~ , although they are  near by each other.
+
+* When?
+Papers are forthcoming.
+
+Code exists.
+
+Uses of the code exist, also.
+- https://github.com/steve-downey/fixpoint :: Astronautics with Kmett's recursion schemes
+- https://github.com/steve-downey/compile-time-scheme :: A compile time +Scheme+ Common Lisp compiler
+- https://github.com/steve-downey/compile-time-forth :: A compile time Forth compiler
