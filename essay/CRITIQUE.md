@@ -697,6 +697,48 @@ may show extra call frames through the CRTP base**. If so, state it —
 builds" is a defensible claim, and volunteering it costs nothing while
 an unqualified "no runtime cost" invites a correction.
 
+**Measure depth, not just presence.** Whether this is a footnote or a
+finding depends on how many frames a single derived operation forwards
+through. One or two is the same order as a ranges adaptor. Four or five
+compounds per element and is worth knowing before someone else measures
+it.
+
+### 13f-2. Pre-conceding debug cost — ruling (Steve, 2026-07-20)
+
+**Ruling: pre-concede the cost of "fast" debug builds.** The `-O0`
+penalty is not peculiar to this machinery; it is endemic to the whole
+abstraction-heavy direction the library has already taken. Ranges
+adaptors and `std::execution` impose the same hidden costs, and MSVC's
+debug iterators go further into ABI trouble.
+
+**Stratify rather than lump — the precision is the argument.** The three
+are not the same kind of problem:
+
+1. **Extra call frames at `-O0`** (ranges, `std::execution`) — a
+   performance problem in debug builds. Annoying, not incorrect.
+2. **ABI incompatibility** (MSVC `_ITERATOR_DEBUG_LEVEL`) — TUs built
+   with different settings do not link or, worse, link and misbehave.
+   A correctness and linkage problem, categorically more severe.
+3. **This machinery** — category 1, and at the shallow end of it.
+
+Lumping all three invites "so you're as bad as debug iterators," when the
+honest answer is that this is the mild category and the same category as
+facilities already shipped and accepted. Say which category it is.
+
+**The precedent worth citing** (verify before use): vendors have treated
+the `-O0` cost of fundamental library facilities as a *compiler* problem
+rather than a reason to reject the facility — Clang builtins for
+`std::move` / `std::forward` / `std::addressof` exist precisely because
+the call overhead at `-O0` was unacceptable for something that ubiquitous.
+The response to abstraction penalty has been to fix the toolchain, not to
+stop abstracting.
+
+**And fix the comparison class.** The debug cost of this machinery is not
+against zero; it is against the hand-written instance it replaces, which
+has its own frames plus the correctness risk the machinery removes.
+Framing it as machinery-vs-nothing concedes a comparison that was never
+the right one.
+
 ### 13g. "Only one way to do it" — right, but hold it in reserve
 
 The observation is correct and the ownership example is good: `unique_ptr`,
