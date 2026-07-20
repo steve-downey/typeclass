@@ -871,6 +871,70 @@ than through instance state, entirely within the contract as ruled.
 Worth one sentence in the paper, because "no state" reads as "profiling
 impossible" and that would be a false deterrent.
 
+### 14i. Object size — ask the prior question first (2026-07-20)
+
+A plausible reflection strategy is stateless lambda members, each given
+access to the base operations. For a typeclass like Foldable that could
+produce a fairly large object.
+
+**But that depends on a design question that has not been settled here:
+does the object carry the derived operations, or only the basis?**
+
+- If an algorithm author writes `foldable.fold_left(…)`, the derived
+  operations must be members, the object carries all of them, and it is
+  large in *every* shape — CRTP inherits them just as surely as a
+  generator would emit them.
+- If the object carries only the basis and derived operations are free
+  functions constrained on it — `fold_left(foldable, …)` — the object
+  stays small in every shape and the concern evaporates.
+
+The second already matches the settled position that `fold_left` is
+Foldable's derived operation with one definition from `fold_map`, rather
+than parallel per-instance machinery. If derived operations have one
+definition, there is a real question whether they belong in the object at
+all.
+
+**Settle this before worrying about size**, because it determines size in
+every implementation strategy, and the answer is a design decision rather
+than a QoI matter.
+
+### 14j. Permission as the enforcement mechanism
+
+The observation is right and worth stating as a principle: **granting
+consumers the right to copy is an implicit recommendation against making
+the object large**, and it does the work a size note would do — without
+telling anyone their business.
+
+Generalise it. **Specify the permission, not the prohibition.** The
+consumer-side guarantee creates the incentive; a producer-side
+exhortation creates nothing.
+
+One honest caveat about how strong that incentive actually is. The object
+is stateless and its members are empty, so at `-O2` the copies vanish
+entirely and a vendor pays nothing for a large object. The cost lands in
+**debug builds and compile time** — a forty-byte copy per call at `-O0`,
+and forty lambda types to instantiate, name, and print in diagnostics.
+Real, but concentrated exactly where §13f-2 already applies. Do not
+overstate the incentive; it is a nudge, not a forcing function.
+
+### 14k. The one normative hook worth having: trivially copyable
+
+Do not specify size — it is not specifiable, and requiring `is_empty_v`
+would rule out the lambda-member strategy outright, which would violate
+the shape-neutrality of §14.
+
+**Require trivially copyable instead.** It is cheap, statically
+checkable, and it is what makes the copy permission mean anything: an
+instance with a non-trivial copy constructor makes "copy freely" a lie.
+It also turns "a typeclass is not a resource" from a prose principle into
+something a `static_assert` can enforce — nothing owning survives the
+requirement. And it keeps the profiling hatch open, since a raw pointer
+to external state (§14g) is trivially copyable.
+
+That is the whole normative surface needed: **trivially copyable, copies
+interchangeable, no observable state.** Size follows from incentive, and
+needs no words.
+
 ### 14h. Synopsis hazard
 
 The paper's synopsis has to show *some* shape, and whichever it shows
@@ -881,8 +945,55 @@ left open.
 
 ---
 
+## 15. Drafting stance: no recommended-practice notes (Steve, 2026-07-20)
+
+**Position.** Standard library authors do not generally need to be told
+not to do obviously bad things. "Recommended practice" in practice helps
+no one: it cannot be relied on, and it is unnecessary for vendors who
+have been in the meetings and followed the papers.
+
+Agreed, and it sharpens what the contract text has to carry.
+
+### 15a. The redirect that makes it work
+
+The impulse behind a recommended-practice note is usually to record *why*
+a decision was made so it is not relitigated. That impulse is right; the
+destination is wrong. **The audience for rationale is the LEWG reviewer
+reading the paper, not the implementer reading the standard.** Notes in
+the wording are read by nobody who needs them. A design-rationale section
+in the paper is read by exactly the people who do, and it never has to be
+normatively defensible.
+
+So: rationale to the paper, guarantees to the wording, nothing in
+between.
+
+### 15b. The consequence — the contract has to be complete
+
+With no notes and no size language, the contract text is the only thing
+carrying the whole design. That is an argument for a short **enumerated
+typeclass-object contract** in P3200 — the thing an algorithm author
+reads once and then relies on:
+
+1. Operations are reachable in call position, and nothing more (§14b).
+2. Instances are trivially copyable; copies are interchangeable (§14k).
+3. Instances carry no observable state (§14g gives the profiling route).
+4. Instances are taken by value; a typeclass is not a resource (§14f).
+5. The spelling of an operation — member function, member template, or
+   named callable member — is unspecified and shall not be relied upon
+   (§14, §14h).
+
+Five lines that replace every note that would otherwise be needed, and
+they are also the enforcement mechanism: the constraining concepts can
+express (1) and nothing else, so no algorithm can acquire a dependence
+the contract does not grant.
+
+---
+
 ## Open questions for Steve
 
+- **Does the typeclass object carry derived operations, or only the
+  basis?** (§14i) Determines object size in every implementation
+  strategy; a design decision, not QoI.
 - Runtime-parity claim (§13f) — needs the godbolt check before it goes in
   public text.
 - Is the authoring side actually separable from the vocabulary in the
