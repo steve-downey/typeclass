@@ -888,15 +888,20 @@ does the object carry the derived operations, or only the basis?**
   functions constrained on it — `fold_left(foldable, …)` — the object
   stays small in every shape and the concern evaporates.
 
-The second already matches the settled position that `fold_left` is
-Foldable's derived operation with one definition from `fold_map`, rather
-than parallel per-instance machinery. If derived operations have one
-definition, there is a real question whether they belong in the object at
-all.
+**ANSWERED 2026-07-20 (Steve): derivable members are still members**, so
+that an instance can override a default whose performance is materially
+worse for that type. The object carries them. Foldable is therefore a
+laundry list next to Functor or Applicative, and that is intended.
 
-**Settle this before worrying about size**, because it determines size in
-every implementation strategy, and the answer is a design decision rather
-than a QoI matter.
+*Correction to the framing above:* the settled "one definition from
+`fold_map`" fact does not argue against membership, and I conflated the
+two. A **default** is one definition — shared by every instance that does
+not override it. One canonical definition and per-instance override are
+the same design, not competing ones.
+
+So the size concern in §14i is **real and does not dissolve**. It is
+handled by §14j and §14k as recorded: permission creates the incentive,
+`trivially_copyable` is the only normative hook, and size gets no words.
 
 ### 14j. Permission as the enforcement mechanism
 
@@ -989,11 +994,79 @@ the contract does not grant.
 
 ---
 
+## 16. The membership line — art, not science (Steve, 2026-07-20)
+
+**Position.** Which operations are members of a typeclass, versus
+separate algorithms taking a typeclass, is a judgment call. The selection
+cribs from Haskell, Scala, and PureScript. The consequence is that
+Foldable is a laundry list next to Functor or Applicative.
+
+True, and the paper cannot say "we used judgment." It does not have to
+say "we derived it," either. What it needs is a **stated criterion whose
+application is judgment** — which is a normal and defensible thing to
+bring to LEWG.
+
+### 16a. The criterion is already implicit — state it
+
+*An operation is a member if some plausible instance has a materially
+better implementation than the default.* Otherwise it is a free algorithm
+over the typeclass.
+
+That is crisp, it is reviewable, and it is what the Haskell design
+actually encodes. Stating it converts a laundry list into a principled
+list whose length is a consequence rather than a choice.
+
+### 16b. The test that makes it reviewable — and the poster case
+
+For every member, name a type whose override matters. Any member for
+which no plausible override case can be named should be a free function.
+That single test turns art into something a reviewer can check, and it is
+the same discipline the campaign already applies elsewhere: propose only
+what the evidence forces.
+
+**The poster case is in this campaign.** Foldable's `length` defaults to
+O(n), and the fingertree's cached measure makes it O(1). Haskell's
+`Data.Sequence` overrides `length` and `null` for exactly this reason. So
+Paper C is the motivating instance for Paper D's membership decision —
+which is a genuine cross-paper connection the map (§3) can use, and it is
+worth more than an abstract argument about defaults.
+
+### 16c. Put the three-language comparison in the paper
+
+The crib is evidence and belongs in the text, not just behind the design.
+A short table of who puts what in the class across Haskell, Scala/Cats,
+and PureScript is the kind of prior art reviewers respect, and it is
+squarely the house habit of grounding claims in named precedent.
+
+**Where they disagree is the most useful part.** Haskell's `Foldable` is
+wide — many defaulted, overridable members. PureScript's is narrow —
+`foldr`/`foldl`/`foldMap` in the class, with `length`, `sum`, `any` and
+the rest as free functions in `Data.Foldable`. Naming that divergence and
+explaining which way you went and why is stronger than presenting a
+consensus that does not exist. It also pre-empts "why is this so much
+bigger than Functor," because the answer is visible in the table.
+
+### 16d. Hazard from the same prior art
+
+Haskell's wide, heavily-defaulted `Foldable` has a known failure mode
+worth one line of acknowledgment: defaults make it cheap to have
+instances that typecheck but do not mean anything — the
+`length` on a tuple / Foldable-in-Prelude complaints. The lesson is not
+"go narrow"; it is that a wide defaulted class needs its instances
+justified per type, not handed out because the defaults compile. Worth
+knowing before a reviewer raises it.
+
+### 16e. Scope note
+
+This is paper-level material, not essay-level. It changes P3200 and
+Paper D's text; it does not change the edit letter or the essay's
+structure. The only essay-visible consequence is the §16b cross-paper
+connection, which strengthens the map.
+
+---
+
 ## Open questions for Steve
 
-- **Does the typeclass object carry derived operations, or only the
-  basis?** (§14i) Determines object size in every implementation
-  strategy; a design decision, not QoI.
 - Runtime-parity claim (§13f) — needs the godbolt check before it goes in
   public text.
 - Is the authoring side actually separable from the vocabulary in the
