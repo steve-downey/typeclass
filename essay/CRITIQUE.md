@@ -565,11 +565,171 @@ example, and a link.
 8. Decide backtick framing (§9) and relationship to the exhibit essay
    (§10).
 
+## 13. Reflection — Steve's position (2026-07-20) and assessment
+
+### 13a. The position as stated
+
+Reflection could emit a completely flat aggregate — a struct with exactly
+the named operations — from a base set of implementation functions. No
+runtime cost difference either way (**claim to check; tracked in §13f**),
+so it reduces to compile-time cost of producing the typeclass. The
+present mechanism's cost is not zero but not high: no real
+metaprogramming, no SFINAE, just deducing-this and CRTP. No mechanism is
+visible by which reflection replaces typeclasses entirely. There may be
+room for `Derive{Functor,Foldable,Traversable,Lift}` — good prior art —
+but those carry constraints meaning not all instances are derivable. And
+"there should be only one way to do this" is a standard way of killing a
+feature, usually unprincipled even when phrased as principle; q.v.
+`optional`, `indirect`, `polymorphic`, `shared_ptr`, `unique_ptr`, all
+overlapping on ownership.
+
+### 13b. The reframe that dissolves most of the objection
+
+**Reflection is a code-generation mechanism; a typeclass is a vocabulary.**
+Reflection can generate an instance; it cannot *be* the instance, and it
+cannot be the thing consumers look up. So the two are not competitors at
+any level. Reflection is a candidate *implementation strategy for the
+authoring side*, competing with CRTP-plus-deducing-this — not with the
+typeclass surface.
+
+That shrinks "wait for reflection" from a standardisation objection to an
+engineering choice. And if the output is a flat aggregate with named
+operations either way, the surface is identical and the derivation
+strategy is not an interface decision at all — a later revision can swap
+it without breaking anyone. This is structurally the same argument that
+carried `std::execution::task` (§12c): the machinery is instantiated in
+user code, so its strategy can change between revisions without an ABI
+break.
+
+**Wording consequence, actionable:** specify the derived thing by its
+*shape* — an aggregate providing these named operations with these
+semantics — never by how it was derived. If the wording pins the
+derivation mechanism, the reflection objection becomes real. If it pins
+only the shape, the objection answers itself.
+
+### 13c. The C++26 / C++29 fact, with the honest caveat
+
+`std::meta::define_aggregate` in [P2996][P2996] completes a type with
+**data members** only. Injecting *member function definitions* needs
+token injection — [P3294][P3294], Revzin/Alexandrescu/Vandevoorde —
+which is **C++29 material, not in C++26**.
+
+So on the face of it, "wait for reflection" means waiting for the same
+standard being targeted.
+
+**But do not lean on this without checking the shape of the design.** If
+the typeclass surface is *member functions with bodies*, the argument
+holds and reflection cannot do this until C++29. If the surface is
+*named data members of callable type* — which is what "a record that
+collects a coherent set of named operations" and "structs, with named
+operations" describe, and which matches "using a base set of
+implementation functions" — then `define_aggregate` may well be able to
+emit it in C++26, and the timing argument evaporates. Determine which
+before using this in public.
+
+Either way §13b still holds: it is an implementation strategy, and the
+surface does not move.
+
+### 13d. Where reflection could genuinely be better
+
+Answering the question as posed — significantly better in some dimension:
+
+- **Runtime:** no, on present understanding (§13f). Both are compile-time
+  constructions that inline out.
+- **Compile time:** unlikely to be decisive. Reflection is not free, and
+  token injection is not free; the present mechanism avoids SFINAE and
+  heavy metaprogramming, which is where compile-time cost usually lives.
+- **Diagnostics:** *this is the real candidate.* CRTP error messages are
+  notoriously bad, and a flat aggregate with named members may diagnose
+  and tool considerably better than a derivation chain. If reflection
+  wins anywhere, it wins here, and diagnostics is a dimension LEWG cares
+  about.
+- **Tooling / IDE:** minor win in the same direction.
+
+Conceding diagnostics is cheap and buys credibility, because it is still
+an implementation-swap argument, not a don't-standardise argument.
+
+### 13e. `Derive{Functor,Foldable,Traversable}` — the prior art says coexist
+
+The Haskell experience is the empirical answer: `DeriveFunctor`,
+`DeriveFoldable`, and `DeriveTraversable` exist **and** hand-written
+instances remain routine. Deriving did not eliminate authoring. The
+constraints are real — contravariant occurrences of the parameter are not
+derivable at all — but the deeper limit is that **derivation produces the
+canonical structural instance, and one per type.**
+
+Two counterexamples come from this campaign's own evidence, which is what
+makes them worth using:
+
+- **The lanewise/SIMD applicative is zip-shaped, not cartesian.** A
+  structural derivation of Applicative over a sequence gives the
+  cartesian product, not the lanewise zip. Haskell needs a `ZipList`
+  newtype precisely because a type gets one instance. So derivation
+  produces the *wrong* instance for one of P3200's three motivating
+  domains.
+- **Traversal order is contractual per instance** — in-order for binary
+  trees. A structural derivation yields field order, not the contracted
+  in-order. Derivation produces the wrong traversal for the campaign's
+  exemplar tree.
+
+**And the design already has the escape hatch**, which is worth saying
+out loud: the `*_with` spellings pass the instance inline rather than
+looking it up, so a non-canonical instance can be supplied without
+newtype-wrapping the type. That is a genuine advantage over the Haskell
+arrangement, and it makes deriving *complementary* rather than competing:
+derive the easy cases, pass explicitly for the rest. The position is
+constructive rather than defensive, which is a better place to argue
+from.
+
+### 13f. Tracked claim — runtime cost parity
+
+**Claim:** there is no runtime cost difference between a
+CRTP + deducing-this derived instance and a flat aggregate of named
+operations (the reflection-emitted shape). **Status: unverified.**
+
+Suggested check: a godbolt comparison in the transpose repo of a derived
+instance against a hand-written flat aggregate standing in for the
+reflection output, at `-O2` and at `-O0`, comparing codegen.
+
+Expected honest caveat: parity at `-O2` is likely; **unoptimized builds
+may show extra call frames through the CRTP base**. If so, state it —
+"identical optimized codegen; the derivation chain is visible in debug
+builds" is a defensible claim, and volunteering it costs nothing while
+an unqualified "no runtime cost" invites a correction.
+
+### 13g. "Only one way to do it" — right, but hold it in reserve
+
+The observation is correct and the ownership example is good: `unique_ptr`,
+`shared_ptr`, `optional`, `indirect`, `polymorphic`, plus `vector` and
+`reference_wrapper`, all overlap on managing a value, all justified by
+different trade-offs, and nobody argues `indirect` is redundant because
+`shared_ptr` exists.
+
+But it is an *answer to a bad objection*, not a positive case. Leading
+with it signals that the objection is expected and puts the argument on
+the back foot. Lead with §13e — derivation cannot produce the instances
+this campaign actually needs — and keep the only-one-way rebuttal for if
+someone raises it.
+
+There is also a principled version of the objection worth answering
+directly rather than dismissing: *don't add a second way that is strictly
+worse or merely different.* The answer is that deriving and hand-
+authoring are not two ways to do one thing — one is a fast path for the
+derivable subset, the other the general mechanism for everything else,
+and Haskell demonstrates they coexist because they must.
+
+[P2996]: https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2025/p2996r10.html
+[P3294]: https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p3294r0.html
+
+---
+
 ## Open questions for Steve
 
-- Reflection vs the typeclass authoring machinery — which of the three
-  positions in §12g is the real one? Blocks the "why in the Standard"
-  section.
+- **Is the typeclass surface member functions, or named callable data
+  members?** Decides whether the C++26/C++29 timing argument in §13c is
+  usable. Blocks that part of the section.
+- Runtime-parity claim (§13f) — needs the godbolt check before it goes in
+  public text.
 - Is the authoring side actually separable from the vocabulary in the
   P3200 wording, as §12g assumes tactically?
 - Full policy post as a separate piece, or compact passage only (§12h)?
