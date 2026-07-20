@@ -17,7 +17,7 @@ these repos.
 |------|------|------------------------|
 | `~/src/tree_algorithms/tree_algorithms.git` (this repo) | **Paper D** — recursive tree algorithms: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters across representations | `docs/DECISIONS.md` (frozen), `papers/algorithms-for-trees.md`, `docs/notes/extraction-plan.md`, `docs/notes/punch-list.md`, `docs/notes/anchor-inventory.md` |
 | `~/src/transpose/transpose` | **Paper A / P3200 (D3200R0)** — traversal, transposition, bundled customization. Owns the mechanism: typeclass-object lookup, Functor/Foldable/Applicative/Traversable/Monad bases, `traverse`/`transpose`/`invoke`, `Monoid` | `papers/wg21/D3200R0.md`, `docs/provenance.md`, `docs/typeclass-object-pattern.md` |
-| `~/src/fingertree/main` | **Paper C** (unnumbered) — persistent measured sequence. Owns the container, measures, allocator/PMR story | `docs/allocator-design.md`, `docs/compile-time-design.md`, `docs/measure-based-splitting.md` |
+| `~/src/fingertree/main` | **Paper C / D4325R0** — persistent measured sequence. Owns the container, measures, allocator/PMR story | `docs/allocator-design.md`, `docs/compile-time-design.md`, `docs/measure-based-splitting.md` |
 | `~/src/fixpoint/main` | **Evidence only, never proposed** — full recursion-scheme catalog (para/apo/zygo/histo/futu/…, distributive laws, gcata/gana/ghylo) proving the three verbs are the stable primitive layer | `docs/recursion-schemes-design.md` (D1–D11), `ops/DEVIATIONS.md` (DEV-01..04), `ops/PLAN.md` |
 | `~/src/trees/main` | **Origin/pedagogy** — CppNow26 talk, source of all extractions. Extraction is ONE-WAY; extracted repos diverge deliberately and do not backport | `docs/notes/standardization-inverted-triangle-plan.md` (three-paper strategy), `foldable-applicative-traversable.org`, `CLAUDE.md` |
 
@@ -158,8 +158,11 @@ change, and keep `docs/notes/anchor-inventory.md` current.
   paper's scope shifts, and add its URL to this skill's map table.
 - **Paper numbers in flux**: Paper D is D4322R0 ("Algorithms for Trees",
   assigned 2026-07-17; `DnnnnR0` was the placeholder); Paper C is
-  unnumbered; P3200 is reserved for Paper A. Verify wg21.link references
-  before publication.
+  D4325R0 ("A Persistent Measured Sequence for the Standard Library",
+  assigned 2026-07-19); P3200 is reserved for Paper A (registrar entry
+  dates to 2024 and still carries the placeholder title "Trees for the
+  standard library" — the title updates on submission). Verify wg21.link
+  references before publication.
 - **Paper files are named by name, not number** (ruling, Steve
   2026-07-17): e.g. `papers/algorithms-for-trees.md`, never
   `papers/D4322R0-....md`. The WG21 upload system renames what is

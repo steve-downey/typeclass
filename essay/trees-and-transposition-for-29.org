@@ -51,7 +51,7 @@ That turns out to be unnecessary.
 
 While I still believe that a Unicode Text type would be a valuable addition to the standard, simply maintaining well-formedness of the underlying UTF encoded data is sufficient to support Unicode algorithms and interoperability with facilities and languages, such as Python3, that have well-formed UTF-8 as a hard requirement for bringing data into their string types.
 Normalization is best done once, as needed, at the boundaries of the system.
-Normalization never changes the meaning of text, simply some details of representation.
+Canonical normalization ([[https://unicode.org/reports/tr15/][UAX #15]]) never changes the meaning of text, simply some details of representation.
 Unicode algorithms generally just do not care.
 
 I will still be bringing the Container I had planned, since it's both very widely useful, available in several different languages already, and can solve many real world problems efficiently and safely.
@@ -151,14 +151,15 @@ They are proposed together, with equal standing, because they share the token --
 * What?
 - https://github.com/steve-downey/transpose :: Transpose Context and Structure
 - https://github.com/steve-downey/tree_algorithms :: Algorithms for Trees
-- https://github.com/steve-downey/fingertree :: Hinze's Fingertrees
+- https://github.com/steve-downey/fingertree :: Hinze & Paterson's Fingertrees
 - https://github.com/steve-downey/llvm-project/tree/backtick :: Backticks in LLVM
 - https://github.com/steve-downey/gcc/tree/backtick :: Backticks in GCC
 
 ** Transpose
 You have a ~vector<sender<int>>~ and you need a ~sender<vector<int>>~. Or you need to swap array of struct to struct of array for lane-wise SIMD processing. And you don't want to write that loop one more time.
 
-This is actually what McBride invented Applicative and Transpose *for*.
+This is actually what McBride and Paterson invented Applicative and Transpose *for*.
+Transposing a matrix is the opening example of [[https://www.staff.city.ac.uk/~ross/papers/Applicative.html][/Applicative Programming with Effects/]] (JFP 2008).
 
 Also, Applicative has almost nothing to do with partial application or currying.
 It is all about applying a pure function to arguments in contexts.
@@ -168,11 +169,13 @@ Some times you don't want to flatten everything to a sequence.
 You want to preserve the shape of the structure.
 
 It also turns out there are *efficient* tools for building recursive data structures out of flat templated types, then folding them in to a value, unfolding a value into a structure, and fusing the two so the structure is never materialized.
+The fold/unfold/fuse trio goes back to [[https://maartenfokkinga.github.io/utwente/mmf91m.pdf][/Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire/]] (Meijer, Fokkinga, and Paterson, 1991).
 
 We should standardize those tools, and provide the hooks so your current handwritten binary tree can use all the same algorithms.
 
 ** Fingertrees
 A twenty year old data structure.
+[[https://www.staff.city.ac.uk/~ross/papers/FingerTree.html][Hinze and Paterson's 2006 paper]] is still the reference, and Haskell has shipped it as [[https://hackage.haskell.org/package/containers/docs/Data-Sequence.html][~Data.Sequence~]] the whole time.
 
 It's "purely functional" and "persistent" which means that operations on the tree return a new tree rather than mutating the original tree.
 Nonetheless, by clever sharing of state, it is still very efficient.
@@ -184,7 +187,9 @@ Further, by clever annotation of the interior nodes, many other data structures 
 
 This is apparently either something you have always desired, or you have no idea why anyone would ever need such a thing.
 
-It's not the same as the ~pizza~ operator, ~|>~ , although they are  near by each other.
+C++26 added the backtick to the basic character set ([[https://wg21.link/p2558][P2558]]). Nothing uses it yet.
+
+It's not the same as the ~pizza~ operator, ~|>~ ([[https://wg21.link/p2011][P2011]]), although they are  near by each other.
 
 * When?
 Papers are forthcoming.
