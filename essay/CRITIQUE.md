@@ -765,11 +765,124 @@ and Haskell demonstrates they coexist because they must.
 
 ---
 
+## 14. The instance contract — ruling (Steve, 2026-07-20)
+
+**Ruling.** It does not matter to the consumer of a typeclass instance
+whether an operation is a named callable data member (a member CPO), a
+member function, or a member template function. **And that
+non-specification is itself an explicit part of the contract.** An
+algorithm writer may assume almost nothing beyond being able to spell
+`functor.fmap(g, thing)`; that instances are zero-sized or very small,
+and freely copyable; and that there is no contract to treat them as
+stateful, even though statefulness would be convenient for profiling.
+**A typeclass is not a resource.**
+
+This resolves the §13c open question, and resolves it better than either
+branch offered there.
+
+### 14a. Consequence: drop the C++26/C++29 timing argument
+
+If the shape is deliberately unspecified, the reflection objection does
+not merely shrink (§13b) — it dissolves. The standard cannot be locked
+into a derivation strategy it never specified, so implementations and
+future revisions switch freely and no consumer can observe the
+difference.
+
+**So do not use the P3294-is-C++29 timing argument.** It was always
+slightly cheap, and it ages badly — it becomes false in three years. The
+contract argument never ages. Lead with the contract.
+
+### 14b. State the constraint precisely: call position only
+
+"Only being able to spell `functor.fmap(g, thing)`" is best stated as
+**expression validity in call position, and nothing else.** That is what
+makes the shapes interchangeable, and it is worth spelling out what it
+forbids, because algorithm writers will want these:
+
+- `&functor.fmap` — no. Ill-formed for a member function template,
+  ambiguous for an overload set, fine for a data member. Must be out.
+- `std::invoke(functor.fmap, …)`, or passing the operation to another
+  higher-order algorithm — **no, and this is the one that will hurt.**
+  It works for a callable data member and breaks for a member function.
+  The workaround is a lambda closing over the instance; say so, because
+  otherwise someone writes it, it compiles against one shape, and breaks
+  on the other.
+- `decltype(functor.fmap)` — no.
+- `requires { f.fmap(g, x); }` — **yes, and this must work**, since it is
+  how the concept is written.
+
+### 14c. Enforcement: the concept can only check expressions
+
+The contract is not merely documentation — it is enforced by what the
+constraining concept is allowed to express. If the concept checks call
+expressions only, and never nested types or member pointers, then no
+algorithm can accidentally acquire a dependence on the shape. Write the
+concepts that way deliberately, and say that is why.
+
+### 14d. The evidence play — demonstrate it, do not promise it
+
+Provide the same typeclass in **both shapes** — one instance with member
+functions, one with callable data members — and run the entire algorithm
+suite against both. If both pass, the non-specification is demonstrated
+rather than asserted, and the reflection objection is pre-answered by a
+running test instead of an argument. Cheap to build, and it is exactly
+the kind of implementation experience the paper wants.
+
+### 14e. "Zero-sized or very small" — the parenthetical earns its keep
+
+The two shapes are **not** equivalent on size, and this is why the
+qualifier is needed:
+
+- A CRTP type with member functions is genuinely empty.
+- A flat aggregate of N callable data members is **not** empty — distinct
+  members need distinct addresses, so it is at least N bytes.
+- Unless the generator applies `[[no_unique_address]]` to each member, in
+  which case it can be empty again.
+
+So parity is achievable but only deliberately. Worth knowing before
+someone measures it and reports that the reflection-emitted form is
+bigger.
+
+For normative wording: specify the *semantic* properties (copyable,
+copies interchangeable, no observable state) and leave size to a
+recommended-practice note. "Very very small" is not specifiable;
+"trivially copyable, and implementations are expected to make instances
+empty" is.
+
+### 14f. "Not a resource" — the signature consequence
+
+Pin it: **instances are taken by value.** Never by reference, never by
+forwarding reference, never moved. No ownership, no lifetime coupling to
+the algorithm, no RAII, freely created and destroyed at any point, copies
+interchangeable. That follows directly from "not a resource" and it is a
+signature-level decision that should be stated once and applied
+everywhere.
+
+### 14g. Profiling is achievable inside the contract
+
+The aside about statefulness being convenient for profiling has a clean
+resolution that does not require weakening anything. Since algorithms may
+copy instances arbitrarily, instance-held counters are per-copy and
+useless. But an instance holding a **non-owning handle** to external
+state — a pointer to a counter — is still small, still freely copyable,
+and still not a resource. So profiling works through indirection rather
+than through instance state, entirely within the contract as ruled.
+
+Worth one sentence in the paper, because "no state" reads as "profiling
+impossible" and that would be a false deterrent.
+
+### 14h. Synopsis hazard
+
+The paper's synopsis has to show *some* shape, and whichever it shows
+will be read as normative. It needs an explicit note that the shape shown
+is exposition-only and the actual requirement is call-expression
+validity. Otherwise the wording quietly re-specifies what §14 deliberately
+left open.
+
+---
+
 ## Open questions for Steve
 
-- **Is the typeclass surface member functions, or named callable data
-  members?** Decides whether the C++26/C++29 timing argument in §13c is
-  usable. Blocks that part of the section.
 - Runtime-parity claim (§13f) — needs the godbolt check before it goes in
   public text.
 - Is the authoring side actually separable from the vocabulary in the

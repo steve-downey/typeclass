@@ -196,10 +196,15 @@ version needs:
 
 These gate sections; the draft stalls without them.
 
-1. **Is the typeclass surface member functions, or named callable data
-   members?** Decides whether the reflection timing argument is usable at
-   all — `define_aggregate` reaches the second in C++26, the first needs
-   token injection in C++29 (§13c). Blocks part of move 7.
+1. ~~Is the typeclass surface member functions, or named callable data
+   members?~~ **Resolved 2026-07-20 (§14): neither — the shape is
+   deliberately unspecified, and the non-specification is part of the
+   contract.** Consumers get call-position expression validity, small and
+   freely copyable instances, no statefulness contract, and a typeclass
+   that is not a resource. Consequence for move 7: **drop the
+   P3294-is-C++29 timing argument entirely.** It ages badly and is no
+   longer needed — the contract makes the question unobservable, which is
+   a stronger and permanent answer.
 2. **Standalone policy post, or compact passage only?** (§12h) I
    recommend both: the full treatment has a wider audience, will be
    argued about on its own terms, and becomes one citable thing all four
