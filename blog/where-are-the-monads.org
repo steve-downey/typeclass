@@ -110,8 +110,8 @@ dependent generic algorithms are rare. That is the whole thesis.
 Rare is not none. The futumorphism builds several layers at a time
 through the Free monad; an interpreter for a little effect language is
 monadic through and through --- the reference tree contains one, a retry
-program over a Freer monad, and it earns its keep. But these are
-astronautics, honestly labeled. They prove the machinery composes. They
+program over a Freer monad, and it is real code, not a demo. But these
+are astronautics, honestly labeled. They prove the machinery composes. They
 are not why you would standardize it.
 
 * And Then the Language Grew One
