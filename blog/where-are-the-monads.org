@@ -1,0 +1,182 @@
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:nil arch:headline author:t
+#+options: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
+#+options: email:nil f:t inline:t num:nil p:nil pri:nil prop:nil stat:t tags:t
+#+options: tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
+#+options: html5-fancy:t
+#+TITLE: Where Are the Monads?
+#+AUTHOR: Steve Downey
+#+DATE: {{{modification-time(%Y-%m-%d, VC)}}}
+
+#+begin_abstract
+I have spent the last while implementing the recursion-schemes catalog, a
+traversal library, a fold family, and a persistent sequence, all on one
+typeclass mechanism, and I kept a ledger of what each algorithm actually
+demands of its types. Monad came in last. This post is the claim that
+organizes everything that follows: few algorithms require Monad in an
+interesting way --- and the most interesting client C++ now has for it is
+reflection.
+#+end_abstract
+
+# {{{TEASER_END}}}
+
+* The Ledger
+
+Twenty-odd recursion schemes. A traversal front door. A fold family. A
+measured sequence. Every one generic, every one demanding some bundle of
+named operations from its type arguments --- that is what a typeclass is,
+a record of named operations, and the algorithms are constrained on the
+record, not the type. So the ledger is easy to keep. What did each
+algorithm need?
+
+| Algorithm                              | Needs                        |
+|----------------------------------------+------------------------------|
+| ~fmap~, ~hoist~                        | Functor                      |
+| ~length~, ~sum~, ~any_of~, ~fold_map~  | Foldable's one hook + Monoid |
+| ~fold_fix~, ~unfold_fix~, ~refold~     | Functor                      |
+| ~traverse~, ~transpose~                | Applicative                  |
+| ~para~, ~zygo~, ~histo~ (fold extras)  | a Comonad --- the library's  |
+| ~apo~, ~futu~, ~gana~ (build extras)   | a Monad --- the library's    |
+| ~bind~, ~join~, ~kleisli~              | Monad. No caller above.      |
+
+Monad appears twice. Both times the monad is scaffolding the library
+supplies --- ~Identity~, ~either~, ~Free~ --- never a type you brought.
+The generalized unfold is parameterized by a monad the same way the
+generalized fold is parameterized by a comonad, and in both cases the
+instances are the structural ones needed to state the scheme. Nothing in
+the collection asks for a ~bind~ on /your/ type.
+
+The bottom row is not an accident. The mechanism carries Monad without
+strain --- the reference implementation ships the CRTP base, derives
+~join~ and Kleisli composition from ~pure~ and ~bind~, and tests it. It
+sits there as evidence. Nothing calls it.
+
+* Chaining, Combining, and ∘
+
+The ladder from Functor to Applicative to Monad is usually presented as
+increasing power. It reads better as three answers to one question: what
+is function composition, once context is involved?
+
+Ordinary composition is ~g ∘ f~ --- feed the result forward. No context
+anywhere.
+
+Functor is composition preserved under a wrapper. ~fmap~ lifts one
+function at a time, and the law is exactly that lifting respects
+composition: ~fmap(g ∘ f) = fmap(g) ∘ fmap(f)~. Nothing combines,
+nothing depends. You are still chaining plain functions, one level down.
+
+Applicative is combining. ~invoke(f, ma, mb, mc)~ applies a pure n-ary
+function to arguments that each carry context, and the contexts merge in
+a way the instance fixes --- independent of any of the values. That
+independence is the definition, not a limitation.
+
+Monad is dependent chaining. The functions now have the shape
+~A → M<B>~ --- they produce context along with the value --- and Kleisli
+composition is the ∘ for that shape: given ~f : A → M<B>~ and
+~g : B → M<C>~, ~kleisli(g, f) : A → M<C>~ runs ~f~, looks at the value,
+and lets ~g~ decide what happens next. It is the context-sensitive
+composition operator. And it is derived, not primitive --- ~pure~ and
+~bind~ give it to you, which is exactly how the reference implementation
+spells it. (It also wants an infix spelling. That is another paper's
+problem.)
+
+So the ledger above sorts by operator. Which grade of composition does
+each algorithm need? Almost everything is answered by the first two
+rungs. The dependent operator is the rare one.
+
+* But C++ Is Full of Monads
+
+The obvious objection: C++ is drowning in monads. ~optional::and_then~,
+~expected::and_then~, ~flat_map~ on ranges, ~let_value~ on senders. All
+of them ~bind~, each spelled as a member of its own class, none of them
+generic. The committee has been shipping monads one at a time for a
+decade; P0798 put ~and_then~ on ~optional~ by arguing exactly this.
+
+However --- and this is the point the ledger keeps making --- the
+/instances/ being everywhere is not the same as the /abstraction/ having
+clients. An algorithm is a client of Monad when it is constrained on
+~bind~ generically, the way ~transpose~ is constrained on Applicative.
+And when you go looking for algorithms with that constraint, the standard
+result is that most of the famous "monadic" ones are not. Haskell spent
+its first two decades with ~mapM :: Monad m => ...~; McBride and Paterson
+pointed out the constraint was overkill
+([[https://www.staff.city.ac.uk/~ross/papers/Applicative.html][/Applicative Programming with Effects/]], JFP 2008), and today ~mapM~ is a
+synonym for ~traverse~, which asks for Applicative. Traversal never lets
+one element's effect depend on another's result, so it never needs
+sequential composition. Independence is the common case. Monad is the
+abstraction for the /dependent/ case --- the coalgebra that decides what
+to build next by looking at what just happened --- and genuinely
+dependent generic algorithms are rare. That is the whole thesis.
+
+Rare is not none. The futumorphism builds several layers at a time
+through the Free monad; an interpreter for a little effect language is
+monadic through and through --- the reference tree contains one, a retry
+program over a Freer monad, and it earns its keep. But these are
+astronautics, honestly labeled. They prove the machinery composes. They
+are not why you would standardize it.
+
+* And Then the Language Grew One
+
+So the papers this collection supports propose Applicative, Traversable,
+Foldable, and the fold family, and propose no Monad. I know what the
+first question in the room will be, and this post is the answer, filed
+in advance. Deferred, not rejected: the typeclass design leads to a
+consistent generic name for sequential composition eventually, and
+per-type members --- ~and_then~, ~transform~, ~let_value~ --- are
+precisely not that name. The slot stays open for the paper that needs
+it.
+
+Then, in March, Ben Deane pointed out that C++26 shipped an instance
+([[https://www.elbeno.com/blog/?p=1813][/C++ Reflection: Another Monad/]]). Reflection's ~^^~ takes a type into
+~std::meta::info~ --- that is ~pure~. ~substitute~ applies a type
+function under the wrapper --- that is ~fmap~. ~extract<std::meta::info>~
+flattens a reflection of a reflection --- that is ~join~. ~fmap~ then
+~join~ is ~bind~, and Deane checks the laws. Type-function composition,
+the metaprogramming C++ has done by exhausting template specialization
+tricks for thirty years, is Kleisli composition in the reflection monad.
+
+And this instance is different from ~optional~ in the way that matters:
+there is no class to hang ~and_then~ off of. ~std::meta::info~ is one
+opaque type for every reflected thing; the monad structure lives in free
+functions the language gives you, and composing metaprograms means
+composing those. A generic ~bind~ --- a generic Kleisli arrow --- finally
+has a client that cannot solve its problem with a member function.
+Whether that client is worth a paper is a question I intend to take
+seriously rather than answer here.
+
+* The Map
+
+The claim above organizes a collection of posts, published together as
+series. Each series stands alone; each post is supposed to be of some use
+by itself --- a thing you can take away and apply without reading the
+rest. The abstraction is the through-line, not the toll.
+
+- *Transpose, Traverse, and Typeclass Objects* --- five posts. The loop
+  you have written a dozen times, the two typeclasses under it, what it
+  costs a type to opt in, and the prior art. Applicative territory,
+  start to finish.
+- *Recursion Schemes in C++26* --- the field guide, fourteen posts and an
+  interlude. Functor territory at the start; comonads on the fold side
+  and monads on the build side by the end, all structural, all supplied.
+- The papers themselves --- traversal and transposition, algorithms for
+  trees, the persistent measured sequence --- for when a post convinces
+  you the library should exist.
+
+Read whichever problem you have. The ledger will keep itself.
+
+* References
+
+McBride, Conor and Paterson, Ross (2008). *Applicative Programming with
+Effects*, Journal of Functional Programming 18(1),
+<https://www.staff.city.ac.uk/~ross/papers/Applicative.html>.
+
+Deane, Ben (2026). *C++ Reflection: Another Monad*, Why is a raven like a
+writing desk?, <https://www.elbeno.com/blog/?p=1813>.
+
+Sutton, Andrew, et al. (2025). *P2996: Reflection for C++26*,
+<https://wg21.link/p2996>.
+
+Brand, Sy (2019). *P0798: Monadic operations for std::optional*,
+<https://wg21.link/p0798>.
+
+Meijer, Erik, Fokkinga, Maarten, and Paterson, Ross (1991). *Functional
+Programming with Bananas, Lenses, Envelopes and Barbed Wire*, FPCA '91.
