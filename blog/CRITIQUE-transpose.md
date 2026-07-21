@@ -89,9 +89,13 @@ capability clause.
 
 ## 6. Self-repetition across posts that must stand alone
 
-No banned words; the tell here is duplication. "Front door" 13× (seven
-in post one); "the whole X" 14× (six in adapting); "not a limitation to
-apologize for" appears near-verbatim in posts one *and* two; "pile of
+No banned words; the tells here are a foreign idiom and duplication.
+"Front door" appears 13× (seven in post one) — **not Steve's idiom at
+all (ruling, 2026-07-21): replace it throughout, don't thin it.** Say
+what it is in each place — the verb, the entry point, the one call —
+rather than keeping a pet metaphor he wouldn't use once. Duplication:
+"the whole X" 14× (six in adapting); "not a limitation to apologize
+for" appears near-verbatim in posts one *and* two; "pile of
 one-CPO-per-operation hooks" in three *and* four. Under the each-post-
 stands-alone rule, every duplicated sentence gets assigned to exactly
 one owner before republication. Also: `writing-algorithms` ends on a

@@ -51,8 +51,9 @@ Ploeg–Kiselyov, P2300) check out.
 Twelve-plus instances across ten posts of the same personification move:
 "repay attention", "worth naming", "deserves its moment", "earns its
 comment", "earning its keep", "worth the price of admission", "repay
-reading", "earns a fusion". Individually each is fine; at this density
-it is a watermark. Keep two or three ("worth the price of admission" in
+reading", "earns a fusion". Steve's own read (2026-07-21): the words
+are, possibly, tics he has — the *pattern* is not. So the fix is
+density, not vocabulary: keep two or three ("worth the price of admission" in
 part-12 is the best), rewrite the rest as flat statements — "Get the
 NTTP mechanics wrong and the whole mode is unusable" instead of "The
 mechanics of that NTTP repay attention."

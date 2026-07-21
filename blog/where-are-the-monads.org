@@ -21,7 +21,7 @@ reflection.
 
 * The Ledger
 
-Twenty-odd recursion schemes. A traversal front door. A fold family. A
+Twenty-odd recursion schemes. A traversal verb. A fold family. A
 measured sequence. Every one generic, every one demanding some bundle of
 named operations from its type arguments --- that is what a typeclass is,
 a record of named operations, and the algorithms are constrained on the
