@@ -128,6 +128,23 @@ Evidence repo complete (S00–S16, 214 tests). Referenced by Paper D's
 implementation-experience section; compatibility checklist consumed by
 tree_algorithms extraction-plan §7.
 
+## Blog collection (monadic-algorithms re-cast) — plan: `blog/PLAN.md`
+
+1. Reviews of both existing series delivered 2026-07-21:
+   `blog/CRITIQUE-fixpoint.md`, `blog/CRITIQUE-transpose.md`. The five
+   blocking findings are planned as an execution pass in
+   `blog/MUSTFIX.md` (ordered MF-3 → MF-5 → MF-2 → MF-1 → MF-4; three
+   small decisions listed at its end unblock the two that need them).
+   Fixes land in the source repos; SYNC entry pins SHAs when done.
+2. Spine post drafted: `blog/where-are-the-monads.org` — the
+   Monad-scarcity thesis, the advance answer to "where's Monad?" for the
+   campaign; cites Deane's reflection-monad post (elbeno.com,
+   2026-03-04). Awaiting Steve's read.
+3. Instances series (new writing): reflection-monad post first — needs
+   gcc-16 consteval experiments; placement open (see PLAN.md questions).
+4. Re-cast edits to both series indexes and framing posts, per the
+   critiques and PLAN.md dispositions.
+
 ## Done
 
 - 2026-07-13: extraction plan, coherence skill, per-repo worklists,
