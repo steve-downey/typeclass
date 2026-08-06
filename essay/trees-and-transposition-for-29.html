@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2026-07-19 Sun 19:18 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trees, Transposition, and a new Container for C++29</title>
+<meta name="author" content="Steve Downey" />
+<meta name="generator" content="Org Mode" />
+<script>
+// @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+// @license-end
+</script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Trees, Transposition, and a new Container for C++29</h1>
+<div id="outline-container-org37b03ce" class="outline-2">
+<h2 id="org37b03ce"><span class="section-number-2">1.</span> Abstract</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+I am on a campaign to improve support in C++ for contemporary algorithms.
+By contemporary I mean more recent than the Sedgewick C++ Algorithms  book I used back in the 90s.
+There has been extraordinary work done in programming language and algorithmic research in the last 30 years.
+Much of it even well understood and codified enough to be standardized.
+</p>
+
+<p>
+It's not one huge paper, though, although a couple are shaping up to be beefy.
+They are intended to be independent enough to be evaluated and survive on their own merits, although they do lean on each other, and extend or reuse some machinery.
+Each is intended to solve a real problem that working C++ programmers face, give support for common generic domains, and provide generic vocabulary for algorithm writers, as well as to provide the facilities for users to connect their existing types in.
+</p>
+</div>
+</div>
+<div id="outline-container-org7b3d3dd" class="outline-2">
+<h2 id="org7b3d3dd"><span class="section-number-2">2.</span> Not Quite What I Set Out To Do</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+To be very honest, one of the main use cases I set out to solve with all of this turned out better to not be done at all.
+The particular problem of Unicode normalization can require many small insertions and deletions of code points in the middle of strings, and is a worst-case scenario for vector, and string.
+I was originally envisioning Text types that would maintain a normalization as an invariant as the text is manipulated.
+</p>
+
+<p>
+That turns out to be unnecessary.
+</p>
+
+<p>
+While I still believe that a Unicode Text type would be a valuable addition to the standard, simply maintaining well-formedness of the underlying UTF encoded data is sufficient to support Unicode algorithms and interoperability with facilities and languages, such as Python3, that have well-formed UTF-8 as a hard requirement for bringing data into their string types.
+Normalization is best done once, as needed, at the boundaries of the system.
+Normalization never changes the meaning of text, simply some details of representation.
+Unicode algorithms generally just do not care.
+</p>
+
+<p>
+I will still be bringing the Container I had planned, since it's both very widely useful, available in several different languages already, and can solve many real world problems efficiently and safely.
+Just not as a necessary part of Text.
+Instead as one of many Containers that Text could be an adapter for.
+</p>
+
+<p>
+A Text adapter is, also, not on my core road map for Unicode in C++29.
+Access to the primary algorithms defined by the Unicode standard is much more important, and would be, in any case, the underpinnings for a Text type.
+</p>
+</div>
+</div>
+<div id="outline-container-orga45ed62" class="outline-2">
+<h2 id="orga45ed62"><span class="section-number-2">3.</span> Enough About What It Isn't.</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Let's talk about what I do want.
+</p>
+
+<p>
+I want excellent support in the standard for algorithms that are not just processing a sequence.
+</p>
+
+<p>
+I want to take what we have learned from the STL, from std::ranges, and from std::execution, and extend the capabilities to more classes of structures.
+</p>
+
+<p>
+I want C++ to be as expressive as Python, Rust, Swift, or Haskell.
+</p>
+
+<p>
+I want idiomatic C++ to be as correct and as sound as OCaml.
+</p>
+
+<p>
+I want idiomatic C++ to be as, or more, performant than NumPy or Rust.
+</p>
+
+<p>
+I want to package into the standard the tools, facilities, and vocabulary that make all of this accessible to working programmers.
+</p>
+
+<p>
+Without having to go back to University and get a Maths degree specializing in Category Theory and Programming Languages.
+</p>
+</div>
+</div>
+<div id="outline-container-orgbdb85f8" class="outline-2">
+<h2 id="orgbdb85f8"><span class="section-number-2">4.</span> "Only be sure always to call it please 'Research'" - Tom Lehrer</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+The core ideas that run through all of this work are
+</p>
+<ol class="org-ol">
+<li>Higher Order Functions</li>
+<li>Internal Iteration</li>
+<li>Typeclasses</li>
+</ol>
+
+<p>
+None are at all novel.
+</p>
+
+<p>
+Higher order functions, functions that take functions as arguments, or return functions, are the central mechanism of Ranges and Senders, as well as being in Stepanov's STL.
+Separation of the mechanism, or shape,  of an algorithm from the operation the algorithm performs is table stakes these days.
+</p>
+
+<p>
+Iteration is also a central concern of the STL.
+ Applying functions to or inspecting each element in some collection in some manner defined by the structure &mdash; abstracted away from the algorithm that applies a user operation &mdash; was Stepanov's key insight in defining Generic Programming.
+ The STL exposes the iteration externally, making Iterators a key component. Algorithms, Iterators,  and Containers are the triad that define the STL.
+ Ranges provides a bridge to internal iteration, where the iteration is not necessarily exposed.
+</p>
+
+<p>
+It has turned out that external iteration, using pointers or indices, is a source of needless safety problems.
+Moving the details of unsafe operations, such as checking if an iterator is valid, or dereferenceable, into small and reused blocks of code improves safety, and correctness.
+It has also turned out that there is little to no loss of performance.
+Sometimes even performance improvements because the compiler can see it is lowering known safe code to unsafe implementation and can elide checks it might otherwise need to do.
+Compiler middle and back ends have learned an astonishing number of tricks &mdash; often driven by other languages that have made safety a priority.
+</p>
+
+<p>
+Typeclasses are more novel in C++ as an organizing principle, but not at all as an implementation technique.
+They are merely a record that collects a coherent set of named operations together.
+In a language with first class support for them the compiler or runtime will arrange to make these names available to functions constrained on them.
+</p>
+
+<p>
+I am not proposing a language extension for typeclasses.
+</p>
+
+<p>
+I am proposing pure and efficient library mechanisms for discovering and forwarding the bundle of named operations.
+Structs, with named operations.
+No other required indirection.
+No required virtual functions.
+No required inheritance.
+Everything visible to the compiler &mdash; available for inlining and defunctionalization.
+</p>
+
+<p>
+The compiler's middle and back ends are extremely happy with them.
+</p>
+
+<p>
+I am proposing some more complicated machinery to help write a typeclass instance, machinery that will derive operations based on a few core, essential, operations, but consumers of a typeclass instance do not care.
+All they look for is how to perform one of the named operations the typeclass provides, not how the operation is provided.
+Purely duck typing.
+</p>
+</div>
+</div>
+<div id="outline-container-orgff7d1de" class="outline-2">
+<h2 id="orgff7d1de"><span class="section-number-2">5.</span> The Papers</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org6479e61" class="outline-3">
+<h3 id="org6479e61"><span class="section-number-3">5.1.</span> P3200 &ndash; Shape-Preserving Traversal and Transposition for Contextual Computations</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+C++ has vocabulary types and computational contexts that are individually well understood, but it lacks a uniform way to traverse a structure while producing contextual results and then <b>transpose</b> the result into a single outer context.
+This problem appears today in combinations such as containers of `optional`s, containers of senders, and lanewise or zipped structured computation.
+</p>
+
+<p>
+This paper proposes a shape-preserving traversal facility together with `transpose` operations that convert a structure of contextual values into a contextual structure.
+The proposal is based on <b>independent contextual composition</b> rather than on general sequential dependence.
+</p>
+
+<p>
+The paper also proposes a bundled customization model.
+That mechanism is included because current trait-only and per-operation customization techniques are not strong enough to bundle applicative primitives and derived operations coherently.
+</p>
+</div>
+</div>
+<div id="outline-container-orgf3eae0c" class="outline-3">
+<h3 id="orgf3eae0c"><span class="section-number-3">5.2.</span> P4322 &ndash; Algorithms for Trees</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+Recursive tree structures are common in parsing, transformation pipelines, symbolic representations, and hierarchical data processing, but the standard library offers little direct support for generic algorithms centered on recursive structure rather than on flat external iteration.
+</p>
+</div>
+</div>
+<div id="outline-container-orgd0fd80c" class="outline-3">
+<h3 id="orgd0fd80c"><span class="section-number-3">5.3.</span> P4325 &ndash; A Persistent Measured Sequence for the Standard Library</h3>
+<div class="outline-text-3" id="text-5-3">
+<p>
+The standard library provides strong support for mutable flat sequences, but it does not provide a persistent sequence abstraction that combines efficient front and back operations, concatenation, and splitting or searching by accumulated measure.
+</p>
+
+<p>
+Standard containers primarily assume destructive update: mutation invalidates existing views of the value unless the user pays with copying, coordination,or bespoke sharing schemes.
+</p>
+
+<p>
+This paper proposes a persistent measured sequence abstraction with efficient concatenation, prefix-based search, and split operations. The design emphasizes semantic capabilities rather than a single implementation name, while drawing on the long-studied literature and practice behind finger-tree-like structures.
+</p>
+</div>
+</div>
+<div id="outline-container-orgbcb253b" class="outline-3">
+<h3 id="orgbcb253b"><span class="section-number-3">5.4.</span> P4307 &ndash; An Infix Operator and a Keyword Escape for C++</h3>
+<div class="outline-text-3" id="text-5-4">
+<p>
+We propose two uses for one character: the backtick, the last printable ASCII character the language can still claim.
+One makes any callable a binary operator; the other lets a keyword be escaped for use as an ordinary identifier.
+Each is independently motivated, and each is defined by rewrite into something the language already has.
+They are proposed together, with equal standing, because they share the token &mdash; two independent claims on one character, designed separately, end in contradiction.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgd6fc4de" class="outline-2">
+<h2 id="orgd6fc4de"><span class="section-number-2">6.</span> What?</h2>
+<div class="outline-text-2" id="text-6">
+<dl class="org-dl">
+<dt><a href="https://github.com/steve-downey/transpose">https://github.com/steve-downey/transpose</a></dt><dd>Transpose Context and Structure</dd>
+<dt><a href="https://github.com/steve-downey/tree_algorithms">https://github.com/steve-downey/tree_algorithms</a></dt><dd>Algorithms for Trees</dd>
+<dt><a href="https://github.com/steve-downey/fingertree">https://github.com/steve-downey/fingertree</a></dt><dd>Hinze's Fingertrees</dd>
+<dt><a href="https://github.com/steve-downey/llvm-project/tree/backtick">https://github.com/steve-downey/llvm-project/tree/backtick</a></dt><dd>Backticks in LLVM</dd>
+<dt><a href="https://github.com/steve-downey/gcc/tree/backtick">https://github.com/steve-downey/gcc/tree/backtick</a></dt><dd>Backticks in GCC</dd>
+</dl>
+</div>
+<div id="outline-container-org5544d69" class="outline-3">
+<h3 id="org5544d69"><span class="section-number-3">6.1.</span> Transpose</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+You have a vector&lt;sender&lt;int&gt;&gt;and you want a sender&lt;vector&lt;int&gt;&gt;. Or you need to swap array of struct to struct of array for lane-wise SIMD processing. And you don't want to write that loop one more time.
+</p>
+
+<p>
+This is actually what McBride invented Applicative and Transpose <b>for</b>.
+</p>
+
+<p>
+Also, Applicative has almost nothing to do with partial application or currying.
+It is all about applying a pure function to arguments in contexts.
+</p>
+</div>
+</div>
+<div id="outline-container-org19d7294" class="outline-3">
+<h3 id="org19d7294"><span class="section-number-3">6.2.</span> Algorithms for Trees</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+Some times you don't want to flatten everything to a sequence.
+You want to preserve the shape of the structure.
+</p>
+
+<p>
+It also turns out there are <b>efficient</b> tools for building recursive data structures out of flat templated types, then folding them in to a value, unfolding a value into a structure, and fusing the two so the structure is never materialized.
+</p>
+
+<p>
+We should standardize those tools, and provide the hooks so your current handwritten binary tree can use all the same algorithms.
+</p>
+</div>
+</div>
+<div id="outline-container-org64b43d4" class="outline-3">
+<h3 id="org64b43d4"><span class="section-number-3">6.3.</span> Fingertrees</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+A twenty year old data structure.
+</p>
+
+<p>
+It's "purely functional" and "persistent" which means that operations on the tree return a new tree rather than mutating the original tree.
+Nonetheless, by clever sharing of state, it is still very efficient.
+</p>
+
+<p>
+Further, by clever annotation of the interior nodes, many other data structures can be efficiently modeled, using the magic of <code>monoids</code>, types with associative binary operations.
+</p>
+</div>
+</div>
+<div id="outline-container-org70e9ff3" class="outline-3">
+<h3 id="org70e9ff3"><span class="section-number-3">6.4.</span> Backticks For Infix</h3>
+<div class="outline-text-3" id="text-6-4">
+<p>
+<code>a `f` b</code> == <code>f(a, b)</code>
+</p>
+
+<p>
+This is apparently either something you have always desired, or you have no idea why anyone would ever need such a thing.
+</p>
+
+<p>
+It's not the same as the <code>pizza</code> operator, <code>|&gt;</code> , although they are  near by each other.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb99cd6a" class="outline-2">
+<h2 id="orgb99cd6a"><span class="section-number-2">7.</span> When?</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+Papers are forthcoming.
+</p>
+
+<p>
+Code exists.
+</p>
+
+<p>
+Uses of the code exist, also.
+</p>
+<dl class="org-dl">
+<dt><a href="https://github.com/steve-downey/fixpoint">https://github.com/steve-downey/fixpoint</a></dt><dd>Astronautics with Kmett's recursion schemes</dd>
+<dt><a href="https://github.com/steve-downey/compile-time-scheme">https://github.com/steve-downey/compile-time-scheme</a></dt><dd>A compile time <del>Scheme</del> Common Lisp compiler</dd>
+<dt><a href="https://github.com/steve-downey/compile-time-forth">https://github.com/steve-downey/compile-time-forth</a></dt><dd>A compile time Forth compiler</dd>
+</dl>
+</div>
+</div>
+</div>
+</body>
+</html>

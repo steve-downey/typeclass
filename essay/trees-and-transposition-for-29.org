@@ -31,6 +31,15 @@
 #+INFOJS_OPT:
 
 * Abstract
+You have a ~vector<sender<int>>~ and you need a ~sender<vector<int>>~, or a ~vector<optional<int>>~ and you need an ~optional<vector<int>>~.
+
+You don't want to write a binary tree. Again. By hand.
+
+You need have a pure function. You have arguments in two vectors. You just want to zip and apply the function.
+
+You want to keep working on a data structure while something else works on it. Making copies is expensive.
+# {{{TEASER_END}}}
+
 I am on a campaign to improve support in C++ for contemporary algorithms.
 By contemporary I mean more recent than the Sedgewick C++ Algorithms  book I used back in the 90s.
 There has been extraordinary work done in programming language and algorithmic research in the last 30 years.
@@ -39,44 +48,6 @@ Much of it even well understood and codified enough to be standardized.
 It's not one huge paper, though, although a couple are shaping up to be beefy.
 They are intended to be independent enough to be evaluated and survive on their own merits, although they do lean on each other, and extend or reuse some machinery.
 Each is intended to solve a real problem that working C++ programmers face, give support for common generic domains, and provide generic vocabulary for algorithm writers, as well as to provide the facilities for users to connect their existing types in.
-# {{{TEASER_END}}}
-
-
-* Not Quite What I Set Out To Do
-To be very honest, one of the main use cases I set out to solve with all of this turned out better to not be done at all.
-The particular problem of Unicode normalization can require many small insertions and deletions of code points in the middle of strings, and is a worst-case scenario for vector, and string.
-I was originally envisioning Text types that would maintain a normalization as an invariant as the text is manipulated.
-
-That turns out to be unnecessary.
-
-While I still believe that a Unicode Text type would be a valuable addition to the standard, simply maintaining well-formedness of the underlying UTF encoded data is sufficient to support Unicode algorithms and interoperability with facilities and languages, such as Python3, that have well-formed UTF-8 as a hard requirement for bringing data into their string types.
-Normalization is best done once, as needed, at the boundaries of the system.
-Canonical normalization ([[https://unicode.org/reports/tr15/][UAX #15]]) never changes the meaning of text, simply some details of representation.
-Unicode algorithms generally just do not care.
-
-I will still be bringing the Container I had planned, since it's both very widely useful, available in several different languages already, and can solve many real world problems efficiently and safely.
-Just not as a necessary part of Text.
-Instead as one of many Containers that Text could be an adapter for.
-
-A Text adapter is, also, not on my core road map for Unicode in C++29.
-Access to the primary algorithms defined by the Unicode standard is much more important, and would be, in any case, the underpinnings for a Text type.
-
-* Enough About What It Isn't.
-Let's talk about what I do want.
-
-I want excellent support in the standard for algorithms that are not just processing a sequence.
-
-I want to take what we have learned from the STL, from std::ranges, and from std::execution, and extend the capabilities to more classes of structures.
-
-I want C++ to be as expressive as Python, Rust, Swift, or Haskell.
-
-I want idiomatic C++ to be as correct and as sound as OCaml.
-
-I want idiomatic C++ to be as, or more, performant than NumPy or Rust.
-
-I want to package into the standard the tools, facilities, and vocabulary that make all of this accessible to working programmers.
-
-Without having to go back to University and get a Maths degree specializing in Category Theory and Programming Languages.
 
 * "Only be sure always to call it please 'Research'" - Tom Lehrer
 
@@ -152,6 +123,9 @@ They are proposed together, with equal standing, because they share the token --
 - https://github.com/steve-downey/transpose :: Transpose Context and Structure
 - https://github.com/steve-downey/tree_algorithms :: Algorithms for Trees
 - https://github.com/steve-downey/fingertree :: Hinze & Paterson's Fingertrees
+
+  Bonus tracks:
+- https://github.com/steve-downey/backtick :: Infix function notation for C++
 - https://github.com/steve-downey/llvm-project/tree/backtick :: Backticks in LLVM
 - https://github.com/steve-downey/gcc/tree/backtick :: Backticks in GCC
 
@@ -190,6 +164,43 @@ This is apparently either something you have always desired, or you have no idea
 C++26 added the backtick to the basic character set ([[https://wg21.link/p2558][P2558]]). Nothing uses it yet.
 
 It's not the same as the ~pizza~ operator, ~|>~ ([[https://wg21.link/p2011][P2011]]), although they are  near by each other.
+
+
+
+* Not Quite What I Set Out To Do
+To be very honest, one of the main use cases I set out to solve with all of this turned out better to not be done at all.
+The particular problem of Unicode normalization can require many small insertions and deletions of code points in the middle of strings, and is a worst-case scenario for vector, and string.
+I was originally envisioning Text types that would maintain a normalization as an invariant as the text is manipulated.
+
+That turns out to be unnecessary.
+
+While I still believe that a Unicode Text type would be a valuable addition to the standard, simply maintaining well-formedness of the underlying UTF encoded data is sufficient to support Unicode algorithms and interoperability with facilities and languages, such as Python3, that have well-formed UTF-8 as a hard requirement for bringing data into their string types.
+Normalization is best done once, as needed, at the boundaries of the system.
+Canonical normalization ([[https://unicode.org/reports/tr15/][UAX #15]]) never changes the meaning of text, simply some details of representation.
+Unicode algorithms generally just do not care.
+
+I will still be bringing the Container I had planned, since it's both very widely useful, available in several different languages already, and can solve many real world problems efficiently and safely.
+Just not as a necessary part of Text.
+Instead as one of many Containers that Text could be an adapter for.
+
+A Text adapter is, also, not on my core road map for Unicode in C++29.
+Access to the primary algorithms defined by the Unicode standard is much more important, and would be, in any case, the underpinnings for a Text type.
+
+
+* What I want
+I want excellent support in the standard for algorithms that are not just processing a sequence.
+
+I want to take what we have learned from the STL, from std::ranges, and from std::execution, and extend the capabilities to more classes of structures.
+
+I want C++ to be as expressive as Python, Rust, Swift, or Haskell.
+
+I want idiomatic C++ to be as correct and as sound as OCaml.
+
+I want idiomatic C++ to be as, or more, performant than NumPy or Rust.
+
+I want to package into the standard the tools, facilities, and vocabulary that make all of this accessible to working programmers.
+
+Without having to go back to University and get a Maths degree specializing in Category Theory and Programming Languages.
 
 * When?
 Papers are forthcoming.
