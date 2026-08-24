@@ -30,6 +30,97 @@
 #+SUBTITLE:
 #+INFOJS_OPT:
 
+#+begin_comment
+TODO — REVISION BOARD (non-exporting; strip or leave, org drops it)
+Sources: EDIT-LETTER.md (the moves), DRAFT-REVIEW-2026-08-06.md (what is
+still open), CRITIQUE.md (rationale, cited by section). Per-passage work
+is in the TODO blocks below. This one holds what has no single home.
+Line numbers cited throughout are from the pre-annotation draft (the
+56c03af revision); each block sits next to the passage it is about.
+
+TOP PRIORITY — THE MAP DOES NOT EXIST (move 1; CRITIQUE 3 and 11d).
+Line 49 asserts the papers "lean on each other" and the essay never says
+which. This is the one job only this post can do; four good pitches in
+one post is not a campaign. It has to answer, in prose, not a table:
+  - why four papers and not one
+  - what each owns: P3200 the customization mechanism, P4322 the
+    recursive verbs, P4325 the container/measures/allocator story,
+    P4307 the token
+  - what survives alone. P4322 stays fully valid if P3200 stalls,
+    because the primary spellings take the ingredients explicitly and
+    lookup is a separate convenience layer. Say it outright; it is the
+    single most reassuring fact about the set and it is invisible now.
+  - where the holes are (Monad; see the TODO in "When?")
+Concrete cross-paper connection, available and unused (CRITIQUE 16b):
+Foldable's length defaults to O(n), the fingertree's cached measure
+makes it O(1), and Data.Sequence overrides length and null for exactly
+that reason. Paper C is the motivating instance for Paper D's
+membership rule. Worth more than an abstract argument about defaults.
+
+RUNNING ORDER the edit letter proposes:
+  problems -> map -> papers (pitch, scope, link) -> the how -> why in
+  the Standard -> close (I can have / Unicode / holes / timeline / CTA)
+Currently: problems -> the how -> papers -> what? -> Unicode -> wants.
+The map and "why in the Standard" are missing; Papers and What? are
+still two sections; the how is still in front.
+
+FIVE GATING DECISIONS. Only #1 is resolved.
+  1. Instance contract. RESOLVED 2026-07-20: the shape is deliberately
+     unspecified, and the non-specification is part of the contract.
+     Consequence: drop the P3294-is-C++29 timing argument entirely.
+  2. Standalone "why in the Standard" post as well as the compact
+     passage? The letter recommends both, so all four papers point at
+     one citable thing instead of each re-litigating it.
+  3. Backtick: bonus track, or integrated? See the TODO at Backticks.
+  4. This post vs the exhibit essay in SPEC.md. If this ships first it
+     becomes the de facto map and the papers have to stay consistent
+     with it. If it is the teaser, say so and keep it short.
+  5. Which "I want" lines survive as "I can have"? See that TODO.
+
+/voice DENSITY (lexcheck, blog register) — details at each site:
+  - impostor: "performant" (199). Zero occurrences in your corpus.
+  - twice, where the ceiling is once: clever (155, 157), idiomatic
+    (197, 199), novel (59, 75).
+  - "machinery" x3 (49, and twice in 90) = 16/10k against a base of
+    1.1, and it is blog-only for you: seven lifetime uses.
+  - "rather" x4 = 21/10k against 5.9. Three of the four (100, 106, 113)
+    are inside the pasted paper abstracts and go away with the merge.
+  - em/en dashes x5 = 27/10k, above even your paper rate of 20; the
+    blog baseline is about zero. Two of the five would be happier as a
+    comma or a semicolon.
+  - ", not Y" appositive tail x2 (91, 186). Ceiling is once per piece.
+  - sentence-initial And/But/So runs low for blog register (base is
+    6.3/100 sentences). The lede has them; the body mostly does not.
+
+STANDING RULES for this pass (edit letter):
+  - Concede costs before anyone raises them. Fingertree's ongoing cost,
+    the -O0 penalty, the derivation machinery's complexity.
+  - When conceding debug cost, stratify (CRITIQUE 13f-2): extra frames
+    at -O0 is the ranges/std::execution category; MSVC's debug
+    iterators are an ABI category and categorically worse. Lumping them
+    invites "so you're as bad as debug iterators."
+  - No internal planning identifiers in public text. Real paper numbers
+    and repo paths are fine.
+  - No new arguments the papers do not already carry.
+  - Cut anything unfalsifiable. Anchor it or drop it.
+
+VERIFY BEFORE PUBLISHING
+  - Paper numbers. The coordination notes carry Paper D as D4322R0 and
+    Paper C as D4325R0; wg21.link/P3200 currently resolves to the
+    placeholder title "Trees for the standard library", not the title
+    used here. P4307's number appears nowhere in the notes — confirm it
+    is real and not penciled.
+  - P2727 iterator_interface status against the latest mailing. It is
+    the one claim in the standards argument a reviewer will check.
+  - compile-time-forth is 404. It publishes first, or the bullet goes.
+  - Runtime-parity godbolt check: derived instance vs flat aggregate,
+    -O2 and -O0, measuring forwarding depth per operation.
+  - std::move / std::forward builtins as the "vendors fixed the
+    toolchain rather than rejecting the facility" precedent — from
+    memory, unverified.
+  - Re-export the .html. It is dated 2026-07-19 and predates this lede.
+#+end_comment
+
 * Abstract
 You have a ~vector<sender<int>>~ and you need a ~sender<vector<int>>~, or a ~vector<optional<int>>~ and you need an ~optional<vector<int>>~.
 
@@ -40,6 +131,25 @@ You need have a pure function. You have arguments in two vectors. You just want 
 You want to keep working on a data structure while something else works on it. Making copies is expensive.
 # {{{TEASER_END}}}
 
+#+begin_comment
+KEEP — the lede. Four pain-first lines, no facility names,
+vector<sender> first, every paper with a slot, backtick correctly
+absent. The letter says promote the vector<sender<int>> hook, do not
+rewrite it. Two fixes only.
+
+/voice line 38 — "need have" is a typo, and it is in the showcase
+position: the fourth line of the post.
+- CURRENT:  You need have a pure function. You have arguments in two
+            vectors. You just want to zip and apply the function.
+- PROPOSED: You have a pure function, and its arguments in two vectors.
+            You just want to zip and apply it.
+  (accept / stet)
+
+NOTE — line 40 is the fingertree slot, and the persistence-and-hand-off
+pitch it promises is not delivered anywhere in the body. See the TODO
+at "Fingertrees"; draft the two together.
+#+end_comment
+
 I am on a campaign to improve support in C++ for contemporary algorithms.
 By contemporary I mean more recent than the Sedgewick C++ Algorithms  book I used back in the 90s.
 There has been extraordinary work done in programming language and algorithmic research in the last 30 years.
@@ -49,7 +159,95 @@ It's not one huge paper, though, although a couple are shaping up to be beefy.
 They are intended to be independent enough to be evaluated and survive on their own merits, although they do lean on each other, and extend or reuse some machinery.
 Each is intended to solve a real problem that working C++ programmers face, give support for common generic domains, and provide generic vocabulary for algorithm writers, as well as to provide the facilities for users to connect their existing types in.
 
+#+begin_comment
+TODO — THE MAP GOES HERE, between the problems and the papers (running
+order 2). Line 49 says they lean on each other; this is where you say
+which. Full brief in the revision board at the top of the file. This is
+the highest-priority item in the round, above both ends of the essay.
+
+/voice line 48 — "though, although" inside one clause.
+- CURRENT:  It's not one huge paper, though, although a couple are
+            shaping up to be beefy.
+- PROPOSED: It's not one huge paper, though a couple are shaping up to
+            be beefy.
+  (accept / stet)
+
+/voice line 50 — four things hung off one "intended to", "provide"
+twice, "generic" twice, and the last clause is the longest and vaguest
+of the four. As written it is a feature list, which is exactly the
+failure mode the letter names.
+- CURRENT:  Each is intended to solve a real problem that working C++
+            programmers face, give support for common generic domains,
+            and provide generic vocabulary for algorithm writers, as
+            well as to provide the facilities for users to connect
+            their existing types in.
+- PROPOSED: Each solves a problem working C++ programmers actually
+            have, and gives algorithm writers vocabulary they can count
+            on being there. All of them have hooks for the types you
+            already have; none of them asks you to throw away the
+            binary tree you already wrote.
+            (ties back to the second line of the lede, and lands hard)
+- SHORTER:  Each solves a real problem, gives algorithm writers
+            vocabulary they can count on, and has hooks for the types
+            you already have.
+  (accept one / stet)
+#+end_comment
+
 * "Only be sure always to call it please 'Research'" - Tom Lehrer
+
+#+begin_comment
+TODO — this section is the "how", and it currently sits before the
+reader knows what is on offer. Move it after the map and shrink it
+(running order 4; CRITIQUE 11e). Once problems lead, it is answering
+"how does that work", not preloading theory. That is also the argument
+for making it shorter: it no longer has to carry the opening.
+
+TODO — indentation runs 0 / 2 / 3 spaces paragraph to paragraph across
+this whole section. Normalize before export.
+
+TODO — the debug-build concession fits here or in "why in the
+Standard", and it has to be stratified (CRITIQUE 13f-2): extra frames
+at -O0 is the ranges/std::execution category; MSVC's debug iterators
+are an ABI category and categorically worse. Lumping them together
+invites "so you're as bad as debug iterators."
+
+/voice "novel" twice (59 and 75); the ceiling is once per piece. Keep
+59 — "None are at all novel." is the flat landing and the better line.
+- CURRENT (75):  Typeclasses are more novel in C++ as an organizing
+                 principle, but not at all as an implementation
+                 technique.
+- PROPOSED:      Typeclasses are newer to C++ as an organizing
+                 principle, although not at all as an implementation
+                 technique.
+  (accept / stet)
+
+/voice "machinery" x3 — once at 49 and twice in one sentence at 90.
+Base rate is about 1 per 10k words and it is blog-only for you.
+- CURRENT (90):  I am proposing some more complicated machinery to help
+                 write a typeclass instance, machinery that will derive
+                 operations based on a few core, essential, operations,
+                 but consumers of a typeclass instance do not care.
+- PROPOSED:      I am proposing some more complicated machinery to help
+                 write a typeclass instance, one that derives the rest
+                 of the operations from a few core ones. Consumers of
+                 an instance do not care.
+  (accept / stet)
+
+/voice line 91 — one of the two ", not Y" appositive tails in the piece
+(the other is 186). The ceiling is once. Whichever you keep, kill the
+other; this one is the weaker of the two.
+- CURRENT:  All they look for is how to perform one of the named
+            operations the typeclass provides, not how the operation is
+            provided.
+- PROPOSED: All they look for is how to perform one of the named
+            operations the typeclass provides. How it is provided is
+            not their problem.
+  (accept / stet)
+
+KEEP — the "No other required indirection. / No required virtual
+functions. / No required inheritance." run at 83-85. That is the one
+anaphora drumroll the post gets. Do not add a second one elsewhere.
+#+end_comment
 
 The core ideas that run through all of this work are
 1. Higher Order Functions
@@ -92,6 +290,32 @@ None are at all novel.
    Purely duck typing.
 
 * The Papers
+#+begin_comment
+TODO — merge this section into "What?" (move 3; CRITIQUE 2). They are
+the same section twice and the committee-register one is first. One
+section per paper: informal pitch, one sentence of formal scope, link.
+The abstract belongs in the paper.
+
+TODO — markup bug: the entries below use markdown backticks (`optional`,
+`transpose`) in an org file. They export as literal backticks. Use
+~optional~ and ~transpose~.
+
+TODO — P4322 is the only entry that never says what it proposes; it is
+one paragraph of problem statement and then it stops. The sentence
+exists elsewhere in the campaign: generic algorithms over recursive
+structure — fold, unfold, and the fusion of the two so the structure is
+never materialized — plus the hooks that let a hand-written tree use
+them. The "Algorithms for Trees" section below already has most of it.
+
+/voice register — these four entries are lifted paper abstracts, and
+they read that way. "We propose", "This paper proposes", "The proposal
+is based on", "The design emphasizes semantic capabilities rather than
+a single implementation name". Three of the piece's four "rather"s live
+in here. Once the merge happens the pitch sentence carries the entry
+and one sentence of scope follows it, and most of this goes away on its
+own — so do the merge before doing line edits in here.
+#+end_comment
+
 ** P3200 -- Shape-Preserving Traversal and Transposition for Contextual Computations
 C++ has vocabulary types and computational contexts that are individually well understood, but it lacks a uniform way to traverse a structure while producing contextual results and then *transpose* the result into a single outer context.
 This problem appears today in combinations such as containers of `optional`s, containers of senders, and lanewise or zipped structured computation.
@@ -118,6 +342,20 @@ One makes any callable a binary operator; the other lets a keyword be escaped fo
 Each is independently motivated, and each is defined by rewrite into something the language already has.
 They are proposed together, with equal standing, because they share the token --- two independent claims on one character, designed separately, end in contradiction.
 
+#+begin_comment
+/voice line 119 — as written the sentence says the two claims do end in
+contradiction, which is the opposite of the argument. The conditional
+is missing.
+- CURRENT:  They are proposed together, with equal standing, because
+            they share the token --- two independent claims on one
+            character, designed separately, end in contradiction.
+- PROPOSED: They are proposed together, with equal standing, because
+            they share the token. Two independent claims on one
+            character, designed separately, would end in contradiction.
+  (also retires one of the five em-dashes)
+  (accept / stet)
+#+end_comment
+
 
 * What?
 - https://github.com/steve-downey/transpose :: Transpose Context and Structure
@@ -138,6 +376,21 @@ Transposing a matrix is the opening example of [[https://www.staff.city.ac.uk/~r
 Also, Applicative has almost nothing to do with partial application or currying.
 It is all about applying a pure function to arguments in contexts.
 
+#+begin_comment
+TODO — exhibit E1 placeholder (move 6): transpose over
+vector<optional<T>>, vector<sender<T>>, and lanewise values, all
+through the one call. Transcluded from the anchored three-domain test
+in the transpose repo. Nothing hand-typed, nothing "illustrative"; if
+it needs to be smaller, fix the source region. ~a `f` b~ is currently
+the only code in the piece, and not coincidentally the backtick section
+is the most immediately graspable one.
+
+KEEP — the Paterson aside is available here and is in register: he
+co-authored /Bananas/ (1991), /Finger Trees/ (2006), and /Applicative
+Programming with Effects/ (2008). One person on all three pillars.
+Dropped flat and unexplained.
+#+end_comment
+
 ** Algorithms for Trees
 Some times you don't want to flatten everything to a sequence.
 You want to preserve the shape of the structure.
@@ -146,6 +399,24 @@ It also turns out there are *efficient* tools for building recursive data struct
 The fold/unfold/fuse trio goes back to [[https://maartenfokkinga.github.io/utwente/mmf91m.pdf][/Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire/]] (Meijer, Fokkinga, and Paterson, 1991).
 
 We should standardize those tools, and provide the hooks so your current handwritten binary tree can use all the same algorithms.
+
+#+begin_comment
+TODO — exhibit E3 placeholder (move 6): fold_with over a tree you
+already own. Layer struct, fmap, projection, no Fix, no conversion.
+examples/nonce_tree_direct.cpp is already anchored. This paragraph
+makes the claim; the exhibit is what makes it believed.
+
+TODO — this section has the P4322 proposal sentence that the paper
+entry above is missing. When the two sections merge, this is the one
+that survives.
+
+/voice line 142 — "Some times" is one word.
+- CURRENT:  Some times you don't want to flatten everything to a
+            sequence.
+- PROPOSED: Sometimes you don't want to flatten everything to a
+            sequence.
+  (accept / stet)
+#+end_comment
 
 ** Fingertrees
 A twenty year old data structure.
@@ -156,6 +427,58 @@ Nonetheless, by clever sharing of state, it is still very efficient.
 
 Further, by clever annotation of the interior nodes, many other data structures can be efficiently modeled, using the magic of ~monoids~, types with associative binary operations.
 
+#+begin_comment
+TODO — this is the entry the letter singles out (move 2, second half;
+CRITIQUE 11c). Fingertree loses every single-operation comparison to a
+purpose-built structure, so pitching it on any one operation pitches it
+into its weakness. The lede promises persistence and the hand-off; this
+section still pitches generic persistence. Three things it has to do:
+
+  1. Concede the cost in the same breath. The hand-off is O(1) and
+     allocation-free; ongoing operations cost more than vector —
+     allocation, indirection, cache behaviour. Say it first. Being
+     first to name the cost is what makes the claim credible. The
+     precise claim is about the copy that is not made, not about free
+     operations.
+  2. Answer shared_ptr<const vector> explicitly. It is the closest
+     competitor and it already gets the O(1) hand-off. What it does not
+     get is continuing to work: freezing it freezes everything, and
+     resuming mutation costs a full copy. Fingertree gives the hand-off
+     *and* cheap continued mutation of your own version. That is the
+     differentiator; without it, "persistent" reads as an academic
+     property rather than the answer to a problem the reader has.
+     Naming what people do today — copy the vector, take a lock and
+     block the producer, hand-roll a snapshot scheme — lets a reader
+     recognize their own code.
+  3. Keep the measure as the tie-in clause. Changing the measure makes
+     the same structure a sequence, a priority queue, or an interval
+     map. Persistence is the hook, but the annotation is what makes it
+     a fingertree rather than any persistent sequence, and what
+     connects it to the monoid vocabulary the rest of the campaign
+     shares. An all-persistence pitch detaches the container from the
+     set, which is the one thing this essay exists to prevent.
+
+TODO — exhibit E5 placeholder (move 6): the hand-off. This one carries
+the persistence pitch, so draft the code and the prose together.
+
+TODO — factual. "types with associative binary operations" is a
+semigroup. The identity is missing, and identity() is half of the
+frozen monoid vocabulary the campaign uses everywhere else.
+
+/voice "clever" twice (155 and 157); the ceiling is once per piece.
+Keeping it at 155 and dropping it at 157 also fixes the definition and
+retires "the magic of".
+- CURRENT (157):  Further, by clever annotation of the interior nodes,
+                  many other data structures can be efficiently
+                  modeled, using the magic of ~monoids~, types with
+                  associative binary operations.
+- PROPOSED:       Further, by annotating the interior nodes, many other
+                  data structures can be efficiently modeled, using
+                  ~monoids~: a type, an associative binary operation,
+                  and an identity element.
+  (accept / stet)
+#+end_comment
+
 ** Backticks For Infix
 ~a `f` b~ == ~f(a, b)~
 
@@ -165,9 +488,91 @@ C++26 added the backtick to the basic character set ([[https://wg21.link/p2558][
 
 It's not the same as the ~pizza~ operator, ~|>~ ([[https://wg21.link/p2011][P2011]]), although they are  near by each other.
 
+#+begin_comment
+TODO — gating decision 3, still open, and it blocks this section. The
+link list already says "Bonus tracks", but P4307 still sits in "The
+Papers" with full standing, and the tie-in sentence is missing either
+way. The connection is real: infix spelling is what makes
+combine-heavy monoid code readable, and monoids are the shared
+vocabulary. One sentence, or demote it properly and take it out of the
+paper list. Left unexplained it costs coherence (CRITIQUE 9), because a
+reader cannot tell whether it is part of the set or a side quest.
+
+/voice line 166 — "near by" is one word, the clause is vague, and there
+is a double space in it.
+- CURRENT:  It's not the same as the ~pizza~ operator, ~|>~ (P2011),
+            although they are  near by each other.
+- PROPOSED: It's not the ~pizza~ operator, ~|>~ (P2011), although the
+            two are adjacent.
+  (accept / stet)
+#+end_comment
+
+#+begin_comment
+TODO — MISSING SECTION: "Why in the *Standard*" goes here, before the
+close (move 7; CRITIQUE 12). This is the objection that actually
+decides these papers — "why should this exist" is winnable while still
+losing the vote. Compact version here; the full treatment is its own
+post (gating decision 2). What the compact version needs:
+
+  - The argument, not the frame. Vocabulary has value only if it is
+    shared, so a vocabulary mechanism outside the standard is close to
+    worthless. Batteries-vs-prelude is the frame; let it emerge.
+  - std::optional as the anchor. Nobody argues it should not be
+    standard because you could write your own. Everybody did write
+    their own, and that was the problem.
+  - The authoring-support pattern. The concept gets standardized; the
+    authoring aid never does, because it is never strictly essential.
+    Iterator concept 1998, std::iterator removed in C++26,
+    iterator_interface still in flight. Then the mechanism: the people
+    who could build it afterward are permanently absorbed by the next
+    large feature. Pattern plus mechanism is an explanation; pattern
+    alone is an anecdote. Keep it dry and structural — the moment it
+    reads as grievance it stops working.
+  - One clause of safety tie-back. A hand-written iterator that is
+    subtly wrong gives strange overload resolution; a hand-written
+    coroutine type that is subtly wrong gives a dangling frame that
+    compiles clean. This is the essay's own safety argument applied to
+    extension points.
+  - The regex objection, answered with the scoping discipline rather
+    than defensively: P3200 proposes only what its three-domain proof
+    forces, the exotic recursion-scheme catalog stays in the fixpoint
+    repo and ships in nothing, and Monad is deferred. That turns a
+    defensive passage into evidence, and ties it back to the map.
+  - The gradient. The four papers do not need this equally, and
+    conceding that is more persuasive than uniform urgency. P3200 is
+    the pure case; P4325 is the weak case and you should say so.
+
+DO NOT use the P3294-is-C++29 timing argument (resolved 2026-07-20).
+It ages badly and is no longer needed: the instance contract makes the
+question unobservable, which is a stronger and permanent answer.
+#+end_comment
 
 
 * Not Quite What I Set Out To Do
+#+begin_comment
+KEEP — the retraction. The letter calls it the most disarming thing in
+the piece and the draft's best asset; it buys credibility no amount of
+advocacy would. Position is now right: moved out of slot one, sitting
+in the close as one thing you set out to have and then decided against.
+That is what shows the "I can have" list was filtered rather than
+accumulated (move 5), so keep it adjacent to the Monad hole.
+
+/voice line 171 — "To be very honest" is a wind-up, and the sentence
+after it is the sentence. The end of it is also tangled.
+- CURRENT:  To be very honest, one of the main use cases I set out to
+            solve with all of this turned out better to not be done at
+            all.
+- PROPOSED: One of the main use cases I set out to solve with all of
+            this turned out to be better not done at all.
+  (accept / stet)
+
+/voice line 186 — the second ", not Y" appositive tail (the other is
+91). Ceiling is once per piece, and this is the better of the two, so
+the fix belongs at 91. No change here.
+
+KEEP — "That turns out to be unnecessary." Flat landing, exactly right.
+#+end_comment
+
 To be very honest, one of the main use cases I set out to solve with all of this turned out better to not be done at all.
 The particular problem of Unicode normalization can require many small insertions and deletions of code points in the middle of strings, and is a worst-case scenario for vector, and string.
 I was originally envisioning Text types that would maintain a normalization as an invariant as the text is manipulated.
@@ -188,6 +593,49 @@ Access to the primary algorithms defined by the Unicode standard is much more im
 
 
 * What I want
+#+begin_comment
+TODO — reframe as "I can have" (move 4; CRITIQUE 6 and 11a). The move
+is moved but not made: still titled "What I want", still the full list,
+still verbatim. Two constraints from the letter.
+
+  - It must be SHORTER than the "I want" list was. Cut what cannot be
+    cashed rather than softening it.
+  - Build it to survive being read cold. Skimmers scroll straight to
+    the close. A list, not a paragraph.
+
+This is gating decision 5: which lines survive.
+
+/voice line 197 — cannot be cashed, and it invites a drive-by
+dismissal. Soundness is a property of a type system, and C++'s does not
+become sound because these papers land. The defensible narrower claim
+is about not having to reach for unsafe iteration, which the "how"
+section already argues.
+- CURRENT:  I want idiomatic C++ to be as correct and as sound as
+            OCaml.
+- PROPOSED: cut. (Also clears "idiomatic" twice in one piece.)
+  (accept / stet)
+
+/voice line 199 — "performant" has zero occurrences in your corpus in
+176k words, and the claim needs a number or a link behind it either
+way.
+- CURRENT:  I want idiomatic C++ to be as, or more, performant than
+            NumPy or Rust.
+- PROPOSED: cut; or keep it and anchor it to the godbolt comparison
+            once that exists — derived instance vs flat aggregate, -O2
+            and -O0, measuring forwarding depth per operation. Anchor
+            it or drop it.
+  (accept / stet)
+
+/voice line 195 — "as expressive as Python, Rust, Swift, or Haskell" is
+a four-item list of languages that do not agree with each other about
+what expressive means. Two would do more work than four. No proposed
+text; your call which two.
+
+KEEP — "Without having to go back to University and get a Maths degree
+specializing in Category Theory and Programming Languages." Best line
+in the draft, and it is the one on the list that cashes completely.
+#+end_comment
+
 I want excellent support in the standard for algorithms that are not just processing a sequence.
 
 I want to take what we have learned from the STL, from std::ranges, and from std::execution, and extend the capabilities to more classes of structures.
@@ -203,6 +651,36 @@ I want to package into the standard the tools, facilities, and vocabulary that m
 Without having to go back to University and get a Maths degree specializing in Category Theory and Programming Languages.
 
 * When?
+#+begin_comment
+TODO — MONAD. This is an invariant violation, not an editorial gap. The
+coherence skill is explicit: never let a paper go silent on it, and the
+essay is the place that acknowledges the open slot. The draft has zero
+mentions. Two sentences in the close discharge it (move 5): deferred,
+not rejected — the typeclass design leads to a consistent generic name
+for sequential composition eventually, monad.hpp in the reference tree
+proves the mechanism carries it without strain, and nothing currently
+proposed calls bind. In the close it stops being defensive and becomes
+part of an honest ending. The things you cannot have yet are the
+campaign's shape.
+
+TODO — the title promises C++29 and the body never mentions a timeline
+(CRITIQUE 8). One sentence on why C++29 is plausible.
+
+TODO — call to action (CRITIQUE 7). "Papers are forthcoming. Code
+exists." is a good landing rhythmically, and it leaves a sympathetic
+reader with nothing to do. What do you want from someone who finished
+this and agrees? Try it, review a paper, come to the LEWGI session,
+open an issue on one of the repos.
+
+TODO — the compile-time-forth link below is 404. It publishes first, or
+the bullet goes.
+
+TODO — decide what this post is (gating decision 4). If it ships before
+the SPEC.md exhibit essay it becomes the de facto map, and its claims
+are what the papers have to stay consistent with. If it is the teaser,
+say so here and link forward.
+#+end_comment
+
 Papers are forthcoming.
 
 Code exists.
