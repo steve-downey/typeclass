@@ -126,29 +126,10 @@ You have a ~vector<sender<int>>~ and you need a ~sender<vector<int>>~, or a ~vec
 
 You don't want to write a binary tree. Again. By hand.
 
-You need have a pure function. You have arguments in two vectors. You just want to zip and apply the function.
+You have a pure function. You have arguments in two vectors. You just want to zip the arguments together and apply the it.
 
 You want to keep working on a data structure while something else works on it. Making copies is expensive.
 # {{{TEASER_END}}}
-
-#+begin_comment
-KEEP — the lede. Four pain-first lines, no facility names,
-vector<sender> first, every paper with a slot, backtick correctly
-absent. The letter says promote the vector<sender<int>> hook, do not
-rewrite it. Two fixes only.
-
-/voice line 38 — "need have" is a typo, and it is in the showcase
-position: the fourth line of the post.
-- CURRENT:  You need have a pure function. You have arguments in two
-            vectors. You just want to zip and apply the function.
-- PROPOSED: You have a pure function, and its arguments in two vectors.
-            You just want to zip and apply it.
-  (accept / stet)
-
-NOTE — line 40 is the fingertree slot, and the persistence-and-hand-off
-pitch it promises is not delivered anywhere in the body. See the TODO
-at "Fingertrees"; draft the two together.
-#+end_comment
 
 I am on a campaign to improve support in C++ for contemporary algorithms.
 By contemporary I mean more recent than the Sedgewick C++ Algorithms  book I used back in the 90s.
@@ -157,41 +138,16 @@ Much of it even well understood and codified enough to be standardized.
 
 It's not one huge paper, though, although a couple are shaping up to be beefy.
 They are intended to be independent enough to be evaluated and survive on their own merits, although they do lean on each other, and extend or reuse some machinery.
-Each is intended to solve a real problem that working C++ programmers face, give support for common generic domains, and provide generic vocabulary for algorithm writers, as well as to provide the facilities for users to connect their existing types in.
+Each solves a real problem working C++ programmers actually have, and gives  algorithm writers vocabulary they can count on being there. All of them have hooks for the types you already have; none of them asks you to throw away the binary tree you already wrote.
 
-#+begin_comment
-TODO — THE MAP GOES HERE, between the problems and the papers (running
-order 2). Line 49 says they lean on each other; this is where you say
-which. Full brief in the revision board at the top of the file. This is
-the highest-priority item in the round, above both ends of the essay.
+* The Big Idea
+Use an object that provides a collection of callables with well known names that provide generic access to a related family of functions. A concrete interface.
 
-/voice line 48 — "though, although" inside one clause.
-- CURRENT:  It's not one huge paper, though, although a couple are
-            shaping up to be beefy.
-- PROPOSED: It's not one huge paper, though a couple are shaping up to
-            be beefy.
-  (accept / stet)
+Provide a generic lookup mechanism for the object so that algorithms can find the instance for the types provided to the algorithms. The typeclass instance.
 
-/voice line 50 — four things hung off one "intended to", "provide"
-twice, "generic" twice, and the last clause is the longest and vaguest
-of the four. As written it is a feature list, which is exactly the
-failure mode the letter names.
-- CURRENT:  Each is intended to solve a real problem that working C++
-            programmers face, give support for common generic domains,
-            and provide generic vocabulary for algorithm writers, as
-            well as to provide the facilities for users to connect
-            their existing types in.
-- PROPOSED: Each solves a problem working C++ programmers actually
-            have, and gives algorithm writers vocabulary they can count
-            on being there. All of them have hooks for the types you
-            already have; none of them asks you to throw away the
-            binary tree you already wrote.
-            (ties back to the second line of the lede, and lands hard)
-- SHORTER:  Each solves a real problem, gives algorithm writers
-            vocabulary they can count on, and has hooks for the types
-            you already have.
-  (accept one / stet)
-#+end_comment
+Provide algorithms that extend the capabilities provided by Ranges to more kinds of structures than just sequences. Trees. SIMD. Senders.
+
+The generic programming facilities of C++26 provide all the features necessary to implement the powerful abstractions in fully type safe ways. Even taking in to account the effects of error handling and failures. Using these facilities also produces efficient and correct by construction code, at the cost of
 
 * "Only be sure always to call it please 'Research'" - Tom Lehrer
 
@@ -202,51 +158,11 @@ reader knows what is on offer. Move it after the map and shrink it
 "how does that work", not preloading theory. That is also the argument
 for making it shorter: it no longer has to carry the opening.
 
-TODO — indentation runs 0 / 2 / 3 spaces paragraph to paragraph across
-this whole section. Normalize before export.
-
 TODO — the debug-build concession fits here or in "why in the
 Standard", and it has to be stratified (CRITIQUE 13f-2): extra frames
 at -O0 is the ranges/std::execution category; MSVC's debug iterators
 are an ABI category and categorically worse. Lumping them together
 invites "so you're as bad as debug iterators."
-
-/voice "novel" twice (59 and 75); the ceiling is once per piece. Keep
-59 — "None are at all novel." is the flat landing and the better line.
-- CURRENT (75):  Typeclasses are more novel in C++ as an organizing
-                 principle, but not at all as an implementation
-                 technique.
-- PROPOSED:      Typeclasses are newer to C++ as an organizing
-                 principle, although not at all as an implementation
-                 technique.
-  (accept / stet)
-
-/voice "machinery" x3 — once at 49 and twice in one sentence at 90.
-Base rate is about 1 per 10k words and it is blog-only for you.
-- CURRENT (90):  I am proposing some more complicated machinery to help
-                 write a typeclass instance, machinery that will derive
-                 operations based on a few core, essential, operations,
-                 but consumers of a typeclass instance do not care.
-- PROPOSED:      I am proposing some more complicated machinery to help
-                 write a typeclass instance, one that derives the rest
-                 of the operations from a few core ones. Consumers of
-                 an instance do not care.
-  (accept / stet)
-
-/voice line 91 — one of the two ", not Y" appositive tails in the piece
-(the other is 186). The ceiling is once. Whichever you keep, kill the
-other; this one is the weaker of the two.
-- CURRENT:  All they look for is how to perform one of the named
-            operations the typeclass provides, not how the operation is
-            provided.
-- PROPOSED: All they look for is how to perform one of the named
-            operations the typeclass provides. How it is provided is
-            not their problem.
-  (accept / stet)
-
-KEEP — the "No other required indirection. / No required virtual
-functions. / No required inheritance." run at 83-85. That is the one
-anaphora drumroll the post gets. Do not add a second one elsewhere.
 #+end_comment
 
 The core ideas that run through all of this work are
@@ -256,116 +172,63 @@ The core ideas that run through all of this work are
 
 None are at all novel.
 
-  Higher order functions, functions that take functions as arguments, or return functions, are the central mechanism of Ranges and Senders, as well as being in Stepanov's STL.
-  Separation of the mechanism, or shape,  of an algorithm from the operation the algorithm performs is table stakes these days.
+Higher order functions, functions that take functions as arguments, or return functions, are the central mechanism of Ranges and Senders, as well as being in Stepanov's STL.
+Separation of the mechanism, or shape,  of an algorithm from the operation the algorithm performs is table stakes these days.
 
-  Iteration is also a central concern of the STL.
-   Applying functions to or inspecting each element in some collection in some manner defined by the structure --- abstracted away from the algorithm that applies a user operation --- was Stepanov's key insight in defining Generic Programming.
-   The STL exposes the iteration externally, making Iterators a key component. Algorithms, Iterators,  and Containers are the triad that define the STL.
-   Ranges provides a bridge to internal iteration, where the iteration is not necessarily exposed.
+Iteration is also a central concern of the STL.
+Applying functions to or inspecting each element in some collection in some manner defined by the structure --- abstracted away from the algorithm that applies a user operation --- was Stepanov's key insight in defining Generic Programming.
+ The STL exposes the iteration externally, making Iterators a key component. Algorithms, Iterators,  and Containers are the triad that define the STL.
+Ranges provides a bridge to internal iteration, where the iteration is not necessarily exposed.
 
-   It has turned out that external iteration, using pointers or indices, is a source of needless safety problems.
-   Moving the details of unsafe operations, such as checking if an iterator is valid, or dereferenceable, into small and reused blocks of code improves safety, and correctness.
-   It has also turned out that there is little to no loss of performance.
-   Sometimes even performance improvements because the compiler can see it is lowering known safe code to unsafe implementation and can elide checks it might otherwise need to do.
-   Compiler middle and back ends have learned an astonishing number of tricks --- often driven by other languages that have made safety a priority.
+It has turned out that external iteration, using pointers or indices, is a source of needless safety problems.
+Moving the details of unsafe operations, such as checking if an iterator is valid, or dereferenceable, into small and reused blocks of code improves safety, and correctness.
+It has also turned out that there is little to no loss of performance.
+Sometimes even performance improvements because the compiler can see it is lowering known safe code to unsafe implementation and can elide checks it might otherwise need to do.
+Compiler middle and back ends have learned an astonishing number of tricks --- often driven by other languages that have made safety a priority.
 
-   Typeclasses are more novel in C++ as an organizing principle, but not at all as an implementation technique.
-   They are merely a record that collects a coherent set of named operations together.
-   In a language with first class support for them the compiler or runtime will arrange to make these names available to functions constrained on them.
+Typeclasses are newer to C++ as an organizing principle, although not at all as an implementation technique.
+They are merely a record that collects a coherent set of named operations together.
+In a language with first class support for them the compiler or runtime will arrange to make these names available to functions constrained on them.
 
-   I am not proposing a language extension for typeclasses.
+I am not proposing a language extension for typeclasses.
 
-   I am proposing pure and efficient library mechanisms for discovering and forwarding the bundle of named operations.
-   Structs, with named operations.
-   No other required indirection.
-   No required virtual functions.
-   No required inheritance.
-   Everything visible to the compiler --- available for inlining and defunctionalization.
+I am proposing pure and efficient library mechanisms for discovering and forwarding the bundle of named operations.
 
-   The compiler's middle and back ends are extremely happy with them.
+Structs, with named operations.
 
-   I am proposing some more complicated machinery to help write a typeclass instance, machinery that will derive operations based on a few core, essential, operations, but consumers of a typeclass instance do not care.
-   All they look for is how to perform one of the named operations the typeclass provides, not how the operation is provided.
-   Purely duck typing.
+No other required indirection.
 
-* The Papers
-#+begin_comment
-TODO — merge this section into "What?" (move 3; CRITIQUE 2). They are
-the same section twice and the committee-register one is first. One
-section per paper: informal pitch, one sentence of formal scope, link.
-The abstract belongs in the paper.
+No required virtual functions.
 
-TODO — markup bug: the entries below use markdown backticks (`optional`,
-`transpose`) in an org file. They export as literal backticks. Use
-~optional~ and ~transpose~.
+No required inheritance.
 
-TODO — P4322 is the only entry that never says what it proposes; it is
-one paragraph of problem statement and then it stops. The sentence
-exists elsewhere in the campaign: generic algorithms over recursive
-structure — fold, unfold, and the fusion of the two so the structure is
-never materialized — plus the hooks that let a hand-written tree use
-them. The "Algorithms for Trees" section below already has most of it.
+Everything visible to the compiler --- available for inlining and defunctionalization.
 
-/voice register — these four entries are lifted paper abstracts, and
-they read that way. "We propose", "This paper proposes", "The proposal
-is based on", "The design emphasizes semantic capabilities rather than
-a single implementation name". Three of the piece's four "rather"s live
-in here. Once the merge happens the pitch sentence carries the entry
-and one sentence of scope follows it, and most of this goes away on its
-own — so do the merge before doing line edits in here.
-#+end_comment
+The compiler's middle and back ends are extremely happy with them.
 
-** P3200 -- Shape-Preserving Traversal and Transposition for Contextual Computations
-C++ has vocabulary types and computational contexts that are individually well understood, but it lacks a uniform way to traverse a structure while producing contextual results and then *transpose* the result into a single outer context.
-This problem appears today in combinations such as containers of `optional`s, containers of senders, and lanewise or zipped structured computation.
+I am proposing some more complicated machinery to help write a typeclass  instance, one that derives the rest of the operations from a few core ones.
+Consumers of an instance do not care.
+All they look for is how to perform one of the named operations the typeclass provides.
+How it is provided is not their problem.
+Purely duck typing.
 
-This paper proposes a shape-preserving traversal facility together with `transpose` operations that convert a structure of contextual values into a contextual structure.
-The proposal is based on *independent contextual composition* rather than on general sequential dependence.
-
-The paper also proposes a bundled customization model.
-That mechanism is included because current trait-only and per-operation customization techniques are not strong enough to bundle applicative primitives and derived operations coherently.
-
-** P4322 -- Algorithms for Trees
-Recursive tree structures are common in parsing, transformation pipelines, symbolic representations, and hierarchical data processing, but the standard library offers little direct support for generic algorithms centered on recursive structure rather than on flat external iteration.
-
-** P4325 -- A Persistent Measured Sequence for the Standard Library
-The standard library provides strong support for mutable flat sequences, but it does not provide a persistent sequence abstraction that combines efficient front and back operations, concatenation, and splitting or searching by accumulated measure.
-
-Standard containers primarily assume destructive update: mutation invalidates existing views of the value unless the user pays with copying, coordination,or bespoke sharing schemes.
-
-This paper proposes a persistent measured sequence abstraction with efficient concatenation, prefix-based search, and split operations. The design emphasizes semantic capabilities rather than a single implementation name, while drawing on the long-studied literature and practice behind finger-tree-like structures.
-
-** P4307 -- An Infix Operator and a Keyword Escape for C++
-We propose two uses for one character: the backtick, the last printable ASCII character the language can still claim.
-One makes any callable a binary operator; the other lets a keyword be escaped for use as an ordinary identifier.
-Each is independently motivated, and each is defined by rewrite into something the language already has.
-They are proposed together, with equal standing, because they share the token --- two independent claims on one character, designed separately, end in contradiction.
-
-#+begin_comment
-/voice line 119 — as written the sentence says the two claims do end in
-contradiction, which is the opposite of the argument. The conditional
-is missing.
-- CURRENT:  They are proposed together, with equal standing, because
-            they share the token --- two independent claims on one
-            character, designed separately, end in contradiction.
-- PROPOSED: They are proposed together, with equal standing, because
-            they share the token. Two independent claims on one
-            character, designed separately, would end in contradiction.
-  (also retires one of the five em-dashes)
-  (accept / stet)
-#+end_comment
-
+Haskell is not the only language to use typeclasses as an organizing principle.
+One of the new "hot" languages in 2026, [[https://lean-lang.org/][Lean]] , borrowed them as well.
+#+begin_quote
+ A type class describes a collection of overloadable operations. To overload these operations for a new type, an instance is created that contains an implementation of each operation for the new type. For example, a type class named ~Add~ describes types that allow addition, and an instance of ~Add~ for ~Nat~ provides an implementation of addition for ~Nat~.
+#+end_quote
+https://lean-lang.org/functional_programming_in_lean/Overloading-and-Type-Classes/#type-classes
 
 * What?
+The core code:
 - https://github.com/steve-downey/transpose :: Transpose Context and Structure
 - https://github.com/steve-downey/tree_algorithms :: Algorithms for Trees
 - https://github.com/steve-downey/fingertree :: Hinze & Paterson's Fingertrees
 
   Bonus tracks:
 - https://github.com/steve-downey/backtick :: Infix function notation for C++
-- https://github.com/steve-downey/llvm-project/tree/backtick :: Backticks in LLVM
-- https://github.com/steve-downey/gcc/tree/backtick :: Backticks in GCC
+    - https://github.com/steve-downey/llvm-project/tree/backtick :: Backticks in LLVM
+    - https://github.com/steve-downey/gcc/tree/backtick :: Backticks in GCC
 
 ** Transpose
 You have a ~vector<sender<int>>~ and you need a ~sender<vector<int>>~. Or you need to swap array of struct to struct of array for lane-wise SIMD processing. And you don't want to write that loop one more time.
@@ -410,74 +273,25 @@ TODO — this section has the P4322 proposal sentence that the paper
 entry above is missing. When the two sections merge, this is the one
 that survives.
 
-/voice line 142 — "Some times" is one word.
-- CURRENT:  Some times you don't want to flatten everything to a
-            sequence.
-- PROPOSED: Sometimes you don't want to flatten everything to a
-            sequence.
-  (accept / stet)
 #+end_comment
 
 ** Fingertrees
 A twenty year old data structure.
 [[https://www.staff.city.ac.uk/~ross/papers/FingerTree.html][Hinze and Paterson's 2006 paper]] is still the reference, and Haskell has shipped it as [[https://hackage.haskell.org/package/containers/docs/Data-Sequence.html][~Data.Sequence~]] the whole time.
 
+That is, by the way, the same Paterson on all three foundational papers.
+
 It's "purely functional" and "persistent" which means that operations on the tree return a new tree rather than mutating the original tree.
 Nonetheless, by clever sharing of state, it is still very efficient.
+That means that you can, efficiently, hand off a fingertree to some long running operation, on another thread, or scheduler, and not worry.
+You don't have to pause the world while writing out state to disk.
 
-Further, by clever annotation of the interior nodes, many other data structures can be efficiently modeled, using the magic of ~monoids~, types with associative binary operations.
+Further, by annotating the interior nodes, many other data structures can be efficiently modeled, using ~monoids~: a type, an associative binary operation, and an identity element.
+The monoidal tag allows measurements of what is held below a node to be accumulated, allowing the tree to be navigated more effectively.
+It can act as a sequence, a priority queue, or an interval map, all depending on the choice of measure.
 
-#+begin_comment
-TODO — this is the entry the letter singles out (move 2, second half;
-CRITIQUE 11c). Fingertree loses every single-operation comparison to a
-purpose-built structure, so pitching it on any one operation pitches it
-into its weakness. The lede promises persistence and the hand-off; this
-section still pitches generic persistence. Three things it has to do:
-
-  1. Concede the cost in the same breath. The hand-off is O(1) and
-     allocation-free; ongoing operations cost more than vector —
-     allocation, indirection, cache behaviour. Say it first. Being
-     first to name the cost is what makes the claim credible. The
-     precise claim is about the copy that is not made, not about free
-     operations.
-  2. Answer shared_ptr<const vector> explicitly. It is the closest
-     competitor and it already gets the O(1) hand-off. What it does not
-     get is continuing to work: freezing it freezes everything, and
-     resuming mutation costs a full copy. Fingertree gives the hand-off
-     *and* cheap continued mutation of your own version. That is the
-     differentiator; without it, "persistent" reads as an academic
-     property rather than the answer to a problem the reader has.
-     Naming what people do today — copy the vector, take a lock and
-     block the producer, hand-roll a snapshot scheme — lets a reader
-     recognize their own code.
-  3. Keep the measure as the tie-in clause. Changing the measure makes
-     the same structure a sequence, a priority queue, or an interval
-     map. Persistence is the hook, but the annotation is what makes it
-     a fingertree rather than any persistent sequence, and what
-     connects it to the monoid vocabulary the rest of the campaign
-     shares. An all-persistence pitch detaches the container from the
-     set, which is the one thing this essay exists to prevent.
-
-TODO — exhibit E5 placeholder (move 6): the hand-off. This one carries
-the persistence pitch, so draft the code and the prose together.
-
-TODO — factual. "types with associative binary operations" is a
-semigroup. The identity is missing, and identity() is half of the
-frozen monoid vocabulary the campaign uses everywhere else.
-
-/voice "clever" twice (155 and 157); the ceiling is once per piece.
-Keeping it at 155 and dropping it at 157 also fixes the definition and
-retires "the magic of".
-- CURRENT (157):  Further, by clever annotation of the interior nodes,
-                  many other data structures can be efficiently
-                  modeled, using the magic of ~monoids~, types with
-                  associative binary operations.
-- PROPOSED:       Further, by annotating the interior nodes, many other
-                  data structures can be efficiently modeled, using
-                  ~monoids~: a type, an associative binary operation,
-                  and an identity element.
-  (accept / stet)
-#+end_comment
+While every data structure currently in the standard library has operations that strictly outperform fingertree, fingertree is often better performing on other Container operations all containers must support.
+And true O(1) copies are very hard to beat.
 
 ** Backticks For Infix
 ~a `f` b~ == ~f(a, b)~
@@ -486,26 +300,13 @@ This is apparently either something you have always desired, or you have no idea
 
 C++26 added the backtick to the basic character set ([[https://wg21.link/p2558][P2558]]). Nothing uses it yet.
 
-It's not the same as the ~pizza~ operator, ~|>~ ([[https://wg21.link/p2011][P2011]]), although they are  near by each other.
+It's not the same as the ~pizza~ operator, ~|>~ ([[https://wg21.link/p2011][P2011]]), although they are  nearby each other.
 
-#+begin_comment
-TODO — gating decision 3, still open, and it blocks this section. The
-link list already says "Bonus tracks", but P4307 still sits in "The
-Papers" with full standing, and the tie-in sentence is missing either
-way. The connection is real: infix spelling is what makes
-combine-heavy monoid code readable, and monoids are the shared
-vocabulary. One sentence, or demote it properly and take it out of the
-paper list. Left unexplained it costs coherence (CRITIQUE 9), because a
-reader cannot tell whether it is part of the set or a side quest.
+Infix makes the sort of pipelines that are constructed with the sorts of algebraic gadgets I am proposing more readable for many people.
+Subject - verb - object ordering is natural in most human languages.
+Piling up verbs in front is not typical of any language.
+Creating extra nouns just to break up a composition of operations increases the cognitive load by adding conceptual weight to intermediated state.
 
-/voice line 166 — "near by" is one word, the clause is vague, and there
-is a double space in it.
-- CURRENT:  It's not the same as the ~pizza~ operator, ~|>~ (P2011),
-            although they are  near by each other.
-- PROPOSED: It's not the ~pizza~ operator, ~|>~ (P2011), although the
-            two are adjacent.
-  (accept / stet)
-#+end_comment
 
 #+begin_comment
 TODO — MISSING SECTION: "Why in the *Standard*" goes here, before the
@@ -547,6 +348,83 @@ It ages badly and is no longer needed: the instance contract makes the
 question unobservable, which is a stronger and permanent answer.
 #+end_comment
 
+The Papers
+#+begin_comment
+TODO — merge this section into "What?" (move 3; CRITIQUE 2). They are
+the same section twice and the committee-register one is first. One
+section per paper: informal pitch, one sentence of formal scope, link.
+The abstract belongs in the paper.
+
+TODO — P4322 is the only entry that never says what it proposes; it is
+one paragraph of problem statement and then it stops. The sentence
+exists elsewhere in the campaign: generic algorithms over recursive
+structure — fold, unfold, and the fusion of the two so the structure is
+never materialized — plus the hooks that let a hand-written tree use
+them. The "Algorithms for Trees" section below already has most of it.
+
+/voice register — these four entries are lifted paper abstracts, and
+they read that way. "We propose", "This paper proposes", "The proposal
+is based on", "The design emphasizes semantic capabilities rather than
+a single implementation name". Three of the piece's four "rather"s live
+in here. Once the merge happens the pitch sentence carries the entry
+and one sentence of scope follows it, and most of this goes away on its
+own — so do the merge before doing line edits in here.
+#+end_comment
+
+The base paper is P3200.
+I got the number by honest accident and sat on it.
+
+This is the solution to the transpose problem, when you have  a ~vector<sender<int>>~ and you need a ~sender<vector<int>>~, and you need to swap a container and context.
+
+The same mechanism
+
+** P3200 -- Shape-Preserving Traversal and Transposition for Contextual Computations
+#+begin_quote
+C++ has vocabulary types and computational contexts that are individually well understood, but it lacks a uniform way to traverse a structure while producing contextual results and then *transpose* the result into a single outer context.
+This problem appears today in combinations such as containers of ~optional~s, containers of senders, and lanewise or zipped structured computation.
+
+This paper proposes a shape-preserving traversal facility together with ~transpose~ operations that convert a structure of contextual values into a contextual structure.
+The proposal is based on *independent contextual composition* rather than on general sequential dependence.
+
+The paper also proposes a bundled customization model.
+That mechanism is included because current trait-only and per-operation customization techniques are not strong enough to bundle applicative primitives and derived operations coherently.
+#+end_quote
+
+** P4322 -- Algorithms for Trees
+#+begin_quote
+Recursive tree structures are common in parsing, transformation pipelines, symbolic representations, and hierarchical data processing, but the standard library offers little direct support for generic algorithms centered on recursive structure rather than on flat external iteration.
+#+end_quote
+
+** P4325 -- A Persistent Measured Sequence for the Standard Library
+#+begin_quote
+The standard library provides strong support for mutable flat sequences, but it does not provide a persistent sequence abstraction that combines efficient front and back operations, concatenation, and splitting or searching by accumulated measure.
+
+Standard containers primarily assume destructive update: mutation invalidates existing views of the value unless the user pays with copying, coordination,or bespoke sharing schemes.
+
+This paper proposes a persistent measured sequence abstraction with efficient concatenation, prefix-based search, and split operations. The design emphasizes semantic capabilities rather than a single implementation name, while drawing on the long-studied literature and practice behind finger-tree-like structures.
+#+end_quote
+
+** P4307 -- An Infix Operator and a Keyword Escape for C++
+#+begin_quote
+We propose two uses for one character: the backtick, the last printable ASCII character the language can still claim.
+One makes any callable a binary operator; the other lets a keyword be escaped for use as an ordinary identifier.
+Each is independently motivated, and each is defined by rewrite into something the language already has.
+They are proposed together, with equal standing, because they share the token --- two independent claims on one character, designed separately, end in contradiction.
+#+end_quote
+
+#+begin_comment
+/voice line 119 — as written the sentence says the two claims do end in
+contradiction, which is the opposite of the argument. The conditional
+is missing.
+- CURRENT:  They are proposed together, with equal standing, because
+            they share the token --- two independent claims on one
+            character, designed separately, end in contradiction.
+- PROPOSED: They are proposed together, with equal standing, because
+            they share the token. Two independent claims on one
+            character, designed separately, would end in contradiction.
+  (also retires one of the five em-dashes)
+  (accept / stet)
+#+end_comment
 
 * Not Quite What I Set Out To Do
 #+begin_comment
@@ -573,7 +451,7 @@ the fix belongs at 91. No change here.
 KEEP — "That turns out to be unnecessary." Flat landing, exactly right.
 #+end_comment
 
-To be very honest, one of the main use cases I set out to solve with all of this turned out better to not be done at all.
+One of the main use cases I set out to solve with all of this turned out to be better not done at all.
 The particular problem of Unicode normalization can require many small insertions and deletions of code points in the middle of strings, and is a worst-case scenario for vector, and string.
 I was originally envisioning Text types that would maintain a normalization as an invariant as the text is manipulated.
 
@@ -590,7 +468,6 @@ Instead as one of many Containers that Text could be an adapter for.
 
 A Text adapter is, also, not on my core road map for Unicode in C++29.
 Access to the primary algorithms defined by the Unicode standard is much more important, and would be, in any case, the underpinnings for a Text type.
-
 
 * What I want
 #+begin_comment
@@ -642,10 +519,6 @@ I want to take what we have learned from the STL, from std::ranges, and from std
 
 I want C++ to be as expressive as Python, Rust, Swift, or Haskell.
 
-I want idiomatic C++ to be as correct and as sound as OCaml.
-
-I want idiomatic C++ to be as, or more, performant than NumPy or Rust.
-
 I want to package into the standard the tools, facilities, and vocabulary that make all of this accessible to working programmers.
 
 Without having to go back to University and get a Maths degree specializing in Category Theory and Programming Languages.
@@ -685,7 +558,14 @@ Papers are forthcoming.
 
 Code exists.
 
-Uses of the code exist, also.
+Public uses of the code exist, also.
 - https://github.com/steve-downey/fixpoint :: Astronautics with Kmett's recursion schemes
 - https://github.com/steve-downey/compile-time-scheme :: A compile time +Scheme+ Common Lisp compiler
 - https://github.com/steve-downey/compile-time-forth :: A compile time Forth compiler
+
+In order to keep this feasible for C++29 I am keeping the papers minimal and focused.
+It's also why there are several papers, not a "One Typeclass Proposal" paper.
+This means possibly leaving some work undone, without foreclosing it.
+The largest gap right now is a Monad typeclass.
+It's clear how to do one, and what would go in it.
+But it's not necessary for solving the problems that any of the papers I'm working on are trying to solve.
