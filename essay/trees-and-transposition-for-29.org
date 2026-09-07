@@ -50,8 +50,12 @@ LANDED (cumulative, against the edit letter's checklist)
   [x] Lede rebuilt as four problems, pain not facilities.
   [x] Fingertree entry: cost conceded, shared_ptr<const vector>
       answered, measure tie-in kept, hand-off framing.
-  [ ] Papers + What? merged, pitch first.
-  [ ] P4322 proposal sentence in its paper entry.
+  [x] Papers + What? merged (2026-09-06): one subsection per paper,
+      pitch, one or two sentences of formal scope, code link. The
+      pasted abstracts are gone; the P4307 "would end in contradiction"
+      fix went in with the scope sentence. "The same mechanism" and
+      the fourth vector<sender> telling went with them.
+  [x] P4322 proposal sentence in its entry.
   [~] Theory section moved after the map and the papers (done
       2026-09-06). Not yet shrunk.
   [~] "Why in the Standard" compact passage: section exists, three
@@ -61,10 +65,13 @@ LANDED (cumulative, against the edit letter's checklist)
   [x] Monad hole and Unicode retraction in the close.
   [x] C++29 timeline sentence.
   [ ] Call to action.
-  [x] Three exhibit placeholders marked (E1 Transpose, E2 Fingertree,
-      E3 Trees).
-  [~] Backtick framing: the tie-in paragraph is written; links list
-      and "The Papers" do not yet agree with it.
+  [x] Three exhibits transcluded (2026-09-07): E1 Transpose, E2
+      Fingertree, E3 Trees. orgit-file links, each pinned to an
+      annotated tag blog/trees-and-transposition-for-29 in its source
+      repo. See PUBLISHING below.
+  [x] Backtick framing: integrated. The "Bonus tracks" links list is
+      gone; P4307 is a subsection with the same shape as the other
+      three, and its LLVM and GCC branches sit under its code link.
   [~] Unfalsifiable claims: word-order claims reworded. "at the cost
       of" concession is present but not stratified.
   Also landed: monoid identity element; "To be very honest" cut;
@@ -80,19 +87,13 @@ that reason. Paper C is the motivating instance for Paper D's
 membership rule. Worth more than an abstract argument about defaults.
 A natural home is the second Monoid hole in the map.
 
-The abstract's "although they do lean on each other, and extend or
-reuse some parts" is now redundant with the map. Cut it or point it
-forward ("how, below").
-
 RUNNING ORDER the edit letter proposes:
   problems -> map -> papers (pitch, scope, link) -> the how -> why in
   the Standard -> close (I can have / Unicode / holes / timeline / CTA)
-Currently (sections reordered 2026-09-06):
-  problems -> map -> What? (pitches) -> The Papers (abstracts) -> the
-  how -> why in the Standard -> Unicode -> wants -> When? (Monad,
-  timeline)
-Differences: Papers and What? are still two sections (now adjacent, so
-the merge is a local edit); no call to action.
+Currently (merge done 2026-09-06):
+  problems -> map -> What? (one subsection per paper) -> the how ->
+  why in the Standard -> Unicode -> wants -> When? (Monad, timeline)
+Differences: no call to action. Otherwise the letter's order.
 
 FIVE GATING DECISIONS.
   1. Instance contract. RESOLVED 2026-07-20: the shape is deliberately
@@ -101,11 +102,9 @@ FIVE GATING DECISIONS.
   2. Standalone "why in the Standard" post as well as the compact
      passage? OPEN. The compact passage now exists. The letter
      recommends both, so all four papers point at one citable thing.
-  3. Backtick: bonus track, or integrated? EFFECTIVELY MADE by the
-     tie-in paragraph in "Backticks For Infix" and by the map's
-     "parallel evolution" paragraph. The links list still says "Bonus
-     tracks" and P4307 still has full standing in "The Papers". Make
-     the three places agree.
+  3. Backtick: bonus track, or integrated? MADE 2026-09-06:
+     integrated. The tie-in paragraph, the map's "parallel evolution"
+     paragraph, and the merged "What?" all agree.
   4. This post vs the exhibit essay in SPEC.md. OPEN. The map now
      exists here, which makes this the de facto map unless the post
      says otherwise.
@@ -120,10 +119,9 @@ which is noise). Exported prose:
     Proposal' paper" in "When?". Fix the second; PROPOSED is in that
     block.
   - "machinery" x1, in the how. Blog-only word for you. Fine at one.
-  - "rather" x4, all inside the pasted abstracts; goes away with the
-    merge.
-  - em/en dashes x4, all "---" in the how and the P4307 abstract. At
-    or under your paper rate; the blog baseline is about zero.
+  - "rather" x1 (fingertree, "rather than mutating"). At base.
+  - em/en dashes x3, all "---" in the how. Under your paper rate; the
+    blog baseline is about zero.
   - "although" cleared. "clever", "novel", "strictly" once each.
 
 STANDING RULES for this pass (edit letter):
@@ -137,6 +135,24 @@ STANDING RULES for this pass (edit letter):
     and repo paths are fine.
   - No new arguments the papers do not already carry.
   - Cut anything unfalsifiable. Anchor it or drop it.
+
+PUBLISHING — the post is copied into the wctm repo, whose org compiler
+resolves orgit-file pins from GitHub by matching the repo name in the
+link's REPO component (plugins/orgmode/conf.el). For the copy to
+build there:
+  - Push the tag blog/trees-and-transposition-for-29 to GitHub in all
+    three repos. transpose: tag at bb32a37, which is already on
+    GitHub. tree_algorithms: tag at da3d59f, a new local commit, not
+    yet pushed. fingertree: tag at bb48221, a new local commit, not yet
+    pushed.
+  - Add "/tree_algorithms/" -> "steve-downey/tree_algorithms" and
+    "/fingertree/" -> "steve-downey/fingertree" to
+    orgit-file-transclusion-repo-alist in wctm's conf.el. transpose
+    is already there.
+  - This repo has no export toolchain. To preview here, render with
+    the transpose repo's papers/blog toolchain (.emacs.d plus the
+    orgit-file-transclusion adapter), which resolves the same links
+    against the local checkouts.
 
 VERIFY BEFORE PUBLISHING
   - Paper numbers. The coordination notes carry Paper D as D4322R0 and
@@ -175,8 +191,7 @@ There has been extraordinary work done in programming language and algorithmic r
 Much of it even well understood and codified enough to be standardized.
 
 It's not one huge paper, though a couple are shaping up to be beefy.
-They are intended to be independent enough to be evaluated and survive on their own merits, although they do lean on each other, and extend or reuse some parts.
-Each solves a real problem working C++ programmers actually have, and gives  algorithm writers vocabulary they can count on being there. All of them have hooks for the types you already have; none of them asks you to throw away the binary tree you already wrote.
+All of them have hooks for the types you already have; none of them asks you to throw away the binary tree you already wrote.
 
 * Why four papers
 
@@ -222,15 +237,8 @@ The crossover with the rest of this is just that infix is easier to read than ne
 
 
 * What?
-The core code:
-- https://github.com/steve-downey/transpose :: Transpose Context and Structure
-- https://github.com/steve-downey/tree_algorithms :: Algorithms for Trees
-- https://github.com/steve-downey/fingertree :: Hinze & Paterson's Fingertrees
-
-  Bonus tracks:
-- https://github.com/steve-downey/backtick :: Infix function notation for C++
-    - https://github.com/steve-downey/llvm-project/tree/backtick :: Backticks in LLVM
-    - https://github.com/steve-downey/gcc/tree/backtick :: Backticks in GCC
+The base paper is P3200.
+I got the number by honest accident and sat on it.
 
 ** Transpose
 You have a ~vector<sender<int>>~ and you need a ~sender<vector<int>>~. Or you need to swap array of struct to struct of array for lane-wise SIMD processing. And you don't want to write that loop one more time.
@@ -241,15 +249,25 @@ Transposing a matrix is the opening example of [[https://www.staff.city.ac.uk/~r
 Also, Applicative has almost nothing to do with partial application or currying.
 It is all about applying a pure function to arguments in contexts.
 
-#+begin_comment
-TODO — exhibit E1 placeholder (move 6): transpose over
-vector<optional<T>>, vector<sender<T>>, and lanewise values, all
-through the one call. Transcluded from the anchored three-domain test
-in the transpose repo. Nothing hand-typed, nothing "illustrative"; if
-it needs to be smaller, fix the source region. ~a `f` b~ is currently
-the only code in the piece, and not coincidentally the backtick section
-is the most immediately graspable one.
+One verb, three contexts.
+The code is from the [[https://github.com/steve-downey/transpose][transpose]] repository's example, which builds and runs in CI.
 
+#+transclude: [[orgit-file:~/src/transpose/main::blog/trees-and-transposition-for-29::examples/transpose_post_example.cpp::05ce0358-d2a6-4908-a5b3-ec09da449bbd]] :lines 2- :src cpp :end "05ce0358-d2a6-4908-a5b3-ec09da449bbd end"
+
+#+transclude: [[orgit-file:~/src/transpose/main::blog/trees-and-transposition-for-29::examples/transpose_post_example.cpp::680950c9-7c4f-4aac-9e7b-bd32d9c7056a]] :lines 2- :src cpp :end "680950c9-7c4f-4aac-9e7b-bd32d9c7056a end"
+
+#+transclude: [[orgit-file:~/src/transpose/main::blog/trees-and-transposition-for-29::examples/transpose_post_example.cpp::e916da84-685b-40b3-aee5-c9df63321855]] :lines 2- :src cpp :end "e916da84-685b-40b3-aee5-c9df63321855 end"
+
+P3200, /Shape-Preserving Traversal and Transposition for Contextual Computations/, proposes a shape-preserving traversal facility together with ~transpose~ operations that convert a structure of contextual values into a contextual structure, and the bundled customization model it takes to do that coherently.
+
+- https://github.com/steve-downey/transpose :: Transpose Context and Structure
+
+#+begin_comment
+DONE 2026-09-07 — exhibit E1: three transclusions (optional, sender,
+simd) from examples/transpose_post_example.cpp, pinned to the annotated
+tag blog/trees-and-transposition-for-29 in the transpose repo, which
+points at bb32a37, the same revision the published transpose-at-work
+post is pinned to. The two lead-in lines are mine.
 #+end_comment
 
 ** Algorithms for Trees
@@ -261,15 +279,28 @@ The fold/unfold/fuse trio goes back to [[https://maartenfokkinga.github.io/utwen
 
 We should standardize those tools, and provide the hooks so your current handwritten binary tree can use all the same algorithms.
 
-#+begin_comment
-TODO — exhibit E3 placeholder (move 6): fold_with over a tree you
-already own. Layer struct, fmap, projection, no Fix, no conversion.
-examples/nonce_tree_direct.cpp is already anchored. This paragraph
-makes the claim; the exhibit is what makes it believed.
+Here is yesterday's tree: ~unique_ptr~ children, not even copyable, no ~Fix~ anywhere.
+Three ingredients, and then the fold runs over it as it is.
+From the [[https://github.com/steve-downey/tree_algorithms][tree_algorithms]] repository's examples.
 
-TODO — this section has the P4322 proposal sentence that the paper
-entry below is missing. When the two sections merge, this is the one
-that survives.
+#+transclude: [[orgit-file:~/src/tree_algorithms/main::blog/trees-and-transposition-for-29::examples/nonce_tree_direct.cpp::04e450a4-3614-4f09-a185-1835f935673a]] :lines 2- :src cpp :end "04e450a4-3614-4f09-a185-1835f935673a end"
+
+#+transclude: [[orgit-file:~/src/tree_algorithms/main::blog/trees-and-transposition-for-29::examples/nonce_tree_direct.cpp::78958c3f-7ae7-4933-bc32-57c5ec1e8ea2]] :lines 2- :src cpp :end "78958c3f-7ae7-4933-bc32-57c5ec1e8ea2 end"
+
+P4322, /Algorithms for Trees/, proposes generic algorithms centered on recursive structure instead of flat external iteration: fold, unfold, and the fusion of the two, plus the hooks that let a hand-written tree use them.
+
+- https://github.com/steve-downey/tree_algorithms :: Algorithms for Trees
+
+#+begin_comment
+DONE 2026-09-07 — exhibit E3: two transclusions from
+examples/nonce_tree_direct.cpp, the existing ingredients anchor
+04e450a4 and a new anchor 78958c3f around the shape algebra and the
+fold_with call (added in tree_algorithms commit da3d59f, recorded in
+its anchor inventory). Pinned to the annotated tag
+blog/trees-and-transposition-for-29 at that commit. The ingredients
+region is about forty lines, over the SPEC's fifteen-line budget; if
+it has to shrink, shrink the source region. The three lead-in lines
+are mine.
 
 KEEP — "We should standardize those tools, and provide the hooks so
 your current handwritten binary tree can use all the same algorithms."
@@ -296,11 +327,22 @@ That is very hard to beat.
 
 A ~shared_ptr<const vector>~ allows O(1) copy of the shared_ptr, but the ~vector~ can't be modified by anyone else. A ~fingertree~, or any persistent data structure, can be modified without affecting anyone holding the old one. Modifications produce a new ~fingertree~, cheaply.
 
+Split by measure, and the original is untouched.
+From the [[https://github.com/steve-downey/fingertree][fingertree]] repository's example.
+
+#+transclude: [[orgit-file:~/src/fingertree/fingertree::blog/trees-and-transposition-for-29::examples/finger_tree.cpp::78d295c0-0601-4b09-b262-7c18620d3034]] :lines 2- :src cpp :end "78d295c0-0601-4b09-b262-7c18620d3034 end"
+
+P4325, /A Persistent Measured Sequence for the Standard Library/, proposes a persistent measured sequence abstraction with efficient concatenation, prefix-based search, and split operations, drawing on the finger-tree literature without committing to one implementation.
+
+- https://github.com/steve-downey/fingertree :: Hinze & Paterson's Fingertrees
+
 #+begin_comment
-TODO — exhibit E2 placeholder (move 6): the fingertree hand-off.
-Transcluded from anchored source in the fingertree repo. This exhibit
-carries the persistence pitch, so it goes with the hand-off and
-shared_ptr paragraphs above.
+DONE 2026-09-07 — exhibit E2: one transclusion from
+examples/finger_tree.cpp, new anchor 78d295c0 around the build, the
+split_at_measure, and the original-still-intact line (added in
+fingertree commit bb48221 on main, comment-only). Pinned to the annotated tag
+blog/trees-and-transposition-for-29 at that commit. The two lead-in
+lines are mine.
 
 KEEP — the shared_ptr paragraph does the job the letter asked for,
 and "cheaply" carries the landing on its own.
@@ -323,114 +365,12 @@ Subject-verb-object is the common order in most of the native languages programm
 No language stacks its verbs in front the way f(g(h(x))) does.
 Naming every intermediate result just to break up a chain makes the reader keep track of state that exists only to be named.
 
-#+begin_comment
-TODO — this paragraph is the tie-in the letter asked for (gating
-decision 3), and the map's "parallel evolution" paragraph now says the
-same from the other side. Between them the decision is integrated, not
-bonus track. Two places still say otherwise: the links list under
-"What?" ("Bonus tracks") and P4307's full standing in "The Papers".
-Make them agree.
+P4307, /An Infix Operator and a Keyword Escape for C++/, proposes two uses for the backtick, the last printable ASCII character the language can still claim: any callable as a binary operator, and a keyword escaped for use as an ordinary identifier.
+Each is defined by rewrite into something the language already has, and they are proposed together because two independent claims on one character, designed separately, would end in contradiction.
 
-KEEP — "This is apparently either something you have always desired,
-or you have no idea why anyone would ever need such a thing." and
-"Nothing uses it yet." and "No language stacks its verbs in front the
-way f(g(h(x))) does."
-#+end_comment
-
-
-* The Papers
-#+begin_comment
-TODO — merge this section into "What?" (move 3; CRITIQUE 2). They are
-the same section twice and the informal one now comes first, which is
-the right order, so the merge is: for each paper, the pitch from
-"What?", then one sentence of formal scope, then the link. The
-abstracts below go back to the papers.
-
-TODO — P4322 is the only entry that never says what it proposes; it is
-one paragraph of problem statement and then it stops. The sentence
-exists elsewhere in the campaign: generic algorithms over recursive
-structure — fold, unfold, and the fusion of the two so the structure is
-never materialized — plus the hooks that let a hand-written tree use
-them. "Algorithms for Trees" above already has it.
-
-TODO — "The same mechanism" is an unfinished fragment. Finish or cut
-before export. If it was heading toward "the same mechanism carries
-the other three papers", that is the map, and it belongs in the map.
-
-/voice — the vector<sender> hook now appears three times: the lede,
-"Transpose", and here. The letter said promote it, not rewrite it;
-three is one more than promotion. This one is the weakest of the
-three (", and you need to swap a container and context" is a second
-restatement). Cut it here and let "The base paper is P3200" run
-straight into the abstract. The map now says what P3200 owns, so this
-sentence is a fourth telling.
-
-/voice register — these four entries are lifted paper abstracts, and
-they read that way. "We propose", "This paper proposes", "The proposal
-is based on", "The design emphasizes semantic capabilities rather than
-a single implementation name". All three remaining "rather"s live in
-here. Once the merge happens the pitch sentence carries the entry and
-one sentence of scope follows it, and most of this goes away on its
-own — so do the merge before doing line edits in here.
-
-KEEP — "I got the number by honest accident and sat on it."
-#+end_comment
-
-The base paper is P3200.
-I got the number by honest accident and sat on it.
-
-This is the solution to the transpose problem, when you have  a ~vector<sender<int>>~ and you need a ~sender<vector<int>>~, and you need to swap a container and context.
-
-The same mechanism
-
-** P3200 -- Shape-Preserving Traversal and Transposition for Contextual Computations
-#+begin_quote
-C++ has vocabulary types and computational contexts that are individually well understood, but it lacks a uniform way to traverse a structure while producing contextual results and then *transpose* the result into a single outer context.
-This problem appears today in combinations such as containers of ~optional~s, containers of senders, and lanewise or zipped structured computation.
-
-This paper proposes a shape-preserving traversal facility together with ~transpose~ operations that convert a structure of contextual values into a contextual structure.
-The proposal is based on *independent contextual composition* rather than on general sequential dependence.
-
-The paper also proposes a bundled customization model.
-That mechanism is included because current trait-only and per-operation customization techniques are not strong enough to bundle applicative primitives and derived operations coherently.
-#+end_quote
-
-** P4322 -- Algorithms for Trees
-#+begin_quote
-Recursive tree structures are common in parsing, transformation pipelines, symbolic representations, and hierarchical data processing, but the standard library offers little direct support for generic algorithms centered on recursive structure rather than on flat external iteration.
-#+end_quote
-
-** P4325 -- A Persistent Measured Sequence for the Standard Library
-#+begin_quote
-The standard library provides strong support for mutable flat sequences, but it does not provide a persistent sequence abstraction that combines efficient front and back operations, concatenation, and splitting or searching by accumulated measure.
-
-Standard containers primarily assume destructive update: mutation invalidates existing views of the value unless the user pays with copying, coordination,or bespoke sharing schemes.
-
-This paper proposes a persistent measured sequence abstraction with efficient concatenation, prefix-based search, and split operations. The design emphasizes semantic capabilities rather than a single implementation name, while drawing on the long-studied literature and practice behind finger-tree-like structures.
-#+end_quote
-
-** P4307 -- An Infix Operator and a Keyword Escape for C++
-#+begin_quote
-We propose two uses for one character: the backtick, the last printable ASCII character the language can still claim.
-One makes any callable a binary operator; the other lets a keyword be escaped for use as an ordinary identifier.
-Each is independently motivated, and each is defined by rewrite into something the language already has.
-They are proposed together, with equal standing, because they share the token --- two independent claims on one character, designed separately, end in contradiction.
-#+end_quote
-
-#+begin_comment
-/voice — NOT YET APPLIED. As written the sentence says the two claims
-do end in contradiction, which is the opposite of the argument. The
-conditional is missing. (This is quoted from the paper abstract, so if
-it is fixed here it should be fixed in P4307 too.)
-- CURRENT:  They are proposed together, with equal standing, because
-            they share the token --- two independent claims on one
-            character, designed separately, end in contradiction.
-- PROPOSED: They are proposed together, with equal standing, because
-            they share the token. Two independent claims on one
-            character, designed separately, would end in contradiction.
-  (also retires one of the five em-dashes)
-  (accept / stet)
-#+end_comment
+- https://github.com/steve-downey/backtick :: Infix function notation for C++
+  - https://github.com/steve-downey/llvm-project/tree/backtick :: Backticks in LLVM
+  - https://github.com/steve-downey/gcc/tree/backtick :: Backticks in GCC
 
 * "Only be sure always to call it please 'Research'" - Tom Lehrer
 
@@ -453,9 +393,8 @@ not/I am proposing", then the two Big Idea sentences (object, lookup)
 as the concrete statement of the mechanism, "Structs, with named
 operations." as the landing, duck typing, then the C++26 paragraph
 with the cost concession as the close. "Provide algorithms that
-extend ... Trees. SIMD. Senders." kept, placed last before the Lean
-aside; it is a recap of the pitches now and can go if it reads as one.
-No prose changed, only order.
+extend ... Trees. SIMD. Senders." cut 2026-09-06 as a recap of the
+pitches.
 
 #+end_comment
 
@@ -508,8 +447,6 @@ The generic programming facilities of C++26 are enough to implement these abstra
 Even taking in to account the effects of error handling and failures.
 Using these facilities also produces efficient and correct by construction code, at the cost of some debugging overhead without inlining, and some complexity in the implementation of the proposed framework for users to provide typeclass definition for their own types.
 
-Provide algorithms that extend the capabilities provided by Ranges to more kinds of structures than just sequences. Trees. SIMD. Senders.
-
 Haskell is not the only language to use typeclasses as an organizing principle.
 [[https://lean-lang.org/][Lean]], which the mathematicians and the machine learning people have both taken up lately, borrowed them as well.
 #+begin_quote
@@ -527,6 +464,40 @@ A typeclass is a very lightweight adapter.
 Providing the translation between the vocabulary a type would like to use for its own domain to the abstract verbs something like Traversable or Monad provides is a benefit to everyone.
 
 Providing the typeclass also signals how the native vocabulary of the type works.
+
+Anyone can write typeclass machinery for themselves.
+I certainly have been for years.
+Stepanov's insight was that making the interface between algorithms and containers a distinct third thing improved both algorithms and containers.
+Making the iterators what each sees turns M*N into M+N.
+Making them standard made them worth providing for everything, even third party code.
+
+We then failed to provide any support for writing iterators.
+
+This is a running problem.
+We failed to provide support for iterators, for writing coroutine types, and initially failed to provide the extension point for writing pipable range algorithms.
+Writing typeclasses is a first class part of this proposal, while still also making sure that the coupling is as minimal as I could make it.
+There's no inherent requirement to use the facilities.
+Algorithms and code that consume a typeclass do not care how it is implemented.
+
+We've also learned a lot about ABI stability and the mistakes that make evolution difficult.
+The lack of names in the vtable makes for silent breaks if that layout is ever changed or extended.
+This is one of the problems with locale facets in iostreams, as well as with pmr::memory_resource.
+Typeclasses are not virtual interfaces, and are fully typed.
+Changing a function in them can cause errors, and be a breaking change, but extending them can be a compatible, non-breaking, change, if the implementation infrastructure is used because derived operations are based on a small set of core functions.
+We can even add a new alternative basis operation in terms of the existing ones.
+Entirely new operation sets would instead be a new typeclass.
+
+Complexity of implementation is also an issue for new standard components.
+There can be legitimate concerns that specialized knowledge is necessary for a high quality implementation.
+This often comes up in numerical processing.
+However, in this case, the implementation is fairly boring.
+It is not at all complex and well within the normal realm of work for a standard library writer.
+
+The typeclasses being proposed are ancient.
+It is highly unlikely that monoid or functor get new or different operations which would break everything.
+The implementation for a particular instance can be updated with normal care as the standard typeclasses being proposed are all stateless.
+User written typeclasses might have state, and that can be a useful instrumentation technique, but that is a user manageable problem.
+
 #+begin_comment
 DRAFTED — the section exists (move 7; CRITIQUE 12), three paragraphs.
 It carries the argument the letter put first: vocabulary has value
@@ -556,7 +527,7 @@ The full treatment is its own post (gating decision 2, still open).
 
 /voice — the heading is in quotes with the emphasis inside them. If
 that is a placeholder title, "Why in the Standard" bare is the blog
-register. 
+register.
 KEEP — "That is why we standardize things." Flat landing.
 
 DO NOT use the P3294-is-C++29 timing argument (resolved 2026-07-20).
