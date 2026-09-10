@@ -86,3 +86,27 @@ parallel view-based definition.
 **Why:** One definition, one derivation path.
 **Log:**
 - 2026-07-17 — opened by the representation round; `fold_left` part ruled.
+
+## graded-fold-scope
+
+**Question:** Does the fold family say anything about grading, now that P3200
+proposes a grade algebra for fallible contexts?
+**Status:** OPEN (raised 2026-09-10)
+**Decision:** —
+**Why (what the answer has to weigh):** transpose's grading plan carries
+follow-on guidance for tree_algorithms — fold grades are shape-independent
+*iff* the grade algebra is a bounded join-semilattice (which is what lets `Fix`
+stay ungraded while effectful clauses carry the grade); two fold entry points,
+monadic (short-circuit only, the per-layer bind forces it) and applicative
+(accumulating admissible), never one that silently picks; widen once rather
+than coercing per merge node; recovery annotated at the fold boundary; fuel and
+cost as a perpendicular, non-idempotent axis that belongs in
+compile-time-scheme. The gate it was blocked on is open. Three readings: Paper D
+stays silent and the axis lives in Paper A's rationale; tree_algorithms grows
+the two entry points as labeled evidence (repo surface ≠ paper surface); or D
+proposes something. Detail in
+`tree_algorithms/docs/notes/extraction-plan.md` §10.
+**Log:**
+- 2026-09-10 — opened by the grading campaign landing in transpose
+  ([transpose-grading-landed](SYNC.md#transpose-grading-landed)).
+

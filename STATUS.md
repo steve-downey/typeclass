@@ -21,6 +21,12 @@ repo's document (linked). Order within each repo is execution order.
   Partially resolved 2026-07-17 (Steve): `fold_left` is Foldable's
   derived operation, one definition from `fold_map`; trees reach it by
   being Foldable, never via a parallel view-based definition.
+- [graded-fold-scope](DECISIONS.md#graded-fold-scope) — does the fold family
+  say anything about grading? P3200's grading campaign landed and its plan
+  carries follow-on guidance for tree_algorithms; the gate it was blocked on
+  is open. Three readings, detailed in the entry and in
+  `tree_algorithms/docs/notes/extraction-plan.md` §10. SYNC
+  [transpose-grading-landed](SYNC.md#transpose-grading-landed).
 
 Resolved 2026-07-13 (see SYNC [direct-verbs-implemented](SYNC.md#direct-verbs-implemented)):
 
@@ -81,6 +87,15 @@ Resolved 2026-07-13 (see SYNC [direct-verbs-implemented](SYNC.md#direct-verbs-im
    GitHub home: `steve-downey/tree-coordination` (private). The
    "superseded Catch2 stash" note turned out stale — the stash list is
    empty; nothing to drop.
+8. Descriptions of Paper A that its grading work made incomplete —
+   independent of [graded-fold-scope](DECISIONS.md#graded-fold-scope),
+   since they describe A rather than propose anything here: the
+   related-work entry in `papers/algorithms-for-trees.md` and the essay
+   map line (extraction-plan §7a) both read "mechanism +
+   Applicative/Traversable", and A now also proposes a grade algebra and
+   error sets. The `traverse` prose is still accurate but now shows the
+   default call of a two-object (short-circuit / accumulating) surface.
+   The essay draft has the same gap — see the essay section.
 
 ## transpose (Paper A) — worklist: `docs/coordination-worklist-2026-07-13.md`
 
@@ -103,7 +118,26 @@ Resolved 2026-07-13 (see SYNC [direct-verbs-implemented](SYNC.md#direct-verbs-im
 6. Standing: BinaryTree example cross-check with tree_algorithms —
    NOTE: semantics now stated n-ary; tree_algorithms' copy unaffected
    (it has no applicative instance) but any future one follows the
-   n-ary formulation.
+   n-ary formulation. Re-checked 2026-09-10: clang-format only, no
+   semantic drift.
+7. ~~Grading campaign~~ **DONE 2026-09-06** (main at 6366591; ten stages
+   from `docs/transpose-grading-plan.md`, decision log at
+   `docs/decisions.md`): `error_set`, the grade semilattice, a graded
+   `expected` model, a `traverse` policy parameter, three wording
+   clauses generated from the headers by beman.specgen, and a blog arc.
+   Pinned in SYNC
+   [transpose-grading-landed](SYNC.md#transpose-grading-landed), which
+   also records the coherence re-check against tree_algorithms. Opens
+   [graded-fold-scope](DECISIONS.md#graded-fold-scope) and
+   tree_algorithms item 8.
+8. Standing: two mechanism branches are open —
+   `typeclass-operation-cpos` (2026-08-02) and
+   `typeclass-instance-grounding` (2026-09-08). Either would change the
+   lookup pattern tree_algorithms' convenience headers consume;
+   `traverse-policy-surface` was decided specifically to keep a CPO
+   `traverse` possible. Nothing downstream should mirror the lookup
+   pattern until they resolve — check transpose's branches, not just
+   its `main`.
 
 ## fingertree (Paper C) — worklist: `docs/coordination-worklist-2026-07-13.md`
 
@@ -140,7 +174,10 @@ tree_algorithms extraction-plan §7.
    prose-led with three exhibits, a prose map, and P4307 as a fourth
    paper. Decide whether SPEC is superseded by the draft or the
    six-exhibit piece is still a separate post.
-3. Remaining revision items, tracked in the draft's own revision board
+3. Pre-publication: the draft describes P3200 as applicative,
+   traversable, and a path to monad — written before grading landed, so
+   it carries the same gap as tree_algorithms item 8.
+4. Remaining revision items, tracked in the draft's own revision board
    (non-exporting comment blocks): call to action; "What I want" →
    "I can have"; the five missing points in "Why in the Standard"
    (optional anchor, authoring-support pattern, safety clause, regex
@@ -148,7 +185,7 @@ tree_algorithms extraction-plan §7.
    debug-cost concession; decide on a standalone "why in the Standard"
    post. Verify list there: paper numbers against the mailing, P2727
    status, the two private backtick links, the godbolt parity check.
-4. When published: transpose item 4 and fingertree item 2 (cite the
+5. When published: transpose item 4 and fingertree item 2 (cite the
    essay); update the coherence skill's essay pointer.
 
 ## Blog collection (monadic-algorithms re-cast) — plan: `blog/PLAN.md`
@@ -171,6 +208,13 @@ tree_algorithms extraction-plan §7.
 
 ## Done
 
+- 2026-09-10: transpose's grading campaign pinned and tree_algorithms
+  re-checked against it (SYNC
+  [transpose-grading-landed](SYNC.md#transpose-grading-landed)); its
+  extraction plan corrected where it described Paper A and given a §10
+  for the incoming guidance (476cc66); the coherence skill swept for
+  moved paths, Paper A's grown scope, and the two open mechanism
+  branches.
 - 2026-09-07: essay drafted through the edit letter's structural moves
   (lede, map, merged paper sections, how/why-in-the-Standard order,
   close); three exhibits transcluded and pinned by tag in transpose,

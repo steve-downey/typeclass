@@ -4,6 +4,71 @@ Pins each repo's state at each coordination decision. Append-only;
 newest entry first. Each entry is headed by its slug (the link anchor) with
 the date on the line below; refer to entries by slug, never by position.
 
+## transpose-grading-landed
+
+**2026-09-10** — P3200's grading campaign landed; tree_algorithms re-checked against it.
+
+No new ruling. This entry pins eight weeks of beman.transpose work that
+went in after [ap-basis-invoke-interface](#ap-basis-invoke-interface),
+and records the cross-repo checks run afterwards.
+
+**What landed** (transpose `main` at 6366591, 2026-09-06): the grading
+campaign — a compile-time grade index for effectful computations,
+`error_set<E...>` (nominal, normalized, a bounded join-semilattice under
+union), a graded `std::expected` model, and a decision log at
+`docs/decisions.md` in the question-slug form this repo has since
+adopted. `traverse` gained a trailing defaulted applicative-object
+policy parameter (short-circuiting vs accumulating) on the `ranges`
+`comp = {}, proj = {}` precedent. D3200R0 gained a "Coherent grading for
+fallible contexts" rationale section and three wording clauses
+(`[transpose.grade]`, `[transpose.errset]`, `[transpose.expected]`),
+generated from the headers by beman.specgen into `papers/wording/`. The
+paper also moved out of the vendored MPark.WG21 tree: it is
+`papers/D3200R0.md` now, not `papers/wg21/D3200R0.md`.
+
+**Checks run against tree_algorithms** (main at da3d59f; 77/77 green,
+every UUID anchor in its inventory still paired in source):
+
+- Frozen naming holds. `invoke` is still the interface and `ap` the
+  basis, with no `apply` verb on the surface; `traverse`/`transpose` and
+  `traverse_with`/`transpose_with` are intact, so Paper D's `_with`
+  rationale still cites something true; `monoid_identity`/
+  `monoid_combine` and the lookup variable templates are unchanged.
+- `docs/typeclass-object-pattern.md` was not touched, so the pattern
+  Paper D's convenience headers mirror has not moved.
+- The Traversable-must-not-require-Foldable pin is still in
+  `traverse.hpp`, comment and all.
+- The two-BinaryTree hazard is clear: transpose's
+  `examples/binary_tree.hpp` changed by clang-format only.
+- Division of labor improved rather than drifted: D3200R0's non-goals
+  now name Foldable, attribute the fold family to the companion paper,
+  and label `fold.hpp`/`monad.hpp` as evidence. Two claims in
+  tree_algorithms' extraction plan ("D3200R0 mentions neither", "never
+  mentions Foldable") were stale as a result, and are updated in place
+  with dated notes (476cc66).
+
+**What it opens.** transpose's grading plan carries a section addressed
+to tree_algorithms — fold grades shape-independent under a bounded
+join-semilattice, two fold entry points (monadic and applicative, never
+one that silently picks), widen once, recovery annotated at the fold
+boundary, fuel as a perpendicular axis. It was gated on stages that have
+all now shipped. Recorded as §10 of
+`tree_algorithms/docs/notes/extraction-plan.md`; the scope question is
+[graded-fold-scope](DECISIONS.md#graded-fold-scope).
+
+**In flight, not landed** — before anything downstream mirrors the
+mechanism: transpose branches `typeclass-operation-cpos` (2026-08-02)
+and `typeclass-instance-grounding` (2026-09-08). The first would change
+the lookup pattern Paper D's convenience headers consume; the
+`traverse-policy-surface` decision in transpose's log was taken
+specifically to keep a CPO `traverse` possible.
+
+| Repo | Branch | SHA | Notes |
+|---|---|---|---|
+| transpose/main | main | 6366591 | grading landed; `papers/D3200R0.md`; branches above still open |
+| tree_algorithms/main | main | 476cc66 | extraction plan §10 + the stale-claim fixes |
+| tree-coordination | todo | this entry | board and coherence skill updated alongside |
+
 ## essay-exhibit-pins
 
 **2026-09-10** — essay drafted; exhibits pinned by tag in three repos.

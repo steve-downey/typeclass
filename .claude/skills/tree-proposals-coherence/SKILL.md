@@ -15,9 +15,9 @@ these repos.
 
 | Repo | Role | Authoritative documents |
 |------|------|------------------------|
-| `~/src/tree_algorithms/tree_algorithms.git` (this repo) | **Paper D** — recursive tree algorithms: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters across representations | `docs/DECISIONS.md` (frozen), `papers/algorithms-for-trees.md`, `docs/notes/extraction-plan.md`, `docs/notes/punch-list.md`, `docs/notes/anchor-inventory.md` |
-| `~/src/transpose/transpose` | **Paper A / P3200 (D3200R0)** — traversal, transposition, bundled customization. Owns the mechanism: typeclass-object lookup, Functor/Foldable/Applicative/Traversable/Monad bases, `traverse`/`transpose`/`invoke`, `Monoid` | `papers/wg21/D3200R0.md`, `docs/provenance.md`, `docs/typeclass-object-pattern.md` |
-| `~/src/fingertree/main` | **Paper C / D4325R0** — persistent measured sequence. Owns the container, measures, allocator/PMR story | `docs/allocator-design.md`, `docs/compile-time-design.md`, `docs/measure-based-splitting.md` |
+| `~/src/tree_algorithms/main` (this repo) | **Paper D** — recursive tree algorithms: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters across representations | `docs/DECISIONS.md` (frozen), `papers/algorithms-for-trees.md`, `docs/notes/extraction-plan.md`, `docs/notes/punch-list.md`, `docs/notes/anchor-inventory.md` |
+| `~/src/transpose/main` | **Paper A / P3200 (D3200R0)** — traversal, transposition, bundled customization, and the grading of fallible contexts. Owns the mechanism: typeclass-object lookup, Functor/Foldable/Applicative/Traversable/Monad bases, `traverse`/`transpose`/`invoke`, `Monoid`, and the grade algebra (`error_set`, `grade_join`/`grade_bottom`/`grade_subsumes`/`grade_subsume`) | `papers/D3200R0.md` (moved out of the vendored `papers/wg21/` tree 2026-09-06), `docs/decisions.md` (question-slug log), `docs/transpose-grading-plan.md`, `docs/provenance.md`, `docs/typeclass-object-pattern.md` |
+| `~/src/fingertree/fingertree` | **Paper C / D4325R0** — persistent measured sequence. Owns the container, measures, allocator/PMR story | `docs/allocator-design.md`, `docs/compile-time-design.md`, `docs/measure-based-splitting.md` |
 | `~/src/fixpoint/main` | **Evidence only, never proposed** — full recursion-scheme catalog (para/apo/zygo/histo/futu/…, distributive laws, gcata/gana/ghylo) proving the three verbs are the stable primitive layer | `docs/recursion-schemes-design.md` (D1–D11), `ops/DEVIATIONS.md` (DEV-01..04), `ops/PLAN.md` |
 | `~/src/trees/main` | **Origin/pedagogy** — CppNow26 talk, source of all extractions. Extraction is ONE-WAY; extracted repos diverge deliberately and do not backport | `docs/notes/standardization-inverted-triangle-plan.md` (three-paper strategy), `foldable-applicative-traversable.org`, `CLAUDE.md` |
 
@@ -25,9 +25,23 @@ these repos.
 
 **Division of labor.**
 - P3200 owns the customization mechanism and proposes only what its
-  three-domain proof forces: Applicative and Traversable. Papers C and D
-  *consume* the mechanism and never respecify it. The mechanism debate
-  happens only in P3200.
+  three-domain proof forces: Applicative and Traversable — plus, since
+  2026-09, the grade algebra that makes fallible contexts compose
+  (`[transpose.grade]`, `[transpose.errset]`, `[transpose.expected]`).
+  Papers C and D *consume* the mechanism and never respecify it. The
+  mechanism debate happens only in P3200, and so does the grading
+  debate.
+- **Grading is Paper A's axis; whether it reaches the fold family is
+  open.** The rule that keeps the two apart: fold grades are
+  shape-independent *iff* the grade algebra is a bounded
+  join-semilattice, which is what lets recursive data types stay
+  ungraded while their effectful clauses carry the grade. `Fix` stays
+  ungraded. Anything that would make a fold's grade depend on runtime
+  shape (fuel, cost — non-idempotent grades) is a perpendicular axis and
+  belongs in compile-time-scheme, not here. Paper A's follow-on guidance
+  for tree_algorithms is in `docs/transpose-grading-plan.md`; the scope
+  question is open as `graded-fold-scope` in the coordination repo's
+  `DECISIONS.md`.
 - **Paper D proposes the fold family, both structural and elementwise**:
   `fold_fix`/`unfold_fix`/`refold` plus `fold_map` (decided 2026-07-13).
   Rationale: `fold_map`'s motivation is structures that aren't ranges —
@@ -56,7 +70,7 @@ these repos.
   ships in a proposal; it is cited as evidence only.
 - **Public text stands alone** (ruling, Steve 2026-07-17): papers and
   blog posts must not cite internal planning identifiers — decision-log
-  numbers (D5, D8, DEV-01), status markers ([S-n]), SYNC entries, or
+  numbers (D5, D8, DEV-01), question slugs, SYNC entries, or
   note filenames — in running text. Describe the reason or the effect
   instead, or say nothing; a reader must never need a second document
   open to follow the text. Real paper numbers (P3200, D4322R0) and
@@ -148,6 +162,17 @@ change, and keep `docs/notes/anchor-inventory.md` current.
   ships the CRTP base and `fold_map` machinery in `fold.hpp` (repo
   surface, evidence only); the *proposal* is Paper D's. A's paper must
   not silently claim it; D's paper does. Do not grow a third definition.
+  Discharged on A's side 2026-09: D3200R0's non-goals name Foldable,
+  attribute the fold family to the companion paper, and label
+  `fold.hpp`/`monad.hpp` as evidence rather than wording. Keep checking
+  it — the failure mode returns the moment either paper's scope moves.
+- **The mechanism has unlanded branches**: transpose carries
+  `typeclass-operation-cpos` and `typeclass-instance-grounding`, either
+  of which would change the lookup pattern Paper D's convenience headers
+  consume (the `traverse-policy-surface` decision was taken specifically
+  to keep a CPO `traverse` possible). Nothing downstream should mirror
+  the lookup pattern while they are open; check `git branch` in
+  transpose, not just its `main`, before copying the shape.
 - **A's Traversable must not require Foldable as a superclass** —
   otherwise D proposing Foldable beneath an already-reviewed Traversable
   creates a dependency inversion. Check this whenever concept
