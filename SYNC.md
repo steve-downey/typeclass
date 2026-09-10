@@ -63,9 +63,39 @@ the lookup pattern Paper D's convenience headers consume; the
 `traverse-policy-surface` decision in transpose's log was taken
 specifically to keep a CPO `traverse` possible.
 
+**Correction, same morning.** The local transpose checkout was 43
+commits stale when the above was written, and one of the two branches
+called in flight had already merged: `typeclass-instance-grounding`
+(PR #46, transpose main now 26f6ab8, 2026-09-08). `typeclass-operation-cpos`
+is still open, 7 commits ahead. What merged is repo surface, and labeled
+as such — the paper, the examples, and `docs/typeclass-object-pattern.md`
+are untouched by all 43:
+
+- Foldable's evidence surface grew a **mutually-derivable basis pair**:
+  an Impl now provides `fold_map` *or* `fold_right`, the base derives
+  the other, in the shape `Applicative::invoke` already models. Paper D
+  proposes `fold_map` alone; the second basis is an input to D's
+  Foldable wording when it is written, not a change to it.
+- Named monoid carriers (`Sum`, `Product`, `Max`, `Min`, `Any`, `All`)
+  and a new `induced_monoid.hpp`, the latter opening with
+  EVIDENCE, NOT PROPOSED WORDING and the reason the categorical
+  "monoid in the category of endofunctors" is inexpressible at
+  `Monoid<T>`. `identity()`/`combine()` are unchanged, and the
+  numeric-carrier default registrations are being retired in favour of
+  choosing a named carrier.
+- Deep object concepts (`traversable_object` and kin) that check a
+  class's whole surface rather than probing one operation. The
+  Traversable-not-Foldable pin survives verbatim and is now cited by
+  the concept.
+- A held backlog, `docs/coordination-worklist-2026-09-07.md`: four
+  items from a 2026-09-07 design discussion, **all HELD, none
+  scheduled**. Its item 2 would replace the Maps' `using`-selection
+  with per-operation probing — the lookup pattern Paper D's convenience
+  headers mirror. Watch it; do not mirror ahead of it.
+
 | Repo | Branch | SHA | Notes |
 |---|---|---|---|
-| transpose/main | main | 6366591 | grading landed; `papers/D3200R0.md`; branches above still open |
+| transpose/main | main | 26f6ab8 | grading + instance grounding; `typeclass-operation-cpos` still open |
 | tree_algorithms/main | main | 476cc66 | extraction plan §10 + the stale-claim fixes |
 | tree-coordination | todo | this entry | board and coherence skill updated alongside |
 

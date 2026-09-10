@@ -130,14 +130,21 @@ Resolved 2026-07-13 (see SYNC [direct-verbs-implemented](SYNC.md#direct-verbs-im
    also records the coherence re-check against tree_algorithms. Opens
    [graded-fold-scope](DECISIONS.md#graded-fold-scope) and
    tree_algorithms item 8.
-8. Standing: two mechanism branches are open —
-   `typeclass-operation-cpos` (2026-08-02) and
-   `typeclass-instance-grounding` (2026-09-08). Either would change the
-   lookup pattern tree_algorithms' convenience headers consume;
-   `traverse-policy-surface` was decided specifically to keep a CPO
-   `traverse` possible. Nothing downstream should mirror the lookup
-   pattern until they resolve — check transpose's branches, not just
-   its `main`.
+8. ~~Instance grounding~~ **MERGED 2026-09-08** (PR #46, main at
+   26f6ab8): Foldable's evidence surface takes `fold_map` *or*
+   `fold_right` as a mutually-derivable basis pair, named monoid
+   carriers and `induced_monoid.hpp` arrive labeled evidence, and the
+   object concepts go deep. The paper is untouched. The second Foldable
+   basis is an input to Paper D's wording when it is written.
+9. Standing: `typeclass-operation-cpos` is still open (7 commits), and
+   `docs/coordination-worklist-2026-09-07.md` holds four items from the
+   2026-09-07 design discussion — all HELD, none scheduled. Item 2 there
+   would replace the Maps' `using`-selection with per-operation probing,
+   which is the lookup pattern tree_algorithms' convenience headers
+   mirror; `traverse-policy-surface` was decided specifically to keep a
+   CPO `traverse` possible. Nothing downstream should mirror the lookup
+   pattern until these resolve — check transpose's branches and that
+   worklist, not just its `main`.
 
 ## fingertree (Paper C) — worklist: `docs/coordination-worklist-2026-07-13.md`
 

@@ -166,13 +166,21 @@ change, and keep `docs/notes/anchor-inventory.md` current.
   attribute the fold family to the companion paper, and label
   `fold.hpp`/`monad.hpp` as evidence rather than wording. Keep checking
   it — the failure mode returns the moment either paper's scope moves.
-- **The mechanism has unlanded branches**: transpose carries
-  `typeclass-operation-cpos` and `typeclass-instance-grounding`, either
-  of which would change the lookup pattern Paper D's convenience headers
-  consume (the `traverse-policy-surface` decision was taken specifically
-  to keep a CPO `traverse` possible). Nothing downstream should mirror
-  the lookup pattern while they are open; check `git branch` in
-  transpose, not just its `main`, before copying the shape.
+- **The mechanism is still moving**: transpose carries an open
+  `typeclass-operation-cpos` branch and a held backlog,
+  `docs/coordination-worklist-2026-09-07.md`, whose item 2 would replace
+  the Maps' `using`-selection with per-operation probing — the lookup
+  pattern Paper D's convenience headers mirror. The
+  `traverse-policy-surface` decision was taken specifically to keep a
+  CPO `traverse` possible. Nothing downstream should mirror the lookup
+  pattern while these are open; check transpose's branches and that
+  worklist, not just its `main`, before copying the shape.
+- **Foldable's evidence surface has two bases**: transpose's `fold.hpp`
+  takes `fold_map` *or* `fold_right` and derives the other (merged
+  2026-09-08). Paper D proposes `fold_map` alone. That is a legitimate
+  repo-surface/paper-surface gap, but it is an input to D's Foldable
+  wording — decide the basis question deliberately when that wording is
+  written, rather than inheriting it.
 - **A's Traversable must not require Foldable as a superclass** —
   otherwise D proposing Foldable beneath an already-reviewed Traversable
   creates a dependency inversion. Check this whenever concept
