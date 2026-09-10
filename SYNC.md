@@ -3,6 +3,53 @@
 Pins each repo's state at each coordination decision. Append-only;
 newest entry first.
 
+## 2026-09-10 (entry 6) — essay drafted; exhibits pinned by tag in three repos
+
+The relationships essay exists as a draft: `essay/trees-and-transposition-for-29.org`
+("Trees, Transposition, and a new Container for C++29"), revised
+2026-09-05..07 against `essay/EDIT-LETTER.md` and merged to this
+repo's main via PR #1 (dfcf3d9). It departs from `essay/SPEC.md` r2:
+prose-led rather than exhibit-led, three exhibits not six, the map is
+a prose section ("Why four papers", the discovery story reversed)
+rather than a diagram plus table, and P4307 (backtick) is carried as a
+fourth paper with equal standing. SPEC r2 is not updated; whether it
+is superseded or the exhibit essay is still a separate piece is open
+(STATUS, essay item 2).
+
+Decisions recorded in the draft's revision board: instance contract
+resolved 2026-07-20 (shape deliberately unspecified; P3294 timing
+argument dropped); backtick integrated, not a bonus track; this post
+is the de facto map. Still open: standalone "why in the Standard"
+post, the "I can have" reframe, the call to action.
+
+Exhibit pins. Each exhibit is an `orgit-file` transclusion pinned to an
+annotated tag `blog/trees-and-transposition-for-29` in its source repo;
+all three tags are on GitHub. New UUID anchors were added for it, both
+comment-only commits on main:
+- tree_algorithms da3d59f: anchor 78958c3f around the shape algebra and
+  `fold_with` call in `examples/nonce_tree_direct.cpp`; inventory row
+  added. Exhibit E3 = 04e450a4 (existing) + 78958c3f.
+- fingertree bb48221: anchor 78d295c0 around build / `split_at_measure`
+  / original-intact in `examples/finger_tree.cpp`. Exhibit E2.
+- transpose: tag at bb32a37, the revision the published
+  transpose-at-work post is pinned to; exhibit E1 = anchors 05ce0358,
+  680950c9, e916da84 in `examples/transpose_post_example.cpp`.
+
+Publication path is the wctm site repo (per [S-4]), whose org compiler
+resolves pins from GitHub by repo name. As of this entry wctm has the
+repo-table entries for tree_algorithms and fingertree and a copy of the
+post, all uncommitted (see table).
+
+| Repo | Branch | SHA | Notes |
+|---|---|---|---|
+| tree-coordination | main | dfcf3d9 | PR #1 merged; `.md` and `.html` exports committed (e34096b) |
+| transpose/main | main | 6366591 | tag blog/trees-and-transposition-for-29 → bb32a37; clean |
+| tree_algorithms/main | main | da3d59f | tag → da3d59f; + modified `docs/notes/extraction-plan.md` |
+| fingertree/fingertree | main | bb48221 | tag → bb48221; clean |
+| fixpoint/main | main | 17077b9 | + modified `docs/blog/part-{1,2,3}-*.md`, untracked `test.png` (MUSTFIX pass in progress) |
+| trees/main | main | 43d7106 | clean |
+| wctm | main | 628e752 | + modified `plugins/orgmode/conf.el`, `projects.eld`; untracked `posts/trees-and-transposition.org`, `.meta` |
+
 ## 2026-07-14 (entry 5) — settled: ap is a basis, invoke is the interface
 
 Two refinements from Steve landed the pure/apply ruling in its final

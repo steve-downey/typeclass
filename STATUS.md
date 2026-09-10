@@ -1,6 +1,6 @@
 # STATUS — cross-repo work board
 
-Updated: 2026-07-17. One line per open item; details live in the owning
+Updated: 2026-09-10. One line per open item; details live in the owning
 repo's document (linked). Order within each repo is execution order.
 
 ## Decisions needed from Steve (unblock markers: [S-n])
@@ -62,8 +62,8 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    work is external-input only: real paper number ([S-5]), essay URL
    for the companion citation, and the MEASURE re-measurement flags
    carried on the punch list.
-5. Representation round per Steve's 2026-07-16 direction — **in working
-   tree 2026-07-17, uncommitted**: Fix-native BST example
+5. ~~Representation round~~ **DONE 2026-07-17** (commit e57499b, merged
+   to main) per Steve's 2026-07-16 direction: Fix-native BST example
    (`examples/search_tree_on_fix.cpp` — verbs where they fit, plain
    wrap/unwrap recursion where they don't), rose tree
    (`include/rose_tree.hpp` + tests; Fix-native, no Box, pre-order
@@ -73,14 +73,9 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    design note `docs/notes/representations-and-sequence-interfaces.md`,
    anchor inventory extended. Opens [S-6]. Paper delta drafted in the
    2026-07-17 documentation pass (next item).
-6. Relationships essay — specified in `tree-coordination/essay/SPEC.md`
-   (r2, exhibit-driven): six transcluded code exhibits carry the piece,
-   prose ≤ 1,200 words as captions, code ≤ 90 lines from UUID-anchored
-   CI-covered source only. Skim test, hallway/hand-sell test, truth
-   test. Prerequisites: P3200's "Why not Monad"/"why not apply" sections
-   (transpose items 1, 5) and exhibit anchors confirmed in transpose and
-   fingertree repos (E1, E5 — anchors may need creating there). Publish
-   per [S-4].
+6. ~~Relationships essay~~ **DRAFTED 2026-09-07** — see the essay
+   section below. Exhibit anchors created in tree_algorithms (da3d59f)
+   and fingertree (bb48221); SYNC entry 6.
 7. ~~Push main to GitHub~~ **DONE 2026-07-17**: pushed through 8d02a60
    (representation round + docs pass). This meta-repo also now has a
    GitHub home: `steve-downey/tree-coordination` (private). The
@@ -95,7 +90,9 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    header notes, provenance entry, non-goals bullets.
 3. ~~Traversable superclass pin~~ **DONE** (same commit): documented
    deliberate constraint in traverse.hpp.
-4. Cite essay when published (blocked on [S-4]).
+4. Cite essay when published (blocked on publication; the pin tag
+   `blog/trees-and-transposition-for-29` at bb32a37 already exists on
+   GitHub).
 5. ~~Pure/apply ruling~~ **SETTLED 2026-07-14** (commits b21e8da then
    b77b4cd, after two refinements — SYNC entry 5): `ap` is a supported
    *basis* (`pure`+`invoke` or `pure`+`ap`, base derives the other) and
@@ -114,6 +111,9 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
 2. Companion-section hygiene when the C draft is written (cite essay;
    instances are implementation not wording; O(n) traverse honesty).
 3. Standing: monoid vocabulary gate (`identity`/`combine`).
+4. ~~Essay exhibit anchor~~ **DONE 2026-09-07** (commit bb48221 on
+   main): anchor 78d295c0 in `examples/finger_tree.cpp`; tag
+   `blog/trees-and-transposition-for-29` pushed to GitHub.
 
 ## trees/main (origin) — addendum: `docs/notes/standardization-plan-addendum-2026-07-13.md`
 
@@ -127,6 +127,29 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
 Evidence repo complete (S00–S16, 214 tests). Referenced by Paper D's
 implementation-experience section; compatibility checklist consumed by
 tree_algorithms extraction-plan §7.
+
+## Essay — `essay/trees-and-transposition-for-29.org`
+
+1. Publish via wctm ([S-4]). In progress at `~/src/wctm` 2026-09-10:
+   repo-table entries for tree_algorithms and fingertree added to
+   `plugins/orgmode/conf.el`, post copied to
+   `posts/trees-and-transposition.org`, all uncommitted; the site build
+   is expected to turn up infrastructure work. Pins resolve from GitHub
+   (SYNC entry 6).
+2. Reconcile `essay/SPEC.md` r2 with what was written: the draft is
+   prose-led with three exhibits, a prose map, and P4307 as a fourth
+   paper. Decide whether SPEC is superseded by the draft or the
+   six-exhibit piece is still a separate post.
+3. Remaining revision items, tracked in the draft's own revision board
+   (non-exporting comment blocks): call to action; "What I want" →
+   "I can have"; the five missing points in "Why in the Standard"
+   (optional anchor, authoring-support pattern, safety clause, regex
+   objection, gradient); shrink the how section and stratify the
+   debug-cost concession; decide on a standalone "why in the Standard"
+   post. Verify list there: paper numbers against the mailing, P2727
+   status, the two private backtick links, the godbolt parity check.
+4. When published: transpose item 4 and fingertree item 2 (cite the
+   essay); update the coherence skill's essay pointer.
 
 ## Blog collection (monadic-algorithms re-cast) — plan: `blog/PLAN.md`
 
@@ -147,5 +170,12 @@ tree_algorithms extraction-plan §7.
 
 ## Done
 
+- 2026-09-07: essay drafted through the edit letter's structural moves
+  (lede, map, merged paper sections, how/why-in-the-Standard order,
+  close); three exhibits transcluded and pinned by tag in transpose,
+  tree_algorithms, fingertree; `.md`/`.html` exported; PR #1 merged
+  (dfcf3d9). SYNC entry 6.
+- 2026-07-17: tree_algorithms representation round committed (e57499b)
+  and pushed with the docs pass (8d02a60).
 - 2026-07-13: extraction plan, coherence skill, per-repo worklists,
   trees addendum, this meta-repo scaffolded; SYNC ledger entry 1.
