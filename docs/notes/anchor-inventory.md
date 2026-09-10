@@ -7,7 +7,7 @@ Complete UUID-anchor map for docs/recursive-tree-algorithms.org and papers/algor
 
 | Anchor | File | Region | Serves |
 |---|---|---|---|
-| 6c596985-e990-4808-a504-2b651c34cebc | include/.../recursion_schemes.hpp | fold_with | paper synopsis; essay exhibit E3 candidate |
+| 6c596985-e990-4808-a504-2b651c34cebc | include/.../recursion_schemes.hpp | fold_with | paper synopsis; essay exhibit-yesterdays-tree candidate |
 | d160af7b-9a3c-4593-b8f5-fc1ff0404b37 | include/.../recursion_schemes.hpp | unfold_with | paper synopsis |
 | 52588460-d05a-43f9-97cc-01aa06732730 | include/.../fold_map.hpp | fold_map over Fix (explicit) | paper synopsis |
 | 5bf78776-81e7-4b66-8487-6615adc33b17 | include/.../fold_map.hpp | fold_map direct (explicit) | paper synopsis |
@@ -21,8 +21,8 @@ Complete UUID-anchor map for docs/recursive-tree-algorithms.org and papers/algor
 | a692305b-eb87-43fb-98a0-901a582d7ddf | include/.../fringe_tree.hpp | functor Impl/Map + specialization | follow-up article |
 | 321edf34-488f-4322-ac5c-320fa5c4d1fc | include/.../fringe_tree.hpp | project + embed (measure invariant) | follow-up article; measures bridge |
 | e6cd1dd3-85b1-4ce2-bf7f-2ab1783d16f8 | include/.../fringe_tree.hpp | FringeTreeLayerFoldMap + lookup registrations | follow-up article |
-| 8f25579d-443a-4685-b3af-01f8103f6863 | include/.../expression.hpp | ExprLayerFoldMap (6-vs-9 contrast) | paper §Folding; essay exhibit E4 candidate |
-| 04e450a4-3614-4f09-a185-1835f935673a | examples/nonce_tree_direct.cpp | nonce Node + NodeF + fmap + project | paper §Trees you don't own; essay exhibit E3 |
+| 8f25579d-443a-4685-b3af-01f8103f6863 | include/.../expression.hpp | ExprLayerFoldMap (6-vs-9 contrast) | paper §Folding; essay exhibit-fold-map-queries candidate |
+| 04e450a4-3614-4f09-a185-1835f935673a | examples/nonce_tree_direct.cpp | nonce Node + NodeF + fmap + project | paper §Trees you don't own; essay exhibit-yesterdays-tree |
 
 ## Rose tree and fringe views (2026-07-17)
 
@@ -91,8 +91,8 @@ e4beac7f (fold_map lookup), 8f25579d (ExprLayerFoldMap), and
 
 ## Essay exhibits (2026-09-07)
 
-Added for the tree-coordination essay `trees-and-transposition-for-29.org`, exhibit E3, which transcludes 04e450a4 (ingredients) followed by this anchor (the fold), pinned by commit.
+Added for the tree-coordination essay `trees-and-transposition-for-29.org`, exhibit-yesterdays-tree, which transcludes 04e450a4 (ingredients) followed by this anchor (the fold), pinned by commit.
 
 | Anchor | File | Region | Serves |
 |---|---|---|---|
-| 78958c3f-7ae7-4933-bc32-57c5ec1e8ea2 | examples/nonce_tree_direct.cpp | shape algebra + fold_with call over the unique_ptr tree | essay exhibit E3 (second half) |
+| 78958c3f-7ae7-4933-bc32-57c5ec1e8ea2 | examples/nonce_tree_direct.cpp | shape algebra + fold_with call over the unique_ptr tree | essay exhibit-yesterdays-tree (second half) |
