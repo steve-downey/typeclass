@@ -1,20 +1,24 @@
 # SYNC ledger
 
 Pins each repo's state at each coordination decision. Append-only;
-newest entry first.
+newest entry first. Each entry is headed by its slug (the link anchor) with
+the date on the line below; refer to entries by slug, never by position.
 
-## 2026-09-10 (entry 6) — essay drafted; exhibits pinned by tag in three repos
+## essay-exhibit-pins
+
+**2026-09-10** — essay drafted; exhibits pinned by tag in three repos.
 
 The relationships essay exists as a draft: `essay/trees-and-transposition-for-29.org`
 ("Trees, Transposition, and a new Container for C++29"), revised
 2026-09-05..07 against `essay/EDIT-LETTER.md` and merged to this
-repo's main via PR #1 (dfcf3d9). It departs from `essay/SPEC.md` r2:
+repo's main via PR #1 (dfcf3d9). It departs from `essay/SPEC.md`
+(2026-07-14 revision):
 prose-led rather than exhibit-led, three exhibits not six, the map is
 a prose section ("Why four papers", the discovery story reversed)
 rather than a diagram plus table, and P4307 (backtick) is carried as a
-fourth paper with equal standing. SPEC r2 is not updated; whether it
+fourth paper with equal standing. SPEC is not updated; whether it
 is superseded or the exhibit essay is still a separate piece is open
-(STATUS, essay item 2).
+(STATUS, essay section, the SPEC reconcile item).
 
 Decisions recorded in the draft's revision board: instance contract
 resolved 2026-07-20 (shape deliberately unspecified; P3294 timing
@@ -28,14 +32,17 @@ all three tags are on GitHub. New UUID anchors were added for it, both
 comment-only commits on main:
 - tree_algorithms da3d59f: anchor 78958c3f around the shape algebra and
   `fold_with` call in `examples/nonce_tree_direct.cpp`; inventory row
-  added. Exhibit E3 = 04e450a4 (existing) + 78958c3f.
+  added. exhibit-yesterdays-tree = 04e450a4 (existing) + 78958c3f.
 - fingertree bb48221: anchor 78d295c0 around build / `split_at_measure`
-  / original-intact in `examples/finger_tree.cpp`. Exhibit E2.
+  / original-intact in `examples/finger_tree.cpp`. exhibit-measured-split
+  (the draft had labelled it as the SPEC's second exhibit; the slug
+  removes that mismatch).
 - transpose: tag at bb32a37, the revision the published
-  transpose-at-work post is pinned to; exhibit E1 = anchors 05ce0358,
+  transpose-at-work post is pinned to; exhibit-one-verb-three-contexts =
+  anchors 05ce0358,
   680950c9, e916da84 in `examples/transpose_post_example.cpp`.
 
-Publication path is the wctm site repo (per [S-4]), whose org compiler
+Publication path is the wctm site repo (per [publication-venue](DECISIONS.md#publication-venue)), whose org compiler
 resolves pins from GitHub by repo name. As of this entry wctm has the
 repo-table entries for tree_algorithms and fingertree and a copy of the
 post, all uncommitted (see table).
@@ -50,7 +57,9 @@ post, all uncommitted (see table).
 | trees/main | main | 43d7106 | clean |
 | wctm | main | 628e752 | + modified `plugins/orgmode/conf.el`, `projects.eld`; untracked `posts/trees-and-transposition.org`, `.meta` |
 
-## 2026-07-14 (entry 5) — settled: ap is a basis, invoke is the interface
+## ap-basis-invoke-interface
+
+**2026-07-14** — settled: ap is a basis, invoke is the interface.
 
 Two refinements from Steve landed the pure/apply ruling in its final
 form. First, one-step application is a reasonable implementation detail
@@ -66,7 +75,9 @@ ap-basis exemplar. D3200R0's section is now "`ap` as basis, `invoke`
 as interface." Skill invariant updated (third and final wording);
 memory updated.
 
-## 2026-07-14 (entry 4) — Monad framing refined: deferred, not rejected
+## monad-deferred-not-rejected
+
+**2026-07-14** — Monad framing refined: deferred, not rejected.
 
 Ruling (Steve): the Why-not-Monad argument must not read as rejection.
 The typeclass design leads to a consistent generic name for sequential
@@ -75,11 +86,11 @@ gap typeclasses close), and `monad.hpp` proves the mechanism carries it;
 Monad is unproposed only because nothing currently proposed calls
 `bind`. "For now." Reframed in: D3200R0 "Why not Monad", monad.hpp
 header note, Paper D companion text, skill (both copies), transpose
-worklist item 1, essay SPEC exhibit E6, trees addendum, provenance.
+worklist item 1, essay SPEC exhibit-holes, trees addendum, provenance.
 
 Also this session (transpose repo, branch remove-pure-apply-forms in
-`~/src/transpose/apply-removal`): pure/apply removal executed per entry
-3 — apply/ap/terminating_partial/applicative_eval deleted, Monad's
+`~/src/transpose/apply-removal`): pure/apply removal executed per
+[apply-forms-removed](#apply-forms-removed) — apply/ap/terminating_partial/applicative_eval deleted, Monad's
 synthesized apply removed, dual-core instances (zip_list, array,
 simd_lanes) reduced to the invoke core, laws restated invoke-form,
 absence of apply forms pinned per instance, fold.hpp/monad.hpp evidence
@@ -87,7 +98,9 @@ labels, Traversable no-Foldable-superclass pin, D3200R0 gains "Why not
 apply"/"Why not Monad" + non-goals, provenance entry. Build/test pending
 merge.
 
-## 2026-07-13 (entry 3) — pure/apply forms removed from the design
+## apply-forms-removed
+
+**2026-07-13** — pure/apply forms removed from the design.
 
 Ruling (Steve): the classic `apply` formulation (callable-in-context,
 curried application) is a Haskell artifact and a misunderstanding in
@@ -98,14 +111,16 @@ transpose `apply.hpp` + instance headers + `monad.hpp`; mirrors in
 fingertree `typeclass/applicative.hpp` and trees/main pedagogy Part 6;
 fixpoint sweeps opportunistically. tree_algorithms unaffected
 (functor-only surface). Work scheduled in transpose worklist item 5;
-repo SHAs unchanged from entry 2.
+repo SHAs unchanged from [direct-verbs-implemented](#direct-verbs-implemented).
 
-## 2026-07-13 (entry 2) — [S-1..4] resolved; direct verbs implemented
+## direct-verbs-implemented
 
-Decisions (Steve): [S-1] direct verbs are `fold_with`/`unfold_with`;
-[S-2] `fold_map` primary spelling takes combine + identity as plain
-parameters (no Monoid trait in the primary API); [S-3] fringe tree goes
-in `include/`; [S-4] everything publishes on sdowney.org — repo blog
+**2026-07-13** — four decisions resolved; direct verbs implemented.
+
+Decisions (Steve): [direct-verb-names](DECISIONS.md#direct-verb-names): direct verbs are
+`fold_with`/`unfold_with`; [fold-map-monoid-passing](DECISIONS.md#fold-map-monoid-passing): `fold_map` primary spelling takes combine + identity as plain
+parameters (no Monoid trait in the primary API); [fringe-tree-location](DECISIONS.md#fringe-tree-location):
+fringe tree goes in `include/`; [publication-venue](DECISIONS.md#publication-venue): everything publishes on sdowney.org — repo blog
 dirs are where code and text come together, so drafting location is
 logistics, not a venue decision.
 
@@ -117,7 +132,9 @@ fetch-content configure defect (Catch2 extras/module-path recovery in
 `tests/beman/tree_algorithms/CMakeLists.txt`). All on branch
 worktree-bright-ray-n44x, uncommitted.
 
-## 2026-07-13 — fold family to Paper D; Monad acknowledged out-of-band
+## fold-family-to-paper-d
+
+**2026-07-13** — fold family to Paper D; Monad acknowledged out-of-band.
 
 Decisions: (1) `fold_map` + monoid proposed in Paper D, not Paper A;
 Paper A proposes only Applicative/Traversable + mechanism. (2) Monad

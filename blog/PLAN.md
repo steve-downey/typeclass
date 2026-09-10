@@ -1,4 +1,4 @@
-# Blog collection — re-cast plan (r1)
+# Blog collection — re-cast plan (2026-07-21)
 
 Working name: the **monadic-algorithms collection**. A series of series,
 published at once on sdowney.org, organized by one thesis:
@@ -10,7 +10,7 @@ side of the campaign announcement (`essay/trees-and-transposition-for-29`)
 but is closely related — it is the **partial, advance explanation of why
 Monad is not a focus of the core work**. The papers' "Why not Monad"
 sections and the campaign essay's Monad answer stay short because this
-collection carries the long form. It also serves the exhibit essay's E6
+collection carries the long form. It also serves the exhibit essay's exhibit-holes
 ("the holes, shown not argued") as the argument that exists at
 publication time.
 
@@ -100,7 +100,7 @@ layer the thesis promises. Candidates, in priority order:
 - Posted at once, cross-linked: spine ↔ series indexes ↔ posts. The
   spine post is the landing page for the collection.
 - The campaign essay and the papers link to the spine post for the Monad
-  question; the exhibit essay's E6 caption cites it.
+  question; the exhibit essay's exhibit-holes caption cites it.
 
 ## Order of work
 

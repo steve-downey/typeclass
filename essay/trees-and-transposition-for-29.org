@@ -65,8 +65,10 @@ LANDED (cumulative, against the edit letter's checklist)
   [x] Monad hole and Unicode retraction in the close.
   [x] C++29 timeline sentence.
   [ ] Call to action.
-  [x] Three exhibits transcluded (2026-09-07): E1 Transpose, E2
-      Fingertree, E3 Trees. orgit-file links, each pinned to an
+  [x] Three exhibits transcluded (2026-09-07):
+      exhibit-one-verb-three-contexts (Transpose), exhibit-measured-split
+      (Fingertrees), exhibit-yesterdays-tree (Trees), named as in
+      essay/SPEC.md. orgit-file links, each pinned to an
       annotated tag blog/trees-and-transposition-for-29 in its source
       repo. See PUBLISHING below.
   [x] Backtick framing: integrated. The "Bonus tracks" links list is
@@ -263,7 +265,7 @@ P3200, /Shape-Preserving Traversal and Transposition for Contextual Computations
 - https://github.com/steve-downey/transpose :: Transpose Context and Structure
 
 #+begin_comment
-DONE 2026-09-07 — exhibit E1: three transclusions (optional, sender,
+DONE 2026-09-07 — exhibit-one-verb-three-contexts: three transclusions (optional, sender,
 simd) from examples/transpose_post_example.cpp, pinned to the annotated
 tag blog/trees-and-transposition-for-29 in the transpose repo, which
 points at bb32a37, the same revision the published transpose-at-work
@@ -292,7 +294,7 @@ P4322, /Algorithms for Trees/, proposes generic algorithms centered on recursive
 - https://github.com/steve-downey/tree_algorithms :: Algorithms for Trees
 
 #+begin_comment
-DONE 2026-09-07 — exhibit E3: two transclusions from
+DONE 2026-09-07 — exhibit-yesterdays-tree: two transclusions from
 examples/nonce_tree_direct.cpp, the existing ingredients anchor
 04e450a4 and a new anchor 78958c3f around the shape algebra and the
 fold_with call (added in tree_algorithms commit da3d59f, recorded in
@@ -337,7 +339,7 @@ P4325, /A Persistent Measured Sequence for the Standard Library/, proposes a per
 - https://github.com/steve-downey/fingertree :: Hinze & Paterson's Fingertrees
 
 #+begin_comment
-DONE 2026-09-07 — exhibit E2: one transclusion from
+DONE 2026-09-07 — exhibit-measured-split: one transclusion from
 examples/finger_tree.cpp, new anchor 78d295c0 around the build, the
 split_at_measure, and the original-still-intact line (added in
 fingertree commit bb48221 on main, comment-only). Pinned to the annotated tag

@@ -1,4 +1,4 @@
-# MUST FIX — execution plan (r1, 2026-07-21)
+# MUST FIX — execution plan (2026-07-21)
 
 The five blocking findings from `CRITIQUE-transpose.md` and
 `CRITIQUE-fixpoint.md`, planned as work. These apply to the posts *as
@@ -16,12 +16,18 @@ Standing rules for the whole pass:
 - When the pass lands in both repos, add a SYNC.md entry here pinning
   the two SHAs, and move the STATUS item.
 
-Recommended order: MF-3 (small, self-contained) → MF-5 → MF-2 → MF-1
-(needs a decision) → MF-4 (widest blast radius, wants a quiet stretch).
+Recommended order: [wg21-author-lists](#wg21-author-lists) (small,
+self-contained) → [stale-apply-spelling](#stale-apply-spelling) →
+[unanchored-quoted-snippets](#unanchored-quoted-snippets) →
+[sender-integration-claim](#sender-integration-claim) (needs a decision) →
+[header-comment-leak](#header-comment-leak) (widest blast radius, wants a
+quiet stretch).
 
 ---
 
-## MF-1 — The sender passage asserts an integration that does not exist
+## sender-integration-claim
+
+The sender passage asserts an integration that does not exist
 
 **Repo:** transpose. **Files:**
 `papers/blog/transposing-structure-and-context.org` (~lines 133–146);
@@ -54,7 +60,9 @@ beman.execution integration first.**
 papers/blog/` → zero hits; the transcluded block diffs clean against
 `sender.hpp`.
 
-## MF-2 — Two quoted snippets absent from their cited files
+## unanchored-quoted-snippets
+
+Two quoted snippets absent from their cited files
 
 **Repo:** transpose. **File:**
 `papers/blog/writing-algorithms-with-typeclass-objects.org` lines
@@ -85,7 +93,9 @@ durable fix; schedule it with the re-cast, not this pass.
 **Check:** each fenced block in the post appears verbatim (modulo
 stated namespace elisions) in the file its caption names.
 
-## MF-3 — Wrong WG21 author lists, including your own paper
+## wg21-author-lists
+
+Wrong WG21 author lists, including your own paper
 
 **Repo:** fixpoint. **Files:** `docs/blog/references.bib`; reference
 sections of `part-1-fixpoint.org` and `part-4-para-apo.org`.
@@ -112,7 +122,9 @@ sections of `part-1-fixpoint.org` and `part-4-para-apo.org`.
 bib entry; every bib entry is cited from some post; author fields match
 the primary sources fetched during the edit.
 
-## MF-4 — 48 internal identifiers leak into rendered posts via header comments
+## header-comment-leak
+
+48 internal identifiers leak into rendered posts via header comments
 
 **Repo:** fixpoint (the fix is in the *headers*, not the posts).
 **Scope:** doc comments in transcluded headers — worst first:
@@ -143,7 +155,7 @@ Steps:
    anything is line-range-pinned, editing comments shifts lines
    silently — re-render every post and diff the transcluded blocks
    against the intended regions afterward. This is the step that makes
-   MF-4 want a quiet stretch rather than a quick pass.
+   this item want a quiet stretch rather than a quick pass.
 4. Comments only — zero code changes; the full test suite must pass
    unchanged (214 tests) as the no-op proof.
 5. Re-export all 17 posts.
@@ -152,7 +164,9 @@ Steps:
 the same grep over the regenerated `docs/blog/*.md` → zero hits; test
 count unchanged.
 
-## MF-5 — Stale `apply` in three posts (settled ruling: `ap` basis, `invoke` interface)
+## stale-apply-spelling
+
+Stale `apply` in three posts (settled ruling: `ap` basis, `invoke` interface)
 
 **Repo:** transpose. **Files/sites:**
 
@@ -191,11 +205,11 @@ would make the diffs unreviewable.
 
 ## Decisions needed before starting
 
-1. MF-1: rewrite the sender passage honestly (recommended) or build
+1. [sender-integration-claim](#sender-integration-claim): rewrite the sender passage honestly (recommended) or build
    the beman.execution integration first?
-2. MF-2: re-quote the real examples (recommended) or add the named
+2. [unanchored-quoted-snippets](#unanchored-quoted-snippets): re-quote the real examples (recommended) or add the named
    examples to the repo?
-3. MF-3: cite P2988 from part-4's expected discussion, or drop the
+3. [wg21-author-lists](#wg21-author-lists): cite P2988 from part-4's expected discussion, or drop the
    orphan entry (recommended: drop unless a sentence already wants it)?
 
 Everything else is unambiguous and can start on your word.

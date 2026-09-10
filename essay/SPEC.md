@@ -1,11 +1,11 @@
-# Relationships essay — specification (r2)
+# Relationships essay — specification (revision of 2026-07-14)
 
 Working title: "Three papers and two deliberate holes"
 Form: **exhibit-driven** — 6 code exhibits carry the piece; prose is
 captions and connective tissue.
 Budget: prose ≤ 1,200 words; code ≤ 90 lines total, no exhibit over 15.
 One diagram (the map).
-Venue: sdowney.org (per [S-4]); cited by all three papers.
+Venue: sdowney.org (per [publication-venue](DECISIONS.md#publication-venue)); cited by all three papers.
 
 ## The job, and the tension it must resolve
 
@@ -38,39 +38,40 @@ while staying checkable: every block in it runs in CI somewhere.
 
 ## The exhibits
 
-Each: ≤ 15 lines, self-contained, individually titled — because each
+Each: ≤ 15 lines, self-contained, individually titled, and named by a slug
+that is also how the source repos' anchor inventories refer to it — because each
 must also work as a **hand-sell prop**: one exhibit on a phone screen is
 a hallway conversation. Source anchors to be confirmed/created at
 draft time.
 
-**E1 — One verb, three domains.** `transpose` flipping
+**exhibit-one-verb-three-contexts — One verb, three domains.** `transpose` flipping
 `vector<optional<T>>`, `vector<sender<T>>`, and lanewise values through
 the same front door. (transpose repo, three-domain test.)
 Caption claim: this is the context axis, and it is one facility, not
 three. → Paper A.
 
-**E2 — The recursion is the algorithm's job.** The before/after from
+**exhibit-fold-vs-visit — The recursion is the algorithm's job.** The before/after from
 Paper D: hand-rolled `std::visit` recursion vs `fold_fix` with a
 non-recursive algebra. (Already anchored for the paper's cmptable.)
 Caption claim: this is the structure axis. → Paper D.
 
-**E3 — Yesterday's tree, no conversion.** The nonce tree's three
+**exhibit-yesterdays-tree — Yesterday's tree, no conversion.** The nonce tree's three
 ingredients (layer struct, fmap, projection) then `fold_with` over
 `unique_ptr` nodes. (examples/nonce_tree_direct.cpp, anchored.)
 Caption claim: the verbs meet your types where they are; no blessed
 tree, no Fix in sight. → Paper D.
 
-**E4 — One hook, the whole query family.** length / sum / any_of as
+**exhibit-fold-map-queries — One hook, the whole query family.** length / sum / any_of as
 one-line `fold_map`s. (fold_map.test.cpp, DerivedQueries.)
 Caption claim: elementwise folding is derived from the structural verbs
 — small surface, wide reach. → Paper D.
 
-**E5 — Split a sequence by what it means.** Measured split/search on the
+**exhibit-measured-split — Split a sequence by what it means.** Measured split/search on the
 persistent sequence in a few lines. (fingertree repo.)
 Caption claim: where structure and context pay off in one concrete,
 production-shaped container. → Paper C.
 
-**E6 — The holes, shown not argued.** Two fragments side by side:
+**exhibit-holes — The holes, shown not argued.** Two fragments side by side:
 `monad.hpp`'s `bind`/`join` signatures from the reference tree —
 evidence the mechanism carries Monad without strain, captioned
 "deferred, not rejected: a consistent generic name is where typeclasses
@@ -83,15 +84,15 @@ one of them is an open slot.
 
 ## Structure
 
-1. **Cold open: E1.** Code before any thesis — desire first. (~100 words
+1. **Cold open: exhibit-one-verb-three-contexts.** Code before any thesis — desire first. (~100 words
    around it.)
-2. **E2, E3** — the structure axis, and "works on your types." (~250
+2. **exhibit-fold-vs-visit, exhibit-yesterdays-tree** — the structure axis, and "works on your types." (~250
    words total.)
 3. **The map** — the diagram plus a six-row table: paper / owns /
    explicitly-not / survives-alone. This is the only expository passage,
    placed *after* the reader wants the goods. (~250 words.)
-4. **E4, E5** — depth of the surface; the concrete payoff. (~200 words.)
-5. **E6 — the holes.** (~150 words.)
+4. **exhibit-fold-map-queries, exhibit-measured-split** — depth of the surface; the concrete payoff. (~200 words.)
+5. **exhibit-holes.** (~150 words.)
 6. **Going deeper** — link farm: two blog series indexes, the CppNow26
    talk, three papers, repos. Labels only. (~100 words.)
 
