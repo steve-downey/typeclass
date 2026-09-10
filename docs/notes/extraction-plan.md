@@ -7,16 +7,17 @@ the Paper D draft (now `papers/algorithms-for-trees.md`;
 `DnnnnR0` at the time this plan was written).
 Sources surveyed for this plan: `trees/main` (origin/pedagogy repo,
 including `docs/notes/standardization-inverted-triangle-plan.md`),
-`transpose/transpose` (beman.transpose, D3200R0), `fixpoint/main`
-(smd::fixpoint evidence repo), `fingertree/main` (beman.fingertree,
+`transpose/main` (beman.transpose, D3200R0; the checkout was
+`transpose/transpose` when this plan was written), `fixpoint/main`
+(smd::fixpoint evidence repo), `fingertree/fingertree` (beman.fingertree,
 Paper C), and this repository.
 
 ## 1. The coordinated set — who owns what
 
 | Piece | Repo | Paper | Owns |
 |-------|------|-------|------|
-| Traversal, transposition, bundled customization | `~/src/transpose/transpose` | P3200 / D3200R0 (Paper A) | The mechanism: typeclass-object lookup, `Functor`/`Foldable`/`Applicative`/`Traversable`/`Monad` CRTP bases, `traverse`, `transpose`, `invoke`, `Monoid` customization point |
-| Persistent measured sequence | `~/src/fingertree/main` | Paper C (unnumbered) | The container: FingerTree, measures, monoid-tagged split/search, allocator/PMR story |
+| Traversal, transposition, bundled customization | `~/src/transpose/main` | P3200 / D3200R0 (Paper A) | The mechanism: typeclass-object lookup, `Functor`/`Foldable`/`Applicative`/`Traversable`/`Monad` CRTP bases, `traverse`, `transpose`, `invoke`, `Monoid` customization point |
+| Persistent measured sequence | `~/src/fingertree/fingertree` | Paper C (unnumbered) | The container: FingerTree, measures, monoid-tagged split/search, allocator/PMR story |
 | Recursive tree algorithms | this repo | Paper D (`D4322R0`) | The verbs: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters proving the verbs across representations |
 | Recursion-scheme catalog (evidence only) | `~/src/fixpoint/main` | none — deliberately unproposed | para/apo/zygo/histo/futu/…, distributive laws, gcata/gana/ghylo; the proof that the three proposed verbs are the stable primitive layer |
 | Origin / pedagogy | `~/src/trees/main` | CppNow26 talk | The source everything above was extracted from; extraction is one-way |
@@ -55,9 +56,15 @@ Not yet extracted, outlined, or designed — the subject of this plan:
 A principle that governs items A and G, worth stating once:
 **repo surface ≠ paper surface.** A beman repo may legitimately ship
 more than its paper proposes (beman.transpose ships `fold.hpp` and
-`monad.hpp`; D3200R0 mentions neither), but every unproposed component
+`monad.hpp`; D3200R0 proposes neither), but every unproposed component
 must be explicitly labeled evidence, the way the fixpoint catalog is for
 Paper D. Silence plus shipped code is the configuration to avoid.
+
+**Update 2026-09-10.** D3200R0 no longer keeps that silence: its
+non-goals section names both headers and calls them "evidence that the
+mechanism scales, not proposed wording," and attributes the fold family
+to this paper by name. The principle stands; the specific exposure it
+was written against is closed on Paper A's side.
 
 ## 3. Work item A — the fold family (proposed in D)
 
@@ -66,8 +73,10 @@ earlier draft of this plan said "Paper A owns the Foldable surface."
 That conflated repo surface with paper surface: beman.transpose *ships*
 `fold.hpp` (`Foldable<Impl>` CRTP base, `foldable_typeclass<T>`,
 `fold_map` plus ten derived operations) and `monoid.hpp`, but D3200R0
-never mentions Foldable — it is proposal-orphaned there, and nothing in
-the three-domain transpose proof needs it. Its motivation is
+did not then mention Foldable — it was proposal-orphaned there, and
+nothing in the three-domain transpose proof needs it. (Since 2026-09
+D3200R0 names Foldable in its non-goals and points at this paper, which
+ratifies the split rather than reopening it.) Its motivation is
 tree-shaped: for flat ranges `std::ranges::fold_left` already exists,
 and the only honest answer to "why `fold_map` when `fold_left` exists?"
 is "structures that aren't ranges" — exactly what Paper A keeps out of
@@ -372,7 +381,68 @@ Decisions needing Steve (beyond the existing punch-list items):
   matching transpose-repo changes there: the "Why not Monad" section in
   D3200R0, labeling `fold.hpp`/`monad.hpp` as unproposed evidence, and
   keeping Traversable free of a Foldable superclass requirement (§3).
+  All three transpose-repo changes have since landed (2026-07-14 and
+  2026-09-06); only the venue and timing are still open.
 
 Resolved 2026-07-13 (Steve): the fold family is proposed in Paper D, not
 Paper A; the Monad slot ("Paper B") is acknowledged explicitly but
 out-of-band, not as a WG21 paper.
+
+## 10. Incoming from P3200 — graded folds (opened 2026-09-10)
+
+beman.transpose's grading campaign landed on its `main` at `6366591`
+(2026-09-06): a compile-time grade index on effectful computations,
+`error_set<E...>` as the grade of error types a computation may raise, a
+graded `std::expected` model, and three new wording clauses
+(`[transpose.grade]`, `[transpose.errset]`, `[transpose.expected]`).
+Its plan carries a section addressed to this repo —
+`~/src/transpose/main/docs/transpose-grading-plan.md`, "Guidance —
+tree_algorithms" — which was gated on stages that have all now shipped,
+so the gate is open.
+
+The guidance, restated (Paper A's decision log is
+`~/src/transpose/main/docs/decisions.md`, one anchor per question):
+
+- **Fold grades are shape-independent iff the grade algebra is a bounded
+  join-semilattice** (`#grade-generality`). That is the wall between
+  "the fold family grows an error feature" and "the fold family needs
+  indexed fixpoints": `Fix` stays ungraded, and fold carriers are
+  ordinary types instantiated at the join of the per-clause grades.
+- **Two entry points, never one that silently picks**: a monadic fold
+  (effectful algebra clauses; short-circuit only, because the per-layer
+  bind forces it) and an applicative fold (pure algebra, effectful layer
+  or leaves, where an accumulating applicative object is admissible).
+- **Widen once**: compute the algebra's joined grade up front and run
+  the whole fold in that fiber — inject at the leaves or at the first
+  raise, never coerce per merge node. Subsumption is a retyping in
+  theory and a representation change in C++.
+- **Recovery inside algebra clauses breaks grade = join of clauses**, so
+  it has to be annotated at the fold boundary instead.
+- **Fuel and cost grades are a perpendicular axis**: non-idempotent,
+  prototyped in compile-time-scheme, and if they are ever adopted they
+  arrive as an NTTP on the coalgebra/driver side, not as a widening of
+  this one.
+
+**Status: needs Steve.** Nothing here is a break. The surface proposed
+in `papers/algorithms-for-trees.md` is unaffected, and this repo builds
+and tests green against transpose as it now stands. The open question is
+scope: whether Paper D says anything about graded folds at all, whether
+this repo grows the two entry points as evidence (repo surface ≠ paper
+surface, §2), or whether the whole axis stays in Paper A's rationale and
+compile-time-scheme's experiments. It is tracked as `graded-fold-scope`
+in the coordination repo's `DECISIONS.md`, pinned by the SYNC entry
+`transpose-grading-landed`. Until it is ruled, this section records an
+incoming obligation; it is not a work item in the §9 sequence.
+
+Two consequences that do not wait on that ruling, because they are
+descriptions of Paper A rather than proposals of our own:
+
+- The related-work entry for P3200 in `papers/algorithms-for-trees.md`
+  and the essay map line in §7a both describe Paper A as the mechanism
+  plus Applicative/Traversable. Paper A now also proposes a grade
+  algebra and error sets; both descriptions under-state it.
+- `traverse` gained a trailing defaulted applicative-object policy
+  parameter — short-circuiting or accumulating — on the `ranges`
+  `comp = {}, proj = {}` precedent. The §4 prose about `traverse` is
+  still accurate, but the spelling it shows is now the default call of a
+  two-object surface.
