@@ -6,6 +6,15 @@ written* and are independent of the re-cast — the re-cast should start
 from true text, so this pass lands first, in the source repos, under
 each repo's own conventions.
 
+All five are open as issues in their source repos (linked under each
+heading below), each carrying the finding, the recommended fix, the
+decision it needs where it needs one, and its own re-runnable check.
+The counts in [header-comment-leak](#header-comment-leak) were
+re-measured 2026-09-10 and still hold; the two missing functions in
+[unanchored-quoted-snippets](#unanchored-quoted-snippets) are still
+missing, now behind `orgit-file` links that pin the false attribution
+harder.
+
 Standing rules for the whole pass:
 
 - Edit `.org` sources only; regenerate `.md`/HTML exports afterward.
@@ -28,6 +37,8 @@ quiet stretch).
 ## sender-integration-claim
 
 The sender passage asserts an integration that does not exist
+
+**Issue:** [steve-downey/transpose#49](https://github.com/steve-downey/transpose/issues/49)
 
 **Repo:** transpose. **Files:**
 `papers/blog/transposing-structure-and-context.org` (~lines 133–146);
@@ -64,6 +75,8 @@ papers/blog/` → zero hits; the transcluded block diffs clean against
 
 Two quoted snippets absent from their cited files
 
+**Issue:** [steve-downey/transpose#48](https://github.com/steve-downey/transpose/issues/48)
+
 **Repo:** transpose. **File:**
 `papers/blog/writing-algorithms-with-typeclass-objects.org` lines
 62–69 and 80–86.
@@ -97,6 +110,8 @@ stated namespace elisions) in the file its caption names.
 
 Wrong WG21 author lists, including your own paper
 
+**Issue:** [steve-downey/fixpoint#30](https://github.com/steve-downey/fixpoint/issues/30)
+
 **Repo:** fixpoint. **Files:** `docs/blog/references.bib`; reference
 sections of `part-1-fixpoint.org` and `part-4-para-apo.org`.
 
@@ -125,6 +140,8 @@ the primary sources fetched during the edit.
 ## header-comment-leak
 
 48 internal identifiers leak into rendered posts via header comments
+
+**Issue:** [steve-downey/fixpoint#31](https://github.com/steve-downey/fixpoint/issues/31)
 
 **Repo:** fixpoint (the fix is in the *headers*, not the posts).
 **Scope:** doc comments in transcluded headers — worst first:
@@ -167,6 +184,8 @@ count unchanged.
 ## stale-apply-spelling
 
 Stale `apply` in three posts (settled ruling: `ap` basis, `invoke` interface)
+
+**Issue:** [steve-downey/transpose#47](https://github.com/steve-downey/transpose/issues/47)
 
 **Repo:** transpose. **Files/sites:**
 

@@ -203,7 +203,16 @@ tree_algorithms extraction-plan §7.
    `blog/MUSTFIX.md` (ordered wg21-author-lists → stale-apply-spelling →
    unanchored-quoted-snippets → sender-integration-claim → header-comment-leak; three
    small decisions listed at its end unblock the two that need them).
+   **Issues opened 2026-09-10**, one per item, in the repo that owns the
+   fix: transpose [#47](https://github.com/steve-downey/transpose/issues/47),
+   [#48](https://github.com/steve-downey/transpose/issues/48),
+   [#49](https://github.com/steve-downey/transpose/issues/49); fixpoint
+   [#30](https://github.com/steve-downey/fixpoint/issues/30),
+   [#31](https://github.com/steve-downey/fixpoint/issues/31).
    Fixes land in the source repos; a SYNC entry pins SHAs when done.
+   Also 2026-09-10: fixpoint's three uncommitted blog exports were an
+   exporter artifact, not content — committed on branch
+   `blog-export-refresh` (eb1a650) rather than left in the tree.
 2. Spine post drafted: `blog/where-are-the-monads.org` — the
    Monad-scarcity thesis, the advance answer to "where's Monad?" for the
    campaign; cites Deane's reflection-monad post (elbeno.com,
