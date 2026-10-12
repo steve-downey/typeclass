@@ -16,6 +16,23 @@
 
 namespace beman::transpose {
 
+namespace detail {
+//! \omit
+/// The function that ignores its argument and returns `value`: what
+/// `replace` maps with. A named type rather than a lambda, because it
+/// appears in `replace`'s constraint, and a lambda there is local to each
+/// translation unit -- a module that instantiates `replace` would expose it.
+template <class VALUE>
+struct constant_function {
+    VALUE value;
+
+    template <class ARGUMENT>
+    constexpr auto operator()(const ARGUMENT &) const -> VALUE {
+        return value;
+    }
+};
+} // namespace detail
+
 // Functor pattern invariants:
 // - Instances are single lookup objects that provide fmap(F, T).
 // - replace is a derived object operation implemented from fmap.
@@ -47,9 +64,10 @@ struct derive_functor : protected Impl {
         requires requires(const Impl &impl) {
             impl.replace(std::forward<T>(value), std::forward<U>(replacement));
         } || requires(const Impl &impl) {
-            impl.fmap([replacement = std::forward<U>(replacement)](
-                          const auto &) { return replacement; },
-                      std::forward<T>(value));
+            impl.fmap(
+                detail::constant_function<std::remove_cvref_t<U>>{
+                    std::forward<U>(replacement)},
+                std::forward<T>(value));
         }
     {
         if constexpr (requires {
@@ -62,9 +80,10 @@ struct derive_functor : protected Impl {
             // One-way derivation (not a mutually-derivable pair): route
             // through self, not Impl, so a shadow on a wrapping Map is
             // still reached.
-            return self.fmap([replacement = std::forward<U>(replacement)](
-                                 const auto &) { return replacement; },
-                             std::forward<T>(value));
+            return self.fmap(
+                detail::constant_function<std::remove_cvref_t<U>>{
+                    std::forward<U>(replacement)},
+                std::forward<T>(value));
         }
     }
 
@@ -78,8 +97,10 @@ struct derive_functor : protected Impl {
 
 /** Typeclass lookup variable for Functor; specialize for each container type.
  */
+// 5cdef435-de62-4973-91f4-a56dbef659f3
 template <class T>
 inline constexpr auto functor = std::false_type{};
+// 5cdef435-de62-4973-91f4-a56dbef659f3 end
 
 // -- Operation objects --
 //
