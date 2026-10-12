@@ -34,6 +34,23 @@ jobs:
           {"preset": "msvc-release", "runner": "windows-latest"}
         ]
 
+  # The union of the three libraries' former matrices. Floors differ:
+  # beman.transpose and beman.tree_algorithms are C++23 (deducing this; gcc 14,
+  # clang 19). beman.fingertree needs std::inplace_vector at C++26, which only
+  # libstdc++ 16 ships; src/beman/CMakeLists.txt probes for it and skips
+  # fingertree elsewhere, so the full fingertree suite runs only in the gcc 16
+  # C++26 row.
+  #
+  # libc++ before llvm.org/PR160431 rejects any C++26 use of std::expected
+  # whose comparison operands drag expected in by ADL -- which includes
+  # constructing a vector<expected<T, E>>, transpose's central case. The fix
+  # is in the clang 23 image and in no earlier one, and it has not reached the
+  # libc++ shipped in the macOS SDK, so clang 22 and 21 test C++26 on
+  # libstdc++ only and appleclang stays on C++23. Restore libc++ to those rows
+  # once their toolchains carry the fix.
+  #
+  # BEMAN_TYPECLASS_USE_MODULES builds tree_algorithms as a module;
+  # transpose has no module interface and fingertree's cannot be built yet.
   build-and-test:
     uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-build-and-test.yml@1.7.4
     with:
@@ -47,8 +64,7 @@ jobs:
                     { "stdlibs": ["libstdc++"],
                       "tests": [
                         "Debug.Default", "Release.Default", "Release.TSan",
-                        "Release.MaxSan", "Debug.Werror",
-                        "Debug.Coverage", "Debug.-DBEMAN_TYPECLASS_USE_MODULES=On"
+                        "Release.MaxSan", "Debug.Werror", "Debug.Coverage"
                       ]
                     }
                   ]
@@ -61,15 +77,22 @@ jobs:
                       ]
                     }
                   ]
-                },
-                { "cxxversions": ["c++20", "c++17"],
-                  "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
                 }
               ]
             },
             { "versions": ["15"],
               "tests": [
-                { "cxxversions": ["c++26", "c++23"],
+                { "cxxversions": ["c++26"],
+                  "tests": [
+                    { "stdlibs": ["libstdc++"],
+                      "tests": [
+                        "Debug.Default", "Release.Default", "Release.TSan",
+                        "Release.MaxSan", "Debug.Werror"
+                      ]
+                    }
+                  ]
+                },
+                { "cxxversions": ["c++23"],
                   "tests": [
                     { "stdlibs": ["libstdc++"],
                       "tests": [
@@ -77,32 +100,45 @@ jobs:
                       ]
                     }
                   ]
-                },
-                { "cxxversions": ["c++20", "c++17"],
-                  "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
                 }
               ]
             },
-            { "versions": ["14", "13"],
+            { "versions": ["14"],
               "tests": [
-                { "cxxversions": ["c++26", "c++23", "c++20", "c++17"],
-                  "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
-                }
-              ]
-            },
-            {
-              "versions": ["12", "11"],
-              "tests": [
-                { "cxxversions": ["c++23", "c++20", "c++17"],
+                { "cxxversions": ["c++26", "c++23"],
                   "tests": [{ "stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
                 }
               ]
             }
           ],
           "clang": [
+            { "versions": ["23"],
+              "tests": [
+                { "cxxversions": ["c++26"],
+                  "tests": [
+                    { "stdlibs": ["libstdc++", "libc++"],
+                      "tests": [
+                        "Debug.Default", "Release.Default", "Release.TSan",
+                        "Release.MaxSan", "Debug.Werror"
+                      ]
+                    }
+                  ]
+                },
+                { "cxxversions": ["c++23"],
+                  "tests": [
+                    {"stdlibs": ["libstdc++", "libc++"], "tests": ["Release.Default"]}
+                  ]
+                }
+              ]
+            },
             { "versions": ["22"],
               "tests": [
-                {"cxxversions": ["c++26"],
+                { "cxxversions": ["c++26"],
+                  "tests": [
+                    {"stdlibs": ["libstdc++"], "tests": ["Release.Default"]}
+                  ]
+                },
+                { "cxxversions": ["c++23"],
                   "tests": [
                     { "stdlibs": ["libstdc++", "libc++"],
                       "tests": [
@@ -112,49 +148,29 @@ jobs:
                       ]
                     }
                   ]
+                }
+              ]
+            },
+            { "versions": ["21"],
+              "tests": [
+                { "cxxversions": ["c++26"],
+                  "tests": [
+                    {"stdlibs": ["libstdc++"], "tests": ["Release.Default"]}
+                  ]
                 },
                 { "cxxversions": ["c++23"],
                   "tests": [
-                    { "stdlibs": ["libstdc++", "libc++"],
-                      "tests": [
-                        "Release.Default", "Debug.-DBEMAN_TYPECLASS_USE_MODULES=On"
-                      ]
-                    }
-                  ]
-                },
-                { "cxxversions": ["c++20", "c++17"],
-                  "tests": [
                     {"stdlibs": ["libstdc++", "libc++"], "tests": ["Release.Default"]}
                   ]
                 }
               ]
             },
-            { "versions": ["21", "20", "19"],
+            { "versions": ["20", "19"],
               "tests": [
-                { "cxxversions": ["c++26", "c++23", "c++20", "c++17"],
+                { "cxxversions": ["c++26", "c++23"],
                   "tests": [
                     {"stdlibs": ["libstdc++", "libc++"], "tests": ["Release.Default"]}
                   ]
-                }
-              ]
-            },
-            { "versions": ["18"],
-              "tests": [
-                { "cxxversions": ["c++26", "c++23", "c++20", "c++17"],
-                  "tests": [{"stdlibs": ["libc++"], "tests": ["Release.Default"]}]
-                },
-                { "cxxversions": ["c++23", "c++20", "c++17"],
-                  "tests": [{"stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
-                }
-              ]
-            },
-            { "versions": ["17"],
-              "tests": [
-                { "cxxversions": ["c++26", "c++23", "c++20", "c++17"],
-                  "tests": [{"stdlibs": ["libc++"], "tests": ["Release.Default"]}]
-                },
-                { "cxxversions": ["c++20", "c++17"],
-                  "tests": [{"stdlibs": ["libstdc++"], "tests": ["Release.Default"]}]
                 }
               ]
             }
@@ -162,7 +178,7 @@ jobs:
           "appleclang": [
             { "versions": ["latest"],
               "tests": [
-                { "cxxversions": ["c++26", "c++23", "c++20", "c++17"],
+                { "cxxversions": ["c++23"],
                   "tests": [{ "stdlibs": ["libc++"], "tests": ["Release.Default"]}]
                 }
               ]

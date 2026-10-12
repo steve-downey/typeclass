@@ -29,4 +29,17 @@
 .venv/
 
 # Claude Code local settings
-/.claude/
+/.claude/settings.local.json
+
+# Paper and blog builds (MPark.WG21, org export)
+/papers/generated/
+/papers/wording/.stamp
+/papers/blog/*.html
+*.deps
+/docs/html/
+/installtest/*/.build/
+
+# Emacs packages installed by .emacs.d/init.el for blog export
+/.emacs.d/eln-cache/
+/.emacs.d/elpa/
+/.emacs.d/elpa-*/

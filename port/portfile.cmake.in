@@ -19,14 +19,29 @@ vcpkg_cmake_configure(
         ${FEATURE_OPTIONS}
         -DBEMAN_TYPECLASS_BUILD_TESTS=OFF
         -DBEMAN_TYPECLASS_BUILD_EXAMPLES=OFF
+        -DBEMAN_TYPECLASS_BUILD_BENCHMARKS=OFF
 )
 
 vcpkg_cmake_install()
 
-vcpkg_cmake_config_fixup(
-    PACKAGE_NAME beman.typeclass
-    CONFIG_PATH lib/cmake/beman.typeclass
-)
+# One CMake package per library. beman.fingertree is only built where the
+# toolchain has std::inplace_vector at C++26, so fix up what was installed.
+# Every fixup but the last keeps lib/cmake, which the others still need.
+set(_packages "")
+foreach(_pkg IN ITEMS beman.transpose beman.tree_algorithms beman.fingertree)
+    if(EXISTS "${CURRENT_PACKAGES_DIR}/lib/cmake/${_pkg}")
+        list(APPEND _packages ${_pkg})
+    endif()
+endforeach()
+list(POP_BACK _packages _last)
+foreach(_pkg IN LISTS _packages)
+    vcpkg_cmake_config_fixup(
+        PACKAGE_NAME ${_pkg}
+        CONFIG_PATH lib/cmake/${_pkg}
+        DO_NOT_DELETE_PARENT_CONFIG_PATH
+    )
+endforeach()
+vcpkg_cmake_config_fixup(PACKAGE_NAME ${_last} CONFIG_PATH lib/cmake/${_last})
 
 if(NOT "modules" IN_LIST FEATURES)
     file(

@@ -13,5 +13,22 @@ disabled_rules:
   - cmake.default
   # TODO: Enable once module builds no longer rely on target_compile_features PUBLIC (needs separate design; removing it today breaks module support).
   - cmake.passive_targets
+  # This repository holds three libraries (beman.transpose,
+  # beman.tree_algorithms, beman.fingertree) rather than one named after the
+  # repository, and colocates each library's headers and tests under
+  # src/beman/<lib>/ rather than splitting include/ and tests/. These rules
+  # assume a single beman.typeclass library in the split layout; see README.md.
+  - cmake.library_name
+  - cmake.library_alias
+  - directory.sources
+  - directory.tests
+  - file.names
 ignored_paths:
   - infra/
+  # Vendored MPark.WG21, maintained upstream.
+  - papers/wg21/
+  # The coherence skill is agent configuration, not documentation.
+  - .claude/
+  # Local build and environment state; absent in CI.
+  - .build/
+  - .venv/

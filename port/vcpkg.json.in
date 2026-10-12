@@ -1,7 +1,7 @@
 {
   "name": "beman-typeclass",
   "version-semver": "@VERSION@",
-  "description": "Typeclass Based Libraries for C++",
+  "description": "Typeclass Based Libraries for C++: beman.transpose, beman.tree_algorithms and beman.fingertree",
   "homepage": "https://github.com/bemanproject/typeclass",
   "license": "Apache-2.0 WITH LLVM-exception",
   "dependencies": [
@@ -16,7 +16,7 @@
   ],
   "features": {
     "modules": {
-      "description": "Provide beman.typeclass as a C++ module"
+      "description": "Provide beman.tree_algorithms as a C++ module"
     }
   }
 }

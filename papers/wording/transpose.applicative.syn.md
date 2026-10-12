@@ -1,0 +1,235 @@
+::: add
+
+::: wording
+
+```cpp
+inline constexpr $unspecified$ applicative_eval;
+```
+
+[x]{.pnum} *Remarks*: `applicative_eval` applies a callable to one argument. It is the evaluator that recovers one-step application from the n-ary core: `ap(f, x)` is `invoke(applicative_eval, f, x)`. Naming it is what makes `ap`'s second alternative expressible, and that alternative is satisfied only where the context can hold a callable.
+
+:::
+
+::: wording
+
+```cpp
+inline constexpr $unspecified$ discard_first_eval;
+```
+
+[x+1]{.pnum} *Remarks*: `discard_first_eval` discards its first argument and returns its second. It is the evaluator `discard_first`'s second alternative probes, and that alternative is satisfied exactly when `discard_first`'s own `invoke`-based derivation would be.
+
+:::
+
+::: wording
+
+```cpp
+inline constexpr $unspecified$ discard_second_eval;
+```
+
+[x+2]{.pnum} *Remarks*: `discard_second_eval` discards its second argument and returns its first. It is the evaluator `discard_second`'s second alternative probes, and that alternative is satisfied exactly when `discard_second`'s own `invoke`-based derivation would be.
+
+:::
+
+::: wording
+
+```cpp
+template <class IMPL, class CONTEXT>
+concept applicative_impl =
+    requires(const IMPL &impl) {
+        impl.pure(declval<$applicative-value-t$<CONTEXT>>());
+    } &&
+    (requires(const IMPL &impl, const CONTEXT &context) {
+        impl.invoke($probe-witness$<$applicative-value-t$<CONTEXT>>{}, context);
+    } || requires(const IMPL &impl, const CONTEXT &context) {
+        impl.ap(impl.pure($probe-witness$<$applicative-value-t$<CONTEXT>>{}),
+                context);
+    });
+```
+
+[x+3]{.pnum} *Remarks*: This concept is satisfied when `IMPL` supplies the minimal complete basis the `Applicative` CRTP base needs: `pure`, together with either `invoke` or `ap`. This is the `MINIMAL` pragma to `applicative_object`'s class declaration -- an `IMPL` may satisfy this concept and still fail `applicative_object`, which is exactly the bargain the CRTP base exists to keep. `map`, `lift`, `zip_with`, `discard_first`, `discard_second`, `invoke_with` and `subsume` are all derived and belong to `applicative_object` alone. `pure` is checked for existence only, matching `applicative_object`'s own treatment, and is probed with an rvalue element for the reason `applicative_object` records.
+
+:::
+
+```cpp
+namespace std {
+  template<class Impl>
+  struct derive_applicative : protected Impl {
+    using Impl::pure;
+
+    // @[transpose.applicative.basis]{- .sref}@, basis operations
+    template<class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
+    constexpr auto invoke(this auto&& self, FUNCTION&& function,
+                          FIRST_ARGUMENT&& first_argument,
+                          REST_ARGUMENTS&&... rest_arguments);
+
+    template<class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
+    constexpr auto ap(this auto&& self, FUNCTION_IN_CONTEXT&& function,
+                      ARGUMENT_IN_CONTEXT&& argument)
+      requires requires(const Impl& impl) {
+        impl.ap(forward<FUNCTION_IN_CONTEXT>(function),
+                forward<ARGUMENT_IN_CONTEXT>(argument));
+      } || requires(const Impl& impl) {
+        impl.invoke(applicative_eval, forward<FUNCTION_IN_CONTEXT>(function),
+                    forward<ARGUMENT_IN_CONTEXT>(argument));
+      };
+
+    // @[transpose.applicative.derived]{- .sref}@, derived operations
+    template<class FUNCTION, class ARGUMENT>
+    constexpr auto map(this auto&& self, FUNCTION&& function, ARGUMENT&& argument)
+      requires requires(const Impl& impl) {
+        impl.map(forward<FUNCTION>(function), forward<ARGUMENT>(argument));
+      } || requires {
+        self.invoke(forward<FUNCTION>(function), forward<ARGUMENT>(argument));
+      };
+
+    template<class VALUE>
+    constexpr auto lift(this auto&& self, VALUE&& value)
+      requires requires(const Impl& impl) { impl.lift(forward<VALUE>(value)); } ||
+               requires { self.pure(forward<VALUE>(value)); };
+
+    template<class FUNCTION, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
+    constexpr auto zip_with(this auto&& self, FUNCTION&& function,
+                            FIRST_ARGUMENT&& first_argument,
+                            SECOND_ARGUMENT&& second_argument)
+      requires requires(const Impl& impl) {
+        impl.zip_with(forward<FUNCTION>(function),
+                      forward<FIRST_ARGUMENT>(first_argument),
+                      forward<SECOND_ARGUMENT>(second_argument));
+      } || requires {
+        self.invoke(forward<FUNCTION>(function), forward<FIRST_ARGUMENT>(first_argument),
+                    forward<SECOND_ARGUMENT>(second_argument));
+      };
+
+    template<class FIRST_ARGUMENT, class SECOND_ARGUMENT>
+    constexpr auto discard_first(this auto&& self, FIRST_ARGUMENT&& first_argument,
+                                 SECOND_ARGUMENT&& second_argument)
+      requires requires(const Impl& impl) {
+        impl.discard_first(forward<FIRST_ARGUMENT>(first_argument),
+                           forward<SECOND_ARGUMENT>(second_argument));
+      } || requires {
+        self.invoke(discard_first_eval, forward<FIRST_ARGUMENT>(first_argument),
+                    forward<SECOND_ARGUMENT>(second_argument));
+      };
+
+    template<class FIRST_ARGUMENT, class SECOND_ARGUMENT>
+    constexpr auto discard_second(this auto&& self, FIRST_ARGUMENT&& first_argument,
+                                  SECOND_ARGUMENT&& second_argument)
+      requires requires(const Impl& impl) {
+        impl.discard_second(forward<FIRST_ARGUMENT>(first_argument),
+                            forward<SECOND_ARGUMENT>(second_argument));
+      } || requires {
+        self.invoke(discard_second_eval, forward<FIRST_ARGUMENT>(first_argument),
+                    forward<SECOND_ARGUMENT>(second_argument));
+      };
+
+    // @[transpose.applicative.grade]{- .sref}@, grade re-indexing
+    template<class TARGET_GRADE, class CARRIER>
+    constexpr auto subsume(this auto&&, CARRIER&& value)
+      requires requires { grade_subsume<TARGET_GRADE>(forward<CARRIER>(value)); };
+
+    // @[transpose.applicative.delegate]{- .sref}@, delegated application
+    template<class APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
+             class... REST_ARGUMENTS>
+    constexpr auto invoke_with(this auto&&, const APPLICATIVE_MAP& applicative_map,
+                               FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
+                               REST_ARGUMENTS&&... rest_arguments);
+
+    template<const auto& APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
+             class... REST_ARGUMENTS>
+    constexpr auto invoke_with(this auto&&, FUNCTION&& function,
+                               FIRST_ARGUMENT&& first_argument,
+                               REST_ARGUMENTS&&... rest_arguments);
+  };
+}
+```
+
+::: wording
+
+[x+4]{.pnum} A program that instantiates `derive_applicative<Impl>` is ill-formed unless `is_same_v<Impl, false_type>` is `false`.
+
+:::
+
+::: wording
+
+```cpp
+template<class T> inline constexpr auto applicative = false_type{};
+```
+
+[x+5]{.pnum} *Remarks*: This variable template is the lookup point for the Applicative object of a context type. A program may specialize it for a program-defined context. The primary template names no applicative object. The type of each object named by a specialization this document declares is a class type that is not final and models `semiregular`, so a program may derive from it to combine several objects in one algorithm object.
+
+:::
+
+::: wording
+
+```cpp
+template<class T> inline constexpr auto accumulating_applicative = false_type{};
+```
+
+[x+6]{.pnum} *Remarks*: This variable template is a second lookup point, over the same carrier and grade algebra as `applicative`, naming the accumulating Applicative object. Where the object named by `applicative` stops at the first failing operand, this object combines the evidence of every failing operand. Neither object is selected automatically for a carrier: the context type alone does not determine which composition discipline a caller wants. This object has no Monad instance, because sequencing requires a value from a computation that accumulation admits may have failed. The type of each object named by a specialization this document declares is a class type that is not final and models `semiregular`, so a program may derive from it to combine several objects in one algorithm object.
+
+:::
+
+::: wording
+
+```cpp
+template <class OBJ, class CONTEXT>
+concept applicative_object =
+    requires(const OBJ &obj, const CONTEXT &context) {
+        obj.pure(declval<$applicative-value-t$<CONTEXT>>());
+        obj.invoke($probe-witness$<$applicative-value-t$<CONTEXT>>{}, context);
+        obj.map($probe-witness$<$applicative-value-t$<CONTEXT>>{}, context);
+        obj.lift(declval<$applicative-value-t$<CONTEXT>>());
+        obj.zip_with($probe-witness2$<$applicative-value-t$<CONTEXT>>{}, context,
+                     context);
+        obj.discard_first(declval<CONTEXT>(), declval<CONTEXT>());
+        obj.discard_second(declval<CONTEXT>(), declval<CONTEXT>());
+        obj.invoke_with(obj, $probe-witness$<$applicative-value-t$<CONTEXT>>{},
+                        context);
+    } &&
+    (!requires(const OBJ &obj) {
+        obj.pure($probe-witness$<$applicative-value-t$<CONTEXT>>{});
+    } || requires(const OBJ &obj, const CONTEXT &context) {
+        obj.ap(obj.pure($probe-witness$<$applicative-value-t$<CONTEXT>>{}),
+               context);
+    }) &&
+    (!graded_context<CONTEXT> ||
+     requires(const OBJ &obj, const CONTEXT &context) {
+         obj.template subsume<$grade-of-t$<CONTEXT>>(context);
+     });
+```
+
+[x+7]{.pnum} *Remarks*: This concept is satisfied when `OBJ` provides the full Applicative object surface over `CONTEXT`: `pure`, the `invoke` basis, and the derived `map`, `lift`, `zip_with`, `discard_first`, `discard_second` and `invoke_with`. `ap` and `subsume` are required only where their own condition -- the same one their own declarations carry, not a second spelling of it -- licenses them: `ap` where `CONTEXT` can hold a callable (probed by lifting a witness callable through `OBJ`'s own `pure`, the same mechanism the library's own ap-from-invoke derivation uses), `subsume` where `CONTEXT` participates in grading. Operations templated over an arbitrary callable are probed with one representative witness ($probe-witness$/$probe-witness2$): this checks that the operation exists, not that it holds for every callable. Conformance here is structural, so a hand-implemented object that never derives from `derive_applicative<Impl>` can satisfy this concept.
+
+[x+8]{.pnum} Every probe is written in the value category the operation is used in. `pure` and `lift` take a value *into* the context and are probed with an rvalue element; `discard_first` and `discard_second` return a value *out* of one of their operands and are probed with rvalue operands. Probing either with a `const` lvalue asks the context to copy, which no operation's specification requires, and which for an element type that can be moved but not copied is not merely a stricter test but an ill-formed one: these operations have deduced return types, so a probe instantiates the body, and a body that cannot copy is a diagnostic rather than an unsatisfied constraint. A concept that diagnoses cannot be used to detect anything.
+
+:::
+
+```cpp
+namespace std {
+  template<class VALUE_TYPE>
+  struct $optional-applicative-impl$ {
+    // @[transpose.applicative.optional]{- .sref}@, applicative instance for optional
+    template<class VALUE>
+    constexpr auto pure(this auto&&, VALUE&& value) -> optional<remove_cvref_t<VALUE>>;
+
+    template<class FUNCTION, class FIRST, class... REST>
+      requires $is-optional-v$<FIRST> && ($is-optional-v$<REST> && ...)
+    constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest)
+        -> optional<remove_cvref_t<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>,
+                                                   $contained-ref-t$<REST>...>>>;
+  }; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class VALUE_TYPE>
+  struct $optional-applicative-map$
+      : derive_applicative<$optional-applicative-impl$<VALUE_TYPE>> {
+    using $optional-applicative-impl$<VALUE_TYPE>::invoke;
+    using $optional-applicative-impl$<VALUE_TYPE>::pure;
+  }; // exposition only
+}
+```
+
+:::

@@ -8,146 +8,102 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 [![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg)](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#the-beman-library-maturity-model)
 [![Continuous Integration Tests](https://github.com/bemanproject/typeclass/actions/workflows/ci_tests.yml/badge.svg)](https://github.com/bemanproject/typeclass/actions/workflows/ci_tests.yml)
 [![Lint Check (pre-commit)](https://github.com/bemanproject/typeclass/actions/workflows/pre-commit-check.yml/badge.svg)](https://github.com/bemanproject/typeclass/actions/workflows/pre-commit-check.yml)
-[![Coverage](https://coveralls.io/repos/github/bemanproject/typeclass/badge.svg?branch=main)](https://coveralls.io/github/bemanproject/typeclass?branch=main)
 ![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg)
 <!-- markdownlint-restore -->
 
-`beman.typeclass` is (... TODO: description).
+Three libraries that share one design: typeclass objects as the customization mechanism, and the Functor / Applicative / Foldable / Traversable vocabulary built on it.
+They live in one repository because they layer on the same machinery, and a change to that machinery has to be checked against all of them at once.
+Each is still its own CMake target, its own installed package, and its own paper.
 
-**Implements**: `std::todo` proposed in [TODO (P3200R0)](https://wg21.link/P3200R0).
+| Library | Namespace | What it is | Paper | Notes |
+|---|---|---|---|---|
+| `beman.transpose` | `beman::transpose` | Shape-preserving `traverse` and `transpose` for contextual computations, and the typeclass-object mechanism itself | P3200, [`papers/D3200R0.md`](papers/D3200R0.md) | [`docs/transpose/`](docs/transpose/README.md) |
+| `beman.tree_algorithms` | `beman::tree_algorithms` | The fold family over recursive trees: `fold_fix`, `unfold_fix`, `refold`, and the direct verbs `fold_with` / `unfold_with` | D4322, [`papers/algorithms-for-trees.md`](papers/algorithms-for-trees.md) | [`docs/tree_algorithms/`](docs/tree_algorithms/README.md) |
+| `beman.fingertree` | `beman::fingertree` | A persistent measured sequence | not yet drafted | [`docs/fingertree/`](docs/fingertree/README.md) |
+
+How the three relate, and the invariants that keep them coherent, are in [`docs/coordination/`](docs/coordination/README.md).
 
 **Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use)
 
+## History
+
+Each library was developed in its own repository: `steve-downey/transpose`, `steve-downey/tree_algorithms`, and `steve-downey/fingertree`, coordinated from `steve-downey/tree-coordination`.
+Those repositories are retired.
+Their histories were merged here with every commit's SHA unchanged, so commit references in the decision logs and coordination ledger still resolve.
+Published blog posts were pinned to tags in those repositories; the tags are carried here with the repository's name as a prefix (`transpose/blog/graded-gadgets`).
+
+## Layout
+
+```txt
+src/beman/<library>/    headers, tests and CMake for each library, side by side
+examples/<library>/     runnable examples, several transcluded into papers and posts
+benchmarks/<library>/   benchmarks (tree_algorithms)
+papers/                 every paper, built by the vendored MPark.WG21 in papers/wg21/
+papers/blog/            the blog series
+docs/<library>/         design notes and decision logs for each library
+docs/coordination/      cross-library status, the coordination ledger, and the essay
+```
+
+`src/` is the single include root: headers are included by their canonical names, `<beman/transpose/traverse.hpp>`, as they will be once installed.
+
 ## License
 
-`beman.typeclass` is licensed under the Apache License v2.0 with LLVM Exceptions.
+The libraries are licensed under the Apache License v2.0 with LLVM Exceptions.
+The `beman.fingertree` design documents are additionally offered under CC BY-SA 4.0; see [`docs/fingertree/LICENSE.CC-BY-SA-4.0`](docs/fingertree/LICENSE.CC-BY-SA-4.0).
 
-## Usage
+## Building
 
-TODO
+### Requirements
 
-Full runnable examples can be found in [`examples/`](examples/).
+* The C++23 standard is the minimum for `beman.transpose` and `beman.tree_algorithms`, with GCC 14, Clang 19, current AppleClang or MSVC.
+* `beman.fingertree` needs `std::inplace_vector` at C++26, which today means GCC 16.
+  The build probes for it and skips fingertree where it is missing; force the choice with `-DBEMAN_TYPECLASS_BUILD_FINGERTREE=ON|OFF`.
+* CMake 3.30 or later.
+* (Tests and benchmarks only) Catch2 3.
+* (Optional) [beman.execution](https://github.com/bemanproject/execution), for transpose's P2300 evidence: `-DBEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE=ON`.
 
-## Dependencies
+The CI matrix in [`.github/workflows/ci_tests.yml`](.github/workflows/ci_tests.yml) is the authoritative list of what is tested.
 
-### Build Environment
+### With a preset
 
-This project requires at least the following to build:
+```bash
+cmake --workflow --preset gcc-release
+cmake --list-presets=workflow
+```
 
-* A C++ compiler that conforms to the C++26 standard or greater
-* CMake 3.30 or later
-* (Test Only) GoogleTest
+### With the Makefile
 
-You can disable building tests by setting CMake option `BEMAN_TYPECLASS_BUILD_TESTS` to
-`OFF` when configuring the project.
+```bash
+make TOOLCHAIN=gcc-16 test        # configure, build, run every test
+make TOOLCHAIN=gcc-16 compile-headers
+make wording-check                # P3200 wording still matches the headers
+make papers                       # build every paper
+make bench                        # tree_algorithms runtime benchmarks, Bench config
+make help
+```
 
-You can disable building examples by setting CMake option `BEMAN_TYPECLASS_BUILD_EXAMPLES` to
-`OFF` when configuring the project.
+### Options
 
-### Supported Platforms
+| Option | Default | Effect |
+|---|---|---|
+| `BEMAN_TYPECLASS_BUILD_TESTS` | top level | Build the tests |
+| `BEMAN_TYPECLASS_BUILD_EXAMPLES` | top level | Build the examples |
+| `BEMAN_TYPECLASS_BUILD_BENCHMARKS` | top level | Build (not run) the benchmarks |
+| `BEMAN_TYPECLASS_BUILD_FINGERTREE` | probed | Build `beman.fingertree` |
+| `BEMAN_TYPECLASS_USE_MODULES` | `OFF` | Build `beman.tree_algorithms` as a C++ module |
+| `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE` | `OFF` | Build the P2300 sender adapter and its tests |
 
-| Compiler   | Version | C++ Standards | Standard Library  |
-|------------|---------|---------------|-------------------|
-| GCC        | 16-13   | C++26-C++17   | libstdc++         |
-| GCC        | 12-11   | C++23-C++17   | libstdc++         |
-| Clang      | 22-19   | C++26-C++17   | libstdc++, libc++ |
-| Clang      | 18      | C++26-C++17   | libc++            |
-| Clang      | 18      | C++23-C++17   | libstdc++         |
-| Clang      | 17      | C++26-C++17   | libc++            |
-| Clang      | 17      | C++20, C++17  | libstdc++         |
-| AppleClang | latest  | C++26-C++17   | libc++            |
-| MSVC       | latest  | C++23         | MSVC STL          |
+## Using the libraries
+
+Each library installs as its own CMake package:
+
+```cmake
+find_package(beman.transpose REQUIRED)
+target_link_libraries(yourlib PUBLIC beman::transpose)
+```
+
+and likewise `beman.tree_algorithms` / `beman::tree_algorithms` and `beman.fingertree` / `beman::fingertree`.
 
 ## Development
 
 See the [Contributing Guidelines](CONTRIBUTING.md).
-
-## Integrate beman.typeclass into your project
-
-### Build
-
-You can build typeclass using a CMake workflow preset:
-
-```bash
-cmake --workflow --preset gcc-release
-```
-
-To list available workflow presets, you can invoke:
-
-```bash
-cmake --list-presets=workflow
-```
-
-For details on building beman.typeclass without using a CMake preset, refer to the
-[Contributing Guidelines](CONTRIBUTING.md).
-
-### Installation
-
-#### Vcpkg
-
-The preferred way to install typeclass is via vcpkg. To do so, after installing vcpkg
-itself, you need to add support for the Beman project's [vcpkg
-registry](https://github.com/bemanproject/vcpkg-registry) by configuring a
-`vcpkg-configuration.json` file (which typeclass [provides](vcpkg-configuration.json)).
-
-Then, simply run `vcpkg install beman-typeclass`.
-
-#### Manual
-
-To install beman.typeclass globally after building with the `gcc-release` preset, you can
-run:
-
-```bash
-sudo cmake --install build/gcc-release
-```
-
-Alternatively, to install to a prefix, for example `/opt/beman`, you can run:
-
-```bash
-sudo cmake --install build/gcc-release --prefix /opt/beman
-```
-
-This will generate the following directory structure:
-
-```txt
-/opt/beman
-├── include
-│   └── beman
-│       └── typeclass
-│           ├── typeclass.hpp
-│           └── ...
-└── lib
-    └── cmake
-        └── beman.typeclass
-            ├── beman.typeclass-config-version.cmake
-            ├── beman.typeclass-config.cmake
-            └── beman.typeclass-targets.cmake
-```
-
-### CMake Configuration
-
-If you installed beman.typeclass to a prefix, you can specify that prefix to your CMake
-project using `CMAKE_PREFIX_PATH`; for example, `-DCMAKE_PREFIX_PATH=/opt/beman`.
-
-You need to bring in the `beman.typeclass` package to define the `beman::typeclass` CMake
-target:
-
-```cmake
-find_package(beman.typeclass REQUIRED)
-```
-
-You will then need to add `beman::typeclass` to the link libraries of any libraries or
-executables that include `beman.typeclass` headers.
-
-```cmake
-target_link_libraries(yourlib PUBLIC beman::typeclass)
-```
-
-### Using beman.typeclass
-
-To use `beman.typeclass` in your C++ project,
-include an appropriate `beman.typeclass` header from your source code.
-
-```c++
-#include <beman/typeclass/typeclass.hpp>
-```

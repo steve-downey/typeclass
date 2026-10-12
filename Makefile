@@ -16,6 +16,7 @@ VENV := .venv
 UV := $(shell command -v uv 2> /dev/null)
 ACTIVATE := $(UV) run
 PYEXEC := $(UV) run python
+EMACS ?= $(shell command -v emacs 2> /dev/null)
 MARKER=.initialized.venv.stamp
 
 PRE_COMMIT := $(UV) run pre-commit
@@ -44,7 +45,7 @@ else
 	_local_toolchain?=$(CURDIR)/cmake/$(TOOLCHAIN)-toolchain.cmake
 endif
 
-_configuration_types?="RelWithDebInfo;Debug;Tsan;Asan;Gcov"
+_configuration_types?="RelWithDebInfo;Debug;Tsan;Asan;Gcov;Bench"
 
 _build_path?=$(_build_dir)/$(_build_name)
 _build_path:=$(subst //,/,$(_build_path))
@@ -119,7 +120,7 @@ compile-headers: $(_build_path)/CMakeCache.txt ## Compile the headers
 
 .PHONY: install
 install: $(_build_path)/CMakeCache.txt compile ## Install the project
-	$(CMAKE) --install $(_build_path) --config $(CONFIG) --component beman.typeclass --verbose
+	$(CMAKE) --install $(_build_path) --config $(CONFIG) --verbose
 
 .PHONY: clean-install
 clean-install:
@@ -198,6 +199,103 @@ dev-shell: ## Shell with the venv activated
 bash zsh: venv
 bash zsh: ## Run bash or zsh with the venv activated
 	$(ACTIVATE) $@
+
+# ---------------------------------------------------------------------
+# Papers. Each paper is built by MPark.WG21, vendored under papers/wg21/;
+# see papers/Makefile. The P3200 wording fragments are generated from the
+# beman.transpose headers by beman.specgen; see
+# docs/transpose/wording-pipeline.md.
+# ---------------------------------------------------------------------
+
+WORDING_DIR ?= papers/wording
+
+.PHONY: wording
+wording: ## Regenerate the P3200 wording fragments from the headers
+	scripts/gen-wording.sh $(CURDIR)/$(WORDING_DIR)
+
+.PHONY: wording-check
+wording-check: ## Check the checked-in wording matches what the headers generate
+	rm -rf $(BUILD_DIR)/wording-check
+	scripts/gen-wording.sh $(CURDIR)/$(BUILD_DIR)/wording-check
+	diff -r -x .stamp $(WORDING_DIR) $(BUILD_DIR)/wording-check
+
+.PHONY: clean-wording
+clean-wording: ## Delete the generated wording fragments
+	-rm -rf $(BUILD_DIR)/wording-check
+
+clean: clean-wording
+
+.PHONY: papers
+papers: wording
+papers: ## Build every paper
+	$(MAKE) -C papers pdf
+
+.PHONY: clean-papers
+clean-papers: ## Clean generated paper outputs
+	$(MAKE) -C papers clean
+
+clean: clean-papers
+
+.PHONY: realclean-papers
+realclean-papers: ## Delete generated paper infrastructure
+	$(MAKE) -C papers distclean
+
+realclean: realclean-papers
+
+# Emacs packages for the org exports (papers/blog, docs/*/*.org), installed
+# into .emacs.d/ by its init.el.
+.PHONY: elpa
+elpa: ## Install the Emacs packages the org exports need
+	$(EMACS) --init-directory=.emacs.d/ --batch --load .emacs.d/init.el
+
+.PHONY: refresh
+refresh: ## Upgrade the Emacs packages the org exports need
+	$(EMACS) --init-directory=.emacs.d/ --batch --load .emacs.d/init.el -f package-upgrade-all
+
+.PHONY: clean-emacs.d
+clean-emacs.d:
+	-rm -rf .emacs.d/eln-cache
+	-rm -rf .emacs.d/elpa*
+
+realclean: clean-emacs.d
+
+# ---------------------------------------------------------------------
+# Benchmarks (beman.tree_algorithms).
+#
+# The benchmark targets are ordinary targets in the default build, so they
+# always compile and can never rot silently. What the bench* targets add is
+# *measurement*: they build and run in the Bench configuration (optimized,
+# unsanitized -- see the toolchain flags files), and read compile timings out
+# of the CMake build telemetry, which drops one per-translation-unit
+# `compile` event into $(_build_path)/.trace on every build.
+#
+# CCACHE_RECACHE forces a real (measurable) recompile while keeping the
+# compiler cache coherent. Touching the generated sources is what makes
+# ninja consider them dirty.
+# ---------------------------------------------------------------------
+
+BENCH_CONFIG ?= Bench
+
+_bench_bin_dir := $(_build_path)/benchmarks/tree_algorithms/$(BENCH_CONFIG)
+_bench_ct_src := $(_build_path)/benchmarks/tree_algorithms/ct_*.cpp
+
+.PHONY: bench
+bench: $(_build_path)/CMakeCache.txt ## Build and run the runtime microbenchmarks (Bench config)
+	$(CMAKE) --build $(_build_path) --config $(BENCH_CONFIG) --target bench_runtime_all
+	@echo "==== fold: consuming a very large tree ===="
+	$(_bench_bin_dir)/beman.tree_algorithms.benchmarks.fold "[!benchmark]"
+	@echo "==== build: producing / copying / refolding ===="
+	$(_bench_bin_dir)/beman.tree_algorithms.benchmarks.build "[!benchmark]"
+
+.PHONY: bench-compile
+bench-compile: $(_build_path)/CMakeCache.txt ## Recompile the compile-time benchmark matrix and report per-TU compile time
+	-touch $(_bench_ct_src)
+	CCACHE_RECACHE=1 $(CMAKE) --build $(_build_path) --config $(BENCH_CONFIG) --target bench_ct_all
+	$(PYEXEC) benchmarks/compile_trace_report.py --build-dir $(_build_path) --config $(BENCH_CONFIG)
+
+.PHONY: bench-report
+bench-report: ## Re-print the compile-time report from the existing .trace, without rebuilding
+	$(PYEXEC) benchmarks/compile_trace_report.py --build-dir $(_build_path) --config $(BENCH_CONFIG)
 
 .PHONY: lint
 lint: venv

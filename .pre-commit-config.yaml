@@ -35,10 +35,13 @@ repos:
   #   hooks:
   #   - id: markdownlint
 
+    # Config file: .codespell_ignore
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.3
     hooks:
       - id: codespell
+        args: ['-I', '.codespell_ignore', '--uri-ignore-words-list', '*']
+        exclude: ^papers/
 
     # Beman Standard checking via beman-tidy
   - repo: https://github.com/bemanproject/beman-tidy
@@ -46,4 +49,4 @@ repos:
     hooks:
     - id: beman-tidy
 
-exclude: 'infra/|port/'
+exclude: '^(infra/|port/|papers/wg21/)'

@@ -1,0 +1,18 @@
+# .github/imported-history                                         -*-conf-*-
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+#
+# Tips of the histories merged into this repository from beman.transpose,
+# beman.tree_algorithms, beman.fingertree and tree-coordination, which are
+# retired. Everything reachable from these commits predates the merge and
+# keeps its original SHA, so it is exempt from the commit-authorship check
+# (commit-authorship.yml): it is history, and cannot be re-authored
+# without breaking the references to it. One SHA per line.
+c6209700c81a0a21b70fb13be21e07dc99c93563
+7850388e224b228e91a84b61627618c7b270c052
+476cc6611bd5beafc19fa6ee9380a34ec7e5b8ef
+fe57e7bd599bccf6d31efd1d777e90f6be802f76
+a2785fffcbd5bd38de8652109294a2c7a24b5c4e
+e3aac9e42b613ae84c5b4c74b62bbbcfed4940d2
+8133334cc2713325d523bf0326541ef2b8dd54de
+bf6cc56d89d895e5d2e6cf9e12715a90109447e7
+72ef01e5010a187642ebc8d05a6c6e342fb588b8
