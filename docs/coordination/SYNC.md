@@ -3,6 +3,26 @@
 Pins each repo's state at each coordination decision. Append-only;
 newest entry first.
 
+## 2026-10-12 (entry 2) — machinery deduplication begins
+
+Decision (Steve): collapse the copied typeclass machinery onto
+beman.transpose, per
+[machinery-deduplication.md](machinery-deduplication.md). Rulings:
+fingertree's provisional names go without aliases
+([fingertree-public-names](machinery-deduplication.md#fingertree-public-names));
+tree_algorithms' lookup objects take the plain names `functor`,
+`layer_fold`, `project`
+([consumer-lookup-names](machinery-deduplication.md#consumer-lookup-names));
+`overloaded` moves into beman.transpose and P3200 proposes it
+([overloaded-home](../transpose/decisions.md#overloaded-home)); the
+non-exhaustive overload set is deferred
+([fallback-overload-set](machinery-deduplication.md#fallback-overload-set)).
+Recorded first in tree_algorithms' DECISIONS.md (amendment
+2026-10-12), its extraction plan, transpose's decision log and the
+coherence skill, before any code moves.
+
+Start state: beman.typeclass `reintegrate` at `f1d18e7`.
+
 ## 2026-10-12 — the three libraries merge into beman.typeclass
 
 Decision (Steve): transpose, tree_algorithms and fingertree must stay in

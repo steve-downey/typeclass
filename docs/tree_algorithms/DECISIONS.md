@@ -171,6 +171,18 @@ Everything else stands: value semantics, `Box` deep-copies at the knot, copies a
 - **Decision 3 as amended**: `Box` remains the knot storage, for the recorded reasons (constexpr, nullable, aggregate-friendly).
   The inline slot is plain `std::optional`; no new vocabulary type is introduced.
 
+## Amendment 2026-10-12 — the lookup tier consumes beman.transpose
+
+Ratified by Steve on 2026-10-12, when transpose, tree_algorithms and fingertree were merged into one repository so that shared machinery could have one definition; the plan is [`docs/coordination/machinery-deduplication.md`](../coordination/machinery-deduplication.md).
+This amendment changes how Decision 4's convenience header meets the Paper A facility, and renames the lookup objects of the 2026-07-14 amendment.
+Decision 4's division is unchanged: the primary verbs take `fmap` explicitly and have no customization-mechanism dependency, and the paper consumes the mechanism without respecifying it.
+
+- **The stub becomes a dependency.** `functor.hpp` was a consumer-side stub of the P3200 facility, "to be replaced by a dependency on it" once a library implementation existed. beman.transpose is that implementation and now lives in the same repository, so the lookup tier uses it directly: Layer functors are registered as `beman::transpose::functor<Layer>` with the CRTP base `beman::transpose::derive_functor<Impl>`, and `beman.tree_algorithms` links `beman::transpose`.
+- **The explicit tier stays mechanism-free, and a test now says so.** `fix.hpp`, `box.hpp`, `child_slot.hpp`, `recursion_schemes.hpp` and `fold_map.hpp` must not include anything from beman.transpose, directly or transitively; a build-time check enforces it ([explicit-tier-isolation](../coordination/machinery-deduplication.md#explicit-tier-isolation)). This is the surface that "remains fully valid even if Paper A does not progress at the same pace."
+- **Lookup object names.** The three lookup objects take the plain names transpose adopted for its own ([lookup-variable-naming](../transpose/decisions.md#lookup-variable-naming)): `functor<Layer>` (transpose's own), `layer_fold<Layer>`, `project<Tree>`, replacing `functor_typeclass`, `layer_fold_typeclass` and `project_typeclass` ([consumer-lookup-names](../coordination/machinery-deduplication.md#consumer-lookup-names)). The reasons are transpose's: the lookup objects are the user-facing surface, and one lookup surface should not be spelled two ways in one paper.
+- **`overloaded`** moves to beman.transpose and is proposed in P3200 ([overloaded-home](../coordination/machinery-deduplication.md#overloaded-home)). Paper D's examples use it from there.
+- **DEV-04 still holds.** transpose's derived Functor operations are made `constexpr` before tree_algorithms switches to them ([transpose-constexpr-derivations](../coordination/machinery-deduplication.md#transpose-constexpr-derivations)), so no `static_assert` coverage is lost.
+
 ## Discrepancies
 
 Points where a cited source does not line up exactly with the decision as recorded, noted rather than silently adjusted:

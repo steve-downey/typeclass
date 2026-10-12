@@ -31,9 +31,18 @@ separate checkouts.
 
 **Division of labor.**
 - P3200 owns the customization mechanism and proposes only what its
-  three-domain proof forces: Applicative and Traversable. Papers C and D
-  *consume* the mechanism and never respecify it. The mechanism debate
-  happens only in P3200.
+  three-domain proof forces: Applicative and Traversable. One recorded
+  exception: P3200 also proposes `overloaded`, as vocabulary for writing
+  algebras, needed even more by Paper D (ruling 2026-10-12,
+  [overloaded-home](../../../docs/transpose/decisions.md#overloaded-home)).
+  Papers C and D *consume* the mechanism and never respecify it. The
+  mechanism debate happens only in P3200.
+- **One definition of the machinery.** beman.transpose is the only home
+  of the typeclass mechanism in code. tree_algorithms (its lookup tier)
+  and fingertree link `beman::transpose` and use its names
+  (`functor<T>`, `foldable<T>`, `monoid<T>`, `derive_*`); they never
+  carry copies. Neither links the other. Plan and rulings:
+  `docs/coordination/machinery-deduplication.md`.
 - **Paper D proposes the fold family, both structural and elementwise**:
   `fold_fix`/`unfold_fix`/`refold` plus `fold_map` (decided 2026-07-13).
   Rationale: `fold_map`'s motivation is structures that aren't ranges —
@@ -56,7 +65,9 @@ separate checkouts.
 - Paper D's primary verbs take `fmap` explicitly (no mechanism
   dependence), and `fold_map`'s primary spelling takes the monoid
   explicitly; lookup-based overloads live in a separate convenience
-  header that is explicitly a P3200 consumer.
+  header that is explicitly a P3200 consumer, and includes beman.transpose.
+  The explicit-tier headers (`fix`, `box`, `child_slot`,
+  `recursion_schemes`, `fold_map`) must never include beman.transpose.
 - No normative dependence between Papers C and D in either direction.
 - The exotic scheme catalog stays in the fixpoint repo. Nothing from it
   ships in a proposal; it is cited as evidence only.

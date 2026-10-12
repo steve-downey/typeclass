@@ -27,6 +27,10 @@ Paper D **consumes** the P3200 mechanism in a separate convenience header
 and never respecifies it; the explicit-`fmap` primary API has no
 customization-mechanism dependency at all; no normative dependence in
 either direction between Papers C and D.
+Since 2026-10-12 the convenience header consumes beman.transpose directly
+rather than through a local stub, and the explicit tier's independence is
+checked by a test ([DECISIONS.md amendment of
+2026-10-12](../DECISIONS.md#amendment-2026-10-12--the-lookup-tier-consumes-bemantranspose)).
 
 ## 2. Gap analysis
 
@@ -94,7 +98,7 @@ Deliverables here:
    spelling mirroring the explicit-`fmap` rule: the primary form takes
    the combine operation and identity (or a monoid object) explicitly,
    so it works with no P3200 adoption; lookup-based overloads resolving
-   `foldable_typeclass`/`monoid_v` live in the convenience header, which
+   their ingredients through typeclass-object lookup live in the convenience header, which
    remains an explicit P3200 consumer. Keeps Decision 4's independence
    invariant intact — the mechanism debate still happens only in P3200.
 2. **Instances** for the tree representations shipped here (`Fix<ExprF>`,

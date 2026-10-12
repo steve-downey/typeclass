@@ -3409,3 +3409,33 @@ accept.
 - 2026-10-11 — Stated by Steve Downey while settling
   [monoid-registry-spelling](#monoid-registry-spelling) and
   [wording-spec-names](#wording-spec-names).
+
+---
+
+## overloaded-home
+
+**Question:** Is `overloaded` proposed, and if so by which paper and from which
+library?
+**Status:** DECIDED 2026-10-12
+**Decided by:** Steve Downey, 2026-10-12.
+**Decision:** P3200 proposes `overloaded`, and it lives here as
+`beman::transpose::overloaded`, in `overloaded.hpp`. beman.tree_algorithms and
+beman.fingertree use it from here and carry no copies. It keeps its
+consteval catch-all, which turns an unhandled alternative into a
+`static_assert`. A form without the catch-all, which admits a deliberate
+generic fallback, is a separate type with a worse name, proposed only if
+required. Candidate names and the remaining points are in
+[fallback-overload-set](../coordination/machinery-deduplication.md#fallback-overload-set).
+**Why:** It is tiny, but it is just enough code that no one should have to
+write it again. It is useful here for writing algebras, and needed even more by
+the tree algorithms. This library is the root of the build graph, so putting it
+here adds no dependence between the tree algorithms and the finger tree. It is
+a recorded exception to proposing only what the three-domain argument forces.
+The catch-all is a diagnostic, not a "match anything" case: `overloaded` is
+overload resolution (best-match), not case analysis (first-match).
+**Log:**
+- 2026-10-12 — Decided during the deduplication plan,
+  [overloaded-home](../coordination/machinery-deduplication.md#overloaded-home),
+  which has the gcc-16 checks of the catch-all's behaviour. Paper text and
+  wording are to come; the earlier `overload` proposal (P0051) must be
+  addressed.
