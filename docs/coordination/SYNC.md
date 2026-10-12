@@ -3,6 +3,44 @@
 Pins each repo's state at each coordination decision. Append-only;
 newest entry first.
 
+## 2026-10-12 — the three libraries merge into beman.typeclass
+
+Decision (Steve): transpose, tree_algorithms and fingertree must stay in
+sync where they layer on or reuse machinery and design, and three
+repositories were drifting. They are reintegrated into beman.typeclass
+with full history; the papers stay separate, all under `papers/`. The
+upstream repositories, and this ledger's own, are retired, not synced
+back.
+
+Merged at, with SHAs unchanged (so every SHA cited above still
+resolves here):
+
+| Source | Tip merged |
+|---|---|
+| beman.transpose `main` | `fe57e7bd` |
+| beman.tree_algorithms `main` | `476cc661` |
+| beman.fingertree `main` | `7850388e` (origin; the local clone was 3 behind) |
+| tree-coordination `main` | `c6209700` |
+
+Unmerged branches came along as `import/<repo>/<branch>`: transpose's
+`docs/voice-pass-and-series-nav`, `review-fixes-2026-08-07` and
+`lean-probe-harness`; tree_algorithms' `allocator-awareness`. Thirteen
+transpose commits cited in these documents had been rebased out of every
+branch; `archive/cited-commits` keeps them reachable. Blog tags carry
+the repository as a prefix: `transpose/blog/...`,
+`tree_algorithms/blog/...`, `fingertree/blog/...`.
+
+Layout: `src/beman/<lib>/` (headers beside their tests), `examples/<lib>/`,
+`docs/<lib>/`, `benchmarks/tree_algorithms/`, `papers/` flat because
+MPark.WG21 requires it, and this directory at `docs/coordination/`. The
+namespaces are unchanged. Not yet done: fingertree's private copies of
+the typeclass machinery (`typeclass/`, `fixpoint/overloaded.hpp`) and
+tree_algorithms' (`functor.hpp`, `fix.hpp`, `overloaded.hpp`) still
+duplicate transpose's; collapsing them onto one definition is the point
+of the merge and the next piece of work.
+
+From here on, pinned states are beman.typeclass SHAs.
+
 ## 2026-07-14 (entry 5) — settled: ap is a basis, invoke is the interface
 
 Two refinements from Steve landed the pure/apply ruling in its final

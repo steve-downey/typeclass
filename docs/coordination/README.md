@@ -1,12 +1,12 @@
-# tree-coordination
+# Coordination
 
-Meta-repository coordinating the intertwined tree-standardization work:
+Coordinating the intertwined tree-standardization work:
 
-| Repo (sibling checkout) | Role | Paper |
+| Where | Role | Paper |
 |---|---|---|
-| `~/src/transpose/transpose` | beman.transpose — mechanism + Applicative/Traversable | Paper A / P3200 (D3200R0) |
-| `~/src/fingertree/main` | beman.fingertree — persistent measured sequence | Paper C (unnumbered) |
-| `~/src/tree_algorithms/tree_algorithms.git` | beman.tree_algorithms — the fold family + direct verbs | Paper D (`D4322R0`) |
+| `src/beman/transpose/` (this repo) | beman.transpose — mechanism + Applicative/Traversable | Paper A / P3200 ([`papers/D3200R0.md`](../../papers/D3200R0.md)) |
+| `src/beman/fingertree/` (this repo) | beman.fingertree — persistent measured sequence | Paper C (unnumbered) |
+| `src/beman/tree_algorithms/` (this repo) | beman.tree_algorithms — the fold family + direct verbs | Paper D (D4322, [`papers/algorithms-for-trees.md`](../../papers/algorithms-for-trees.md)) |
 | `~/src/fixpoint/main` | smd::fixpoint — recursion-scheme catalog, evidence only | never proposed |
 | `~/src/trees/main` | origin/pedagogy (CppNow26); one-way extraction source | — |
 
@@ -20,32 +20,18 @@ sdowney.org / the transpose blog) is the citable acknowledgment.
   its owning repo, and its blocking decision. This is the scheduler.
 - `SYNC.md` — ledger pinning each repo's SHA at each coordination
   decision, so "the coordinated state as of date X" is reconstructible.
-- `.claude/skills/tree-proposals-coherence/SKILL.md` — **canonical copy**
-  of the coherence skill (invariants, procedures, hazards). Per-repo
-  copies are mirrors; edit here first, then sync.
+- [`.claude/skills/tree-proposals-coherence/SKILL.md`](../../.claude/skills/tree-proposals-coherence/SKILL.md)
+  at the repository root — the coherence skill (invariants, procedures,
+  hazards). There is one copy now; the per-repo mirrors went with their
+  repositories.
 - `essay/` — drafts of the relationships essay.
 - `CLAUDE.md` — orientation for agents working in this checkout.
 
-## Why thin, and the subtree upgrade path
+## History
 
-This repo deliberately contains **no subtree copies** of the five repos
-yet. The sibling checkouts under `~/src` already give cross-repo grep
-and editing; a thin repo has zero merge friction and can be pushed and
-tracked independently, which is the immediate need.
-
-If a browsable, versioned snapshot of the coordination-relevant material
-becomes worth the cost, the upgrade path is `git subtree` of the
-*document* directories only — not whole repos (their vendored trees,
-CI, and build dirs don't belong here, and bidirectional subtree
-push/pull across five active histories is real merge overhead):
-
-```sh
-git subtree add --prefix=mirror/transpose-papers  ~/src/transpose/transpose  main --squash
-git subtree add --prefix=mirror/fingertree-docs   ~/src/fingertree/main      main --squash
-# pull updates later:
-git subtree pull --prefix=mirror/transpose-papers ~/src/transpose/transpose  main --squash
-```
-
-(Whole-repo subtrees with `--squash` keep this repo small but make
-`subtree push` back to the sources unreliable; treat mirrors as
-read-only if added, and keep edits flowing through the source repos.)
+This was the separate `tree-coordination` repository: deliberately thin,
+holding no copies of the code it coordinated, and pointing at sibling
+checkouts under `~/src`. On 2026-10-12 it was merged, with transpose,
+tree_algorithms and fingertree, into beman.typeclass, which made the
+sibling-checkout arrangement and its subtree upgrade path moot; see the
+[2026-10-12 SYNC entry](SYNC.md#2026-10-12--the-three-libraries-merge-into-bemantypeclass).

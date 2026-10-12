@@ -1,6 +1,6 @@
 ---
 name: tree-proposals-coherence
-description: Keep the coordinated tree-proposal ecosystem coherent when working in any one of its repos — tree_algorithms (Paper D), transpose (P3200/Paper A), fingertree (Paper C), the fixpoint evidence repo, or the trees/main origin repo. Use before changing shared vocabulary (verb names, typeclass/monoid spellings, lookup pattern), adding API surface, editing paper text about companion proposals, or extracting code between these repos.
+description: Keep the coordinated tree-proposal ecosystem coherent — the three libraries in beman.typeclass (tree_algorithms / Paper D, transpose / P3200 / Paper A, fingertree / Paper C), the fixpoint evidence repo, and the trees/main origin repo. Use before changing shared vocabulary (verb names, typeclass/monoid spellings, lookup pattern), adding API surface, editing paper text about companion proposals, or extracting code between these repos.
 ---
 
 # Tree-proposals coherence
@@ -13,11 +13,17 @@ these repos.
 
 ## The map
 
-| Repo | Role | Authoritative documents |
+transpose, tree_algorithms and fingertree were separate repositories until
+2026-10-12; they now live together in beman.typeclass (this repository),
+under `src/beman/<lib>/`, `docs/<lib>/`, `examples/<lib>/`, with every paper
+in `papers/`. Their old repositories are retired. fixpoint and trees remain
+separate checkouts.
+
+| Where | Role | Authoritative documents |
 |------|------|------------------------|
-| `~/src/tree_algorithms/tree_algorithms.git` (this repo) | **Paper D** — recursive tree algorithms: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters across representations | `docs/DECISIONS.md` (frozen), `papers/algorithms-for-trees.md`, `docs/notes/extraction-plan.md`, `docs/notes/punch-list.md`, `docs/notes/anchor-inventory.md` |
-| `~/src/transpose/transpose` | **Paper A / P3200 (D3200R0)** — traversal, transposition, bundled customization. Owns the mechanism: typeclass-object lookup, Functor/Foldable/Applicative/Traversable/Monad bases, `traverse`/`transpose`/`invoke`, `Monoid` | `papers/wg21/D3200R0.md`, `docs/provenance.md`, `docs/typeclass-object-pattern.md` |
-| `~/src/fingertree/main` | **Paper C / D4325R0** — persistent measured sequence. Owns the container, measures, allocator/PMR story | `docs/allocator-design.md`, `docs/compile-time-design.md`, `docs/measure-based-splitting.md` |
+| `src/beman/tree_algorithms/` | **Paper D** — recursive tree algorithms: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters across representations | `docs/tree_algorithms/DECISIONS.md` (frozen), `papers/algorithms-for-trees.md`, `docs/tree_algorithms/notes/extraction-plan.md`, `docs/tree_algorithms/notes/punch-list.md`, `docs/tree_algorithms/notes/anchor-inventory.md` |
+| `src/beman/transpose/` | **Paper A / P3200 (D3200R0)** — traversal, transposition, bundled customization. Owns the mechanism: typeclass-object lookup, Functor/Foldable/Applicative/Traversable/Monad bases, `traverse`/`transpose`/`invoke`, `Monoid` | `papers/D3200R0.md`, `docs/transpose/decisions.md`, `docs/transpose/provenance.md`, `docs/transpose/typeclass-object-pattern.md` |
+| `src/beman/fingertree/` | **Paper C / D4325R0** — persistent measured sequence. Owns the container, measures, allocator/PMR story | `docs/fingertree/allocator-design.md`, `docs/fingertree/compile-time-design.md`, `docs/fingertree/measure-based-splitting.md` |
 | `~/src/fixpoint/main` | **Evidence only, never proposed** — full recursion-scheme catalog (para/apo/zygo/histo/futu/…, distributive laws, gcata/gana/ghylo) proving the three verbs are the stable primitive layer | `docs/recursion-schemes-design.md` (D1–D11), `ops/DEVIATIONS.md` (DEV-01..04), `ops/PLAN.md` |
 | `~/src/trees/main` | **Origin/pedagogy** — CppNow26 talk, source of all extractions. Extraction is ONE-WAY; extracted repos diverge deliberately and do not backport | `docs/notes/standardization-inverted-triangle-plan.md` (three-paper strategy), `foldable-applicative-traversable.org`, `CLAUDE.md` |
 
@@ -89,7 +95,7 @@ these repos.
   `std::indirect` as the plausible future spelling.
 - Value semantics; performance tuning, sharing, memoization, and stack
   safety are non-goals.
-- Language floors differ deliberately: this repo C++23 (gcc-14+/clang
+- Language floors differ deliberately: tree_algorithms C++23 (gcc-14+/clang
   floor under review), fixpoint repo C++26/gcc-16. Do not import
   C++26-isms into proposal repos.
 
@@ -112,7 +118,7 @@ grep all five repos for the identifier; list affected papers, headers,
 blog posts, and org files; either update all in one coordinated pass or
 record the divergence explicitly in the consuming repo's notes.
 
-**Before relitigating a design choice** in this repo: read
+**Before relitigating a design choice** in tree_algorithms: read
 `docs/DECISIONS.md`. If a change is genuinely needed, update DECISIONS.md
 first (with rationale and source citations), then the code.
 
@@ -126,7 +132,7 @@ current draft first (paths in the map above); papers drift. Keep the
 independence claims accurate — Paper D must remain fully valid if P3200
 stalls, and vice versa.
 
-**When adding API surface to this repo**: check the fixpoint
+**When adding API surface to tree_algorithms**: check the fixpoint
 compatibility checklist in `docs/notes/extraction-plan.md` §7 — new
 surface must stay upgradeable to the unproposed catalog (plain callables
 usable as gcata/gana algebras/coalgebras; layer Functor instance remains
@@ -139,7 +145,7 @@ change, and keep `docs/notes/anchor-inventory.md` current.
 
 ## Known coordination hazards
 
-- **Two BinaryTree ports exist**: this repo's
+- **Two BinaryTree ports exist**: tree_algorithms'
   `include/beman/tree_algorithms/binary_tree.hpp` and transpose's
   `examples/binary_tree.hpp`. Both derive from `trees/main`; neither is
   authoritative for the other. Semantics changes (traversal order,

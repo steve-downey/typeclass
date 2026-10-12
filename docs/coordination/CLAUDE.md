@@ -1,7 +1,9 @@
-# CLAUDE.md — tree-coordination meta-repo
+# CLAUDE.md — docs/coordination
 
-This repo coordinates five sibling checkouts (see README.md for the
-map). It holds coordination artifacts only — no code.
+This directory coordinates the three libraries in this repository and
+two outside checkouts (see README.md for the map). It holds coordination
+artifacts only — no code. Until 2026-10-12 it was the separate
+tree-coordination repository.
 
 Rules for working here:
 
@@ -9,16 +11,14 @@ Rules for working here:
   item completes in a source repo, move it to Done here.
 - Every coordination decision gets a dated, append-only entry in
   `SYNC.md` pinning each repo's SHA and pending-file state.
-- The canonical `tree-proposals-coherence` skill lives at
-  `.claude/skills/tree-proposals-coherence/SKILL.md`. Per-repo copies
-  are mirrors: edit here first, then copy outward. The skill's
-  invariants (division of labor, naming, repo-surface ≠ paper-surface,
-  DEV-01/03/04 test discipline) bind work in all six repos including
-  this one.
-- Cross-repo greps: the sources are the sibling checkouts under
-  `~/src/{trees,transpose,fingertree,fixpoint,tree_algorithms}` — not
-  mirrors inside this repo (none exist unless `mirror/` appears; if it
-  does, treat it as read-only, edits flow through source repos).
-- Do not edit source-repo files from this checkout without saying so in
-  the commit/summary; each source repo has its own conventions
-  (DECISIONS.md, DEVIATIONS.md, CODING_RULES.md) that govern there.
+- The `tree-proposals-coherence` skill lives at
+  `.claude/skills/tree-proposals-coherence/SKILL.md` in the repository
+  root; there is one copy. Its invariants (division of labor, naming,
+  repo-surface ≠ paper-surface, DEV-01/03/04 test discipline) bind work
+  on all three libraries and in fixpoint and trees.
+- Cross-library greps: transpose, tree_algorithms and fingertree are in
+  this repository (`src/beman/<lib>/`, `docs/<lib>/`, `papers/`).
+  fixpoint and trees are still sibling checkouts under `~/src`.
+- Each library keeps its own conventions (`docs/transpose/decisions.md`
+  and `CODING_RULES.md`, `docs/tree_algorithms/DECISIONS.md`); they
+  govern changes to that library.
