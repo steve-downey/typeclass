@@ -1,4 +1,4 @@
-// tests/beman/transpose/simd.test.cpp                                -*-C++-*-
+// src/beman/transpose/simd.test.cpp                                  -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // Tests for the std::simd::basic_vec applicative: the invoke-only context.

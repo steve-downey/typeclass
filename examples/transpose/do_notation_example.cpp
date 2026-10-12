@@ -1,4 +1,4 @@
-// examples/do_notation_example.cpp                                   -*-C++-*-
+// examples/transpose/do_notation_example.cpp                         -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // A Haskell `do` block, desugared by hand and carried over to the Monad

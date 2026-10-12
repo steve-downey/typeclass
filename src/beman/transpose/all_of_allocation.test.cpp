@@ -1,4 +1,4 @@
-// tests/beman/transpose/all_of_allocation.test.cpp                   -*-C++-*-
+// src/beman/transpose/all_of_allocation.test.cpp                     -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // THE MEASUREMENT docs/decisions.md#erasure-boundary names as its sentinel.

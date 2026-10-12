@@ -1,4 +1,4 @@
-// benchmarks/beman/tree_algorithms/ct_plain.cpp.in                  -*-C++-*-
+// benchmarks/tree_algorithms/ct_plain.cpp.in                        -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // Compile-time control for ct_fix.cpp.in: the same constexpr workload —

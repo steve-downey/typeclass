@@ -1,4 +1,4 @@
-// include/beman/transpose/error_set.hpp                              -*-C++-*-
+// src/beman/transpose/error_set.hpp                                  -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_ERROR_SET_HPP
 #define BEMAN_TRANSPOSE_ERROR_SET_HPP

@@ -1,4 +1,4 @@
-// tests/beman/transpose/test_support.hpp                             -*-C++-*-
+// src/beman/transpose/test_support.hpp                               -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_TEST_TEST_SUPPORT_HPP
 #define BEMAN_TRANSPOSE_TEST_TEST_SUPPORT_HPP

@@ -1,4 +1,4 @@
-// examples/traverse_post_example.cpp                                 -*-C++-*-
+// examples/transpose/traverse_post_example.cpp                       -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // How it all really works: traverse maps a context-producing function over a

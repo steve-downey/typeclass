@@ -1,4 +1,4 @@
-// tests/beman/transpose/probe_harness_cross_tu.cpp                   -*-C++-*-
+// src/beman/transpose/probe_harness_cross_tu.cpp                     -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // The second translation unit of the probe harness. It exists to make one

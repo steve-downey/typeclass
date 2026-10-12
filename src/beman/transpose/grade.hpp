@@ -1,4 +1,4 @@
-// include/beman/transpose/grade.hpp                                  -*-C++-*-
+// src/beman/transpose/grade.hpp                                      -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_GRADE_HPP
 #define BEMAN_TRANSPOSE_GRADE_HPP

@@ -1,4 +1,4 @@
-// examples/algorithm_object_example.cpp                               -*-C++-*-
+// examples/transpose/algorithm_object_example.cpp                     -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // Demonstrates the algorithm-object pattern: inheriting from typeclass

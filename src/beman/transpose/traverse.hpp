@@ -1,4 +1,4 @@
-// include/beman/transpose/traverse.hpp                               -*-C++-*-
+// src/beman/transpose/traverse.hpp                                   -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_TRAVERSE_HPP
 #define BEMAN_TRANSPOSE_TRAVERSE_HPP

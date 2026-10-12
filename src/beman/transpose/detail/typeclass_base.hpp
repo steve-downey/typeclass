@@ -1,4 +1,4 @@
-// include/beman/transpose/detail/typeclass_base.hpp                  -*-C++-*-
+// src/beman/transpose/detail/typeclass_base.hpp                      -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP
 #define BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP

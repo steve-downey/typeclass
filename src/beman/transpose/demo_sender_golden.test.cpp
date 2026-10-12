@@ -1,4 +1,4 @@
-// tests/beman/transpose/demo_sender_golden.test.cpp                  -*-C++-*-
+// src/beman/transpose/demo_sender_golden.test.cpp                    -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // GOLDEN -- stage execution-baseline of the execution plan

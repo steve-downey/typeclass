@@ -1,4 +1,4 @@
-// tests/beman/transpose/crtp_absorption.test.cpp                     -*-C++-*-
+// src/beman/transpose/crtp_absorption.test.cpp                       -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // Stage crtp-absorption (docs/transpose-grading-plan.md#crtp-absorption).

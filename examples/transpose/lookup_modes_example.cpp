@@ -1,4 +1,4 @@
-// examples/lookup_modes_example.cpp                                   -*-C++-*-
+// examples/transpose/lookup_modes_example.cpp                         -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // Demonstrates the three lookup modes that distinguish the typeclass-object

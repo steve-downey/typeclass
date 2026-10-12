@@ -1,4 +1,4 @@
-// tests/beman/transpose/grade.test.cpp                               -*-C++-*-
+// src/beman/transpose/grade.test.cpp                                 -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/transpose/grade.hpp>

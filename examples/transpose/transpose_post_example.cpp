@@ -1,4 +1,4 @@
-// examples/transpose_post_example.cpp                                -*-C++-*-
+// examples/transpose/transpose_post_example.cpp                      -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // One verb, three contexts: transpose flips structure<context<T>> into

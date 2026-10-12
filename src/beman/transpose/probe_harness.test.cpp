@@ -1,4 +1,4 @@
-// tests/beman/transpose/probe_harness.test.cpp                       -*-C++-*-
+// src/beman/transpose/probe_harness.test.cpp                         -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // The Lean model's probe obligations, checked against this implementation.

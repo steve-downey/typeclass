@@ -1,4 +1,4 @@
-// include/beman/transpose/expected.hpp                               -*-C++-*-
+// src/beman/transpose/expected.hpp                                   -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_EXPECTED_HPP
 #define BEMAN_TRANSPOSE_EXPECTED_HPP

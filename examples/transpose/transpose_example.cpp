@@ -1,4 +1,4 @@
-// examples/transpose_example.cpp                                     -*-C++-*-
+// examples/transpose/transpose_example.cpp                           -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // Paper A in one screen: a single `transpose` front door flips

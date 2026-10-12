@@ -1,4 +1,4 @@
-// include/beman/transpose/fold.hpp                                   -*-C++-*-
+// src/beman/transpose/fold.hpp                                       -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_FOLD_HPP
 #define BEMAN_TRANSPOSE_FOLD_HPP

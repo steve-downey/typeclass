@@ -1,4 +1,4 @@
-// examples/traverse_example.cpp                                      -*-C++-*-
+// examples/transpose/traverse_example.cpp                            -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // `traverse` applies an effectful function to each element of a structure and

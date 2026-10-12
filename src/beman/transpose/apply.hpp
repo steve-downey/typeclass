@@ -1,4 +1,4 @@
-// include/beman/transpose/apply.hpp                                  -*-C++-*-
+// src/beman/transpose/apply.hpp                                      -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_APPLY_HPP
 #define BEMAN_TRANSPOSE_APPLY_HPP

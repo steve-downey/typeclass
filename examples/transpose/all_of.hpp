@@ -1,4 +1,4 @@
-// examples/all_of.hpp                                                -*-C++-*-
+// examples/transpose/all_of.hpp                                      -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_EXAMPLES_ALL_OF_HPP
 #define BEMAN_TRANSPOSE_EXAMPLES_ALL_OF_HPP

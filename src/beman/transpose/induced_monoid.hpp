@@ -1,4 +1,4 @@
-// include/beman/transpose/induced_monoid.hpp                        -*-C++-*-
+// src/beman/transpose/induced_monoid.hpp                            -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_INDUCED_MONOID_HPP
 #define BEMAN_TRANSPOSE_INDUCED_MONOID_HPP

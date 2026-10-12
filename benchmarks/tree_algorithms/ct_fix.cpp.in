@@ -1,4 +1,4 @@
-// benchmarks/beman/tree_algorithms/ct_fix.cpp.in                    -*-C++-*-
+// benchmarks/tree_algorithms/ct_fix.cpp.in                          -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // Compile-time cost of a Fix tree, as a function of size.

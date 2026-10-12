@@ -1,4 +1,4 @@
-// benchmarks/beman/tree_algorithms/fix_unique_tree.hpp              -*-C++-*-
+// benchmarks/tree_algorithms/fix_unique_tree.hpp                    -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TREE_ALGORITHMS_BENCH_FIX_UNIQUE_TREE_HPP
 #define BEMAN_TREE_ALGORITHMS_BENCH_FIX_UNIQUE_TREE_HPP

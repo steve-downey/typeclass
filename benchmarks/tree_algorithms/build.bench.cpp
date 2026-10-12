@@ -1,4 +1,4 @@
-// benchmarks/beman/tree_algorithms/build.bench.cpp                  -*-C++-*-
+// benchmarks/tree_algorithms/build.bench.cpp                        -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // Runtime cost of *producing* and *copying* a large binary tree, and the

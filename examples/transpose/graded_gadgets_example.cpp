@@ -1,4 +1,4 @@
-// examples/graded_gadgets_example.cpp                                -*-C++-*-
+// examples/transpose/graded_gadgets_example.cpp                      -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // Graded gadgets: mixing distinct error types at an applicative mixing point

@@ -1,4 +1,4 @@
-// include/beman/transpose/simd_lanes.hpp                              -*-C++-*-
+// src/beman/transpose/simd_lanes.hpp                                  -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_SIMD_LANES_HPP
 #define BEMAN_TRANSPOSE_SIMD_LANES_HPP

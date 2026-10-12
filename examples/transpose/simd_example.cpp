@@ -1,4 +1,4 @@
-// examples/simd_example.cpp                                          -*-C++-*-
+// examples/transpose/simd_example.cpp                                -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // Paper A's SIMD domain with real hardware: std::simd::vec (GCC 16 / P1928)

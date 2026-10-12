@@ -1,4 +1,4 @@
-// tests/beman/transpose/operation_objects.test.cpp                   -*-C++-*-
+// src/beman/transpose/operation_objects.test.cpp                     -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // The operation objects in beman::transpose: one per typeclass

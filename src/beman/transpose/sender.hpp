@@ -1,4 +1,4 @@
-// include/beman/transpose/sender.hpp                                 -*-C++-*-
+// src/beman/transpose/sender.hpp                                     -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_SENDER_HPP
 #define BEMAN_TRANSPOSE_SENDER_HPP

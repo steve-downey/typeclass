@@ -1,4 +1,4 @@
-// tests/beman/transpose/p2300.test.cpp                               -*-C++-*-
+// src/beman/transpose/p2300.test.cpp                                 -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // The Applicative surface checked against genuine std::execution senders.

@@ -1,4 +1,4 @@
-// examples/apply_example.cpp                                         -*-C++-*-
+// examples/transpose/apply_example.cpp                               -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // `invoke` lifts a plain function and applies it to several effectful

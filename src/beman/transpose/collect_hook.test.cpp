@@ -1,4 +1,4 @@
-// tests/beman/transpose/collect_hook.test.cpp                        -*-C++-*-
+// src/beman/transpose/collect_hook.test.cpp                          -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // The Traversable side of docs/decisions.md#runtime-arity-composition: the

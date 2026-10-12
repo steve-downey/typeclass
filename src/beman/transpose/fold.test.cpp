@@ -1,4 +1,4 @@
-// tests/beman/transpose/fold.test.cpp                                -*-C++-*-
+// src/beman/transpose/fold.test.cpp                                  -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/transpose/fold.hpp>

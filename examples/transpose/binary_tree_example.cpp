@@ -1,4 +1,4 @@
-// examples/binary_tree_example.cpp                                    -*-C++-*-
+// examples/transpose/binary_tree_example.cpp                          -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // Demonstrates the typeclass-object pattern on a recursive data type:

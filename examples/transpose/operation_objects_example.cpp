@@ -1,4 +1,4 @@
-// examples/operation_objects_example.cpp                              -*-C++-*-
+// examples/transpose/operation_objects_example.cpp                    -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // A fourth lookup mode: the typeclass operation as an object that does its

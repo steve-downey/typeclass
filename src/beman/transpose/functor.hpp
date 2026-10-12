@@ -1,4 +1,4 @@
-// include/beman/transpose/functor.hpp                                -*-C++-*-
+// src/beman/transpose/functor.hpp                                    -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_FUNCTOR_HPP
 #define BEMAN_TRANSPOSE_FUNCTOR_HPP

@@ -1,4 +1,4 @@
-// examples/binary_tree.hpp                                           -*-C++-*-
+// examples/transpose/binary_tree.hpp                                 -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // Shared example header: BinaryTree<T> data type with Foldable, Applicative,

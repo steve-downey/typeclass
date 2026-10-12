@@ -1,4 +1,4 @@
-// benchmarks/beman/tree_algorithms/fold.bench.cpp                   -*-C++-*-
+// benchmarks/tree_algorithms/fold.bench.cpp                         -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // Runtime cost of *consuming* a very large binary tree.

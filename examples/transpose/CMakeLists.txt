@@ -1,4 +1,4 @@
-# examples/CMakeLists.txt                                           -*-cmake-*-
+# examples/transpose/CMakeLists.txt                                 -*-cmake-*-
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 set(ALL_EXAMPLES

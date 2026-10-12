@@ -1,4 +1,4 @@
-// tests/beman/transpose/transpose_senders.test.cpp                   -*-C++-*-
+// src/beman/transpose/transpose_senders.test.cpp                     -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // The front door over genuine std::execution senders:

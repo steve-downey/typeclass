@@ -1,4 +1,4 @@
-// include/beman/transpose/detail/applicative_derivation.hpp          -*-C++-*-
+// src/beman/transpose/detail/applicative_derivation.hpp              -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_DETAIL_APPLICATIVE_DERIVATION_HPP
 #define BEMAN_TRANSPOSE_DETAIL_APPLICATIVE_DERIVATION_HPP

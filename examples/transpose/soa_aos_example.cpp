@@ -1,4 +1,4 @@
-// examples/soa_aos_example.cpp                                       -*-C++-*-
+// examples/transpose/soa_aos_example.cpp                             -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // SoA <-> AoS transposition: tuple<array<T, N>...> -> array<tuple<T...>, N>

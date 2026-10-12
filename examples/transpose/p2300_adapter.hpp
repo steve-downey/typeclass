@@ -1,4 +1,4 @@
-// examples/p2300_adapter.hpp                                         -*-C++-*-
+// examples/transpose/p2300_adapter.hpp                               -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_EXAMPLES_P2300_ADAPTER_HPP
 #define BEMAN_TRANSPOSE_EXAMPLES_P2300_ADAPTER_HPP

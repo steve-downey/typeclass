@@ -1,4 +1,4 @@
-// include/beman/transpose/zip_list.hpp                               -*-C++-*-
+// src/beman/transpose/zip_list.hpp                                   -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_ZIP_LIST_HPP
 #define BEMAN_TRANSPOSE_ZIP_LIST_HPP

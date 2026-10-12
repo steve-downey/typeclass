@@ -1,4 +1,4 @@
-// tests/beman/transpose/all_of.test.cpp                              -*-C++-*-
+// src/beman/transpose/all_of.test.cpp                                -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // `when_all` at runtime arity, and the measurement the design rests on.

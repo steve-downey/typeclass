@@ -1,4 +1,4 @@
-// tests/beman/transpose/traverse.test.cpp                            -*-C++-*-
+// src/beman/transpose/traverse.test.cpp                              -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/transpose/traverse.hpp>

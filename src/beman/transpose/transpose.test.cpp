@@ -1,4 +1,4 @@
-// tests/beman/transpose/transpose.test.cpp                           -*-C++-*-
+// src/beman/transpose/transpose.test.cpp                             -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // Paper A's three-domain proof: a single front-door `transpose` flips

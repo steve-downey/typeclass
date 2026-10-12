@@ -1,4 +1,4 @@
-// tests/beman/transpose/baseline_deduction.test.cpp                  -*-C++-*-
+// src/beman/transpose/baseline_deduction.test.cpp                    -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // GOLDEN DEDUCTION TESTS -- stage baseline-capture of the grading plan

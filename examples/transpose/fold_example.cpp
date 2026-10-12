@@ -1,4 +1,4 @@
-// examples/fold_example.cpp                                          -*-C++-*-
+// examples/transpose/fold_example.cpp                                -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
 // `fold` derives many reductions (length, fold_left, any_of, ...) from a

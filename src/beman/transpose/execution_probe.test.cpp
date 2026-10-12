@@ -1,4 +1,4 @@
-// tests/beman/transpose/execution_probe.test.cpp                     -*-C++-*-
+// src/beman/transpose/execution_probe.test.cpp                       -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // DEPENDENCY COMPILE PROBE -- stage execution-baseline of the execution plan

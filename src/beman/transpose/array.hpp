@@ -1,4 +1,4 @@
-// include/beman/transpose/array.hpp                                  -*-C++-*-
+// src/beman/transpose/array.hpp                                      -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TRANSPOSE_ARRAY_HPP
 #define BEMAN_TRANSPOSE_ARRAY_HPP

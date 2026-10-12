@@ -1,4 +1,4 @@
-// tests/beman/transpose/sequence.test.cpp                            -*-C++-*-
+// src/beman/transpose/sequence.test.cpp                              -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/transpose/sequence.hpp>

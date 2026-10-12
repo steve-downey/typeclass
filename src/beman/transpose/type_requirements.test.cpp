@@ -1,4 +1,4 @@
-// tests/beman/transpose/type_requirements.test.cpp                    -*-C++-*-
+// src/beman/transpose/type_requirements.test.cpp                      -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // The type requirements the operations actually impose, pinned against the

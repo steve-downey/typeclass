@@ -1,4 +1,4 @@
-// benchmarks/beman/tree_algorithms/inline_layer.hpp                 -*-C++-*-
+// benchmarks/tree_algorithms/inline_layer.hpp                       -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #ifndef BEMAN_TREE_ALGORITHMS_BENCH_INLINE_LAYER_HPP
 #define BEMAN_TREE_ALGORITHMS_BENCH_INLINE_LAYER_HPP

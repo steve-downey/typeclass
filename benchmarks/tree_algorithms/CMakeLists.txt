@@ -1,4 +1,4 @@
-# benchmarks/beman/tree_algorithms/CMakeLists.txt                   -*-cmake-*-
+# benchmarks/tree_algorithms/CMakeLists.txt                         -*-cmake-*-
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 # Benchmark targets are ordinary targets in the default build: they always

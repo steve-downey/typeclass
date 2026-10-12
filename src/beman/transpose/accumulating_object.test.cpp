@@ -1,4 +1,4 @@
-// tests/beman/transpose/accumulating_object.test.cpp                 -*-C++-*-
+// src/beman/transpose/accumulating_object.test.cpp                   -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // Stage accumulating-object
