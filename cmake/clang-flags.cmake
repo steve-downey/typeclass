@@ -4,8 +4,12 @@ include_guard(GLOBAL)
 
 set(CMAKE_CXX_STANDARD 20)
 
+# tree_algorithms is constexpr-heavy: trees are built and folded at compile
+# time (tests, examples, and the compile-time benchmarks all do it), so the
+# default constexpr ceiling is lifted project-wide. Applied to the base flags
+# so every configuration is coherent.
 set(CMAKE_CXX_FLAGS
-    "-stdlib=libc++ -Wall -Wextra -std=gnu++20"
+    "-stdlib=libc++ -Wall -Wextra -std=gnu++20 -fconstexpr-steps=100000000"
     CACHE STRING
     "CXX_FLAGS"
     FORCE
@@ -48,3 +52,13 @@ set(CMAKE_CXX_FLAGS_GCOV
     FORCE
 )
 set(CMAKE_LINKER_FLAGS_GCOV "--coverage" CACHE STRING "Linker GCOV Flags" FORCE)
+
+# Benchmark configuration: optimized, symbols kept, asserts off, frame
+# pointers preserved for profilers. Deliberately unsanitized — benchmarks
+# are measured here (make bench / BENCH_CONFIG=Bench), never under Asan/Tsan.
+set(CMAKE_CXX_FLAGS_BENCH
+    "-O3 -g -DNDEBUG -fno-omit-frame-pointer"
+    CACHE STRING
+    "C++ Benchmark Flags"
+    FORCE
+)
