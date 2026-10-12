@@ -1,10 +1,12 @@
 ::: add
 
 ```cpp
-template<class CONTEXT>
-concept $applicative-context$ =
-    applicative_object<remove_cvref_t<decltype(applicative<CONTEXT>)>,
-                       CONTEXT>; // exposition only
+namespace std {
+  template<class CONTEXT>
+  concept $applicative-context$ =
+      applicative_object<remove_cvref_t<decltype(applicative<CONTEXT>)>,
+                         CONTEXT>; // exposition only
+}
 ```
 
 ::: wording
@@ -14,9 +16,11 @@ concept $applicative-context$ =
 :::
 
 ```cpp
-template<class OBJ>
-concept $consuming-traversable-object$ =
-    requires { requires bool(OBJ::consumes_rvalue_structure); }; // exposition only
+namespace std {
+  template<class OBJ>
+  concept $consuming-traversable-object$ =
+      requires { requires bool(OBJ::consumes_rvalue_structure); }; // exposition only
+}
 ```
 
 ::: wording
@@ -26,36 +30,38 @@ concept $consuming-traversable-object$ =
 :::
 
 ```cpp
-template<class Impl>
-struct derive_traversable : protected Impl {
-  // Alternate-core: Impl::traverse is the primitive; transpose is derived
-  // from it. A transpose-primitive Impl would shadow transpose instead.
-  using Impl::traverse;
-  using element_type = typename Impl::element_type;
+namespace std {
+  template<class Impl>
+  struct derive_traversable : protected Impl {
+    // Alternate-core: Impl::traverse is the primitive; transpose is derived
+    // from it. A transpose-primitive Impl would shadow transpose instead.
+    using Impl::traverse;
+    using element_type = typename Impl::element_type;
 
-  static constexpr bool consumes_rvalue_structure = $consuming-traversable-object$<Impl>;
+    static constexpr bool consumes_rvalue_structure = $consuming-traversable-object$<Impl>;
 
-  // @[transpose.traversable.ops]{- .sref}@, traversal operations
-  template<class T, class F> auto for_each(this auto&& self, T&& value, F&& function);
+    // @[transpose.traversable.ops]{- .sref}@, traversal operations
+    template<class T, class F> auto for_each(this auto&& self, T&& value, F&& function);
 
-  template<class T>
-    requires $applicative-context$<typename Impl::element_type>
-  auto transpose(this auto&& self, T&& value);
+    template<class T>
+      requires $applicative-context$<typename Impl::element_type>
+    auto transpose(this auto&& self, T&& value);
 
-  // @[transpose.traversable.delegate]{- .sref}@, delegated traversal
-  template<class TRAVERSABLE_MAP, class T, class F>
-  auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& function,
-                     T&& value);
+    // @[transpose.traversable.delegate]{- .sref}@, delegated traversal
+    template<class TRAVERSABLE_MAP, class T, class F>
+    auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& function,
+                       T&& value);
 
-  template<class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
-  auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
-                     const APPLICATIVE_MAP& applicative_map, F&& function, T&& value);
+    template<class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
+    auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
+                       const APPLICATIVE_MAP& applicative_map, F&& function, T&& value);
 
-  template<class TRAVERSABLE_MAP, class T>
-    requires $applicative-context$<typename remove_cvref_t<TRAVERSABLE_MAP>::element_type>
-  auto transpose_with(this auto&& self, const TRAVERSABLE_MAP& traversable_map,
-                      T&& value);
-};
+    template<class TRAVERSABLE_MAP, class T>
+      requires $applicative-context$<typename remove_cvref_t<TRAVERSABLE_MAP>::element_type>
+    auto transpose_with(this auto&& self, const TRAVERSABLE_MAP& traversable_map,
+                        T&& value);
+  };
+}
 ```
 
 ::: wording
@@ -81,25 +87,31 @@ template<class T> inline constexpr auto traversable = false_type{};
 :::
 
 ```cpp
-template<class T>
-using $traversable-object-t$ =
-    remove_cvref_t<decltype(traversable<remove_cvref_t<T>>)>; // exposition only
+namespace std {
+  template<class T>
+  using $traversable-object-t$ =
+      remove_cvref_t<decltype(traversable<remove_cvref_t<T>>)>; // exposition only
+}
 ```
 
 ```cpp
-template<class T>
-using $structure-element-t$ =
-    typename $traversable-object-t$<T>::element_type; // exposition only
+namespace std {
+  template<class T>
+  using $structure-element-t$ =
+      typename $traversable-object-t$<T>::element_type; // exposition only
+}
 ```
 
 ```cpp
-template<class OBJ, class T>
-using $traversal-argument-t$ =
-    conditional_t<!is_lvalue_reference_v<T> && !is_const_v<remove_reference_t<T>> &&
-                      !is_volatile_v<remove_reference_t<T>> &&
-                      $consuming-traversable-object$<remove_cvref_t<OBJ>>,
-                  typename remove_cvref_t<OBJ>::element_type&&,
-                  const typename remove_cvref_t<OBJ>::element_type&>; // exposition only
+namespace std {
+  template<class OBJ, class T>
+  using $traversal-argument-t$ =
+      conditional_t<!is_lvalue_reference_v<T> && !is_const_v<remove_reference_t<T>> &&
+                        !is_volatile_v<remove_reference_t<T>> &&
+                        $consuming-traversable-object$<remove_cvref_t<OBJ>>,
+                    typename remove_cvref_t<OBJ>::element_type&&,
+                    const typename remove_cvref_t<OBJ>::element_type&>; // exposition only
+}
 ```
 
 ::: wording
@@ -109,9 +121,11 @@ using $traversal-argument-t$ =
 :::
 
 ```cpp
-template<class T>
-using $traverse-element-t$ =
-    $traversal-argument-t$<$traversable-object-t$<T>, T>; // exposition only
+namespace std {
+  template<class T>
+  using $traverse-element-t$ =
+      $traversal-argument-t$<$traversable-object-t$<T>, T>; // exposition only
+}
 ```
 
 ::: wording
@@ -121,16 +135,20 @@ using $traverse-element-t$ =
 :::
 
 ```cpp
-template<class F, class T>
-using $traverse-context-t$ =
-    remove_cvref_t<invoke_result_t<F&, $traverse-element-t$<T>>>; // exposition only
+namespace std {
+  template<class F, class T>
+  using $traverse-context-t$ =
+      remove_cvref_t<invoke_result_t<F&, $traverse-element-t$<T>>>; // exposition only
+}
 ```
 
 ```cpp
-template<class T>
-concept $transposable-structure$ = requires {
-  typename $structure-element-t$<T>;
-} && $applicative-context$<$structure-element-t$<T>>; // exposition only
+namespace std {
+  template<class T>
+  concept $transposable-structure$ = requires {
+    typename $structure-element-t$<T>;
+  } && $applicative-context$<$structure-element-t$<T>>; // exposition only
+}
 ```
 
 ::: wording
@@ -140,10 +158,12 @@ concept $transposable-structure$ = requires {
 :::
 
 ```cpp
-template<class APPLICATIVE, class CONTEXT>
-concept $collecting-applicative$ = requires(const APPLICATIVE& applicative) {
-  applicative.collect(declval<vector<CONTEXT>>());
-}; // exposition only
+namespace std {
+  template<class APPLICATIVE, class CONTEXT>
+  concept $collecting-applicative$ = requires(const APPLICATIVE& applicative) {
+    applicative.collect(declval<vector<CONTEXT>>());
+  }; // exposition only
+}
 ```
 
 ::: wording
@@ -161,10 +181,12 @@ concept applicative_object_for =
 :::
 
 ```cpp
-template<class OBJ>
-concept $transposing-object$ = requires {
-  typename OBJ::element_type;
-} && $applicative-context$<typename OBJ::element_type>; // exposition only
+namespace std {
+  template<class OBJ>
+  concept $transposing-object$ = requires {
+    typename OBJ::element_type;
+  } && $applicative-context$<typename OBJ::element_type>; // exposition only
+}
 ```
 
 ::: wording

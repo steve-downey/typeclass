@@ -51,91 +51,93 @@ concept applicative_impl =
 :::
 
 ```cpp
-template<class Impl>
-struct derive_applicative : protected Impl {
-  using Impl::pure;
+namespace std {
+  template<class Impl>
+  struct derive_applicative : protected Impl {
+    using Impl::pure;
 
-  // @[transpose.applicative.basis]{- .sref}@, basis operations
-  template<class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
-  auto invoke(this auto&& self, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
-              REST_ARGUMENTS&&... rest_arguments);
+    // @[transpose.applicative.basis]{- .sref}@, basis operations
+    template<class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
+    auto invoke(this auto&& self, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
+                REST_ARGUMENTS&&... rest_arguments);
 
-  template<class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
-  auto ap(this auto&& self, FUNCTION_IN_CONTEXT&& function,
-          ARGUMENT_IN_CONTEXT&& argument)
-    requires requires(const Impl& impl) {
-      impl.ap(forward<FUNCTION_IN_CONTEXT>(function),
-              forward<ARGUMENT_IN_CONTEXT>(argument));
-    } || requires(const Impl& impl) {
-      impl.invoke(applicative_eval, forward<FUNCTION_IN_CONTEXT>(function),
-                  forward<ARGUMENT_IN_CONTEXT>(argument));
-    };
+    template<class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
+    auto ap(this auto&& self, FUNCTION_IN_CONTEXT&& function,
+            ARGUMENT_IN_CONTEXT&& argument)
+      requires requires(const Impl& impl) {
+        impl.ap(forward<FUNCTION_IN_CONTEXT>(function),
+                forward<ARGUMENT_IN_CONTEXT>(argument));
+      } || requires(const Impl& impl) {
+        impl.invoke(applicative_eval, forward<FUNCTION_IN_CONTEXT>(function),
+                    forward<ARGUMENT_IN_CONTEXT>(argument));
+      };
 
-  // @[transpose.applicative.derived]{- .sref}@, derived operations
-  template<class FUNCTION, class ARGUMENT>
-  auto map(this auto&& self, FUNCTION&& function, ARGUMENT&& argument)
-    requires requires(const Impl& impl) {
-      impl.map(forward<FUNCTION>(function), forward<ARGUMENT>(argument));
-    } || requires {
-      self.invoke(forward<FUNCTION>(function), forward<ARGUMENT>(argument));
-    };
+    // @[transpose.applicative.derived]{- .sref}@, derived operations
+    template<class FUNCTION, class ARGUMENT>
+    auto map(this auto&& self, FUNCTION&& function, ARGUMENT&& argument)
+      requires requires(const Impl& impl) {
+        impl.map(forward<FUNCTION>(function), forward<ARGUMENT>(argument));
+      } || requires {
+        self.invoke(forward<FUNCTION>(function), forward<ARGUMENT>(argument));
+      };
 
-  template<class VALUE>
-  auto lift(this auto&& self, VALUE&& value)
-    requires requires(const Impl& impl) { impl.lift(forward<VALUE>(value)); } ||
-             requires { self.pure(forward<VALUE>(value)); };
+    template<class VALUE>
+    auto lift(this auto&& self, VALUE&& value)
+      requires requires(const Impl& impl) { impl.lift(forward<VALUE>(value)); } ||
+               requires { self.pure(forward<VALUE>(value)); };
 
-  template<class FUNCTION, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-  auto zip_with(this auto&& self, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
-                SECOND_ARGUMENT&& second_argument)
-    requires requires(const Impl& impl) {
-      impl.zip_with(forward<FUNCTION>(function),
-                    forward<FIRST_ARGUMENT>(first_argument),
+    template<class FUNCTION, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
+    auto zip_with(this auto&& self, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
+                  SECOND_ARGUMENT&& second_argument)
+      requires requires(const Impl& impl) {
+        impl.zip_with(forward<FUNCTION>(function),
+                      forward<FIRST_ARGUMENT>(first_argument),
+                      forward<SECOND_ARGUMENT>(second_argument));
+      } || requires {
+        self.invoke(forward<FUNCTION>(function), forward<FIRST_ARGUMENT>(first_argument),
                     forward<SECOND_ARGUMENT>(second_argument));
-    } || requires {
-      self.invoke(forward<FUNCTION>(function), forward<FIRST_ARGUMENT>(first_argument),
-                  forward<SECOND_ARGUMENT>(second_argument));
-    };
+      };
 
-  template<class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-  auto discard_first(this auto&& self, FIRST_ARGUMENT&& first_argument,
-                     SECOND_ARGUMENT&& second_argument)
-    requires requires(const Impl& impl) {
-      impl.discard_first(forward<FIRST_ARGUMENT>(first_argument),
-                         forward<SECOND_ARGUMENT>(second_argument));
-    } || requires {
-      self.invoke(discard_first_eval, forward<FIRST_ARGUMENT>(first_argument),
-                  forward<SECOND_ARGUMENT>(second_argument));
-    };
+    template<class FIRST_ARGUMENT, class SECOND_ARGUMENT>
+    auto discard_first(this auto&& self, FIRST_ARGUMENT&& first_argument,
+                       SECOND_ARGUMENT&& second_argument)
+      requires requires(const Impl& impl) {
+        impl.discard_first(forward<FIRST_ARGUMENT>(first_argument),
+                           forward<SECOND_ARGUMENT>(second_argument));
+      } || requires {
+        self.invoke(discard_first_eval, forward<FIRST_ARGUMENT>(first_argument),
+                    forward<SECOND_ARGUMENT>(second_argument));
+      };
 
-  template<class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-  auto discard_second(this auto&& self, FIRST_ARGUMENT&& first_argument,
-                      SECOND_ARGUMENT&& second_argument)
-    requires requires(const Impl& impl) {
-      impl.discard_second(forward<FIRST_ARGUMENT>(first_argument),
-                          forward<SECOND_ARGUMENT>(second_argument));
-    } || requires {
-      self.invoke(discard_second_eval, forward<FIRST_ARGUMENT>(first_argument),
-                  forward<SECOND_ARGUMENT>(second_argument));
-    };
+    template<class FIRST_ARGUMENT, class SECOND_ARGUMENT>
+    auto discard_second(this auto&& self, FIRST_ARGUMENT&& first_argument,
+                        SECOND_ARGUMENT&& second_argument)
+      requires requires(const Impl& impl) {
+        impl.discard_second(forward<FIRST_ARGUMENT>(first_argument),
+                            forward<SECOND_ARGUMENT>(second_argument));
+      } || requires {
+        self.invoke(discard_second_eval, forward<FIRST_ARGUMENT>(first_argument),
+                    forward<SECOND_ARGUMENT>(second_argument));
+      };
 
-  // @[transpose.applicative.grade]{- .sref}@, grade re-indexing
-  template<class TARGET_GRADE, class CARRIER>
-  constexpr auto subsume(this auto&&, CARRIER&& value)
-    requires requires { grade_subsume<TARGET_GRADE>(forward<CARRIER>(value)); };
+    // @[transpose.applicative.grade]{- .sref}@, grade re-indexing
+    template<class TARGET_GRADE, class CARRIER>
+    constexpr auto subsume(this auto&&, CARRIER&& value)
+      requires requires { grade_subsume<TARGET_GRADE>(forward<CARRIER>(value)); };
 
-  // @[transpose.applicative.delegate]{- .sref}@, delegated application
-  template<class APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
-           class... REST_ARGUMENTS>
-  auto invoke_with(this auto&&, const APPLICATIVE_MAP& applicative_map,
-                   FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
-                   REST_ARGUMENTS&&... rest_arguments);
+    // @[transpose.applicative.delegate]{- .sref}@, delegated application
+    template<class APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
+             class... REST_ARGUMENTS>
+    auto invoke_with(this auto&&, const APPLICATIVE_MAP& applicative_map,
+                     FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
+                     REST_ARGUMENTS&&... rest_arguments);
 
-  template<const auto& APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
-           class... REST_ARGUMENTS>
-  auto invoke_with(this auto&&, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
-                   REST_ARGUMENTS&&... rest_arguments);
-};
+    template<const auto& APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
+             class... REST_ARGUMENTS>
+    auto invoke_with(this auto&&, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
+                     REST_ARGUMENTS&&... rest_arguments);
+  };
+}
 ```
 
 ::: wording
@@ -200,27 +202,31 @@ concept applicative_object =
 :::
 
 ```cpp
-template<class VALUE_TYPE>
-struct $optional-applicative-impl$ {
-  // @[transpose.applicative.optional]{- .sref}@, applicative instance for optional
-  template<class VALUE>
-  auto pure(this auto&&, VALUE&& value) -> optional<remove_cvref_t<VALUE>>;
+namespace std {
+  template<class VALUE_TYPE>
+  struct $optional-applicative-impl$ {
+    // @[transpose.applicative.optional]{- .sref}@, applicative instance for optional
+    template<class VALUE>
+    auto pure(this auto&&, VALUE&& value) -> optional<remove_cvref_t<VALUE>>;
 
-  template<class FUNCTION, class FIRST, class... REST>
-    requires $is-optional-v$<FIRST> && ($is-optional-v$<REST> && ...)
-  auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest)
-      -> optional<remove_cvref_t<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>,
-                                                 $contained-ref-t$<REST>...>>>;
-}; // exposition only
+    template<class FUNCTION, class FIRST, class... REST>
+      requires $is-optional-v$<FIRST> && ($is-optional-v$<REST> && ...)
+    auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest)
+        -> optional<remove_cvref_t<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>,
+                                                   $contained-ref-t$<REST>...>>>;
+  }; // exposition only
+}
 ```
 
 ```cpp
-template<class VALUE_TYPE>
-struct $optional-applicative-map$
-    : derive_applicative<$optional-applicative-impl$<VALUE_TYPE>> {
-  using $optional-applicative-impl$<VALUE_TYPE>::invoke;
-  using $optional-applicative-impl$<VALUE_TYPE>::pure;
-}; // exposition only
+namespace std {
+  template<class VALUE_TYPE>
+  struct $optional-applicative-map$
+      : derive_applicative<$optional-applicative-impl$<VALUE_TYPE>> {
+    using $optional-applicative-impl$<VALUE_TYPE>::invoke;
+    using $optional-applicative-impl$<VALUE_TYPE>::pure;
+  }; // exposition only
+}
 ```
 
 :::

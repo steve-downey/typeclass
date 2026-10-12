@@ -21,14 +21,16 @@ constexpr auto combined_with(const error_set_of& other) const -> error_set_of;
 [x+3]{.pnum} *Remarks*: Combination is left-biased per alternative: where both operands witness the same error type, `*this`'s witness is kept. This is the evidence-combining step of accumulating composition.
 
 ```cpp
-template<>
-class error_set_of<> {
-public:
-  // @[transpose.errset.empty]{- .sref}@, the empty error set
-  error_set_of() = delete;
+namespace std {
+  template<>
+  class error_set_of<> {
+  public:
+    // @[transpose.errset.empty]{- .sref}@, the empty error set
+    error_set_of() = delete;
 
-  template<class ERROR> static constexpr auto contains() noexcept -> bool;
-};
+    template<class ERROR> static constexpr auto contains() noexcept -> bool;
+  };
+}
 ```
 
 :::

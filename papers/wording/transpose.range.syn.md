@@ -1,21 +1,23 @@
 ::: add
 
 ```cpp
-template<class VALUE_TYPE>
-struct $vector-traversable-impl$ {
-  using element_type = VALUE_TYPE;
+namespace std {
+  template<class VALUE_TYPE>
+  struct $vector-traversable-impl$ {
+    using element_type = VALUE_TYPE;
 
-  static constexpr bool consumes_rvalue_structure = true;
+    static constexpr bool consumes_rvalue_structure = true;
 
-  // @[transpose.range.traverse]{- .sref}@, traversable instance for vector
-  template<class APPLICATIVE, class FUNCTION>
-  auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
-                const vector<VALUE_TYPE>& values);
+    // @[transpose.range.traverse]{- .sref}@, traversable instance for vector
+    template<class APPLICATIVE, class FUNCTION>
+    auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
+                  const vector<VALUE_TYPE>& values);
 
-  template<class APPLICATIVE, class FUNCTION>
-  auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
-                vector<VALUE_TYPE>&& values);
-}; // exposition only
+    template<class APPLICATIVE, class FUNCTION>
+    auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
+                  vector<VALUE_TYPE>&& values);
+  }; // exposition only
+}
 ```
 
 ::: wording
@@ -25,11 +27,13 @@ struct $vector-traversable-impl$ {
 :::
 
 ```cpp
-template<class VALUE_TYPE>
-struct $vector-traversable-map$
-    : derive_traversable<$vector-traversable-impl$<VALUE_TYPE>> {
-  using $vector-traversable-impl$<VALUE_TYPE>::traverse;
-}; // exposition only
+namespace std {
+  template<class VALUE_TYPE>
+  struct $vector-traversable-map$
+      : derive_traversable<$vector-traversable-impl$<VALUE_TYPE>> {
+    using $vector-traversable-impl$<VALUE_TYPE>::traverse;
+  }; // exposition only
+}
 ```
 
 :::

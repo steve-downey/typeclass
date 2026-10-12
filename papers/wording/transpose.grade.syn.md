@@ -1,7 +1,9 @@
 ::: add
 
 ```cpp
-struct unit_grade {};
+namespace std {
+  struct unit_grade {};
+}
 ```
 
 ::: wording
@@ -71,10 +73,12 @@ concept grade_semilattice = requires {
 :::
 
 ```cpp
-template<class CONTEXT>
-struct grade_of {
-  using type = unit_grade;
-};
+namespace std {
+  template<class CONTEXT>
+  struct grade_of {
+    using type = unit_grade;
+  };
+}
 ```
 
 ::: wording
@@ -84,8 +88,10 @@ struct grade_of {
 :::
 
 ```cpp
-template<class CONTEXT>
-using $grade-of-t$ = typename grade_of<CONTEXT>::type; // exposition only
+namespace std {
+  template<class CONTEXT>
+  using $grade-of-t$ = typename grade_of<CONTEXT>::type; // exposition only
+}
 ```
 
 ::: wording
@@ -100,8 +106,10 @@ struct rebind_grade;
 :::
 
 ```cpp
-template<class CONTEXT, class GRADE>
-using $rebind-grade-t$ = typename rebind_grade<CONTEXT, GRADE>::type; // exposition only
+namespace std {
+  template<class CONTEXT, class GRADE>
+  using $rebind-grade-t$ = typename rebind_grade<CONTEXT, GRADE>::type; // exposition only
+}
 ```
 
 ::: wording
@@ -116,28 +124,36 @@ concept graded_context = !is_same_v<$grade-of-t$<CONTEXT>, unit_grade>;
 :::
 
 ```cpp
-template<class MODEL_GRADE, class RAW_GRADE>
-struct $mixes-with-model-impl$
-    : bool_constant<is_same_v<grade_model_t<RAW_GRADE>, grade_model_t<MODEL_GRADE>>> {
-}; // exposition only
+namespace std {
+  template<class MODEL_GRADE, class RAW_GRADE>
+  struct $mixes-with-model-impl$
+      : bool_constant<is_same_v<grade_model_t<RAW_GRADE>, grade_model_t<MODEL_GRADE>>> {
+  }; // exposition only
+}
 ```
 
 ```cpp
-template<class MODEL_GRADE>
-struct $mixes-with-model-impl$<MODEL_GRADE, unit_grade> : true_type {}; // exposition only
+namespace std {
+  template<class MODEL_GRADE>
+  struct $mixes-with-model-impl$<MODEL_GRADE, unit_grade> : true_type {}; // exposition only
+}
 ```
 
 ```cpp
-template<class MODEL_GRADE, class OPERAND>
-concept $mixes-with-model$ =
-    $mixes-with-model-impl$<MODEL_GRADE,
-                          $grade-of-t$<remove_cvref_t<OPERAND>>>::value; // exposition
-                                                                       // only
+namespace std {
+  template<class MODEL_GRADE, class OPERAND>
+  concept $mixes-with-model$ =
+      $mixes-with-model-impl$<MODEL_GRADE,
+                            $grade-of-t$<remove_cvref_t<OPERAND>>>::value; // exposition
+                                                                         // only
+}
 ```
 
 ```cpp
-template<class MODEL_GRADE, class CARRIER, class... OPERANDS>
-using $mixed-result-t$ = $see below$; // exposition only
+namespace std {
+  template<class MODEL_GRADE, class CARRIER, class... OPERANDS>
+  using $mixed-result-t$ = $see below$; // exposition only
+}
 ```
 
 :::
