@@ -104,11 +104,11 @@ It is all about applying a pure function to arguments in contexts.
 One verb, three contexts.
 The code is from the [[https://github.com/steve-downey/transpose][transpose]] repository's example, which builds and runs in CI.
 
-#+transclude: [[orgit-file:~/src/transpose/main::blog/trees-and-transposition-for-29::examples/transpose_post_example.cpp::05ce0358-d2a6-4908-a5b3-ec09da449bbd]] :lines 2- :src cpp :end "05ce0358-d2a6-4908-a5b3-ec09da449bbd end"
+#+transclude: [[orgit-file:~/src/typeclass/typeclass::transpose/blog/trees-and-transposition-for-29::examples/transpose_post_example.cpp::05ce0358-d2a6-4908-a5b3-ec09da449bbd]] :lines 2- :src cpp :end "05ce0358-d2a6-4908-a5b3-ec09da449bbd end"
 
-#+transclude: [[orgit-file:~/src/transpose/main::blog/trees-and-transposition-for-29::examples/transpose_post_example.cpp::680950c9-7c4f-4aac-9e7b-bd32d9c7056a]] :lines 2- :src cpp :end "680950c9-7c4f-4aac-9e7b-bd32d9c7056a end"
+#+transclude: [[orgit-file:~/src/typeclass/typeclass::transpose/blog/trees-and-transposition-for-29::examples/transpose_post_example.cpp::680950c9-7c4f-4aac-9e7b-bd32d9c7056a]] :lines 2- :src cpp :end "680950c9-7c4f-4aac-9e7b-bd32d9c7056a end"
 
-#+transclude: [[orgit-file:~/src/transpose/main::blog/trees-and-transposition-for-29::examples/transpose_post_example.cpp::e916da84-685b-40b3-aee5-c9df63321855]] :lines 2- :src cpp :end "e916da84-685b-40b3-aee5-c9df63321855 end"
+#+transclude: [[orgit-file:~/src/typeclass/typeclass::transpose/blog/trees-and-transposition-for-29::examples/transpose_post_example.cpp::e916da84-685b-40b3-aee5-c9df63321855]] :lines 2- :src cpp :end "e916da84-685b-40b3-aee5-c9df63321855 end"
 
 P3200, /Shape-Preserving Traversal and Transposition for Contextual Computations/, proposes a shape-preserving traversal facility together with ~transpose~ operations that convert a structure of contextual values into a contextual structure, and the bundled customization model it takes to do that coherently.
 
@@ -127,9 +127,9 @@ Here is yesterday's tree: ~unique_ptr~ children, not even copyable, no ~Fix~ any
 Three ingredients, and then the fold runs over it as it is.
 From the [[https://github.com/steve-downey/tree_algorithms][tree_algorithms]] repository's examples.
 
-#+transclude: [[orgit-file:~/src/tree_algorithms/main::blog/trees-and-transposition-for-29::examples/nonce_tree_direct.cpp::04e450a4-3614-4f09-a185-1835f935673a]] :lines 2- :src cpp :end "04e450a4-3614-4f09-a185-1835f935673a end"
+#+transclude: [[orgit-file:~/src/typeclass/typeclass::tree_algorithms/blog/trees-and-transposition-for-29::examples/nonce_tree_direct.cpp::04e450a4-3614-4f09-a185-1835f935673a]] :lines 2- :src cpp :end "04e450a4-3614-4f09-a185-1835f935673a end"
 
-#+transclude: [[orgit-file:~/src/tree_algorithms/main::blog/trees-and-transposition-for-29::examples/nonce_tree_direct.cpp::78958c3f-7ae7-4933-bc32-57c5ec1e8ea2]] :lines 2- :src cpp :end "78958c3f-7ae7-4933-bc32-57c5ec1e8ea2 end"
+#+transclude: [[orgit-file:~/src/typeclass/typeclass::tree_algorithms/blog/trees-and-transposition-for-29::examples/nonce_tree_direct.cpp::78958c3f-7ae7-4933-bc32-57c5ec1e8ea2]] :lines 2- :src cpp :end "78958c3f-7ae7-4933-bc32-57c5ec1e8ea2 end"
 
 P4322, /Algorithms for Trees/, proposes generic algorithms centered on recursive structure instead of flat external iteration: fold, unfold, and the fusion of the two, plus the hooks that let a hand-written tree use them.
 
@@ -158,7 +158,7 @@ A ~shared_ptr<const vector>~ allows O(1) copy of the shared_ptr, but the ~vector
 Split by measure, and the original is untouched.
 From the [[https://github.com/steve-downey/fingertree][fingertree]] repository's example.
 
-#+transclude: [[orgit-file:~/src/fingertree/fingertree::blog/trees-and-transposition-for-29::examples/finger_tree.cpp::78d295c0-0601-4b09-b262-7c18620d3034]] :lines 2- :src cpp :end "78d295c0-0601-4b09-b262-7c18620d3034 end"
+#+transclude: [[orgit-file:~/src/typeclass/typeclass::fingertree/blog/trees-and-transposition-for-29::examples/finger_tree.cpp::78d295c0-0601-4b09-b262-7c18620d3034]] :lines 2- :src cpp :end "78d295c0-0601-4b09-b262-7c18620d3034 end"
 
 P4325, /A Persistent Measured Sequence for the Standard Library/, proposes a persistent measured sequence abstraction with efficient concatenation, prefix-based search, and split operations, drawing on the finger-tree literature without committing to one implementation.
 

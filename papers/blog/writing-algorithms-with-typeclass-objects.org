@@ -58,7 +58,7 @@ You asked for the Functor instance of a specific type and got it.
 Pass the instance at the call site, as an ordinary argument.
 A function takes the typeclass object by reference; the caller decides which one it gets.
 
-From [[orgit-file:~/src/transpose/main::blog/writing-algorithms-with-typeclass-objects::examples/lookup_modes_example.cpp][=examples/lookup_modes_example.cpp=]], where ~bt~ is that file's alias for ~beman::transpose~:
+From [[orgit-file:~/src/typeclass/typeclass::transpose/blog/writing-algorithms-with-typeclass-objects::examples/lookup_modes_example.cpp][=examples/lookup_modes_example.cpp=]], where ~bt~ is that file's alias for ~beman::transpose~:
 
 #+begin_src cpp
 auto fmap_with = [](const auto &tc, const auto &val) {
@@ -126,7 +126,7 @@ You want the names in scope.
 So inherit from the instance.
 The typeclass objects are empty structs, so inheriting adds no data and slicing is a non-issue; the inheritance exists only to pull the operation names into the algorithm's own scope.
 
-From [[orgit-file:~/src/transpose/main::blog/writing-algorithms-with-typeclass-objects::examples/algorithm_object_example.cpp][=examples/algorithm_object_example.cpp=]]:
+From [[orgit-file:~/src/typeclass/typeclass::transpose/blog/writing-algorithms-with-typeclass-objects::examples/algorithm_object_example.cpp][=examples/algorithm_object_example.cpp=]]:
 
 #+begin_src cpp
 template <class T, const auto &TC =
@@ -277,7 +277,7 @@ Slightly more syntax; in exchange, the call-site override from earlier, which a 
 * Where it matters, and why it belongs in the standard
 
 This is not a demonstration written once against one type.
-In this proposal's own repository the same fold and traversal algorithms run, unchanged, over a ~BinaryTree<T>~ ([[orgit-file:~/src/transpose/main::blog/writing-algorithms-with-typeclass-objects::examples/binary_tree.hpp][=examples/binary_tree.hpp=]]) /and/ over the contextual types from part one --- ~optional~, the sender-shaped stand-in, and lanewise ~zip_list~/SIMD --- which share nothing with a tree and nothing with each other, yet enter through the identical mechanism.
+In this proposal's own repository the same fold and traversal algorithms run, unchanged, over a ~BinaryTree<T>~ ([[orgit-file:~/src/typeclass/typeclass::transpose/blog/writing-algorithms-with-typeclass-objects::examples/binary_tree.hpp][=examples/binary_tree.hpp=]]) /and/ over the contextual types from part one --- ~optional~, the sender-shaped stand-in, and lanewise ~zip_list~/SIMD --- which share nothing with a tree and nothing with each other, yet enter through the identical mechanism.
 
 The same ~foldable~ / ~traversable~ machinery reaches further in the coordinated paper set, over structures this paper deliberately leaves to its companions:
 

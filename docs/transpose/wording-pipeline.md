@@ -15,7 +15,7 @@ make wording-check  # fail if the checked-in fragments have drifted
 make papers         # regenerate, then build the PDF
 ```
 
-`make wording` runs [`scripts/gen-wording.sh`](../scripts/gen-wording.sh),
+`make wording` runs [`scripts/gen-wording.sh`](../../scripts/gen-wording.sh),
 which needs `specgen` on `PATH` (or `SPECGEN=` pointing at it) and a Clang 22
 development install. If GCC's C++26 standard library is outside Clang's
 default search path, set `GCC_TOOLCHAIN=` to its installation prefix. The
@@ -167,7 +167,7 @@ and are errors.
 
 ## Transclusion
 
-[`papers/filters/transclude.py`](../papers/filters/transclude.py)
+[`papers/filters/transclude.py`](../../papers/filters/transclude.py)
 replaces a fenced div carrying the `include` class with the parsed blocks of
 the file it names:
 
@@ -176,7 +176,7 @@ the file it names:
 :::
 ```
 
-It is selected by [`papers/defaults.yaml`](../papers/defaults.yaml), which
+It is selected by [`papers/defaults.yaml`](../../papers/defaults.yaml), which
 MPark.WG21's `base.mk` already layers after its own `doc` and `formatting`
 defaults.
 A defaults file *replaces* a list-valued key rather than merging into it, so
@@ -186,7 +186,7 @@ that file restates the whole filter chain; transclusion runs first, so the
 
 The fragments must not become prerequisites of the paper: `base.mk` computes
 its pandoc inputs as `$(filter %.md, $^)` and would hand each fragment to
-pandoc as a further input file. [`papers/Makefile`](../papers/Makefile) depends
+pandoc as a further input file. [`papers/Makefile`](../../papers/Makefile) depends
 on `wording/.stamp` instead, which `make wording` writes.
 
 Building the paper prints `mpark/wg21: stable name transpose.* not found` for
@@ -216,7 +216,7 @@ The subtree is unpatched, and should stay that way: everything this project
 adds lives beside it in `papers/`, which is the layout `wg21/flat.mk`
 documents.
 
-[`papers/filters/bibliography-header.py`](../papers/filters/bibliography-header.py)
+[`papers/filters/bibliography-header.py`](../../papers/filters/bibliography-header.py)
 is the one shim. `wg21.py` removes an `unnumbered` class from the generated
 references header unconditionally, and pandoc 3.9's citeproc does not set it,
 so every paper carrying a citation aborts the filter with `ValueError`. A

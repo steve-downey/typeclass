@@ -22,14 +22,14 @@ SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 `beman.fingertree` is licensed under the Apache License v2.0 with LLVM Exceptions.
 
-The design notes under [`docs/`](docs/) are licensed under
+The design notes under [`docs/`](./) are licensed under
 [CC BY-SA 4.0](LICENSE.CC-BY-SA-4.0); each carries its own SPDX identifier.
 
 ## Usage
 
 TODO
 
-Full runnable examples can be found in [`examples/`](examples/).
+Full runnable examples can be found in [`examples/`](../../examples/fingertree/).
 
 ## Dependencies
 
@@ -60,21 +60,21 @@ You can disable building tests by setting CMake option `BEMAN_FINGERTREE_BUILD_T
 
 ## Design notes
 
-The implementation choices are documented under [`docs/`](docs/):
+The implementation choices are documented under [`docs/`](./):
 
-* [Compile-time design](docs/compile-time-design.md) --- why the spine is a
+* [Compile-time design](compile-time-design.md) --- why the spine is a
   uniform type and a runtime variant rather than the textbook nested type, and
   the probe test that keeps it that way.
-* [Allocator design](docs/allocator-design.md) --- how structural sharing and
+* [Allocator design](allocator-design.md) --- how structural sharing and
   the Lakos coherency rule are reconciled, and how the PMR layer stays
   zero-global-allocation.
-* [Measure-based splitting](docs/measure-based-splitting.md) --- splitting on
+* [Measure-based splitting](measure-based-splitting.md) --- splitting on
   accumulated measures, the three split methods, and how the split walks the
   spine.
 
 ## Development
 
-See the [Contributing Guidelines](CONTRIBUTING.md).
+See the [Contributing Guidelines](../../CONTRIBUTING.md).
 
 ## Integrate beman.fingertree into your project
 
@@ -93,7 +93,7 @@ cmake --list-presets=workflow
 ```
 
 For details on building beman.fingertree without using a CMake preset, refer to the
-[Contributing Guidelines](CONTRIBUTING.md).
+[Contributing Guidelines](../../CONTRIBUTING.md).
 
 ### Installation
 
@@ -102,7 +102,7 @@ For details on building beman.fingertree without using a CMake preset, refer to 
 The preferred way to install fingertree is via vcpkg. To do so, after installing vcpkg
 itself, you need to add support for the Beman project's [vcpkg
 registry](https://github.com/bemanproject/vcpkg-registry) by configuring a
-`vcpkg-configuration.json` file (which fingertree [provides](vcpkg-configuration.json)).
+`vcpkg-configuration.json` file (which fingertree [provides](../../vcpkg-configuration.json)).
 
 Then, simply run `vcpkg install beman-fingertree`.
 

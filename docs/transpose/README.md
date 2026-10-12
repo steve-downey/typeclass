@@ -52,7 +52,7 @@ accumulating object) and `std::array` ship with registered instances.
 demonstration types proving the front door is context-agnostic. The `sender`
 here is a `std::function<T()>` wrapper, not a P2300 sender; the applicative
 surface is checked against genuine `std::execution` senders separately, in
-[`examples/p2300_adapter.hpp`](examples/p2300_adapter.hpp).
+[`examples/p2300_adapter.hpp`](../../examples/transpose/p2300_adapter.hpp).
 
 ## Public surface
 
@@ -110,11 +110,11 @@ C++23) and consumable via `find_package`/`add_subdirectory`.
 ## Provenance
 
 The traversal machinery was extracted and renamed from the `trees` pedagogy
-repository; see [`docs/provenance.md`](docs/provenance.md). The WG21 paper
+repository; see [`docs/provenance.md`](provenance.md). The WG21 paper
 framework, [MPark.WG21](https://github.com/mpark/wg21), is a squashed subtree
 under `papers/wg21`, with the papers beside it in `papers/`; the `infra/`
 directory is vendored from the
 [Beman Project infra](https://github.com/bemanproject/infra).
 
 P3200's wording is generated from the headers rather than written by hand; see
-[`docs/wording-pipeline.md`](docs/wording-pipeline.md).
+[`docs/wording-pipeline.md`](wording-pipeline.md).

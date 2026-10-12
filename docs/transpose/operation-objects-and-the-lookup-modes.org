@@ -37,7 +37,7 @@ One namespace holds the whole family, which in the standard would be =std::typec
 
 * Three modes, and the one that isn't there
 
-[[file:../examples/lookup_modes_example.cpp][=examples/lookup_modes_example.cpp=]] lays out the three ways to reach an operation through a typeclass object.
+[[file:../../examples/transpose/lookup_modes_example.cpp][=examples/lookup_modes_example.cpp=]] lays out the three ways to reach an operation through a typeclass object.
 Implicit lookup through the variable template:
 
 #+begin_src cpp

@@ -23,7 +23,7 @@ recursion. No tree container is proposed — the algorithms work across
 representations users already have.
 
 **Implements**: the algorithm family proposed in [Algorithms for Trees
-(D4322R0)](papers/algorithms-for-trees.md).
+(D4322R0)](../../papers/algorithms-for-trees.md).
 
 **Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use)
 
@@ -46,21 +46,21 @@ int result = fold_fix<int>(eval_algebra, tree);
 int sum = fold_map<int>(std::identity{}, std::plus{}, 0, tree);
 ```
 
-Full runnable examples can be found in [`examples/`](examples/):
+Full runnable examples can be found in [`examples/`](../../examples/tree_algorithms/):
 
-* [`fixpoint_tree_example.cpp`](examples/fixpoint_tree_example.cpp) — a
+* [`fixpoint_tree_example.cpp`](../../examples/tree_algorithms/fixpoint_tree_example.cpp) — a
   self-contained expression tree and fold, suitable for Compiler Explorer.
-* [`expression_algorithms.cpp`](examples/expression_algorithms.cpp) — algebras
+* [`expression_algorithms.cpp`](../../examples/tree_algorithms/expression_algorithms.cpp) — algebras
   as reusable algorithm objects over the repository's expression tree.
-* [`binary_tree_adapt.cpp`](examples/binary_tree_adapt.cpp) — adapting an
+* [`binary_tree_adapt.cpp`](../../examples/tree_algorithms/binary_tree_adapt.cpp) — adapting an
   existing `shared_ptr` binary tree by conversion (`to_fix`/`from_fix`).
-* [`nonce_tree_direct.cpp`](examples/nonce_tree_direct.cpp) — folding and
+* [`nonce_tree_direct.cpp`](../../examples/tree_algorithms/nonce_tree_direct.cpp) — folding and
   building a move-only `unique_ptr` tree in place with `fold_with` and
   `unfold_with`; no conversion, no fixed-point wrapper.
-* [`search_tree_on_fix.cpp`](examples/search_tree_on_fix.cpp) — a full working
+* [`search_tree_on_fix.cpp`](../../examples/tree_algorithms/search_tree_on_fix.cpp) — a full working
   binary search tree built on `Fix` directly: folds where they fit, plain
   structural recursion where they don't.
-* [`sequence_algorithms.cpp`](examples/sequence_algorithms.cpp) — sequence
+* [`sequence_algorithms.cpp`](../../examples/tree_algorithms/sequence_algorithms.cpp) — sequence
   algorithms written against a quotient interface that never sees tree shape.
 
 ## Dependencies
@@ -91,7 +91,7 @@ C++26 is additionally exercised by an advisory (allowed-to-fail) CI job on the n
 
 ## Development
 
-See the [Contributing Guidelines](CONTRIBUTING.md).
+See the [Contributing Guidelines](../../CONTRIBUTING.md).
 
 ## Integrate beman.tree_algorithms into your project
 
@@ -110,7 +110,7 @@ cmake --list-presets=workflow
 ```
 
 For details on building beman.tree_algorithms without using a CMake preset, refer to the
-[Contributing Guidelines](CONTRIBUTING.md).
+[Contributing Guidelines](../../CONTRIBUTING.md).
 
 ### Installation
 
@@ -119,7 +119,7 @@ For details on building beman.tree_algorithms without using a CMake preset, refe
 The preferred way to install tree_algorithms is via vcpkg. To do so, after installing vcpkg
 itself, you need to add support for the Beman project's [vcpkg
 registry](https://github.com/bemanproject/vcpkg-registry) by configuring a
-`vcpkg-configuration.json` file (which tree_algorithms [provides](vcpkg-configuration.json)).
+`vcpkg-configuration.json` file (which tree_algorithms [provides](../../vcpkg-configuration.json)).
 
 Then, simply run `vcpkg install beman-tree-algorithms`.
 

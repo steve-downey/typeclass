@@ -62,7 +62,7 @@ SHA, so a stale entry cannot be served for a different revision."
   :group 'orgit-file-transclusion)
 
 (defcustom orgit-file-transclusion-base-url
-  "https://github.com/steve-downey/transpose/blob/"
+  "https://github.com/steve-downey/typeclass/blob/"
   "Base URL for exporting `orgit-file' links, with a trailing slash.
 The pinned REV is appended, so an exported link is a permalink to the
 revision the post was written against rather than to a moving branch."
