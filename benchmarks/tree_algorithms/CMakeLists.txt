@@ -28,7 +28,7 @@ foreach(_bench IN LISTS _runtime_benches)
         beman.tree_algorithms.benchmarks.${_bench}
         PRIVATE beman::tree_algorithms Catch2::Catch2WithMain
     )
-    if(BEMAN_TREE_ALGORITHMS_USE_MODULES)
+    if(BEMAN_TYPECLASS_USE_MODULES)
         set_target_properties(
             beman.tree_algorithms.benchmarks.${_bench}
             PROPERTIES CXX_MODULE_STD ON

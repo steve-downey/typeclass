@@ -10,7 +10,7 @@ foreach(example ${ALL_EXAMPLES})
         beman.fingertree.examples.${example}
         PRIVATE beman::fingertree
     )
-    if(BEMAN_FINGERTREE_USE_MODULES)
+    if(BEMAN_TYPECLASS_USE_MODULES)
         set_target_properties(
             beman.fingertree.examples.${example}
             PROPERTIES CXX_MODULE_STD ON

@@ -39,7 +39,7 @@ endforeach()
 # The receipts for the deferred domain: the same front door over genuine
 # std::execution senders, with concurrency actually happening. Opt-in for the
 # reason the adapter it uses is. See
-# docs/transpose-execution-plan.md#transpose-receipts.
+# docs/transpose/transpose-execution-plan.md#transpose-receipts.
 if(BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE)
     # beman.execution's inline default parallel backend uses std::thread but
     # does not yet propagate the platform threads library from its target.
