@@ -3,11 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2026-09-07 Mon 16:57 -->
+<!-- 2026-09-23 Wed 00:03 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Trees, Transposition, and a new Container for C++29</title>
 <meta name="author" content="Steve Downey" />
+<meta name="description" content="Four proposals for C++29: shape-preserving traversal and transpose, algorithms for trees, a persistent fingertree container, and a backtick infix operator." />
 <meta name="generator" content="Org Mode" />
 <script>
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&amp;dn=gpl-3.0.txt GPL-v3-or-Later
@@ -33,8 +34,30 @@
 <body>
 <div id="content" class="content">
 <h1 class="title">Trees, Transposition, and a new Container for C++29</h1>
-<div id="outline-container-orgf34329d" class="outline-2">
-<h2 id="orgf34329d"><span class="section-number-2">1.</span> Abstract</h2>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org4da98d6">1. Abstract</a></li>
+<li><a href="#org4d9245b">2. Why four papers</a></li>
+<li><a href="#org9eddf71">3. What?</a>
+<ul>
+<li><a href="#org81e8fc7">3.1. Transpose</a></li>
+<li><a href="#org571ef28">3.2. Algorithms for Trees</a></li>
+<li><a href="#org5077c29">3.3. Fingertrees</a></li>
+<li><a href="#orgcfd4e14">3.4. Backticks For Infix</a></li>
+</ul>
+</li>
+<li><a href="#orgd401524">4. "Only be sure always to call it please 'Research'" &mdash; Tom Lehrer</a></li>
+<li><a href="#org0d3cc23">5. "Why in the <b>Standard</b>"</a></li>
+<li><a href="#orgdd92091">6. Not Quite What I Set Out To Do</a></li>
+<li><a href="#orgf38c107">7. What I want</a></li>
+<li><a href="#orgd5cde58">8. When?</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org4da98d6" class="outline-2">
+<h2 id="org4da98d6"><span class="section-number-2">1.</span> Abstract</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 You have a <code>vector&lt;sender&lt;int&gt;&gt;</code> and you need a <code>sender&lt;vector&lt;int&gt;&gt;</code>, or a <code>vector&lt;optional&lt;int&gt;&gt;</code> and you need an <code>optional&lt;vector&lt;int&gt;&gt;</code>.
@@ -52,9 +75,11 @@ You have a pure function. You have arguments in two vectors. You just want to zi
 You want to keep working on a data structure while something else works on it. Making copies is expensive.
 </p>
 
+<!-- TEASER_END -->
+
 <p>
 I am on a campaign to improve support in C++ for contemporary algorithms.
-By contemporary I mean more recent than the Sedgewick C++ Algorithms  book I used back in the 90s.
+By contemporary I mean more recent than the Sedgewick C++ Algorithms book I used back in the 90s.
 There has been extraordinary work done in programming language and algorithmic research in the last 30 years.
 Much of it even well understood and codified enough to be standardized.
 </p>
@@ -65,8 +90,8 @@ All of them have hooks for the types you already have; none of them asks you to 
 </p>
 </div>
 </div>
-<div id="outline-container-orga883a39" class="outline-2">
-<h2 id="orga883a39"><span class="section-number-2">2.</span> Why four papers</h2>
+<div id="outline-container-org4d9245b" class="outline-2">
+<h2 id="org4d9245b"><span class="section-number-2">2.</span> Why four papers</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 This started as a fingertree. A container, adapters for the classic structures it can model, and a Rope.
@@ -76,17 +101,17 @@ That is the first paper boundary.
 </p>
 
 <p>
-It was always a little strange that the standard library has nothing tree shaped except <code>map</code> and <code>set</code>.
+It was always a little strange that the standard library has nothing tree-shaped except <code>map</code> and <code>set</code>.
 Trees are basic.
 When I looked, it turned out the <code>Fix</code> data type could be implemented in C++, literally, and it worked surprisingly well.
-Pattern matching and the visitor are the same thing at the core, Church encoded sum types fall out of that, and Kmett's recursion schemes stop being exotic.
+Pattern matching and the visitor are the same thing at the core, Church-encoded sum types fall out of that, and Kmett's recursion schemes stop being exotic.
 That is the tree paper, and it has its own reason to exist.
 </p>
 
 <p>
 If you have trees, you want to traverse them.
 The insight was that <code>invoke</code> is the key operation and <code>ap</code> is implementation detail.
-That is what P3200 owns, and the tree paper wanted it before I knew what it was.
+P3200 owns that, and the tree paper wanted it before I knew what it was.
 And then zip lists, data parallelism, and SIMD fell out of the same research, which I had not known going in.
 So the base paper is broader than trees.
 That is why it is the base.
@@ -104,7 +129,7 @@ Fingertree survives on its own as a concrete container that most other languages
 </p>
 
 <p>
-If only P3200 Transpose survives, we have applicative and traversable, instances for Ranges, and others, and a worked out path for monad.
+If only P3200 Transpose survives, we have Applicative and Traversable, instances for Ranges and others, and a worked-out path for Monad.
 Range of Context to Context of Ranges is enough.
 </p>
 
@@ -120,21 +145,21 @@ Backtick is parallel evolution.
 I have been thinking about it since C added <code>`</code>, <code>@</code>, and <code>$</code> to the basic character set for C23, and about the uniform function call proposals as really being about infix position.
 That it was actually possible I did not work out until the Brno WG21 meeting in Spring 2026.
 There was also a faction that wanted the backtick for escaping keywords into identifiers.
-Both turned out to be possible, but probably only if they were done at once.
+Both turned out to be possible, but probably only if they were done together.
 The crossover with the rest of this is just that infix is easier to read than nesting, even more than pipelines are.
 </p>
 </div>
 </div>
-<div id="outline-container-org0bbdddb" class="outline-2">
-<h2 id="org0bbdddb"><span class="section-number-2">3.</span> What?</h2>
+<div id="outline-container-org9eddf71" class="outline-2">
+<h2 id="org9eddf71"><span class="section-number-2">3.</span> What?</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 The base paper is P3200.
 I got the number by honest accident and sat on it.
 </p>
 </div>
-<div id="outline-container-org7f6599d" class="outline-3">
-<h3 id="org7f6599d"><span class="section-number-3">3.1.</span> Transpose</h3>
+<div id="outline-container-org81e8fc7" class="outline-3">
+<h3 id="org81e8fc7"><span class="section-number-3">3.1.</span> Transpose</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 You have a <code>vector&lt;sender&lt;int&gt;&gt;</code> and you need a <code>sender&lt;vector&lt;int&gt;&gt;</code>. Or you need to swap array of struct to struct of array for lane-wise SIMD processing. And you don't want to write that loop one more time.
@@ -155,63 +180,6 @@ One verb, three contexts.
 The code is from the <a href="https://github.com/steve-downey/transpose">transpose</a> repository's example, which builds and runs in CI.
 </p>
 
-<div class="org-src-container">
-<pre class="src src-cpp"><code>    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Every position present: the vector of maybes becomes maybe-a-vector.
-</span>    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">vector</span>&lt;<span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>&gt;&gt; <span style="font-weight: bold; font-style: italic;">complete</span>{1, 2, 3};
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">vector</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>&gt;&gt; <span style="font-weight: bold; font-style: italic;">all</span> = <span style="font-weight: bold; text-decoration: underline;">bt</span>::transpose(complete);
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::cout &lt;&lt; <span style="font-style: italic;">"complete input:  has_value = "</span> &lt;&lt; <span style="font-weight: bold; text-decoration: underline;">std</span>::boolalpha
-              &lt;&lt; all.has_value() &lt;&lt; <span style="font-style: italic;">'\n'</span>;
-
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">One gap anywhere and the whole result is empty -- the absence is
-</span>    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">hoisted out of the structure, not left inside it.
-</span>    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">vector</span>&lt;<span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>&gt;&gt; <span style="font-weight: bold; font-style: italic;">gapped</span>{1, <span style="font-weight: bold; text-decoration: underline;">std</span>::nullopt, 3};
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">vector</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>&gt;&gt; <span style="font-weight: bold; font-style: italic;">none</span> = <span style="font-weight: bold; text-decoration: underline;">bt</span>::transpose(gapped);
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::cout &lt;&lt; <span style="font-style: italic;">"gapped input:    has_value = "</span> &lt;&lt; none.has_value() &lt;&lt; <span style="font-style: italic;">'\n'</span>;
-</code></pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-cpp"><code>    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Each sender defers a computation; running one announces itself.
-</span>    <span style="font-weight: bold;">auto</span> <span style="font-weight: bold; font-style: italic;">deferred</span> = [](<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">value</span>) {
-        <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">bt</span>::<span style="font-weight: bold; text-decoration: underline;">sender</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>&gt;{[<span style="font-weight: bold; text-decoration: underline;">value</span>] {
-            <span style="font-weight: bold; text-decoration: underline;">std</span>::cout &lt;&lt; <span style="font-style: italic;">"  running the sender for "</span> &lt;&lt; value &lt;&lt; <span style="font-style: italic;">'\n'</span>;
-            <span style="font-weight: bold;">return</span> value * value;
-        }};
-    };
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">vector</span>&lt;<span style="font-weight: bold; text-decoration: underline;">bt</span>::<span style="font-weight: bold; text-decoration: underline;">sender</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>&gt;&gt; <span style="font-weight: bold; font-style: italic;">senders</span>{deferred(1), deferred(2), deferred(3)};
-
-    <span style="font-weight: bold;">auto</span> <span style="font-weight: bold; font-style: italic;">composed</span> = <span style="font-weight: bold; text-decoration: underline;">bt</span>::transpose(senders);
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::cout &lt;&lt; <span style="font-style: italic;">"composed vector&lt;sender&lt;int&gt;&gt; into sender&lt;vector&lt;int&gt;&gt;; "</span>
-                 <span style="font-style: italic;">"nothing has run yet\n"</span>;
-
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">vector</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>&gt; <span style="font-weight: bold; font-style: italic;">values</span> = composed.get();
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::cout &lt;&lt; <span style="font-style: italic;">"after get():\n"</span>;
-</code></pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-cpp"><code>    <span style="font-weight: bold;">constexpr</span> <span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">W</span> = 4;
-    <span style="font-weight: bold;">using</span> <span style="font-weight: bold; text-decoration: underline;">vec4</span> = <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">simd</span>::<span style="font-weight: bold; text-decoration: underline;">vec</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>, W&gt;;
-
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Three W-wide computations, one per structure position, filled from
-</span>    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">real std::simd arithmetic.
-</span>    <span style="font-weight: bold; text-decoration: underline;">vec4</span> <span style="font-weight: bold; text-decoration: underline;">a</span>([](<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">lane</span>) { <span style="font-weight: bold;">return</span> lane + 1; });        <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">{1, 2, 3, 4}
-</span>    <span style="font-weight: bold; text-decoration: underline;">vec4</span> <span style="font-weight: bold; text-decoration: underline;">b</span>([](<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">lane</span>) { <span style="font-weight: bold;">return</span> (lane + 1) * 10; }); <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">{10, 20, 30, 40}
-</span>    <span style="font-weight: bold; text-decoration: underline;">vec4</span> <span style="font-weight: bold; text-decoration: underline;">c</span>([](<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">lane</span>) { <span style="font-weight: bold;">return</span> (lane + 1) * 100; });
-
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">vector</span>&lt;<span style="font-weight: bold; text-decoration: underline;">bt</span>::<span style="font-weight: bold; text-decoration: underline;">simd_lanes</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>, W&gt;&gt; <span style="font-weight: bold; font-style: italic;">structure</span>(3);
-    <span style="font-weight: bold;">for</span> (<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">lane</span> = 0; lane &lt; W; ++lane) {
-        structure[0].data[lane] = a[lane];
-        structure[1].data[lane] = b[lane];
-        structure[2].data[lane] = c[lane];
-    }
-
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">vector&lt;simd_lanes&lt;int, W&gt;&gt; -&gt; simd_lanes&lt;vector&lt;int&gt;, W&gt;: W complete
-</span>    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">result vectors, one per hardware lane.
-</span>    <span style="font-weight: bold;">auto</span> <span style="font-weight: bold; font-style: italic;">transposed</span> = <span style="font-weight: bold; text-decoration: underline;">bt</span>::transpose(structure);
-</code></pre>
-</div>
-
 <p>
 P3200, <i>Shape-Preserving Traversal and Transposition for Contextual Computations</i>, proposes a shape-preserving traversal facility together with <code>transpose</code> operations that convert a structure of contextual values into a contextual structure, and the bundled customization model it takes to do that coherently.
 </p>
@@ -221,8 +189,8 @@ P3200, <i>Shape-Preserving Traversal and Transposition for Contextual Computatio
 </dl>
 </div>
 </div>
-<div id="outline-container-orgebdc2ca" class="outline-3">
-<h3 id="orgebdc2ca"><span class="section-number-3">3.2.</span> Algorithms for Trees</h3>
+<div id="outline-container-org571ef28" class="outline-3">
+<h3 id="org571ef28"><span class="section-number-3">3.2.</span> Algorithms for Trees</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 Sometimes you don't want to flatten everything to a sequence.
@@ -230,7 +198,7 @@ You want to preserve the shape of the structure.
 </p>
 
 <p>
-It also turns out there are <b>efficient</b> tools for building recursive data structures out of flat templated types, then folding them in to a value, unfolding a value into a structure, and fusing the two so the structure is never materialized.
+It also turns out there are <b>efficient</b> tools for building recursive data structures out of flat templated types, then folding them into a value, unfolding a value into a structure, and fusing the two so the structure is never materialized.
 The fold/unfold/fuse trio goes back to <a href="https://maartenfokkinga.github.io/utwente/mmf91m.pdf"><i>Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire</i></a> (Meijer, Fokkinga, and Paterson, 1991).
 </p>
 
@@ -244,61 +212,6 @@ Three ingredients, and then the fold runs over it as it is.
 From the <a href="https://github.com/steve-downey/tree_algorithms">tree_algorithms</a> repository's examples.
 </p>
 
-<div class="org-src-container">
-<pre class="src src-cpp"><code><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Yesterday's tree.
-</span><span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">Node</span> {
-    <span style="font-weight: bold; text-decoration: underline;">int</span>                   <span style="font-weight: bold; font-style: italic;">value</span>;
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">unique_ptr</span>&lt;<span style="font-weight: bold; text-decoration: underline;">Node</span>&gt; <span style="font-weight: bold; font-style: italic;">left</span>;  <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">null = absent
-</span>    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">unique_ptr</span>&lt;<span style="font-weight: bold; text-decoration: underline;">Node</span>&gt; <span style="font-weight: bold; font-style: italic;">right</span>; <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">null = absent
-</span>};
-
-<span style="font-weight: bold;">auto</span> <span style="font-weight: bold;">leaf</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">v</span>) -&gt; <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">unique_ptr</span>&lt;<span style="font-weight: bold; text-decoration: underline;">Node</span>&gt; { <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::make_unique&lt;<span style="font-weight: bold; text-decoration: underline;">Node</span>&gt;(Node{v, <span style="font-weight: bold; text-decoration: underline;">nullptr</span>, <span style="font-weight: bold; text-decoration: underline;">nullptr</span>}); }
-
-<span style="font-weight: bold;">auto</span> <span style="font-weight: bold;">node</span>(<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">v</span>, <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">unique_ptr</span>&lt;<span style="font-weight: bold; text-decoration: underline;">Node</span>&gt; <span style="font-weight: bold; font-style: italic;">l</span>, <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">unique_ptr</span>&lt;<span style="font-weight: bold; text-decoration: underline;">Node</span>&gt; <span style="font-weight: bold; font-style: italic;">r</span>) -&gt; <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">unique_ptr</span>&lt;<span style="font-weight: bold; text-decoration: underline;">Node</span>&gt; {
-    <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::make_unique&lt;<span style="font-weight: bold; text-decoration: underline;">Node</span>&gt;(Node{v, <span style="font-weight: bold; text-decoration: underline;">std</span>::move(l), <span style="font-weight: bold; text-decoration: underline;">std</span>::move(r)});
-}
-
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Ingredient one: one layer of the tree, child slots holding whatever
-</span><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">handle type the projection deals in.
-</span><span style="font-weight: bold;">template</span> &lt;<span style="font-weight: bold;">typename</span> <span style="font-weight: bold; text-decoration: underline;">A</span>&gt;
-<span style="font-weight: bold;">struct</span> <span style="font-weight: bold; text-decoration: underline;">NodeF</span> {
-    <span style="font-weight: bold; text-decoration: underline;">int</span>              <span style="font-weight: bold; font-style: italic;">value</span>;
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">A</span>&gt; <span style="font-weight: bold; font-style: italic;">left</span>;
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">A</span>&gt; <span style="font-weight: bold; font-style: italic;">right</span>;
-};
-
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Ingredient two: fmap for that layer &#8212; apply a function to each engaged
-</span><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">child slot, left before right; the value rides along.
-</span><span style="font-weight: bold;">inline</span> <span style="font-weight: bold;">constexpr</span> <span style="font-weight: bold;">auto</span> <span style="font-weight: bold; font-style: italic;">fmap_node</span> = [](<span style="font-weight: bold;">auto</span>&amp;&amp; <span style="font-weight: bold; font-style: italic;">fn</span>, <span style="font-weight: bold;">const</span> <span style="font-weight: bold;">auto</span>&amp; <span style="font-weight: bold; font-style: italic;">layer</span>) {
-    <span style="font-weight: bold;">using</span> <span style="font-weight: bold; text-decoration: underline;">A</span> = <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">remove_cvref_t</span>&lt;<span style="font-weight: bold;">decltype</span>(*layer.left)&gt;;
-    <span style="font-weight: bold;">using</span> <span style="font-weight: bold; text-decoration: underline;">B</span> = <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">remove_cvref_t</span>&lt;<span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">invoke_result_t</span>&lt;<span style="font-weight: bold;">decltype</span>(fn), <span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">A</span>&amp;&gt;&gt;;
-    <span style="font-weight: bold;">return</span> <span style="font-weight: bold; text-decoration: underline;">NodeF</span>&lt;<span style="font-weight: bold; text-decoration: underline;">B</span>&gt;{layer.value,
-                    layer.left ? <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">B</span>&gt;{fn(*layer.left)} : <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">B</span>&gt;{},
-                    layer.right ? <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">B</span>&gt;{fn(*layer.right)} : <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">B</span>&gt;{}};
-};
-
-<span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Ingredient three: the projection &#8212; expose one layer, children as raw
-</span><span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">non-owning pointers into the tree we already have.
-</span><span style="font-weight: bold;">inline</span> <span style="font-weight: bold;">constexpr</span> <span style="font-weight: bold;">auto</span> <span style="font-weight: bold; font-style: italic;">project</span> = [](<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Node</span>* <span style="font-weight: bold; font-style: italic;">n</span>) -&gt; <span style="font-weight: bold; text-decoration: underline;">NodeF</span>&lt;<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Node</span>*&gt; {
-    <span style="font-weight: bold;">return</span> {n-&gt;value,
-            n-&gt;left ? <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Node</span>*&gt;{n-&gt;left.get()} : <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Node</span>*&gt;{},
-            n-&gt;right ? <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Node</span>*&gt;{n-&gt;right.get()} : <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">Node</span>*&gt;{}};
-};
-</code></pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-cpp"><code>    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">An order-sensitive algebra: "(left value right)" with "." marking
-</span>    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">an absent child pins shape and traversal order exactly.
-</span>    <span style="font-weight: bold;">auto</span> <span style="font-weight: bold; font-style: italic;">shape_algebra</span> = [](<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">NodeF</span>&lt;<span style="font-weight: bold; text-decoration: underline;">std</span>::string&gt;&amp; <span style="font-weight: bold; font-style: italic;">layer</span>) -&gt; <span style="font-weight: bold; text-decoration: underline;">std</span>::string {
-        <span style="font-weight: bold;">auto</span> <span style="font-weight: bold; font-style: italic;">child</span> = [](<span style="font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="font-weight: bold; text-decoration: underline;">optional</span>&lt;<span style="font-weight: bold; text-decoration: underline;">std</span>::string&gt;&amp; <span style="font-weight: bold; font-style: italic;">c</span>) { <span style="font-weight: bold;">return</span> c ? *c : <span style="font-weight: bold; text-decoration: underline;">std</span>::string(<span style="font-style: italic;">"."</span>); };
-        <span style="font-weight: bold;">return</span> <span style="font-style: italic;">"("</span> + child(layer.left) + <span style="font-style: italic;">" "</span> + <span style="font-weight: bold; text-decoration: underline;">std</span>::to_string(layer.value) + <span style="font-style: italic;">" "</span> + child(layer.right) + <span style="font-style: italic;">")"</span>;
-    };
-
-    <span style="font-weight: bold;">auto</span> <span style="font-weight: bold; font-style: italic;">shape</span> = fold_with&lt;<span style="font-weight: bold; text-decoration: underline;">std</span>::string&gt;(shape_algebra, fmap_node, project, tree.get());
-</code></pre>
-</div>
-
 <p>
 P4322, <i>Algorithms for Trees</i>, proposes generic algorithms centered on recursive structure instead of flat external iteration: fold, unfold, and the fusion of the two, plus the hooks that let a hand-written tree use them.
 </p>
@@ -308,11 +221,11 @@ P4322, <i>Algorithms for Trees</i>, proposes generic algorithms centered on recu
 </dl>
 </div>
 </div>
-<div id="outline-container-org40668aa" class="outline-3">
-<h3 id="org40668aa"><span class="section-number-3">3.3.</span> Fingertrees</h3>
+<div id="outline-container-org5077c29" class="outline-3">
+<h3 id="org5077c29"><span class="section-number-3">3.3.</span> Fingertrees</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
-A twenty year old data structure.
+A twenty-year-old data structure.
 <a href="https://www.staff.city.ac.uk/~ross/papers/FingerTree.html">Hinze and Paterson's 2006 paper</a> is still the reference, and Haskell has shipped it as <a href="https://hackage.haskell.org/package/containers/docs/Data-Sequence.html"><code>Data.Sequence</code></a> the whole time.
 </p>
 
@@ -321,14 +234,14 @@ That is, by the way, the same Paterson on all three foundational papers.
 </p>
 
 <p>
-It's "purely functional" and "persistent" which means that operations on the tree return a new tree rather than mutating the original tree.
+It's "purely functional" and "persistent", which means that operations on the tree return a new tree rather than mutating the original tree.
 Nonetheless, by clever sharing of state, it is still very efficient.
 You can hand a fingertree to a long-running job on another thread and keep working on your own copy.
 You don't have to pause the world while writing out state to disk.
 </p>
 
 <p>
-Further, by annotating the interior nodes, many other data structures can be efficiently modeled, using <code>monoids</code>: a type, an associative binary operation, and an identity element.
+Further, by annotating the interior nodes, many other data structures can be efficiently modeled, using monoids: a type, an associative binary operation, and an identity element.
 The monoidal tag accumulates a measurement of what is held below a node, and the tree is navigated by that measure.
 It can act as a sequence, a priority queue, or an interval map, all depending on the choice of measure.
 </p>
@@ -347,25 +260,6 @@ Split by measure, and the original is untouched.
 From the <a href="https://github.com/steve-downey/fingertree">fingertree</a> repository's example.
 </p>
 
-<div class="org-src-container">
-<pre class="src src-cpp"><code>    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Build a persistent measured sequence 0..9; snoc appends at the back.
-</span>    <span style="font-weight: bold; text-decoration: underline;">ft</span>::<span style="font-weight: bold; text-decoration: underline;">FingerTree</span>&lt;<span style="font-weight: bold; text-decoration: underline;">int</span>&gt; <span style="font-weight: bold; font-style: italic;">seq</span>;
-    <span style="font-weight: bold;">for</span> (<span style="font-weight: bold; text-decoration: underline;">int</span> <span style="font-weight: bold; font-style: italic;">i</span> = 0; i &lt; 10; ++i)
-        seq = seq.snoc(i);
-
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::cout &lt;&lt; <span style="font-style: italic;">"sequence size (measure): "</span> &lt;&lt; seq.measure() &lt;&lt; <span style="font-style: italic;">'\n'</span>;
-
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Split by accumulated measure: the left side is the longest prefix whose
-</span>    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">measure stays below the threshold; the element that reaches it goes right.
-</span>    <span style="font-weight: bold;">auto</span> <span style="font-weight: bold; font-style: italic;">split</span> = seq.split_at_measure(<span style="font-weight: bold; text-decoration: underline;">std</span>::size_t{4});
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::cout &lt;&lt; <span style="font-style: italic;">"left size:  "</span> &lt;&lt; split.d_left.measure() &lt;&lt; <span style="font-style: italic;">'\n'</span>;
-    <span style="font-weight: bold; text-decoration: underline;">std</span>::cout &lt;&lt; <span style="font-style: italic;">"right size: "</span> &lt;&lt; split.d_right.measure() &lt;&lt; <span style="font-style: italic;">'\n'</span>;
-
-    <span style="font-weight: bold; font-style: italic;">// </span><span style="font-weight: bold; font-style: italic;">Persistence: the split shares structure and leaves the original intact.
-</span>    <span style="font-weight: bold; text-decoration: underline;">std</span>::cout &lt;&lt; <span style="font-style: italic;">"original still has "</span> &lt;&lt; seq.measure() &lt;&lt; <span style="font-style: italic;">" elements\n"</span>;
-</code></pre>
-</div>
-
 <p>
 P4325, <i>A Persistent Measured Sequence for the Standard Library</i>, proposes a persistent measured sequence abstraction with efficient concatenation, prefix-based search, and split operations, drawing on the finger-tree literature without committing to one implementation.
 </p>
@@ -375,8 +269,8 @@ P4325, <i>A Persistent Measured Sequence for the Standard Library</i>, proposes 
 </dl>
 </div>
 </div>
-<div id="outline-container-orgc8bee41" class="outline-3">
-<h3 id="orgc8bee41"><span class="section-number-3">3.4.</span> Backticks For Infix</h3>
+<div id="outline-container-orgcfd4e14" class="outline-3">
+<h3 id="orgcfd4e14"><span class="section-number-3">3.4.</span> Backticks For Infix</h3>
 <div class="outline-text-3" id="text-3-4">
 <p>
 <code>a `f` b</code> == <code>f(a, b)</code>
@@ -397,7 +291,7 @@ It's not the same as the <code>pizza</code> operator, <code>|&gt;</code> (<a hre
 <p>
 Infix makes pipelines built from the algebraic gadgets I am proposing easier to read.
 Subject-verb-object is the common order in most of the native languages programmers reading this post use.
-No language stacks its verbs in front the way f(g(h(x))) does.
+No language stacks its verbs in front the way <code>f(g(h(x)))</code> does.
 Naming every intermediate result just to break up a chain makes the reader keep track of state that exists only to be named.
 </p>
 
@@ -416,8 +310,8 @@ Each is defined by rewrite into something the language already has, and they are
 </div>
 </div>
 </div>
-<div id="outline-container-org7cd0917" class="outline-2">
-<h2 id="org7cd0917"><span class="section-number-2">4.</span> "Only be sure always to call it please 'Research'" - Tom Lehrer</h2>
+<div id="outline-container-orgd401524" class="outline-2">
+<h2 id="orgd401524"><span class="section-number-2">4.</span> "Only be sure always to call it please 'Research'" &mdash; Tom Lehrer</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 The core ideas that run through all of this work are
@@ -434,13 +328,13 @@ None are at all novel.
 
 <p>
 Higher order functions, functions that take functions as arguments, or return functions, are the central mechanism of Ranges and Senders, as well as being in Stepanov's STL.
-Separation of the mechanism, or shape,  of an algorithm from the operation the algorithm performs is table stakes these days.
+Separation of the mechanism, or shape, of an algorithm from the operation the algorithm performs is table stakes these days.
 </p>
 
 <p>
 Iteration is also a central concern of the STL.
-Applying functions to or inspecting each element in some collection in some manner defined by the structure &mdash; abstracted away from the algorithm that applies a user operation &mdash; was Stepanov's key insight in defining Generic Programming.
-The STL exposes the iteration externally, making Iterators a key component. Algorithms, Iterators,  and Containers are the triad that define the STL.
+Applying functions to or inspecting each element in some collection in some manner defined by the structure (abstracted away from the algorithm that applies a user operation) was Stepanov's key insight in defining Generic Programming.
+The STL exposes the iteration externally, making Iterators a key component. Algorithms, Iterators, and Containers are the triad that defines the STL.
 Ranges provides a bridge to internal iteration, where the iteration is not necessarily exposed.
 </p>
 
@@ -449,7 +343,7 @@ It has turned out that external iteration, using pointers or indices, is a sourc
 Moving the details of unsafe operations, such as checking if an iterator is valid, or dereferenceable, into small and reused blocks of code improves safety, and correctness.
 It has also turned out that there is little to no loss of performance.
 Sometimes even performance improvements because the compiler can see it is lowering known safe code to unsafe implementation and can elide checks it might otherwise need to do.
-Compiler middle and back ends have learned an astonishing number of tricks &mdash; often driven by other languages that have made safety a priority.
+Compiler middle and back ends have learned an astonishing number of tricks, often driven by other languages that have made safety a priority.
 </p>
 
 <p>
@@ -479,7 +373,7 @@ Structs, with named operations. No other required indirection. No required virtu
 </p>
 
 <p>
-Everything visible to the compiler &mdash; available for inlining and defunctionalization.
+Everything visible to the compiler, and available for inlining and defunctionalization.
 </p>
 
 <p>
@@ -487,7 +381,7 @@ The compiler's middle and back ends are extremely happy with them.
 </p>
 
 <p>
-I am proposing some more complicated machinery to help write a typeclass  instance, one that derives the rest of the operations from a few core ones.
+I am proposing some more complicated machinery to help write a typeclass instance, one that derives the rest of the operations from a few core ones.
 Consumers of an instance do not care.
 All they look for is how to perform one of the named operations the typeclass provides.
 How it is provided is not their problem.
@@ -496,8 +390,8 @@ Purely duck typing.
 
 <p>
 The generic programming facilities of C++26 are enough to implement these abstractions type-safely.
-Even taking in to account the effects of error handling and failures.
-Using these facilities also produces efficient and correct by construction code, at the cost of some debugging overhead without inlining, and some complexity in the implementation of the proposed framework for users to provide typeclass definition for their own types.
+Even taking into account the effects of error handling and failures.
+Using these facilities also produces efficient and correct by construction code, at the cost of some debugging overhead without inlining, and some complexity in the implementation of the proposed framework for users to provide typeclass instances for their own types.
 </p>
 
 <p>
@@ -514,19 +408,19 @@ From <a href="https://lean-lang.org/functional_programming_in_lean/Overloading-a
 </p>
 </div>
 </div>
-<div id="outline-container-org718323b" class="outline-2">
-<h2 id="org718323b"><span class="section-number-2">5.</span> "Why in the <b>Standard</b>"</h2>
+<div id="outline-container-org0d3cc23" class="outline-2">
+<h2 id="org0d3cc23"><span class="section-number-2">5.</span> "Why in the <b>Standard</b>"</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Typeclasses are shared vocabulary.
 A treaty between algorithm writers, data structure writers and programmers trying to use those two together.
-Standardizing the generic verbs for the operations for a typeclass allows generic re-use.
+Standardizing the generic verbs of a typeclass allows generic reuse.
 That is why we standardize things.
 </p>
 
 <p>
 A typeclass is a very lightweight adapter.
-Providing the translation between the vocabulary a type would like to use for its own domain to the abstract verbs something like Traversable or Monad provides is a benefit to everyone.
+Providing the translation from the vocabulary a type would like to use for its own domain to the abstract verbs something like Traversable or Monad provides is a benefit to everyone.
 </p>
 
 <p>
@@ -534,8 +428,8 @@ Providing the typeclass also signals how the native vocabulary of the type works
 </p>
 
 <p>
-Anyone can write typeclass machinery for themselves.
-I certainly have been for years.
+Anyone can build typeclass support for themselves.
+I certainly have, for years.
 Stepanov's insight was that making the interface between algorithms and containers a distinct third thing improved both algorithms and containers.
 Making the iterators what each sees turns M*N into M+N.
 Making them standard made them worth providing for everything, even third party code.
@@ -547,8 +441,8 @@ We then failed to provide any support for writing iterators.
 
 <p>
 This is a running problem.
-We failed to provide support for iterators, for writing coroutine types, and initially failed to provide the extension point for writing pipable range algorithms.
-Writing typeclasses is a first class part of this proposal, while still also making sure that the coupling is as minimal as I could make it.
+We also failed to provide support for writing coroutine types, and initially failed to provide the extension point for writing pipeable range algorithms.
+Writing typeclasses is a first-class part of the proposals, while keeping the coupling as minimal as I could make it.
 There's no inherent requirement to use the facilities.
 Algorithms and code that consume a typeclass do not care how it is implemented.
 </p>
@@ -556,9 +450,9 @@ Algorithms and code that consume a typeclass do not care how it is implemented.
 <p>
 We've also learned a lot about ABI stability and the mistakes that make evolution difficult.
 The lack of names in the vtable makes for silent breaks if that layout is ever changed or extended.
-This is one of the problems with locale facets in iostreams, as well as with pmr::memory_resource.
+This is one of the problems with locale facets in iostreams, as well as with <code>pmr::memory_resource</code>.
 Typeclasses are not virtual interfaces, and are fully typed.
-Changing a function in them can cause errors, and be a breaking change, but extending them can be a compatible, non-breaking, change, if the implementation infrastructure is used because derived operations are based on a small set of core functions.
+Changing a function in them can cause errors, and be a breaking change, but extending them can be a compatible, non-breaking change if the instance uses the implementation infrastructure, because derived operations are built from a small set of core functions.
 We can even add a new alternative basis operation in terms of the existing ones.
 Entirely new operation sets would instead be a new typeclass.
 </p>
@@ -568,19 +462,19 @@ Complexity of implementation is also an issue for new standard components.
 There can be legitimate concerns that specialized knowledge is necessary for a high quality implementation.
 This often comes up in numerical processing.
 However, in this case, the implementation is fairly boring.
-It is not at all complex and well within the normal realm of work for a standard library writer.
+It is not at all complex and well within the normal work of a standard library writer.
 </p>
 
 <p>
 The typeclasses being proposed are ancient.
-It is highly unlikely that monoid or functor get new or different operations which would break everything.
+It is highly unlikely that Monoid or Functor get new or different operations which would break everything.
 The implementation for a particular instance can be updated with normal care as the standard typeclasses being proposed are all stateless.
 User written typeclasses might have state, and that can be a useful instrumentation technique, but that is a user manageable problem.
 </p>
 </div>
 </div>
-<div id="outline-container-org5b5ea7b" class="outline-2">
-<h2 id="org5b5ea7b"><span class="section-number-2">6.</span> Not Quite What I Set Out To Do</h2>
+<div id="outline-container-orgdd92091" class="outline-2">
+<h2 id="orgdd92091"><span class="section-number-2">6.</span> Not Quite What I Set Out To Do</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 One of the main use cases I set out to solve with all of this turned out to be better not done at all.
@@ -593,14 +487,14 @@ That turns out to be unnecessary.
 </p>
 
 <p>
-While I still believe that a Unicode Text type would be a valuable addition to the standard, simply maintaining well-formedness of the underlying UTF encoded data is sufficient to support Unicode algorithms and interoperability with facilities and languages, such as Python3, that have well-formed UTF-8 as a hard requirement for bringing data into their string types.
+While I still believe that a Unicode Text type would be a valuable addition to the standard, simply maintaining well-formedness of the underlying UTF encoded data is sufficient to support Unicode algorithms and interoperability with facilities and languages, such as Python 3, that have well-formed UTF-8 as a hard requirement for bringing data into their string types.
 Normalization is best done once, as needed, at the boundaries of the system.
 Canonical normalization (<a href="https://unicode.org/reports/tr15/">UAX #15</a>) never changes the meaning of text, simply some details of representation.
 Unicode algorithms generally just do not care.
 </p>
 
 <p>
-I will still be bringing the Container I had planned, since it's both very widely useful, available in several different languages already, and can solve many real world problems efficiently and safely.
+I will still be bringing the Container I had planned, since it's very widely useful, available in several different languages already, and can solve many real-world problems efficiently and safely.
 Just not as a necessary part of Text.
 Instead as one of many Containers that Text could be an adapter for.
 </p>
@@ -611,8 +505,8 @@ Access to the primary algorithms defined by the Unicode standard is much more im
 </p>
 </div>
 </div>
-<div id="outline-container-orga11dd7b" class="outline-2">
-<h2 id="orga11dd7b"><span class="section-number-2">7.</span> What I want</h2>
+<div id="outline-container-orgf38c107" class="outline-2">
+<h2 id="orgf38c107"><span class="section-number-2">7.</span> What I want</h2>
 <div class="outline-text-2" id="text-7">
 <p>
 I want excellent support in the standard for algorithms that are not just processing a sequence.
@@ -635,8 +529,8 @@ Without having to go back to University and get a Maths degree specializing in C
 </p>
 </div>
 </div>
-<div id="outline-container-org440b82f" class="outline-2">
-<h2 id="org440b82f"><span class="section-number-2">8.</span> When?</h2>
+<div id="outline-container-orgd5cde58" class="outline-2">
+<h2 id="orgd5cde58"><span class="section-number-2">8.</span> When?</h2>
 <div class="outline-text-2" id="text-8">
 <p>
 Papers are forthcoming.
@@ -657,11 +551,15 @@ Public uses of the code exist, also.
 
 <p>
 In order to keep this feasible for C++29 I am keeping the papers minimal and focused.
-It's also why there are several papers, not a "One Typeclass Proposal" paper.
+It's also why there are several papers instead of one "One Typeclass Proposal" paper.
 This means possibly leaving some work undone, without foreclosing it.
 The largest gap right now is a Monad typeclass.
 It's clear how to do one, and what would go in it.
 But it's not necessary for solving the problems that any of the papers I'm working on are trying to solve.
+</p>
+
+<p>
+The code is up now, and issues on any of the repos are welcome. Comments on the papers, when they land, even more so.
 </p>
 </div>
 </div>
