@@ -11,6 +11,7 @@ import beman.tree_algorithms;
 
 #else
 
+    #include <beman/transpose/functor.hpp>
     #include <beman/tree_algorithms/fold_map.hpp>
     #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
@@ -30,9 +31,10 @@ namespace beman::tree_algorithms {
 // pieces and the data. The fully-explicit forms in fold_map.hpp remain
 // the escape hatch and the surface with no mechanism dependency.
 //
-// Like functor_typeclass, the lookup variables here are consumer-side
-// stubs of the Paper A (P3200) bundled-customization facility; this
-// header consumes the mechanism and never respecifies it.
+// The lookup variables here follow the pattern of beman.transpose, the
+// Paper A (P3200) bundled-customization facility, whose functor<Layer>
+// supplies the layer fmap; this header consumes the mechanism and never
+// respecifies it.
 
 // 94d2dd48-8976-43fc-943d-0dd27177e41a
 /** Typeclass lookup variable for elementwise layer folds, keyed on the
@@ -42,13 +44,7 @@ namespace beman::tree_algorithms {
  * std::false_type so a missing instance is detectable.
  */
 template <class Layer>
-inline constexpr auto layer_fold_typeclass = std::false_type{};
-
-/** True when layer_fold_typeclass<T> has been specialized away from its
- * std::false_type default. */
-template <class Layer>
-inline constexpr bool has_layer_fold_instance =
-    !std::is_same_v<std::remove_cvref_t<decltype(layer_fold_typeclass<Layer>)>, std::false_type>;
+inline constexpr auto layer_fold = std::false_type{};
 
 /** Typeclass lookup variable for projections, keyed on the tree type.
  * An instance is a callable taking a `const Tree*` handle and returning
@@ -56,26 +52,20 @@ inline constexpr bool has_layer_fold_instance =
  * takes; registered projections deal in raw non-owning pointer handles.
  */
 template <class Tree>
-inline constexpr auto project_typeclass = std::false_type{};
-
-/** True when project_typeclass<T> has been specialized away from its
- * std::false_type default. */
-template <class Tree>
-inline constexpr bool has_project_instance =
-    !std::is_same_v<std::remove_cvref_t<decltype(project_typeclass<Tree>)>, std::false_type>;
+inline constexpr auto project = std::false_type{};
 // 94d2dd48-8976-43fc-943d-0dd27177e41a end
 
-/** Look up the layer_fold_typeclass instance for the concrete layer type
+/** Look up the layer_fold instance for the concrete layer type
  * of @p layer and apply it. The single point where the fold_map lookup
  * overloads bridge into layer-fold dispatch, mirroring layer_fmap. */
 template <class MapFn, class Combine, class Result, class Layer>
 constexpr auto layer_fold_map(const MapFn& map_fn, const Combine& combine, const Result& identity, const Layer& layer)
     -> Result {
-    static_assert(has_layer_fold_instance<std::remove_cvref_t<Layer> >,
+    static_assert(transpose::has_instance_v<decltype(layer_fold<std::remove_cvref_t<Layer> >)>,
                   "no layer-fold instance: specialize "
                   "beman::tree_algorithms::layer_fold_typeclass for this layer type, or use "
                   "the explicit forms in fold_map.hpp");
-    return layer_fold_typeclass<std::remove_cvref_t<Layer> >(map_fn, combine, identity, layer);
+    return layer_fold<std::remove_cvref_t<Layer> >(map_fn, combine, identity, layer);
 }
 
 /** Elementwise fold over a Fix<F> tree, resolving the layer fold and the
@@ -101,13 +91,13 @@ constexpr auto fold_map(const MapFn& map_fn, const Combine& combine, const Resul
 template <typename Result, typename MapFn, typename Combine, typename Tree>
 constexpr auto fold_map(const MapFn& map_fn, const Combine& combine, const Result& identity, const Tree& tree)
     -> Result {
-    static_assert(has_project_instance<Tree>,
+    static_assert(transpose::has_instance_v<decltype(project<Tree>)>,
                   "no projection instance: specialize "
                   "beman::tree_algorithms::project_typeclass for this tree type, or use the "
                   "explicit forms in fold_map.hpp");
     auto algebra = [&](const auto& layer) -> Result { return layer_fold_map(map_fn, combine, identity, layer); };
     auto fmap_fn = [](auto&& fn, const auto& layer) { return layer_fmap(std::forward<decltype(fn)>(fn), layer); };
-    return fold_with<Result>(algebra, fmap_fn, project_typeclass<Tree>, &tree);
+    return fold_with<Result>(algebra, fmap_fn, project<Tree>, &tree);
 }
 // 7f08b12d-3d26-4b5e-bf79-66d38f6fee0d end
 

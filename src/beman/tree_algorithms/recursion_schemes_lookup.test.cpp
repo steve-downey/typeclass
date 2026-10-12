@@ -14,12 +14,13 @@
 #include <utility>
 #include <variant>
 
+using beman::transpose::derive_functor;
+using beman::transpose::functor;
+using beman::transpose::has_instance_v;
 using beman::transpose::overloaded;
 using beman::tree_algorithms::Box;
 using beman::tree_algorithms::Fix;
 using beman::tree_algorithms::fold_fix;
-using beman::tree_algorithms::Functor;
-using beman::tree_algorithms::has_functor_instance;
 using beman::tree_algorithms::make_box;
 using beman::tree_algorithms::refold;
 using beman::tree_algorithms::unfold_fix;
@@ -65,18 +66,18 @@ struct NatFFunctorImpl {
 };
 
 template <typename A>
-struct NatFFunctorMap : Functor<NatFFunctorImpl<A>> {
+struct NatFFunctorMap : derive_functor<NatFFunctorImpl<A>> {
     using NatFFunctorImpl<A>::fmap;
 };
 
 } // namespace lookup_test
 
-namespace beman::tree_algorithms {
+namespace beman::transpose {
 
 template <typename A>
-inline constexpr auto functor_typeclass<lookup_test::NatF<A>> = lookup_test::NatFFunctorMap<A>{};
+inline constexpr auto functor<lookup_test::NatF<A>> = lookup_test::NatFFunctorMap<A>{};
 
-} // namespace beman::tree_algorithms
+} // namespace beman::transpose
 
 namespace lookup_test {
 
@@ -135,18 +136,18 @@ struct IntListFFunctorImpl {
 };
 
 template <typename A>
-struct IntListFFunctorMap : Functor<IntListFFunctorImpl<A>> {
+struct IntListFFunctorMap : derive_functor<IntListFFunctorImpl<A>> {
     using IntListFFunctorImpl<A>::fmap;
 };
 
 } // namespace lookup_test
 
-namespace beman::tree_algorithms {
+namespace beman::transpose {
 
 template <typename A>
-inline constexpr auto functor_typeclass<lookup_test::IntListF<A>> = lookup_test::IntListFFunctorMap<A>{};
+inline constexpr auto functor<lookup_test::IntListF<A>> = lookup_test::IntListFFunctorMap<A>{};
 
-} // namespace beman::tree_algorithms
+} // namespace beman::transpose
 
 namespace lookup_test {
 
@@ -197,18 +198,18 @@ struct TreeFFunctorImpl {
 };
 
 template <typename A>
-struct TreeFFunctorMap : Functor<TreeFFunctorImpl<A>> {
+struct TreeFFunctorMap : derive_functor<TreeFFunctorImpl<A>> {
     using TreeFFunctorImpl<A>::fmap;
 };
 
 } // namespace lookup_test
 
-namespace beman::tree_algorithms {
+namespace beman::transpose {
 
 template <typename A>
-inline constexpr auto functor_typeclass<lookup_test::TreeF<A>> = lookup_test::TreeFFunctorMap<A>{};
+inline constexpr auto functor<lookup_test::TreeF<A>> = lookup_test::TreeFFunctorMap<A>{};
 
-} // namespace beman::tree_algorithms
+} // namespace beman::transpose
 
 namespace lookup_test {
 
@@ -257,10 +258,10 @@ using namespace lookup_test;
 namespace {
 
 // Every layer family above is found through the lookup variable.
-static_assert(has_functor_instance<NatF<int>>);
-static_assert(has_functor_instance<IntListF<int>>);
-static_assert(has_functor_instance<TreeF<int>>);
-static_assert(!has_functor_instance<int>);
+static_assert(has_instance_v<decltype(functor<NatF<int>>)>);
+static_assert(has_instance_v<decltype(functor<IntListF<int>>)>);
+static_assert(has_instance_v<decltype(functor<TreeF<int>>)>);
+static_assert(!has_instance_v<decltype(functor<int>)>);
 
 // ---------------------------------------------------------------------
 // Constexpr coverage (DEV-04): at least one static_assert per lookup verb,

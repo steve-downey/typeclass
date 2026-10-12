@@ -13,6 +13,8 @@
 #include <variant>
 #include <vector>
 
+using beman::transpose::functor;
+using beman::transpose::has_instance_v;
 using beman::transpose::overloaded;
 using beman::tree_algorithms::fold_map;
 using beman::tree_algorithms::fold_with;
@@ -24,8 +26,6 @@ using beman::tree_algorithms::FringeEmpty;
 using beman::tree_algorithms::FringeLeaf;
 using beman::tree_algorithms::FringeTree;
 using beman::tree_algorithms::FringeTreeF;
-using beman::tree_algorithms::functor_typeclass;
-using beman::tree_algorithms::has_functor_instance;
 using beman::tree_algorithms::unfold_with;
 using beman::tree_algorithms::view_l;
 using beman::tree_algorithms::view_r;
@@ -50,7 +50,7 @@ inline auto shape_algebra = [](const FringeTreeF<int, std::string>& layer) -> st
 inline auto fringe_shape(const Tree& t) -> std::string {
     const auto& fmap_fn = [](auto&& fn, const auto& layer) {
         using Layer = std::remove_cvref_t<decltype(layer)>;
-        return functor_typeclass<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
+        return functor<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
     };
     return fold_with<std::string>(shape_algebra, fmap_fn, fringe_tree_project, static_cast<Ptr>(&t));
 }
@@ -61,12 +61,12 @@ inline auto fringe_shape(const Tree& t) -> std::string {
 // instance, and the layer fold are fully constexpr.
 // ---------------------------------------------------------------------
 
-static_assert(has_functor_instance<FringeTreeF<int, int>>);
+static_assert(has_instance_v<decltype(functor<FringeTreeF<int, int>>)>);
 
 constexpr auto fmap_doubles_branch_handles() -> bool {
     FringeTreeF<int, int> layer{FringeBranch<int>{3, 4}};
-    auto        doubled = functor_typeclass<FringeTreeF<int, int>>.fmap([](const int& x) { return x * 2; }, layer);
-    const auto* b       = std::get_if<FringeBranch<int>>(&doubled);
+    auto                  doubled = functor<FringeTreeF<int, int>>.fmap([](const int& x) { return x * 2; }, layer);
+    const auto*           b       = std::get_if<FringeBranch<int>>(&doubled);
     return b != nullptr && b->left == 6 && b->right == 8;
 }
 
@@ -197,7 +197,7 @@ TEST_CASE("FringeTree - UnfoldWithMaintainsMeasureInvariant", "[tree_algorithms:
     };
     const auto& fmap_fn = [](auto&& fn, const auto& layer) {
         using Layer = std::remove_cvref_t<decltype(layer)>;
-        return functor_typeclass<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
+        return functor<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
     };
 
     auto tree = unfold_with<Tree>(split_coalgebra, fmap_fn, fringe_tree_embed, Range{0, 8});
@@ -217,7 +217,7 @@ TEST_CASE("FringeTree - UnfoldWithMaintainsMeasureInvariant", "[tree_algorithms:
 TEST_CASE("FringeTree - FoldMapConcatFollowsTheSequence", "[tree_algorithms::fringe_tree]") {
     const auto& fmap_fn = [](auto&& fn, const auto& layer) {
         using Layer = std::remove_cvref_t<decltype(layer)>;
-        return functor_typeclass<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
+        return functor<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
     };
     auto concat = [](const std::string& a, const std::string& b) { return a + b; };
     auto show   = [](int x) { return std::to_string(x); };

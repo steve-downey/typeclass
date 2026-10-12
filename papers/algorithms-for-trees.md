@@ -185,7 +185,7 @@ The projection and embedding remain plain callables in this revision; no `Recurs
 
 ## Typeclass lookup: a separate convenience layer
 
-Alongside the explicit-`fmap` verbs, lookup-based overloads drop the structural parameters and resolve them through typeclass-object lookup in the style proposed by P3200: `fmap` through `functor_typeclass<Layer>`, the elementwise layer fold through `layer_fold_typeclass<Layer>`, and the projection through `project_typeclass<Tree>`.
+Alongside the explicit-`fmap` verbs, lookup-based overloads drop the structural parameters and resolve them through typeclass-object lookup in the style proposed by P3200: `fmap` through P3200's `functor<Layer>`, and, following the same pattern, the elementwise layer fold through `layer_fold<Layer>` and the projection through `project<Tree>`.
 The everyday spelling of the elementwise fold is then four arguments — `fold_map<Result>(map_fn, combine, identity, tree)` — over either a fixed-point tree or a user's tree in its own representation.
 
 These overloads live in separate convenience headers, and those headers are explicitly *consumers* of the P3200 bundled-customization facility.
@@ -293,9 +293,8 @@ constexpr auto fold_map(const MapFn& map_fn, const Combine& combine,
 
 // Lookup-based convenience overloads (separate headers; consume the
 // P3200 bundled-customization facility, resolving fmap through
-// functor_typeclass<Layer>, the layer fold through
-// layer_fold_typeclass<Layer>, and the projection through
-// project_typeclass<Tree>).
+// P3200's functor<Layer>, the layer fold through layer_fold<Layer>,
+// and the projection through project<Tree>).
 
 template <typename Result, template <typename> class F, typename Algebra>
 constexpr auto fold_fix(const Algebra& algebra, const Fix<F>& tree)
@@ -519,7 +518,7 @@ This paper is part of a coordinated set, each paper independently reviewable.
 **What this paper covers on its own**: the six verbs with their explicit primary APIs — explicit `fmap`, explicit projection/embedding, explicit combine and identity — usable with no other paper adopted.
 
 **P3200 (Paper A: traversal, transposition, and bundled customization)**: proposes the bundled-customization mechanism (typeclass-object lookup) and the shape-preserving traversal/transposition story over familiar vocabulary types.
-This paper *consumes* that mechanism in its convenience overloads — `fold_fix(algebra, tree)` resolving `fmap` through `functor_typeclass`, `fold_map(map_fn, combine, identity, tree)` resolving its structural ingredients the same way — and never respecifies it.
+This paper *consumes* that mechanism in its convenience overloads — `fold_fix(algebra, tree)` resolving `fmap` through P3200's `functor`, `fold_map(map_fn, combine, identity, tree)` resolving its structural ingredients the same way — and never respecifies it.
 The mechanism debate belongs in P3200; the division of labor is deliberate.
 The elementwise fold proposed here and the effectful traversal proposed there are two halves of one family, split on motivation: `fold_map`'s case is structures that are not ranges, which is this paper's subject; `traverse`'s case is contexts (`optional`, senders, SIMD lanes), which is P3200's.
 

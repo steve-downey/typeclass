@@ -97,7 +97,7 @@ struct ExprTraversableMap {
     }
 };
 
-// Example-local lookup, mirroring the shape of functor_typeclass: a
+// Example-local lookup, mirroring the shape of transpose::functor: a
 // variable template maps a type to its typeclass object.
 template <class T>
 inline constexpr auto example_foldable_typeclass = std::false_type{};

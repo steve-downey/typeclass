@@ -23,7 +23,7 @@
 // comparison stays purely about the knot.
 
 #include <beman/tree_algorithms/fix.hpp>
-#include <beman/tree_algorithms/functor.hpp>
+#include <beman/transpose/functor.hpp>
 
 #include <functional>
 #include <memory>
@@ -91,20 +91,20 @@ struct UniquePtrTreeFFunctorImpl {
 };
 
 template <typename T, typename A>
-struct UniquePtrTreeFFunctorMap : beman::tree_algorithms::Functor<UniquePtrTreeFFunctorImpl<T, A> > {
+struct UniquePtrTreeFFunctorMap : beman::transpose::derive_functor<UniquePtrTreeFFunctorImpl<T, A> > {
     using UniquePtrTreeFFunctorImpl<T, A>::fmap;
 };
 
 } // namespace bench
 
-namespace beman::tree_algorithms {
+namespace beman::transpose {
 
 // Register the Functor instance so the lookup-based verbs (fold_fix,
 // unfold_fix, refold) resolve fmap for UniquePtrTreeF exactly as they do for
 // BinaryTreeF.
 template <typename T, typename A>
-inline constexpr auto functor_typeclass<bench::UniquePtrTreeF<T, A> > = bench::UniquePtrTreeFFunctorMap<T, A>{};
+inline constexpr auto functor<bench::UniquePtrTreeF<T, A> > = bench::UniquePtrTreeFFunctorMap<T, A>{};
 
-} // namespace beman::tree_algorithms
+} // namespace beman::transpose
 
 #endif // BEMAN_TREE_ALGORITHMS_BENCH_FIX_UNIQUE_TREE_HPP

@@ -14,14 +14,14 @@
 #include <utility>
 #include <vector>
 
+using beman::transpose::functor;
+using beman::transpose::has_instance_v;
 using beman::tree_algorithms::BinaryTreeF;
 using beman::tree_algorithms::BinaryTreeFix;
 using beman::tree_algorithms::BinaryTreeLayer;
 using beman::tree_algorithms::Box;
 using beman::tree_algorithms::fold_fix;
 using beman::tree_algorithms::fold_map;
-using beman::tree_algorithms::functor_typeclass;
-using beman::tree_algorithms::has_functor_instance;
 using beman::tree_algorithms::make_box;
 using beman::tree_algorithms::rose;
 using beman::tree_algorithms::rose_layer_fold_map;
@@ -57,11 +57,11 @@ inline auto rose_shape(const Tree& t) -> std::string { return fold_fix<std::stri
 // lifecycle — build, fold — evaluates at compile time.
 // ---------------------------------------------------------------------
 
-static_assert(has_functor_instance<RoseF<int, int>>);
+static_assert(has_instance_v<decltype(functor<RoseF<int, int>>)>);
 
 constexpr auto fmap_maps_children_in_order() -> bool {
     RoseF<int, int> layer{7, {1, 2, 3}};
-    auto            mapped = functor_typeclass<RoseF<int, int>>.fmap([](const int& x) { return x * 2; }, layer);
+    auto            mapped = functor<RoseF<int, int>>.fmap([](const int& x) { return x * 2; }, layer);
     return mapped.value == 7 && mapped.children == std::vector<int>{2, 4, 6};
 }
 
@@ -146,7 +146,7 @@ TEST_CASE("RoseTree - FoldMapPreorderContract", "[tree_algorithms::rose_tree]") 
     // registered ingredients — same answer through both spellings.
     const auto& fmap_fn = [](auto&& fn, const auto& layer) {
         using Layer = std::remove_cvref_t<decltype(layer)>;
-        return functor_typeclass<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
+        return functor<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
     };
     CHECK(fold_map<std::string>(show, concat, std::string{}, rose_layer_fold_map, fmap_fn, t) ==
           fold_map<std::string>(show, concat, std::string{}, t));

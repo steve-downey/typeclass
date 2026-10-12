@@ -14,9 +14,10 @@
 #include <utility>
 #include <variant>
 
+using beman::transpose::functor;
+using beman::transpose::has_instance_v;
 using beman::transpose::overloaded;
 using beman::tree_algorithms::fold_fix;
-using beman::tree_algorithms::has_functor_instance;
 using beman::tree_algorithms::make_slot;
 using beman::tree_algorithms::make_succ;
 using beman::tree_algorithms::make_zero;
@@ -73,9 +74,9 @@ inline constexpr auto countdown_coalgebra = [](int n) -> NatF<int> {
 // expression.
 // ---------------------------------------------------------------------
 
-static_assert(has_functor_instance<NatF<int>>);
-static_assert(has_functor_instance<NatF<Nat>>);
-static_assert(!has_functor_instance<int>);
+static_assert(has_instance_v<decltype(functor<NatF<int>>)>);
+static_assert(has_instance_v<decltype(functor<NatF<Nat>>)>);
+static_assert(!has_instance_v<decltype(functor<int>)>);
 
 // Header converters are built on the lookup verbs: round trip at compile
 // time.

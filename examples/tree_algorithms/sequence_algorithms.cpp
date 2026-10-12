@@ -46,6 +46,7 @@
 #include <utility>
 #include <vector>
 
+using beman::transpose::functor;
 using beman::transpose::overloaded;
 using beman::tree_algorithms::fold_map;
 using beman::tree_algorithms::fold_with;
@@ -55,7 +56,6 @@ using beman::tree_algorithms::FringeEmpty;
 using beman::tree_algorithms::FringeLeaf;
 using beman::tree_algorithms::FringeTree;
 using beman::tree_algorithms::FringeTreeF;
-using beman::tree_algorithms::functor_typeclass;
 using beman::tree_algorithms::view_l;
 using beman::tree_algorithms::view_r;
 
@@ -159,7 +159,7 @@ static auto fringe_shape(const FringeTree<int>& t) -> std::string {
     };
     const auto& fmap_fn = [](auto&& fn, const auto& layer) {
         using Layer = std::remove_cvref_t<decltype(layer)>;
-        return functor_typeclass<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
+        return functor<Layer>.fmap(std::forward<decltype(fn)>(fn), layer);
     };
     return fold_with<std::string>(algebra, fmap_fn, fringe_tree_project, &t);
 }

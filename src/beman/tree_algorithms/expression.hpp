@@ -15,7 +15,7 @@ import beman.tree_algorithms;
     #include <beman/tree_algorithms/child_slot.hpp>
     #include <beman/tree_algorithms/fix.hpp>
     #include <beman/tree_algorithms/fold_map_lookup.hpp>
-    #include <beman/tree_algorithms/functor.hpp>
+    #include <beman/transpose/functor.hpp>
     #include <beman/transpose/overloaded.hpp>
     #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
@@ -102,13 +102,21 @@ struct ExprFFunctorImpl {
 /** Functor map for ExprF<A>: the fmap primitive plus the derived
  * operations from the Functor CRTP base. */
 template <typename A>
-struct ExprFFunctorMap : Functor<ExprFFunctorImpl<A> > {
+struct ExprFFunctorMap : transpose::derive_functor<ExprFFunctorImpl<A> > {
     using ExprFFunctorImpl<A>::fmap;
 };
 
+} // namespace beman::tree_algorithms
+
+namespace beman::transpose {
+
 /** Registers ExprFFunctorMap as the Functor instance for ExprF<A>. */
 template <typename A>
-inline constexpr auto functor_typeclass<ExprF<A> > = ExprFFunctorMap<A>{};
+inline constexpr auto functor<beman::tree_algorithms::ExprF<A> > = beman::tree_algorithms::ExprFFunctorMap<A>{};
+
+} // namespace beman::transpose
+
+namespace beman::tree_algorithms {
 // a052ddcb-f05b-41c9-85bf-4c443ab438b7 end
 
 // ---------------------------------------------------------------------
@@ -183,7 +191,7 @@ inline constexpr ExprLayerFoldMap expr_layer_fold_map{};
 
 /** Lookup registration for the ExprF layer fold. */
 template <typename A>
-inline constexpr auto layer_fold_typeclass<ExprF<A> > = expr_layer_fold_map;
+inline constexpr auto layer_fold<ExprF<A> > = expr_layer_fold_map;
 // 8f25579d-443a-4685-b3af-01f8103f6863 end
 
 // 66235297-8e2a-4610-b6a4-a3f2a8837fb0

@@ -17,6 +17,7 @@
 #include <utility>
 #include <variant>
 
+using beman::transpose::has_instance_v;
 using beman::transpose::overloaded;
 using beman::tree_algorithms::add_node;
 using beman::tree_algorithms::binary_tree_layer_fold_map;
@@ -32,11 +33,11 @@ using beman::tree_algorithms::Fix;
 using beman::tree_algorithms::fold_fix;
 using beman::tree_algorithms::fold_map;
 using beman::tree_algorithms::FringeTree;
-using beman::tree_algorithms::has_layer_fold_instance;
-using beman::tree_algorithms::has_project_instance;
+using beman::tree_algorithms::layer_fold;
 using beman::tree_algorithms::make_box;
 using beman::tree_algorithms::make_slot;
 using beman::tree_algorithms::mul_node;
+using beman::tree_algorithms::project;
 using beman::tree_algorithms::to_fix;
 using beman::tree_algorithms::wrap_fix;
 
@@ -188,12 +189,12 @@ static_assert(tree_concat_mirrored());
 // typeclass objects registered in the adapter headers.
 // ---------------------------------------------------------------------
 
-static_assert(has_layer_fold_instance<BinaryTreeF<int, int>>);
-static_assert(has_layer_fold_instance<bta::ExprF<int>>);
-static_assert(has_project_instance<BinaryTree<int>>);
-static_assert(has_project_instance<FringeTree<int>>);
-static_assert(!has_layer_fold_instance<int>);
-static_assert(!has_project_instance<int>);
+static_assert(has_instance_v<decltype(layer_fold<BinaryTreeF<int, int>>)>);
+static_assert(has_instance_v<decltype(layer_fold<bta::ExprF<int>>)>);
+static_assert(has_instance_v<decltype(project<BinaryTree<int>>)>);
+static_assert(has_instance_v<decltype(project<FringeTree<int>>)>);
+static_assert(!has_instance_v<decltype(layer_fold<int>)>);
+static_assert(!has_instance_v<decltype(project<int>)>);
 
 // The elementwise/structural contrast on the expression tree: summing
 // the constants of (1 + 2) * 3 sees the elements (6); evaluating it

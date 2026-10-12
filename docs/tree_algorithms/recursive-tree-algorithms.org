@@ -156,9 +156,9 @@ The library finds the right ~fmap~ through a typeclass object.
 Each concept has a variable template that maps a type to an object providing all operations for that concept.
 I described this pattern in more detail in [[https://sdowney.org/posts/index.php/2024/05/19/concept-maps-using-c23-library-tech/][Concept Maps Using C++23 Library Tech]] and [[https://sdowney.org/posts/index.php/2023/12/24/some-informal-remarks-towards-a-new-theory-of-trait-customization/][Some Informal Remarks Towards a New Theory of Trait Customization]].
 
-From [[orgit-file:src/beman/tree_algorithms/functor.hpp][=src/beman/tree_algorithms/functor.hpp=]]:
+The lookup comes from P3200, the paper that proposes the mechanism; this library uses its implementation, from [[orgit-file:src/beman/transpose/functor.hpp][=src/beman/transpose/functor.hpp=]]:
 
-#+transclude: [[file:../../src/beman/tree_algorithms/functor.hpp::5cdef435-de62-4973-91f4-a56dbef659f3]]  :lines 2- :src cpp :end "5cdef435-de62-4973-91f4-a56dbef659f3 end"
+#+transclude: [[file:../../src/beman/transpose/functor.hpp::5cdef435-de62-4973-91f4-a56dbef659f3]]  :lines 2- :src cpp :end "5cdef435-de62-4973-91f4-a56dbef659f3 end"
 
 Default: ~false_type~.
 No instance.
@@ -266,7 +266,7 @@ The depth of the call stack is exactly the depth of the tree, not an approximati
 *** The lookup overload
 
 In practice you rarely want to write the ~fmap~ argument at every call site.
-A second overload drops it and resolves ~fmap~ through ~functor_typeclass~ lookup instead.
+A second overload drops it and resolves ~fmap~ through ~functor~ lookup instead.
 The bridge is one function, from [[orgit-file:src/beman/tree_algorithms/recursion_schemes_lookup.hpp][=src/beman/tree_algorithms/recursion_schemes_lookup.hpp=]]:
 
 #+transclude: [[file:../../src/beman/tree_algorithms/recursion_schemes_lookup.hpp::f6936d93-a4aa-4e85-afd1-092d4bbb1ba1]]  :lines 2- :src cpp :end "f6936d93-a4aa-4e85-afd1-092d4bbb1ba1 end"
@@ -416,7 +416,7 @@ From [[orgit-file:src/beman/tree_algorithms/binary_tree.hpp][=src/beman/tree_alg
 
 #+transclude: [[file:../../src/beman/tree_algorithms/binary_tree.hpp::27aeff53-a371-43b6-9037-135d5d008c26]]  :lines 2- :src cpp :end "27aeff53-a371-43b6-9037-135d5d008c26 end"
 
-Registering a Functor instance for ~BinaryTreeF<T, A>~ is the same three-part pattern already seen for ~ExprF~ --- an ~fmap~ primitive, a ~Functor~-derived map, and a ~functor_typeclass~ specialization --- so ~fold_fix~, ~unfold_fix~, and ~refold~ all work over it without any change to the verbs:
+Registering a Functor instance for ~BinaryTreeF<T, A>~ is the same three-part pattern already seen for ~ExprF~ --- an ~fmap~ primitive, a map derived from ~derive_functor~, and a ~functor~ specialization --- so ~fold_fix~, ~unfold_fix~, and ~refold~ all work over it without any change to the verbs:
 
 #+transclude: [[file:../../src/beman/tree_algorithms/binary_tree.hpp::91fef612-39b5-4424-8ab5-7d8c80997e2c]]  :lines 2- :src cpp :end "91fef612-39b5-4424-8ab5-7d8c80997e2c end"
 

@@ -5,6 +5,7 @@ module;
 // global module; the later includes inside the export block below are then
 // skipped by the include guards rather than redeclaring them in this
 // module's purview.
+#include <beman/transpose/functor.hpp>
 #include <beman/transpose/overloaded.hpp>
 
 // <cassert> is macro-only, so `import std` does not provide it. Included

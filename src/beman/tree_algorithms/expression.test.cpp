@@ -15,6 +15,8 @@
 #include <utility>
 #include <variant>
 
+using beman::transpose::functor;
+using beman::transpose::has_instance_v;
 using beman::transpose::overloaded;
 using beman::tree_algorithms::Add;
 using beman::tree_algorithms::add_node;
@@ -25,7 +27,6 @@ using beman::tree_algorithms::eval_algebra;
 using beman::tree_algorithms::Expr;
 using beman::tree_algorithms::ExprF;
 using beman::tree_algorithms::fold_fix;
-using beman::tree_algorithms::has_functor_instance;
 using beman::tree_algorithms::make_slot;
 using beman::tree_algorithms::Mul;
 using beman::tree_algorithms::mul_node;
@@ -35,7 +36,7 @@ using beman::tree_algorithms::unfold_fix;
 namespace {
 
 // The expression tree exercised through all three verbs, each via both the
-// lookup API (fmap resolved through functor_typeclass<ExprF<A>>) and the
+// lookup API (fmap resolved through functor<ExprF<A>>) and the
 // explicit-fmap API (fmap passed per call site).
 
 // Hand-rolled explicit fmap for the explicit-fmap primary verbs: written
@@ -102,9 +103,9 @@ inline constexpr auto split_coalgebra = [](const Range& r) -> ExprF<Range> {
 // constant expression, with non-idempotent algebras.
 // ---------------------------------------------------------------------
 
-static_assert(has_functor_instance<ExprF<int>>);
-static_assert(has_functor_instance<ExprF<Expr>>);
-static_assert(!has_functor_instance<Expr>);
+static_assert(has_instance_v<decltype(functor<ExprF<int>>)>);
+static_assert(has_instance_v<decltype(functor<ExprF<Expr>>)>);
+static_assert(!has_instance_v<decltype(functor<Expr>)>);
 
 // fold_fix, both APIs: (1 + 2) * 3 == 9, built, folded, and torn down at
 // compile time; the decrement variant gives (0 + 1) * 2 == 2, which is

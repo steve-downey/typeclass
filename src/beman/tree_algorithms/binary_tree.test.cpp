@@ -13,6 +13,8 @@
 #include <type_traits>
 #include <utility>
 
+using beman::transpose::functor;
+using beman::transpose::has_instance_v;
 using beman::tree_algorithms::BinaryTree;
 using beman::tree_algorithms::BinaryTreeF;
 using beman::tree_algorithms::BinaryTreeFix;
@@ -22,8 +24,6 @@ using beman::tree_algorithms::child_slot_t;
 using beman::tree_algorithms::fold_fix;
 using beman::tree_algorithms::fold_with;
 using beman::tree_algorithms::from_fix;
-using beman::tree_algorithms::functor_typeclass;
-using beman::tree_algorithms::has_functor_instance;
 using beman::tree_algorithms::make_box;
 using beman::tree_algorithms::make_slot;
 using beman::tree_algorithms::refold;
@@ -108,9 +108,9 @@ inline constexpr auto bst_coalgebra = [](const Range& r) -> BinaryTreeF<int, Ran
 // Constexpr coverage (DEV-04), Fix side: each verb through each API.
 // ---------------------------------------------------------------------
 
-static_assert(has_functor_instance<BinaryTreeF<int, int>>);
-static_assert(has_functor_instance<BinaryTreeF<int, IntFixed>>);
-static_assert(!has_functor_instance<IntTree>);
+static_assert(has_instance_v<decltype(functor<BinaryTreeF<int, int>>)>);
+static_assert(has_instance_v<decltype(functor<BinaryTreeF<int, IntFixed>>)>);
+static_assert(!has_instance_v<decltype(functor<IntTree>)>);
 
 // fold_fix, both APIs: node(1, leaf 2, leaf 3) gives (2 - 1) - 3 == -2;
 // the mirrored tree gives (3 - 1) - 2 == 0, so child order matters.
@@ -270,7 +270,7 @@ TEST_CASE("BinaryTree - DirectFoldAgreesWithAdapterPath", "[tree_algorithms::bin
 }
 
 TEST_CASE("BinaryTree - FmapPreservesAbsentChildrenAndValue", "[tree_algorithms::binary_tree]") {
-    const auto& map = functor_typeclass<BinaryTreeF<int, int>>;
+    const auto& map = functor<BinaryTreeF<int, int>>;
 
     // int is complete, so the layer's child slots are inline optionals.
     BinaryTreeF<int, int> layer{7, make_slot<int>(1), child_slot_t<int>{}};

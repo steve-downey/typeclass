@@ -14,7 +14,7 @@ import beman.tree_algorithms;
     #include <beman/tree_algorithms/box.hpp>
     #include <beman/tree_algorithms/child_slot.hpp>
     #include <beman/tree_algorithms/fix.hpp>
-    #include <beman/tree_algorithms/functor.hpp>
+    #include <beman/transpose/functor.hpp>
     #include <beman/transpose/overloaded.hpp>
     #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
@@ -82,13 +82,21 @@ struct NatFFunctorImpl {
 /** Functor map for NatF<A>: the fmap primitive plus the derived
  * operations from the Functor CRTP base. */
 template <typename A>
-struct NatFFunctorMap : Functor<NatFFunctorImpl<A> > {
+struct NatFFunctorMap : transpose::derive_functor<NatFFunctorImpl<A> > {
     using NatFFunctorImpl<A>::fmap;
 };
 
+} // namespace beman::tree_algorithms
+
+namespace beman::transpose {
+
 /** Registers NatFFunctorMap as the Functor instance for NatF<A>. */
 template <typename A>
-inline constexpr auto functor_typeclass<NatF<A> > = NatFFunctorMap<A>{};
+inline constexpr auto functor<beman::tree_algorithms::NatF<A> > = beman::tree_algorithms::NatFFunctorMap<A>{};
+
+} // namespace beman::transpose
+
+namespace beman::tree_algorithms {
 // edbdeea5-9b3e-4d9a-88d5-fb2610c9174d end
 
 // ---------------------------------------------------------------------

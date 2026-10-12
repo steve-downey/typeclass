@@ -39,7 +39,7 @@ The representation matrix, after this round:
 | Representation | Relation to Fix | Verbs reach it via | Demonstrates |
 |---|---|---|---|
 | `ExprF` / `Fix<ExprF>` | Fix-based | `unwrap_fix` | the verbs themselves |
-| `BinaryTree<T>` (shared_ptr) | converted (`to_fix`/`from_fix`) or direct | conversion AND `project_typeclass` | adapting a tree you don't own |
+| `BinaryTree<T>` (shared_ptr) | converted (`to_fix`/`from_fix`) or direct | conversion AND `project` | adapting a tree you don't own |
 | nonce `Node` (unique_ptr) | none — no Fix ever | explicit `project` | three ingredients, zero machinery adoption |
 | `FringeTree<T>` | none — no Fix, no Box | `project`/`embed` instances | measures; the sequence quotient |
 | **`RoseTreeFix<T>` (new)** | **Fix-native, no separate class** | `unwrap_fix` | vector children; no Box needed; no in-order |
@@ -66,8 +66,8 @@ tree, Fix-native: `RoseF<T, A> = { T value; std::vector<A> children }`.
 No Box: `std::vector` supports incomplete element types and already owns
 through indirection, so the knot ties with no extra plumbing (Box would
 return for fixed-arity aggregate children — the choice is per-layer).
-Functor instance and `layer_fold_typeclass` instance follow the shipped
-pattern; no `project_typeclass` registration, since the Fix overloads
+Functor instance and `layer_fold` instance follow the shipped
+pattern; no `project` registration, since the Fix overloads
 already unwrap it.
 
 **The no-generic-in-order consequence, made testable.** The rose layer

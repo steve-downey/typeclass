@@ -12,7 +12,7 @@ import beman.tree_algorithms;
 #else
 
     #include <beman/tree_algorithms/fold_map_lookup.hpp>
-    #include <beman/tree_algorithms/functor.hpp>
+    #include <beman/transpose/functor.hpp>
     #include <beman/transpose/overloaded.hpp>
 
     // <cassert> is macro-only and therefore not importable; it is included
@@ -293,14 +293,23 @@ struct FringeTreeFFunctorImpl {
 /** Functor map for FringeTreeF<T, A>: the fmap primitive plus the
  * derived operations from the Functor CRTP base. */
 template <typename T, typename A>
-struct FringeTreeFFunctorMap : Functor<FringeTreeFFunctorImpl<T, A> > {
+struct FringeTreeFFunctorMap : transpose::derive_functor<FringeTreeFFunctorImpl<T, A> > {
     using FringeTreeFFunctorImpl<T, A>::fmap;
 };
+
+} // namespace beman::tree_algorithms
+
+namespace beman::transpose {
 
 /** Registers FringeTreeFFunctorMap as the Functor instance for
  * FringeTreeF<T, A>. */
 template <typename T, typename A>
-inline constexpr auto functor_typeclass<FringeTreeF<T, A> > = FringeTreeFFunctorMap<T, A>{};
+inline constexpr auto functor<beman::tree_algorithms::FringeTreeF<T, A> > =
+    beman::tree_algorithms::FringeTreeFFunctorMap<T, A>{};
+
+} // namespace beman::transpose
+
+namespace beman::tree_algorithms {
 // a692305b-eb87-43fb-98a0-901a582d7ddf end
 
 // ---------------------------------------------------------------------
@@ -375,10 +384,10 @@ inline constexpr FringeTreeLayerFoldMap fringe_tree_layer_fold_map{};
 /** Lookup registrations: the projection keyed on the tree type, the
  * layer fold keyed on the layer type. */
 template <typename T>
-inline constexpr auto project_typeclass<FringeTree<T> > = fringe_tree_project;
+inline constexpr auto project<FringeTree<T> > = fringe_tree_project;
 
 template <typename T, typename A>
-inline constexpr auto layer_fold_typeclass<FringeTreeF<T, A> > = fringe_tree_layer_fold_map;
+inline constexpr auto layer_fold<FringeTreeF<T, A> > = fringe_tree_layer_fold_map;
 // e6cd1dd3-85b1-4ce2-bf7f-2ab1783d16f8 end
 
 } // namespace beman::tree_algorithms

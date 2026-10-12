@@ -24,9 +24,9 @@ namespace beman::tree_algorithms {
 // template parameters because C++ cannot infer fold carriers through
 // recursive calls.
 //
-// Lookup-based overloads (which resolve fmap through functor_typeclass
-// lookup) live in recursion_schemes_lookup.hpp (Decision 4); this header has no
-// typeclass dependency.
+// Lookup-based overloads (which resolve fmap through beman.transpose's
+// functor<Layer> lookup) live in recursion_schemes_lookup.hpp (Decision 4);
+// this header has no typeclass dependency.
 
 /** Recursive fold (reduce): collapse a Fix<F> tree bottom-up into a Result.
  *

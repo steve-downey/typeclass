@@ -13,7 +13,7 @@ import beman.tree_algorithms;
 
     #include <beman/tree_algorithms/fix.hpp>
     #include <beman/tree_algorithms/fold_map_lookup.hpp>
-    #include <beman/tree_algorithms/functor.hpp>
+    #include <beman/transpose/functor.hpp>
 
     #if !BEMAN_TREE_ALGORITHMS_USE_MODULES()
         #include <functional>
@@ -41,7 +41,7 @@ namespace beman::tree_algorithms {
 // children" position, so IN-ORDER TRAVERSAL DOES NOT EXIST for this
 // shape. In-order is a binary tree's contract, not a property of trees.
 // This is why the elementwise machinery leaves traversal order to each
-// layer's registered fold (layer_fold_typeclass) instead of imposing a
+// layer's registered fold (layer_fold) instead of imposing a
 // generic order: the generic thing is the fold, the order is the
 // instance's. The rose layer fold below documents and implements this
 // representation's contract — pre-order, value before children, children
@@ -108,13 +108,21 @@ struct RoseFFunctorImpl {
 /** Functor map for RoseF<T, A>: the fmap primitive plus the derived
  * operations from the Functor CRTP base. */
 template <typename T, typename A>
-struct RoseFFunctorMap : Functor<RoseFFunctorImpl<T, A> > {
+struct RoseFFunctorMap : transpose::derive_functor<RoseFFunctorImpl<T, A> > {
     using RoseFFunctorImpl<T, A>::fmap;
 };
 
+} // namespace beman::tree_algorithms
+
+namespace beman::transpose {
+
 /** Registers RoseFFunctorMap as the Functor instance for RoseF<T, A>. */
 template <typename T, typename A>
-inline constexpr auto functor_typeclass<RoseF<T, A> > = RoseFFunctorMap<T, A>{};
+inline constexpr auto functor<beman::tree_algorithms::RoseF<T, A> > = beman::tree_algorithms::RoseFFunctorMap<T, A>{};
+
+} // namespace beman::transpose
+
+namespace beman::tree_algorithms {
 // 0d3c6e8b-92f4-45f7-8a26-6c1de5b0a973 end
 
 // ---------------------------------------------------------------------
@@ -148,10 +156,10 @@ struct RoseLayerFoldMap {
 inline constexpr RoseLayerFoldMap rose_layer_fold_map{};
 
 /** Lookup registration: the layer fold keyed on the layer type. There is
- * no project_typeclass registration — the rose tree is Fix-native, and
+ * no project registration — the rose tree is Fix-native, and
  * the Fix overloads of the verbs already know how to unwrap it. */
 template <typename T, typename A>
-inline constexpr auto layer_fold_typeclass<RoseF<T, A> > = rose_layer_fold_map;
+inline constexpr auto layer_fold<RoseF<T, A> > = rose_layer_fold_map;
 // 4b9d17f2-30a5-4e1c-b8d4-7f52a6c3e08d end
 
 } // namespace beman::tree_algorithms

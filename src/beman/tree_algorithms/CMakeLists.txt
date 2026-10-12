@@ -46,7 +46,6 @@ target_sources(
     fold_map.hpp
     fold_map_lookup.hpp
     fringe_tree.hpp
-    functor.hpp
     functors.hpp
     recursion_schemes.hpp
     recursion_schemes_lookup.hpp
@@ -77,7 +76,6 @@ if(BEMAN_TYPECLASS_BUILD_TESTS)
             child_slot
             fix
             recursion_schemes
-            functor
             recursion_schemes_lookup
             expression
             functors

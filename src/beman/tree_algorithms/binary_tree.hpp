@@ -15,7 +15,7 @@ import beman.tree_algorithms;
     #include <beman/tree_algorithms/child_slot.hpp>
     #include <beman/tree_algorithms/fix.hpp>
     #include <beman/tree_algorithms/fold_map_lookup.hpp>
-    #include <beman/tree_algorithms/functor.hpp>
+    #include <beman/transpose/functor.hpp>
     #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
     // <cassert> is macro-only and therefore not importable; it is included
@@ -192,14 +192,23 @@ struct BinaryTreeFFunctorImpl {
 /** Functor map for BinaryTreeF<T, A>: the fmap primitive plus the derived
  * operations from the Functor CRTP base. */
 template <typename T, typename A>
-struct BinaryTreeFFunctorMap : Functor<BinaryTreeFFunctorImpl<T, A> > {
+struct BinaryTreeFFunctorMap : transpose::derive_functor<BinaryTreeFFunctorImpl<T, A> > {
     using BinaryTreeFFunctorImpl<T, A>::fmap;
 };
+
+} // namespace beman::tree_algorithms
+
+namespace beman::transpose {
 
 /** Registers BinaryTreeFFunctorMap as the Functor instance for
  * BinaryTreeF<T, A>. */
 template <typename T, typename A>
-inline constexpr auto functor_typeclass<BinaryTreeF<T, A> > = BinaryTreeFFunctorMap<T, A>{};
+inline constexpr auto functor<beman::tree_algorithms::BinaryTreeF<T, A> > =
+    beman::tree_algorithms::BinaryTreeFFunctorMap<T, A>{};
+
+} // namespace beman::transpose
+
+namespace beman::tree_algorithms {
 // 91fef612-39b5-4424-8ab5-7d8c80997e2c end
 
 // ---------------------------------------------------------------------
@@ -253,10 +262,10 @@ inline constexpr BinaryTreeProjectFn binary_tree_project{};
 /** Lookup registrations: the projection keyed on the tree type, the
  * layer fold keyed on the layer type. */
 template <typename T>
-inline constexpr auto project_typeclass<BinaryTree<T> > = binary_tree_project;
+inline constexpr auto project<BinaryTree<T> > = binary_tree_project;
 
 template <typename T, typename A>
-inline constexpr auto layer_fold_typeclass<BinaryTreeF<T, A> > = binary_tree_layer_fold_map;
+inline constexpr auto layer_fold<BinaryTreeF<T, A> > = binary_tree_layer_fold_map;
 // c9e514d9-4cf1-4fa1-ac4d-a9dfdf040291 end
 
 // ---------------------------------------------------------------------
