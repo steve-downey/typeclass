@@ -101,4 +101,54 @@ if(BEMAN_TYPECLASS_BUILD_TESTS)
         endif()
         catch_discover_tests(beman.tree_algorithms.tests.${test})
     endforeach()
+
+    # The explicit tier is the surface that stays valid if P3200 does not
+    # progress, so it must include nothing from beman.transpose (DECISIONS.md,
+    # amendment 2026-10-12). One translation unit per explicit-tier header
+    # includes that header alone, then fails with #error if the include guard
+    # of any beman.transpose header is defined. Building them is the test.
+    # A module build imports everything, so there is nothing to check there.
+    if(NOT BEMAN_TREE_ALGORITHMS_USE_MODULES)
+        get_target_property(_transpose_dir beman.transpose SOURCE_DIR)
+        get_target_property(_transpose_headers beman.transpose HEADER_SET)
+        set(_guard_checks "")
+        foreach(_header IN LISTS _transpose_headers)
+            cmake_path(ABSOLUTE_PATH _header BASE_DIRECTORY "${_transpose_dir}")
+            file(
+                STRINGS "${_header}"
+                _guard
+                REGEX "^#ifndef BEMAN_TRANSPOSE_"
+                LIMIT_COUNT 1
+            )
+            if(_guard)
+                string(REPLACE "#ifndef " "" _guard "${_guard}")
+                string(
+                    APPEND _guard_checks
+                    "#ifdef ${_guard}\n#error \"includes ${_header}\"\n#endif\n"
+                )
+            endif()
+        endforeach()
+        add_library(beman.tree_algorithms.tests.explicit_tier_isolation OBJECT)
+        foreach(
+            header
+            IN
+            ITEMS fix box child_slot recursion_schemes fold_map
+        )
+            file(
+                CONFIGURE
+                OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/explicit_tier_${header}.cpp"
+                CONTENT
+                    "#include <beman/tree_algorithms/${header}.hpp>\n${_guard_checks}"
+            )
+            target_sources(
+                beman.tree_algorithms.tests.explicit_tier_isolation
+                PRIVATE
+                    "${CMAKE_CURRENT_BINARY_DIR}/explicit_tier_${header}.cpp"
+            )
+        endforeach()
+        target_link_libraries(
+            beman.tree_algorithms.tests.explicit_tier_isolation
+            PRIVATE beman::tree_algorithms
+        )
+    endif()
 endif()
