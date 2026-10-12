@@ -14,8 +14,8 @@
 // branch on size() rather than dispatching through a four-way std::visit at
 // every level.
 
-#include <beman/fingertree/fixpoint/overloaded.hpp>
 #include <beman/transpose/monoid.hpp>
+#include <beman/transpose/overloaded.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -38,7 +38,7 @@ namespace beman::fingertree::tree {
 
 namespace ft {
 
-using beman::fingertree::fixpoint::overloaded;
+using beman::transpose::overloaded;
 
 // -- Measure vocabulary -------------------------------------------------------
 //

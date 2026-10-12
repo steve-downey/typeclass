@@ -57,7 +57,6 @@ target_sources(
     FILES
     config.hpp
     fingertree.hpp
-    fixpoint/overloaded.hpp
     tree/finger_tree.hpp
     tree/finger_tree_iterator.hpp
     tree/finger_tree_pmr.hpp
