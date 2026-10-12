@@ -15,8 +15,8 @@
 // structure-preserving traversal can override.
 
 #include <beman/fingertree/tree/finger_tree.hpp>
-#include <beman/fingertree/typeclass/applicative.hpp>
-#include <beman/fingertree/typeclass/traversable.hpp>
+#include <beman/transpose/apply.hpp>
+#include <beman/transpose/traverse.hpp>
 
 #include <functional>
 #include <type_traits>
@@ -37,8 +37,8 @@ struct FingerTreeTraversableImpl {
                   const APPLICATIVE&                                                               applicative,
                   F&&                                                                              function,
                   const beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>& tree) {
-        using Context = remove_cvref_t<std::invoke_result_t<F, const T&>>;
-        using U       = beman::fingertree::applicative_value_t<Context>;
+        using Context = std::remove_cvref_t<std::invoke_result_t<F, const T&>>;
+        using U       = beman::transpose::applicative_value_t<Context>;
 
         auto accumulated = applicative.pure(std::vector<U>{});
 
@@ -63,18 +63,22 @@ struct FingerTreeTraversableImpl {
 
 /** Traversable typeclass map entry for FingerTree. */
 template <class T, class MONOID, class MEASURE_POLICY, class ALLOCATOR>
-struct FingerTreeTraversableMap : Traversable<FingerTreeTraversableImpl<T, MONOID, MEASURE_POLICY, ALLOCATOR>> {
+struct FingerTreeTraversableMap
+    : beman::transpose::derive_traversable<FingerTreeTraversableImpl<T, MONOID, MEASURE_POLICY, ALLOCATOR>> {
     using FingerTreeTraversableImpl<T, MONOID, MEASURE_POLICY, ALLOCATOR>::traverse;
 };
+
+} // namespace beman::fingertree
+
+namespace beman::transpose {
 
 /** Registers FingerTree as a Traversable for all monoid and measure
  * combinations.
  */
 template <class T, class MONOID, class MEASURE_POLICY, class ALLOCATOR>
-inline constexpr auto
-    traversable_typeclass<beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>> =
-        FingerTreeTraversableMap<T, MONOID, MEASURE_POLICY, ALLOCATOR>{};
+inline constexpr auto traversable<beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>> =
+    beman::fingertree::FingerTreeTraversableMap<T, MONOID, MEASURE_POLICY, ALLOCATOR>{};
 
-} // namespace beman::fingertree
+} // namespace beman::transpose
 
 #endif

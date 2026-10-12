@@ -120,7 +120,7 @@ assert(split.d_right.flatten() == std::vector<int>{3, 4, 5});
 ```
 
 The default `UnitMeasure` tags every element with `1` and the default monoid
-instance, `typeclass::sum_monoid<std::size_t>`, adds, so the prefix is just the
+instance, `transpose::sum_monoid<std::size_t>`, adds, so the prefix is just the
 element count. `split_at_measure(3)` puts the first two elements left, and the
 third --- the one that brings the count to 3 --- and everything after it right.
 
@@ -199,7 +199,7 @@ statically, and `sum_monoid`, `max_monoid`, and friends are exactly that.
 ### Interval pruning
 
 The interval index measures each interval by its end point, a plain
-`std::size_t`, and combines under `typeclass::max_monoid<std::size_t>`
+`std::size_t`, and combines under `transpose::max_monoid<std::size_t>`
 (spelled `IntervalMonoid`). Split on it to partition intervals by their running
 maximum endpoint:
 
@@ -280,7 +280,7 @@ if (auto s = tree.split([](std::size_t count) { return count >= 3; })) {
 ## The monoid underneath
 
 Splitting is monoid accumulation and nothing else. The default tree,
-`FingerTree<T>`, is `FingerTree<T, typeclass::sum_monoid<std::size_t>,
+`FingerTree<T>`, is `FingerTree<T, transpose::sum_monoid<std::size_t>,
 UnitMeasure<T, std::size_t>>`, and `sum_monoid` is the whole of the algebra:
 
 ```cpp
@@ -300,7 +300,7 @@ not pick one on the caller's behalf (beman.transpose
 `docs/decisions.md#monoid-selection`). Change the instance and you change what
 "prefix" means --- a count, a maximum endpoint, a total weight, a concatenated
 string --- without changing the tag type. `reversed()` is the same move: it
-returns a tree keyed on `typeclass::dual_monoid<MONOID>`, same tag, combine
+returns a tree keyed on `transpose::dual_monoid<MONOID>`, same tag, combine
 with its arguments flipped, so `split_at_measure` on a reversed tree takes the
 same plain threshold. The split code does not know or care which instance it
 has; it combines and compares. See

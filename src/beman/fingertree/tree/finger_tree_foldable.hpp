@@ -3,7 +3,7 @@
 #define BEMAN_FINGERTREE_TREE_FINGER_TREE_FOLDABLE_HPP
 
 #include <beman/fingertree/tree/finger_tree.hpp>
-#include <beman/fingertree/typeclass/foldable.hpp>
+#include <beman/transpose/fold.hpp>
 
 #include <functional>
 #include <type_traits>
@@ -26,8 +26,8 @@ struct FingerTreeFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                                              function,
                   const beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>& tree,
-                  RESULT_MONOID monoid) -> remove_cvref_t<std::invoke_result_t<F&, const T&>> {
-        using Result = remove_cvref_t<std::invoke_result_t<F&, const T&>>;
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>> {
+        using Result = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
 
         Result acc = monoid.identity();
         tree.for_each([&](const T& value) { acc = monoid.combine(std::move(acc), std::invoke(function, value)); });
@@ -37,13 +37,18 @@ struct FingerTreeFoldableImpl {
 
 /** Foldable typeclass map entry for FingerTree. */
 template <class T, class MONOID, class MEASURE_POLICY, class ALLOCATOR>
-struct FingerTreeFoldableMap : Foldable<FingerTreeFoldableImpl<T, MONOID, MEASURE_POLICY, ALLOCATOR>> {};
+struct FingerTreeFoldableMap
+    : beman::transpose::derive_foldable<FingerTreeFoldableImpl<T, MONOID, MEASURE_POLICY, ALLOCATOR>> {};
+
+} // namespace beman::fingertree
+
+namespace beman::transpose {
 
 /** Registers FingerTree as a Foldable for all monoid and measure combinations. */
 template <class T, class MONOID, class MEASURE_POLICY, class ALLOCATOR>
-inline constexpr auto foldable_typeclass<beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>> =
-    FingerTreeFoldableMap<T, MONOID, MEASURE_POLICY, ALLOCATOR>{};
+inline constexpr auto foldable<beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>> =
+    beman::fingertree::FingerTreeFoldableMap<T, MONOID, MEASURE_POLICY, ALLOCATOR>{};
 
-} // namespace beman::fingertree
+} // namespace beman::transpose
 
 #endif

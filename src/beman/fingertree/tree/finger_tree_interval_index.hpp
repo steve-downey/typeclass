@@ -3,10 +3,10 @@
 #define BEMAN_FINGERTREE_TREE_FINGER_TREE_INTERVAL_INDEX_HPP
 
 #include <beman/fingertree/tree/finger_tree.hpp>
-#include <beman/fingertree/typeclass/applicative.hpp>
-#include <beman/fingertree/typeclass/foldable.hpp>
-#include <beman/fingertree/typeclass/monoid.hpp>
-#include <beman/fingertree/typeclass/traversable.hpp>
+#include <beman/transpose/apply.hpp>
+#include <beman/transpose/fold.hpp>
+#include <beman/transpose/monoid.hpp>
+#include <beman/transpose/traverse.hpp>
 
 #include <cstddef>
 #include <functional>
@@ -35,7 +35,7 @@ struct IntervalMeasure {
 };
 
 /** The monoid instance the interval index measures under. */
-using IntervalMonoid = beman::fingertree::typeclass::max_monoid<std::size_t>;
+using IntervalMonoid = beman::transpose::max_monoid<std::size_t>;
 
 /** @brief Persistent interval index supporting stabbing and overlap queries.
  *
@@ -108,8 +108,8 @@ struct FingerTreeIntervalIndexFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                                         function,
                   const beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>& index,
-                  RESULT_MONOID monoid) -> remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>> {
-        using Result = remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>;
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>> {
+        using Result = std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>;
         return std::ranges::fold_left(index.entries(), Result(monoid.identity()), [&](Result acc, const auto& value) {
             return monoid.combine(std::move(acc), std::invoke(function, value.d_payload));
         });
@@ -117,11 +117,20 @@ struct FingerTreeIntervalIndexFoldableImpl {
 };
 
 template <class PAYLOAD_TYPE, class Tree>
-struct FingerTreeIntervalIndexFoldableMap : Foldable<FingerTreeIntervalIndexFoldableImpl<PAYLOAD_TYPE, Tree>> {};
+struct FingerTreeIntervalIndexFoldableMap
+    : beman::transpose::derive_foldable<FingerTreeIntervalIndexFoldableImpl<PAYLOAD_TYPE, Tree>> {};
+
+} // namespace beman::fingertree
+
+namespace beman::transpose {
 
 template <class PAYLOAD_TYPE, class Tree>
-inline constexpr auto foldable_typeclass<beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>> =
-    FingerTreeIntervalIndexFoldableMap<PAYLOAD_TYPE, Tree>{};
+inline constexpr auto foldable<beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>> =
+    beman::fingertree::FingerTreeIntervalIndexFoldableMap<PAYLOAD_TYPE, Tree>{};
+
+} // namespace beman::transpose
+
+namespace beman::fingertree {
 
 template <class PAYLOAD_TYPE, class Tree>
 struct FingerTreeIntervalIndexTraversableImpl {
@@ -132,8 +141,8 @@ struct FingerTreeIntervalIndexTraversableImpl {
                   const APPLICATIVE&                                                          applicative,
                   F&&                                                                         function,
                   const beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>& index) {
-        using Context = remove_cvref_t<std::invoke_result_t<F, const PAYLOAD_TYPE&>>;
-        using U       = beman::fingertree::applicative_value_t<Context>;
+        using Context = std::remove_cvref_t<std::invoke_result_t<F, const PAYLOAD_TYPE&>>;
+        using U       = beman::transpose::applicative_value_t<Context>;
 
         auto accumulated = applicative.pure(std::vector<beman::fingertree::tree::Interval<U>>{});
 
@@ -159,14 +168,18 @@ struct FingerTreeIntervalIndexTraversableImpl {
 
 template <class PAYLOAD_TYPE, class Tree>
 struct FingerTreeIntervalIndexTraversableMap
-    : Traversable<FingerTreeIntervalIndexTraversableImpl<PAYLOAD_TYPE, Tree>> {
+    : beman::transpose::derive_traversable<FingerTreeIntervalIndexTraversableImpl<PAYLOAD_TYPE, Tree>> {
     using FingerTreeIntervalIndexTraversableImpl<PAYLOAD_TYPE, Tree>::traverse;
 };
 
-template <class PAYLOAD_TYPE, class Tree>
-inline constexpr auto traversable_typeclass<beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>> =
-    FingerTreeIntervalIndexTraversableMap<PAYLOAD_TYPE, Tree>{};
-
 } // namespace beman::fingertree
+
+namespace beman::transpose {
+
+template <class PAYLOAD_TYPE, class Tree>
+inline constexpr auto traversable<beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>> =
+    beman::fingertree::FingerTreeIntervalIndexTraversableMap<PAYLOAD_TYPE, Tree>{};
+
+} // namespace beman::transpose
 
 #endif

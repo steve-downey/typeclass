@@ -58,12 +58,6 @@ target_sources(
     config.hpp
     fingertree.hpp
     fixpoint/overloaded.hpp
-    typeclass/typeclass_base.hpp
-    typeclass/functor.hpp
-    typeclass/applicative.hpp
-    typeclass/foldable.hpp
-    typeclass/traversable.hpp
-    typeclass/monoid.hpp
     tree/finger_tree.hpp
     tree/finger_tree_iterator.hpp
     tree/finger_tree_pmr.hpp
@@ -76,7 +70,13 @@ target_sources(
     "${CMAKE_CURRENT_BINARY_DIR}/config_generated.hpp"
 )
 
-beman_install_library(beman.fingertree TARGETS beman.fingertree)
+target_link_libraries(beman.fingertree ${_scope} beman::transpose)
+
+beman_install_library(
+    beman.fingertree
+    TARGETS beman.fingertree
+    DEPENDENCIES "beman.transpose"
+)
 
 if(BEMAN_TYPECLASS_BUILD_TESTS)
     # Catch2-based unit tests: one executable per component.

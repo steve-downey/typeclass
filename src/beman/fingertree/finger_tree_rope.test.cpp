@@ -9,9 +9,8 @@
 #include <vector>
 
 using Rope = beman::fingertree::tree::FingerTreeRope<
-    beman::fingertree::tree::FingerTree<std::string,
-                                        beman::fingertree::typeclass::sum_monoid<std::size_t>,
-                                        beman::fingertree::tree::RopeChunkMeasure>>;
+    beman::fingertree::tree::
+        FingerTree<std::string, beman::transpose::sum_monoid<std::size_t>, beman::fingertree::tree::RopeChunkMeasure>>;
 
 TEST_CASE("Rope - FromTextAndToString") {
     auto r = Rope::from_text("hello world", 4);

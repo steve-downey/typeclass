@@ -3,10 +3,10 @@
 #define BEMAN_FINGERTREE_TREE_FINGER_TREE_PRIORITY_QUEUE_HPP
 
 #include <beman/fingertree/tree/finger_tree.hpp>
-#include <beman/fingertree/typeclass/applicative.hpp>
-#include <beman/fingertree/typeclass/foldable.hpp>
-#include <beman/fingertree/typeclass/monoid.hpp>
-#include <beman/fingertree/typeclass/traversable.hpp>
+#include <beman/transpose/apply.hpp>
+#include <beman/transpose/fold.hpp>
+#include <beman/transpose/monoid.hpp>
+#include <beman/transpose/traverse.hpp>
 
 #include <algorithm>
 #include <cstddef>
@@ -21,7 +21,7 @@ namespace beman::fingertree::tree {
 
 /** Minimum monoid on `std::optional<T>` with an adjoined identity: `nullopt`
  * is the identity, and two engaged operands combine to the smaller. Unlike
- * `typeclass::min_monoid<T>`, which needs a saturating bound, this works for
+ * `transpose::min_monoid<T>`, which needs a saturating bound, this works for
  * any totally ordered `T`.
  */
 template <typename T>
@@ -64,10 +64,8 @@ template <typename T>
 using PriorityTag = std::tuple<std::size_t, std::optional<T>, std::optional<T>>;
 
 template <typename T>
-using PriorityMonoid =
-    beman::fingertree::typeclass::tuple_monoid<beman::fingertree::typeclass::sum_monoid<std::size_t>,
-                                               optional_min_monoid<T>,
-                                               optional_max_monoid<T>>;
+using PriorityMonoid = beman::transpose::
+    tuple_monoid<beman::transpose::sum_monoid<std::size_t>, optional_min_monoid<T>, optional_max_monoid<T>>;
 
 template <typename T>
 struct PriorityMeasure {
@@ -162,8 +160,8 @@ struct FingerTreePriorityQueueFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                              function,
                   const beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>& queue,
-                  RESULT_MONOID monoid) -> remove_cvref_t<std::invoke_result_t<F&, const T&>> {
-        using Result = remove_cvref_t<std::invoke_result_t<F&, const T&>>;
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>> {
+        using Result = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
         return std::ranges::fold_left(
             queue.to_vector(), Result(monoid.identity()), [&](Result acc, const auto& value) {
                 return monoid.combine(std::move(acc), std::invoke(function, value));
@@ -172,11 +170,20 @@ struct FingerTreePriorityQueueFoldableImpl {
 };
 
 template <class T, class Tree>
-struct FingerTreePriorityQueueFoldableMap : Foldable<FingerTreePriorityQueueFoldableImpl<T, Tree>> {};
+struct FingerTreePriorityQueueFoldableMap
+    : beman::transpose::derive_foldable<FingerTreePriorityQueueFoldableImpl<T, Tree>> {};
+
+} // namespace beman::fingertree
+
+namespace beman::transpose {
 
 template <class T, class Tree>
-inline constexpr auto foldable_typeclass<beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>> =
-    FingerTreePriorityQueueFoldableMap<T, Tree>{};
+inline constexpr auto foldable<beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>> =
+    beman::fingertree::FingerTreePriorityQueueFoldableMap<T, Tree>{};
+
+} // namespace beman::transpose
+
+namespace beman::fingertree {
 
 template <class T, class Tree>
 struct FingerTreePriorityQueueTraversableImpl {
@@ -187,8 +194,8 @@ struct FingerTreePriorityQueueTraversableImpl {
                   const APPLICATIVE&                                               applicative,
                   F&&                                                              function,
                   const beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>& queue) {
-        using Context = remove_cvref_t<std::invoke_result_t<F, const T&>>;
-        using U       = beman::fingertree::applicative_value_t<Context>;
+        using Context = std::remove_cvref_t<std::invoke_result_t<F, const T&>>;
+        using U       = beman::transpose::applicative_value_t<Context>;
 
         auto accumulated = applicative.pure(std::vector<U>{});
 
@@ -212,14 +219,19 @@ struct FingerTreePriorityQueueTraversableImpl {
 };
 
 template <class T, class Tree>
-struct FingerTreePriorityQueueTraversableMap : Traversable<FingerTreePriorityQueueTraversableImpl<T, Tree>> {
+struct FingerTreePriorityQueueTraversableMap
+    : beman::transpose::derive_traversable<FingerTreePriorityQueueTraversableImpl<T, Tree>> {
     using FingerTreePriorityQueueTraversableImpl<T, Tree>::traverse;
 };
 
-template <class T, class Tree>
-inline constexpr auto traversable_typeclass<beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>> =
-    FingerTreePriorityQueueTraversableMap<T, Tree>{};
-
 } // namespace beman::fingertree
+
+namespace beman::transpose {
+
+template <class T, class Tree>
+inline constexpr auto traversable<beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>> =
+    beman::fingertree::FingerTreePriorityQueueTraversableMap<T, Tree>{};
+
+} // namespace beman::transpose
 
 #endif

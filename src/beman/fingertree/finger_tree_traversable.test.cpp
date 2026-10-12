@@ -3,7 +3,7 @@
 #include <beman/fingertree/tree/finger_tree_traversable.hpp>
 #include <beman/fingertree/tree/finger_tree_traversable.hpp> // Re-inclusion check
 
-#include <beman/fingertree/typeclass/traversable.hpp>
+#include <beman/transpose/traverse.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -13,7 +13,7 @@
 TEST_CASE("FingerTreeTraversableTest - TraverseOptionalSucceeds") {
     using Tree  = beman::fingertree::tree::FingerTree<int>;
     auto t      = Tree::from_sequence({1, 2, 3});
-    auto result = beman::fingertree::traverse([](int x) { return std::optional{x * 10}; }, t);
+    auto result = beman::transpose::traverse([](int x) { return std::optional{x * 10}; }, t);
     REQUIRE(result.has_value());
     CHECK(result->flatten() == (std::vector<int>{10, 20, 30}));
 }
@@ -21,7 +21,7 @@ TEST_CASE("FingerTreeTraversableTest - TraverseOptionalSucceeds") {
 TEST_CASE("FingerTreeTraversableTest - TraverseOptionalFailsOnNullopt") {
     using Tree  = beman::fingertree::tree::FingerTree<int>;
     auto t      = Tree::from_sequence({1, 2, 3});
-    auto result = beman::fingertree::traverse(
+    auto result = beman::transpose::traverse(
         [](int x) -> std::optional<int> { return x == 2 ? std::nullopt : std::optional{x}; }, t);
     CHECK_FALSE(result.has_value());
 }
@@ -29,7 +29,7 @@ TEST_CASE("FingerTreeTraversableTest - TraverseOptionalFailsOnNullopt") {
 TEST_CASE("FingerTreeTraversableTest - TraversePreservesShape") {
     using Tree  = beman::fingertree::tree::FingerTree<int>;
     auto t      = Tree::from_sequence({10, 20, 30, 40});
-    auto result = beman::fingertree::traverse([](int x) { return std::optional{x + 1}; }, t);
+    auto result = beman::transpose::traverse([](int x) { return std::optional{x + 1}; }, t);
     REQUIRE(result.has_value());
     CHECK(result->flatten() == (std::vector<int>{11, 21, 31, 41}));
 }
@@ -42,7 +42,7 @@ TEST_CASE("FingerTreeTraversableTest - TraverseOverLargeTree") {
     for (int i = 0; i < 100; ++i)
         t = t.snoc(i);
 
-    auto result = beman::fingertree::traverse([](int x) { return std::optional{x}; }, t);
+    auto result = beman::transpose::traverse([](int x) { return std::optional{x}; }, t);
     REQUIRE(result.has_value());
     auto v = result->flatten();
     REQUIRE(v.size() == 100U);

@@ -17,9 +17,9 @@
 // template signatures; taking the complete instantiation is robust to drift.
 
 #include <beman/fingertree/tree/finger_tree.hpp>
-#include <beman/fingertree/typeclass/applicative.hpp>
-#include <beman/fingertree/typeclass/foldable.hpp>
-#include <beman/fingertree/typeclass/traversable.hpp>
+#include <beman/transpose/apply.hpp>
+#include <beman/transpose/fold.hpp>
+#include <beman/transpose/traverse.hpp>
 
 #include <algorithm>
 #include <cstddef>
@@ -44,8 +44,7 @@ namespace beman::fingertree::tree {
  * - to_vector:                    O(n)
  */
 template <typename T,
-          typename Tree =
-              FingerTree<T, beman::fingertree::typeclass::sum_monoid<std::size_t>, UnitMeasure<T, std::size_t>>>
+          typename Tree = FingerTree<T, beman::transpose::sum_monoid<std::size_t>, UnitMeasure<T, std::size_t>>>
 class FingerTreeRandomAccess {
     Tree d_tree;
 
@@ -142,8 +141,8 @@ struct FingerTreeRandomAccessFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                             function,
                   const beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>& sequence,
-                  RESULT_MONOID monoid) -> remove_cvref_t<std::invoke_result_t<F&, const T&>> {
-        using Result = remove_cvref_t<std::invoke_result_t<F&, const T&>>;
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>> {
+        using Result = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
         return std::ranges::fold_left(
             sequence.to_vector(), Result(monoid.identity()), [&](Result acc, const auto& value) {
                 return monoid.combine(std::move(acc), std::invoke(function, value));
@@ -152,11 +151,20 @@ struct FingerTreeRandomAccessFoldableImpl {
 };
 
 template <class T, class Tree>
-struct FingerTreeRandomAccessFoldableMap : Foldable<FingerTreeRandomAccessFoldableImpl<T, Tree>> {};
+struct FingerTreeRandomAccessFoldableMap
+    : beman::transpose::derive_foldable<FingerTreeRandomAccessFoldableImpl<T, Tree>> {};
+
+} // namespace beman::fingertree
+
+namespace beman::transpose {
 
 template <class T, class Tree>
-inline constexpr auto foldable_typeclass<beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>> =
-    FingerTreeRandomAccessFoldableMap<T, Tree>{};
+inline constexpr auto foldable<beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>> =
+    beman::fingertree::FingerTreeRandomAccessFoldableMap<T, Tree>{};
+
+} // namespace beman::transpose
+
+namespace beman::fingertree {
 
 /** Traversable typeclass implementation for FingerTreeRandomAccess<T, Tree>.
  *
@@ -174,8 +182,8 @@ struct FingerTreeRandomAccessTraversableImpl {
                   const APPLICATIVE&                                              applicative,
                   F&&                                                             function,
                   const beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>& sequence) {
-        using Context = remove_cvref_t<std::invoke_result_t<F, const T&>>;
-        using U       = beman::fingertree::applicative_value_t<Context>;
+        using Context = std::remove_cvref_t<std::invoke_result_t<F, const T&>>;
+        using U       = beman::transpose::applicative_value_t<Context>;
 
         auto accumulated = applicative.pure(std::vector<U>{});
 
@@ -199,14 +207,19 @@ struct FingerTreeRandomAccessTraversableImpl {
 };
 
 template <class T, class Tree>
-struct FingerTreeRandomAccessTraversableMap : Traversable<FingerTreeRandomAccessTraversableImpl<T, Tree>> {
+struct FingerTreeRandomAccessTraversableMap
+    : beman::transpose::derive_traversable<FingerTreeRandomAccessTraversableImpl<T, Tree>> {
     using FingerTreeRandomAccessTraversableImpl<T, Tree>::traverse;
 };
 
-template <class T, class Tree>
-inline constexpr auto traversable_typeclass<beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>> =
-    FingerTreeRandomAccessTraversableMap<T, Tree>{};
-
 } // namespace beman::fingertree
+
+namespace beman::transpose {
+
+template <class T, class Tree>
+inline constexpr auto traversable<beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>> =
+    beman::fingertree::FingerTreeRandomAccessTraversableMap<T, Tree>{};
+
+} // namespace beman::transpose
 
 #endif

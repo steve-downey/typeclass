@@ -24,7 +24,7 @@
 namespace beman::fingertree::tree::pmr {
 
 template <typename T,
-          typename MONOID         = beman::fingertree::typeclass::sum_monoid<std::size_t>,
+          typename MONOID         = beman::transpose::sum_monoid<std::size_t>,
           typename MEASURE_POLICY = UnitMeasure<T, ft::tag_t<MONOID>>>
 using FingerTree =
     beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, std::pmr::polymorphic_allocator<std::byte>>;

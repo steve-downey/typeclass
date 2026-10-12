@@ -86,7 +86,7 @@ TEST_CASE("FingerTree - DefaultTagIsSizeT") {
 
     static_assert(std::is_same_v<FT::value_type, int>);
     static_assert(std::is_same_v<FT::tag_type, std::size_t>);
-    static_assert(std::is_same_v<FT::monoid_type, beman::fingertree::typeclass::sum_monoid<std::size_t>>);
+    static_assert(std::is_same_v<FT::monoid_type, beman::transpose::sum_monoid<std::size_t>>);
     static_assert(FT::has_unit_count_measure);
 }
 
@@ -717,9 +717,8 @@ TEST_CASE("FingerTree - ReversedIsKeyedOnTheDualInstance") {
     using FT  = beman::fingertree::tree::FingerTree<int>;
     using Rev = decltype(FT{}.reversed());
     static_assert(std::is_same_v<Rev::tag_type, std::size_t>);
-    static_assert(std::is_same_v<
-                  Rev::monoid_type,
-                  beman::fingertree::typeclass::dual_monoid<beman::fingertree::typeclass::sum_monoid<std::size_t>>>);
+    static_assert(
+        std::is_same_v<Rev::monoid_type, beman::transpose::dual_monoid<beman::transpose::sum_monoid<std::size_t>>>);
     static_assert(!Rev::has_unit_count_measure);
 }
 
@@ -730,8 +729,7 @@ TEST_CASE("FingerTree - TwoMonoidsOverOneValueTypeAreDifferentTrees") {
         auto operator()(int value) const -> std::size_t { return static_cast<std::size_t>(value); }
     };
     using Count = beman::fingertree::tree::FingerTree<int>;
-    using Max =
-        beman::fingertree::tree::FingerTree<int, beman::fingertree::typeclass::max_monoid<std::size_t>, ValueMeasure>;
+    using Max   = beman::fingertree::tree::FingerTree<int, beman::transpose::max_monoid<std::size_t>, ValueMeasure>;
     static_assert(!std::is_same_v<Count, Max>);
     static_assert(std::is_same_v<Count::tag_type, Max::tag_type>);
 

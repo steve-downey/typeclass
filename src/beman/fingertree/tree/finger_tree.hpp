@@ -15,7 +15,7 @@
 // every level.
 
 #include <beman/fingertree/fixpoint/overloaded.hpp>
-#include <beman/fingertree/typeclass/monoid.hpp>
+#include <beman/transpose/monoid.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -51,7 +51,7 @@ using beman::fingertree::fixpoint::overloaded;
 // docs/decisions.md#monoid-selection.
 
 template <typename MONOID>
-using tag_t = beman::fingertree::typeclass::monoid_value_t<MONOID>;
+using tag_t = beman::transpose::monoid_value_t<MONOID>;
 
 // -- Elem: self-recursive element type ---------------------------------------
 
@@ -291,11 +291,11 @@ class FingerTreeIterator;
 // MONOID is a monoid instance type over the measure value type (the tag);
 // MEASURE_POLICY maps an element to a tag. The default is the element count:
 // every element measures 1 under addition. A tree with a different monoid
-// names its instance -- `FingerTree<int, typeclass::max_monoid<std::size_t>,
+// names its instance -- `FingerTree<int, transpose::max_monoid<std::size_t>,
 // MaxMeasure>` -- and the instance may carry state, in which case it is
 // passed to the constructor or to from_sequence and stored on the tree.
 template <typename T,
-          typename MONOID         = beman::fingertree::typeclass::sum_monoid<std::size_t>,
+          typename MONOID         = beman::transpose::sum_monoid<std::size_t>,
           typename MEASURE_POLICY = UnitMeasure<T, ft::tag_t<MONOID>>,
           typename ALLOCATOR      = std::allocator<std::byte>>
 class FingerTree {
@@ -956,9 +956,8 @@ class FingerTree {
 
     // True for the default count measure, where measure() is the element
     // count and size(), operator== and flatten() take O(1) shortcuts.
-    static constexpr bool has_unit_count_measure =
-        std::same_as<MONOID, beman::fingertree::typeclass::sum_monoid<std::size_t>> &&
-        std::same_as<Meas, UnitMeasure<T, std::size_t>>;
+    static constexpr bool has_unit_count_measure = std::same_as<MONOID, beman::transpose::sum_monoid<std::size_t>> &&
+                                                   std::same_as<Meas, UnitMeasure<T, std::size_t>>;
 
     [[nodiscard]] static auto leaf(T value) -> FingerTree {
         ALLOCATOR alloc{};
@@ -1253,12 +1252,11 @@ class FingerTree {
     // possible only for commutative monoids (cached measures would otherwise be
     // wrong); the eager rebuild is always correct.
 
-    [[nodiscard]] auto reversed() const
-        -> FingerTree<T, beman::fingertree::typeclass::dual_monoid<MONOID>, Meas, ALLOCATOR> {
-        using DT = FingerTree<T, beman::fingertree::typeclass::dual_monoid<MONOID>, Meas, ALLOCATOR>;
+    [[nodiscard]] auto reversed() const -> FingerTree<T, beman::transpose::dual_monoid<MONOID>, Meas, ALLOCATOR> {
+        using DT = FingerTree<T, beman::transpose::dual_monoid<MONOID>, Meas, ALLOCATOR>;
         auto v   = flatten();
         std::reverse(v.begin(), v.end());
-        return DT::from_sequence(std::move(v), d_alloc, beman::fingertree::typeclass::dual_monoid<MONOID>{d_monoid});
+        return DT::from_sequence(std::move(v), d_alloc, beman::transpose::dual_monoid<MONOID>{d_monoid});
     }
 };
 

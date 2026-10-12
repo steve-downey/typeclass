@@ -32,7 +32,7 @@ TEST_CASE("FingerTreeIterator - HeaderIsIdempotent") { REQUIRE(true); }
 
 TEST_CASE("FingerTreeIterator - IteratorCategoryIsBidirectional") {
     using Iter = beman::fingertree::tree::FingerTreeIterator<int,
-                                                             beman::fingertree::typeclass::sum_monoid<std::size_t>,
+                                                             beman::transpose::sum_monoid<std::size_t>,
                                                              beman::fingertree::tree::UnitMeasure<int, std::size_t>>;
     static_assert(std::bidirectional_iterator<Iter>);
     static_assert(!std::random_access_iterator<Iter>);

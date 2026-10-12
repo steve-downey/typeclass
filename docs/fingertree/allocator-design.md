@@ -50,7 +50,7 @@ mixed graphs unrepresentable through the public API.
 
 ```cpp
 template <typename T,
-          typename MONOID         = typeclass::sum_monoid<std::size_t>,
+          typename MONOID         = transpose::sum_monoid<std::size_t>,
           typename MEASURE_POLICY = UnitMeasure<T, ft::tag_t<MONOID>>,
           typename ALLOCATOR      = std::allocator<std::byte>>
 class FingerTree;
@@ -226,7 +226,7 @@ auto t = pmr::FingerTree<int>::from_sequence({1, 2, 3}, &mr);
 ```cpp
 namespace beman::fingertree::tree::pmr {
 template <typename T,
-          typename MONOID         = typeclass::sum_monoid<std::size_t>,
+          typename MONOID         = transpose::sum_monoid<std::size_t>,
           typename MEASURE_POLICY = UnitMeasure<T, ft::tag_t<MONOID>>>
 using FingerTree =
     beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY,

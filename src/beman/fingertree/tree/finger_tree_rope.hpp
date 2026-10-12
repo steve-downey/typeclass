@@ -3,9 +3,9 @@
 #define BEMAN_FINGERTREE_TREE_FINGER_TREE_ROPE_HPP
 
 #include <beman/fingertree/tree/finger_tree.hpp>
-#include <beman/fingertree/typeclass/applicative.hpp>
-#include <beman/fingertree/typeclass/foldable.hpp>
-#include <beman/fingertree/typeclass/traversable.hpp>
+#include <beman/transpose/apply.hpp>
+#include <beman/transpose/fold.hpp>
+#include <beman/transpose/traverse.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -36,8 +36,7 @@ struct RopeChunkMeasure {
  * - to_string / chunks:     O(n)
  * - insert / erase / replace: O(log n)
  */
-template <typename Tree =
-              FingerTree<std::string, beman::fingertree::typeclass::sum_monoid<std::size_t>, RopeChunkMeasure>>
+template <typename Tree = FingerTree<std::string, beman::transpose::sum_monoid<std::size_t>, RopeChunkMeasure>>
 class FingerTreeRope {
     Tree d_tree;
 
@@ -146,8 +145,8 @@ struct FingerTreeRopeFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                  function,
                   const beman::fingertree::tree::FingerTreeRope<Tree>& rope,
-                  RESULT_MONOID monoid) -> remove_cvref_t<std::invoke_result_t<F&, const std::string&>> {
-        using Result = remove_cvref_t<std::invoke_result_t<F&, const std::string&>>;
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const std::string&>> {
+        using Result = std::remove_cvref_t<std::invoke_result_t<F&, const std::string&>>;
         return std::ranges::fold_left(rope.chunks(), Result(monoid.identity()), [&](Result acc, const auto& value) {
             return monoid.combine(std::move(acc), std::invoke(function, value));
         });
@@ -155,11 +154,19 @@ struct FingerTreeRopeFoldableImpl {
 };
 
 template <class Tree>
-struct FingerTreeRopeFoldableMap : Foldable<FingerTreeRopeFoldableImpl<Tree>> {};
+struct FingerTreeRopeFoldableMap : beman::transpose::derive_foldable<FingerTreeRopeFoldableImpl<Tree>> {};
+
+} // namespace beman::fingertree
+
+namespace beman::transpose {
 
 template <class Tree>
-inline constexpr auto foldable_typeclass<beman::fingertree::tree::FingerTreeRope<Tree>> =
-    FingerTreeRopeFoldableMap<Tree>{};
+inline constexpr auto foldable<beman::fingertree::tree::FingerTreeRope<Tree>> =
+    beman::fingertree::FingerTreeRopeFoldableMap<Tree>{};
+
+} // namespace beman::transpose
+
+namespace beman::fingertree {
 
 template <class Tree>
 struct FingerTreeRopeTraversableImpl {
@@ -170,8 +177,8 @@ struct FingerTreeRopeTraversableImpl {
                   const APPLICATIVE&                                   applicative,
                   F&&                                                  function,
                   const beman::fingertree::tree::FingerTreeRope<Tree>& rope) {
-        using Context = remove_cvref_t<std::invoke_result_t<F, const std::string&>>;
-        using U       = beman::fingertree::applicative_value_t<Context>;
+        using Context = std::remove_cvref_t<std::invoke_result_t<F, const std::string&>>;
+        using U       = beman::transpose::applicative_value_t<Context>;
 
         auto accumulated = applicative.pure(std::vector<U>{});
 
@@ -196,14 +203,18 @@ struct FingerTreeRopeTraversableImpl {
 };
 
 template <class Tree>
-struct FingerTreeRopeTraversableMap : Traversable<FingerTreeRopeTraversableImpl<Tree>> {
+struct FingerTreeRopeTraversableMap : beman::transpose::derive_traversable<FingerTreeRopeTraversableImpl<Tree>> {
     using FingerTreeRopeTraversableImpl<Tree>::traverse;
 };
 
-template <class Tree>
-inline constexpr auto traversable_typeclass<beman::fingertree::tree::FingerTreeRope<Tree>> =
-    FingerTreeRopeTraversableMap<Tree>{};
-
 } // namespace beman::fingertree
+
+namespace beman::transpose {
+
+template <class Tree>
+inline constexpr auto traversable<beman::fingertree::tree::FingerTreeRope<Tree>> =
+    beman::fingertree::FingerTreeRopeTraversableMap<Tree>{};
+
+} // namespace beman::transpose
 
 #endif
