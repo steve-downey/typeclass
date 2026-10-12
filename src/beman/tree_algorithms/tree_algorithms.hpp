@@ -21,7 +21,7 @@ import beman.tree_algorithms;
     #include <beman/tree_algorithms/fringe_tree.hpp>
     #include <beman/tree_algorithms/functor.hpp>
     #include <beman/tree_algorithms/functors.hpp>
-    #include <beman/tree_algorithms/overloaded.hpp>
+    #include <beman/transpose/overloaded.hpp>
     #include <beman/tree_algorithms/recursion_schemes.hpp>
     #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
     #include <beman/tree_algorithms/rose_tree.hpp>

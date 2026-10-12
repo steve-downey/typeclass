@@ -1,15 +1,8 @@
+// src/beman/transpose/overloaded.hpp                                -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#ifndef BEMAN_TREE_ALGORITHMS_OVERLOADED_HPP
-#define BEMAN_TREE_ALGORITHMS_OVERLOADED_HPP
-
-#include <beman/tree_algorithms/config.hpp>
-
-#if BEMAN_TREE_ALGORITHMS_USE_MODULES() && !defined(BEMAN_TREE_ALGORITHMS_INCLUDED_FROM_INTERFACE_UNIT)
-
-import beman.tree_algorithms;
-
-#else
+#ifndef BEMAN_TRANSPOSE_OVERLOADED_HPP
+#define BEMAN_TRANSPOSE_OVERLOADED_HPP
 
 // overloaded<Ts...> — aggregate visitor for std::visit.
 //
@@ -28,7 +21,7 @@ import beman.tree_algorithms;
 // No explicit deduction guide is needed: C++20 CTAD for aggregates deduces
 // overloaded<F1, F2, ...> from the constructor arguments.
 
-namespace beman::tree_algorithms {
+namespace beman::transpose {
 
 template <typename... Ts>
 struct overloaded : Ts... {
@@ -39,9 +32,6 @@ struct overloaded : Ts... {
     }
 };
 
-} // namespace beman::tree_algorithms
+} // namespace beman::transpose
 
-#endif // BEMAN_TREE_ALGORITHMS_USE_MODULES() &&
-       // !defined(BEMAN_TREE_ALGORITHMS_INCLUDED_FROM_INTERFACE_UNIT)
-
-#endif // BEMAN_TREE_ALGORITHMS_OVERLOADED_HPP
+#endif // BEMAN_TRANSPOSE_OVERLOADED_HPP

@@ -1,14 +1,15 @@
+// src/beman/transpose/overloaded.test.cpp                          -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/tree_algorithms/overloaded.hpp>
-#include <beman/tree_algorithms/overloaded.hpp> // Re-inclusion: verifies include guard
+#include <beman/transpose/overloaded.hpp>
+#include <beman/transpose/overloaded.hpp> // Re-inclusion: verifies include guard
 
 #include <catch2/catch_test_macros.hpp>
 
 #include <string>
 #include <variant>
 
-using beman::tree_algorithms::overloaded;
+using beman::transpose::overloaded;
 
 TEST_CASE("overloaded - HeaderIsIdempotent", "[tree_algorithms::overloaded]") { REQUIRE(true); }
 

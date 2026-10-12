@@ -48,7 +48,6 @@ target_sources(
     fringe_tree.hpp
     functor.hpp
     functors.hpp
-    overloaded.hpp
     recursion_schemes.hpp
     recursion_schemes_lookup.hpp
     rose_tree.hpp
@@ -57,7 +56,15 @@ target_sources(
     "${CMAKE_CURRENT_BINARY_DIR}/config_generated.hpp"
 )
 
-beman_install_library(beman.tree_algorithms TARGETS beman.tree_algorithms)
+# The lookup tier (functor.hpp, recursion_schemes_lookup.hpp, the example
+# trees) consumes beman.transpose; the explicit tier does not.
+target_link_libraries(beman.tree_algorithms ${_scope} beman::transpose)
+
+beman_install_library(
+    beman.tree_algorithms
+    TARGETS beman.tree_algorithms
+    DEPENDENCIES "beman.transpose"
+)
 
 if(BEMAN_TYPECLASS_BUILD_TESTS)
     # Catch2-based unit tests: one executable per component.
@@ -69,7 +76,6 @@ if(BEMAN_TYPECLASS_BUILD_TESTS)
             box
             child_slot
             fix
-            overloaded
             recursion_schemes
             functor
             recursion_schemes_lookup

@@ -11,7 +11,7 @@
 // fold_fix verb, and not part of the library surface.
 
 #include <beman/tree_algorithms/expression.hpp>
-#include <beman/tree_algorithms/overloaded.hpp>
+#include <beman/transpose/overloaded.hpp>
 #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
 #include <cstddef>
@@ -23,6 +23,7 @@
 
 namespace example {
 
+using beman::transpose::overloaded;
 using beman::tree_algorithms::Add;
 using beman::tree_algorithms::add_node;
 using beman::tree_algorithms::Const;
@@ -33,7 +34,6 @@ using beman::tree_algorithms::ExprF;
 using beman::tree_algorithms::fold_fix;
 using beman::tree_algorithms::Mul;
 using beman::tree_algorithms::mul_node;
-using beman::tree_algorithms::overloaded;
 
 // a66c0122-f24d-4858-a802-cf76f87969e9
 // ---------------------------------------------------------------------

@@ -46,6 +46,7 @@
 #include <utility>
 #include <vector>
 
+using beman::transpose::overloaded;
 using beman::tree_algorithms::fold_map;
 using beman::tree_algorithms::fold_with;
 using beman::tree_algorithms::fringe_tree_project;
@@ -55,7 +56,6 @@ using beman::tree_algorithms::FringeLeaf;
 using beman::tree_algorithms::FringeTree;
 using beman::tree_algorithms::FringeTreeF;
 using beman::tree_algorithms::functor_typeclass;
-using beman::tree_algorithms::overloaded;
 using beman::tree_algorithms::view_l;
 using beman::tree_algorithms::view_r;
 

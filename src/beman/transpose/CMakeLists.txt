@@ -30,6 +30,7 @@ target_sources(
                 induced_monoid.hpp
                 monad.hpp
                 monoid.hpp
+                overloaded.hpp
                 sender.hpp
                 sequence.hpp
                 transpose.hpp
@@ -54,6 +55,7 @@ if(BEMAN_TYPECLASS_BUILD_TESTS)
         baseline_deduction
         demo_sender_golden
         monoid
+        overloaded
         dual_monoid
         error_set
         crtp_absorption

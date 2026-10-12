@@ -13,7 +13,7 @@ import beman.tree_algorithms;
 
     #include <beman/tree_algorithms/fold_map_lookup.hpp>
     #include <beman/tree_algorithms/functor.hpp>
-    #include <beman/tree_algorithms/overloaded.hpp>
+    #include <beman/transpose/overloaded.hpp>
 
     // <cassert> is macro-only and therefore not importable; it is included
     // unconditionally so assert works in the module build as well.
@@ -279,7 +279,7 @@ struct FringeTreeFFunctorImpl {
     template <typename Fn>
     constexpr auto fmap(this auto&&, Fn&& fn, const FringeTreeF<T, A>& layer) {
         using B = std::remove_cvref_t<std::invoke_result_t<Fn, const A&> >;
-        return std::visit(overloaded{
+        return std::visit(transpose::overloaded{
                               [](const FringeEmpty&) -> FringeTreeF<T, B> { return FringeEmpty{}; },
                               [](const FringeLeaf<T>& l) -> FringeTreeF<T, B> { return FringeLeaf<T>{l.value}; },
                               [&fn](const FringeBranch<A>& b) -> FringeTreeF<T, B> {
@@ -332,7 +332,7 @@ inline constexpr FringeTreeProjectFn fringe_tree_project{};
 struct FringeTreeEmbedFn {
     template <typename T>
     auto operator()(FringeTreeF<T, FringeTree<T> >&& layer) const -> FringeTree<T> {
-        return std::visit(overloaded{
+        return std::visit(transpose::overloaded{
                               [](FringeEmpty&&) { return FringeTree<T>::empty(); },
                               [](FringeLeaf<T>&& l) { return FringeTree<T>::leaf(std::move(l.value)); },
                               [](FringeBranch<FringeTree<T> >&& b) {
@@ -361,7 +361,7 @@ struct FringeTreeLayerFoldMap {
                               const Combine&                combine,
                               const Result&                 identity,
                               const FringeTreeF<T, Result>& layer) const -> Result {
-        return std::visit(overloaded{
+        return std::visit(transpose::overloaded{
                               [&](const FringeEmpty&) -> Result { return identity; },
                               [&](const FringeLeaf<T>& l) -> Result { return map_fn(l.value); },
                               [&](const FringeBranch<Result>& b) -> Result { return combine(b.left, b.right); },

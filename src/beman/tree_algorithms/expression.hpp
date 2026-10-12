@@ -16,7 +16,7 @@ import beman.tree_algorithms;
     #include <beman/tree_algorithms/fix.hpp>
     #include <beman/tree_algorithms/fold_map_lookup.hpp>
     #include <beman/tree_algorithms/functor.hpp>
-    #include <beman/tree_algorithms/overloaded.hpp>
+    #include <beman/transpose/overloaded.hpp>
     #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
     #if !BEMAN_TREE_ALGORITHMS_USE_MODULES()
@@ -86,7 +86,7 @@ struct ExprFFunctorImpl {
     constexpr auto fmap(this auto&&, Fn&& fn, const ExprF<A>& layer) {
         using B = std::remove_cvref_t<std::invoke_result_t<Fn, const A&> >;
         return std::visit(
-            overloaded{
+            transpose::overloaded{
                 [](const Const<A>& c) -> ExprF<B> { return Const<B>{c.val}; },
                 [&fn](const Add<A>& a) -> ExprF<B> {
                     return Add<B>{make_slot<B>(std::invoke(fn, *a.left)), make_slot<B>(std::invoke(fn, *a.right))};
@@ -142,7 +142,7 @@ constexpr auto mul_node(Expr l, Expr r) -> Expr {
  * int. Not recursive; fold_fix supplies the recursion.
  */
 inline constexpr auto eval_algebra = [](const ExprF<int>& expr) -> int {
-    return std::visit(overloaded{
+    return std::visit(transpose::overloaded{
                           [](const Const<int>& c) { return c.val; },
                           [](const Add<int>& a) { return *a.left + *a.right; },
                           [](const Mul<int>& m) { return *m.left * *m.right; },
@@ -170,7 +170,7 @@ struct ExprLayerFoldMap {
                               const Combine& combine,
                               const Result& /*identity*/,
                               const ExprF<Result>& layer) const -> Result {
-        return std::visit(overloaded{
+        return std::visit(transpose::overloaded{
                               [&](const Const<Result>& c) -> Result { return map_fn(c.val); },
                               [&](const Add<Result>& a) -> Result { return combine(*a.left, *a.right); },
                               [&](const Mul<Result>& m) -> Result { return combine(*m.left, *m.right); },

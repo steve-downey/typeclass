@@ -8,7 +8,7 @@
 #include <beman/tree_algorithms/expression.hpp>
 #include <beman/tree_algorithms/fold_map_lookup.hpp>
 #include <beman/tree_algorithms/fringe_tree.hpp>
-#include <beman/tree_algorithms/overloaded.hpp>
+#include <beman/transpose/overloaded.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -17,6 +17,7 @@
 #include <utility>
 #include <variant>
 
+using beman::transpose::overloaded;
 using beman::tree_algorithms::add_node;
 using beman::tree_algorithms::binary_tree_layer_fold_map;
 using beman::tree_algorithms::BinaryTree;
@@ -36,7 +37,6 @@ using beman::tree_algorithms::has_project_instance;
 using beman::tree_algorithms::make_box;
 using beman::tree_algorithms::make_slot;
 using beman::tree_algorithms::mul_node;
-using beman::tree_algorithms::overloaded;
 using beman::tree_algorithms::to_fix;
 using beman::tree_algorithms::wrap_fix;
 

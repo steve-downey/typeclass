@@ -4,7 +4,7 @@
 #include <beman/tree_algorithms/expression.hpp> // Re-inclusion: verifies include guard
 
 #include <beman/tree_algorithms/box.hpp>
-#include <beman/tree_algorithms/overloaded.hpp>
+#include <beman/transpose/overloaded.hpp>
 #include <beman/tree_algorithms/recursion_schemes.hpp>
 
 #include <catch2/catch_test_macros.hpp>
@@ -15,6 +15,7 @@
 #include <utility>
 #include <variant>
 
+using beman::transpose::overloaded;
 using beman::tree_algorithms::Add;
 using beman::tree_algorithms::add_node;
 using beman::tree_algorithms::Const;
@@ -28,7 +29,6 @@ using beman::tree_algorithms::has_functor_instance;
 using beman::tree_algorithms::make_slot;
 using beman::tree_algorithms::Mul;
 using beman::tree_algorithms::mul_node;
-using beman::tree_algorithms::overloaded;
 using beman::tree_algorithms::refold;
 using beman::tree_algorithms::unfold_fix;
 

@@ -15,7 +15,7 @@ import beman.tree_algorithms;
     #include <beman/tree_algorithms/child_slot.hpp>
     #include <beman/tree_algorithms/fix.hpp>
     #include <beman/tree_algorithms/functor.hpp>
-    #include <beman/tree_algorithms/overloaded.hpp>
+    #include <beman/transpose/overloaded.hpp>
     #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
     #if !BEMAN_TREE_ALGORITHMS_USE_MODULES()
@@ -71,7 +71,7 @@ struct NatFFunctorImpl {
     constexpr auto fmap(this auto&&, Fn&& fn, const NatF<A>& layer) {
         using B = std::remove_cvref_t<std::invoke_result_t<Fn, const A&> >;
         return std::visit(
-            overloaded{
+            transpose::overloaded{
                 [](const Zero&) -> NatF<B> { return Zero{}; },
                 [&fn](const Succ<A>& s) -> NatF<B> { return Succ<B>{make_slot<B>(std::invoke(fn, *s.pred))}; },
             },
@@ -120,7 +120,7 @@ constexpr auto nat_from_int(int n) -> Nat {
 constexpr auto nat_to_int(const Nat& nat) -> int {
     return fold_fix<int>(
         [](const NatF<int>& layer) -> int {
-            return std::visit(overloaded{
+            return std::visit(transpose::overloaded{
                                   [](const Zero&) { return 0; },
                                   [](const Succ<int>& s) { return *s.pred + 1; },
                               },
