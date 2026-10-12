@@ -1,3 +1,12 @@
+module;
+
+// <cassert> is macro-only, so `import std` does not provide it. Included
+// here it brings its declarations in attached to the global module, as
+// they must be; included first inside the purview below, through
+// binary_tree.hpp and fringe_tree.hpp, it redeclared the library's
+// configuration types in this module.
+#include <cassert>
+
 export module beman.tree_algorithms;
 
 import std;
