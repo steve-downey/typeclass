@@ -1,7 +1,10 @@
 # src/beman/fingertree/CMakeLists.txt                                -*-cmake-*-
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-set(BEMAN_FINGERTREE_USE_MODULES ${BEMAN_TYPECLASS_USE_MODULES})
+# The finger-tree headers include many standard headers, which conflict with
+# `import std` in the module interface unit, so the C++ module cannot be built
+# yet; fingertree stays a header library even when the others are modules.
+set(BEMAN_FINGERTREE_USE_MODULES OFF)
 
 configure_file(
     config_generated.hpp.in

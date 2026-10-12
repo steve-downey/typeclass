@@ -3,4 +3,6 @@
 
 add_subdirectory(transpose)
 add_subdirectory(tree_algorithms)
-add_subdirectory(fingertree)
+if(BEMAN_TYPECLASS_BUILD_FINGERTREE)
+    add_subdirectory(fingertree)
+endif()
