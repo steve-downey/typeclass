@@ -96,9 +96,10 @@ separate checkouts.
   *interface* would lock out a motivating domain. Laws are stated in
   invoke form with per-instance basis-coherence checks. The name is
   `ap`, never `apply`; never lead with it.
-- Monoid operations are spelled `identity()` and `combine()` — in
-  transpose AND fingertree AND anything new. Renaming is a multi-repo
-  sweep, not a local edit.
+- Monoid operations are spelled `identity()` and `combine()` — defined
+  once, in transpose, and used by fingertree and anything new. Renaming
+  is a sweep across every library and the evidence repos, not a local
+  edit.
 
 **Design decisions (frozen; change the doc first, then the code).**
 - `Fix` is composition (`F<Fix<F>> inner`), not inheritance.

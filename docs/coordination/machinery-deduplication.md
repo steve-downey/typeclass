@@ -116,6 +116,32 @@ Could land as early as stage 2, which would make it a guard on stage 5.
 - Remove the "copy of beman.transpose's …, keep the two in step" comments (gone with the files) and the README's statement that deduplication is pending.
 - STATUS.md and the coherence skill's map.
 
+## Outcome
+
+Executed 2026-10-12 on `reintegrate`; every commit below builds and passes on its own.
+
+| Stage | Commits |
+|---|---|
+| [ruling-before-code](#ruling-before-code) | `bfbdc04` |
+| [fingertree-onto-transpose](#fingertree-onto-transpose) | `046bcc9` |
+| [overloaded-home](#overloaded-home) | `34921e6` (move, history kept), `bc9d892` (fingertree's copy), `9e384d9` (documentation) |
+| [transpose-constexpr-derivations](#transpose-constexpr-derivations) | `4e687ae`, recorded as [derived-op-constant-evaluation](../transpose/decisions.md#derived-op-constant-evaluation) |
+| [tree-algorithms-functor-onto-transpose](#tree-algorithms-functor-onto-transpose) | `9ec82a9` (transpose, for the module build), `77180c5` |
+| [explicit-tier-isolation](#explicit-tier-isolation) | `05ea8b4`, a compile check: one generated translation unit per explicit-tier header, `#error` on any beman.transpose include guard |
+| [close-the-ledger](#close-the-ledger) | this entry, and the SYNC entry of the same date |
+
+Found and fixed on the way, each its own commit:
+- `7373a4b`: tree_algorithms' module unit did not build on gcc 15 or 16, and had not in the tree_algorithms repository either: `<cassert>` was first included inside the module purview.
+- `223bd2c`: specgen 0.2.0 wraps synopses in `namespace std { }`, so `make wording-check` failed on every commit, the merge included, until the fragments were regenerated.
+
+Left open:
+- **P3200 text for `overloaded`**: the section motivating it for algebras, its design and the catch-all as a diagnostic, P0051 as prior art, and wording. Paper D's examples should then say they use P3200's `overloaded`. Neither is written.
+- **Module-build tests**: the module unit builds, but tests and examples built against it include standard headers after `import`, which gcc 15 and 16 reject. Predates this work.
+- **`fold_left`/`fold_right` derived through `fold_map`** compose `std::function`, so they are not constant-evaluable; see the log of [derived-op-constant-evaluation](../transpose/decisions.md#derived-op-constant-evaluation).
+- **`examples/tree_algorithms/fixpoint_tree_example.cpp`** defines its own `overloaded`, and `expression_algorithms.cpp` its own `example_*_typeclass` lookups. Both are self-contained teaching examples and were left alone.
+- **gcc 14**: `examples/tree_algorithms/search_tree_on_fix.cpp` formats a `std::vector` with `std::format`, which libstdc++ 14 cannot; every test passes there. Predates this work.
+- [fallback-overload-set](#fallback-overload-set), deferred by ruling.
+
 ## Verification, every stage
 
 - `make TOOLCHAIN=gcc-16 test`: all three libraries.

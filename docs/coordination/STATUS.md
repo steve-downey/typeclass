@@ -5,11 +5,10 @@ repo's document (linked). Order within each repo is execution order.
 
 ## Decisions needed from Steve (unblock markers: [S-n])
 
-- Machinery deduplication
-  ([machinery-deduplication.md](machinery-deduplication.md)): no blocking
-  questions. The non-exhaustive overload set is deferred until the rest
-  of the plan is done, and proposed only if required; candidate names
-  are listed in
+- P3200 text and wording for `overloaded`, now proposed there
+  ([overloaded-home](../transpose/decisions.md#overloaded-home)); then a
+  line in Paper D saying its examples use it. The non-exhaustive overload
+  set stays deferred, proposed only if required; candidate names are in
   [fallback-overload-set](machinery-deduplication.md#fallback-overload-set).
 
 - [S-5] Existing punch-list items (repo owner swap, clang-18 floor,
@@ -154,5 +153,8 @@ tree_algorithms extraction-plan §7.
 
 ## Done
 
+- 2026-10-12: machinery deduplication — one definition of the
+  typeclass machinery, in beman.transpose; SYNC entry of 2026-10-12
+  (entry 3), [machinery-deduplication.md#outcome](machinery-deduplication.md#outcome).
 - 2026-07-13: extraction plan, coherence skill, per-repo worklists,
   trees addendum, this meta-repo scaffolded; SYNC ledger entry 1.

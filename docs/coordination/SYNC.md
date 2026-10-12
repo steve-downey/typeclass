@@ -3,6 +3,26 @@
 Pins each repo's state at each coordination decision. Append-only;
 newest entry first.
 
+## 2026-10-12 (entry 3) — machinery deduplication done
+
+The copied machinery is gone: beman.transpose is the one definition, and
+beman.tree_algorithms (its lookup tier) and beman.fingertree link it.
+fingertree's `typeclass/` and `fixpoint/overloaded.hpp` are deleted;
+tree_algorithms' `functor.hpp` is deleted and its `overloaded.hpp` moved
+into transpose, which P3200 will propose. tree_algorithms' lookup objects
+are `functor` (transpose's), `layer_fold`, `project`. transpose's derived
+operations are constexpr. The explicit tier's independence from
+transpose is now a compile check. Stages and commits:
+[machinery-deduplication.md#outcome](machinery-deduplication.md#outcome).
+
+Correction to entry 1: `tree_algorithms/fix.hpp` duplicated nothing.
+Neither transpose nor fingertree has a `Fix`; it stays in
+tree_algorithms. And transpose had no `overloaded`: the two copies were
+fingertree's and tree_algorithms'.
+
+End state: beman.typeclass `reintegrate` at `05ea8b4`, plus the ledger
+commit. Not done: P3200's text and wording for `overloaded`.
+
 ## 2026-10-12 (entry 2) — machinery deduplication begins
 
 Decision (Steve): collapse the copied typeclass machinery onto
