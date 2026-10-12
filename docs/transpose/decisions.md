@@ -3439,3 +3439,32 @@ overload resolution (best-match), not case analysis (first-match).
   which has the gcc-16 checks of the catch-all's behaviour. Paper text and
   wording are to come; the earlier `overload` proposal (P0051) must be
   addressed.
+
+---
+
+## derived-op-constant-evaluation
+
+**Question:** Are the operations the `derive_*` bases supply usable in a
+constant expression?
+**Status:** DECIDED 2026-10-12
+**Decided by:** Steve Downey, 2026-10-12, in the deduplication plan
+([transpose-constexpr-derivations](../coordination/machinery-deduplication.md#transpose-constexpr-derivations)).
+**Decision:** Yes. Every operation of `derive_functor`, `derive_foldable`,
+`derive_applicative`, `derive_traversable` and `derive_monad` is declared
+`constexpr`, as are the standard instances' bases for `std::optional` and
+`std::vector`, the registered `Monoid<std::string>` and
+`Monoid<std::vector<T>>`, `monoid_identity` and `monoid_combine`. Each
+operation is pinned by a `static_assert` in its test.
+**Why:** The coding rules already require `constexpr` wherever an API can
+meaningfully be constant-evaluated, and the bases' operations could be but
+were not declared so. beman.tree_algorithms registers its layer functors
+through `derive_functor`, and its rules (DEV-04) require every CRTP-derived
+operation to be `constexpr` at declaration with `static_assert` coverage; its
+own copy met that, so moving onto transpose's base must not lose it.
+**Log:**
+- 2026-10-12 — Applied. One known limit: `fold_left` and `fold_right`, when
+  derived through `fold_map`, compose `std::function` endomorphisms
+  (`left_compose_monoid`, `right_compose_monoid`), which cannot be
+  constant-evaluated. They are `constexpr` and forward to a native
+  `fold_left`/`fold_right` in a constant expression; the derived path is not.
+  Replacing `std::function` there is open.

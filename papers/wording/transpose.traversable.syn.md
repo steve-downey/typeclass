@@ -41,25 +41,27 @@ namespace std {
     static constexpr bool consumes_rvalue_structure = $consuming-traversable-object$<Impl>;
 
     // @[transpose.traversable.ops]{- .sref}@, traversal operations
-    template<class T, class F> auto for_each(this auto&& self, T&& value, F&& function);
+    template<class T, class F>
+    constexpr auto for_each(this auto&& self, T&& value, F&& function);
 
     template<class T>
       requires $applicative-context$<typename Impl::element_type>
-    auto transpose(this auto&& self, T&& value);
+    constexpr auto transpose(this auto&& self, T&& value);
 
     // @[transpose.traversable.delegate]{- .sref}@, delegated traversal
     template<class TRAVERSABLE_MAP, class T, class F>
-    auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& function,
-                       T&& value);
+    constexpr auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
+                                 F&& function, T&& value);
 
     template<class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
-    auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
-                       const APPLICATIVE_MAP& applicative_map, F&& function, T&& value);
+    constexpr auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
+                                 const APPLICATIVE_MAP& applicative_map, F&& function,
+                                 T&& value);
 
     template<class TRAVERSABLE_MAP, class T>
       requires $applicative-context$<typename remove_cvref_t<TRAVERSABLE_MAP>::element_type>
-    auto transpose_with(this auto&& self, const TRAVERSABLE_MAP& traversable_map,
-                        T&& value);
+    constexpr auto transpose_with(this auto&& self,
+                                  const TRAVERSABLE_MAP& traversable_map, T&& value);
   };
 }
 ```

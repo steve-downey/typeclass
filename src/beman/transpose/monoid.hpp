@@ -251,9 +251,9 @@ template <>
 struct Monoid<std::string> {
     using value_type = std::string;
 
-    auto identity() const -> std::string { return {}; }
+    constexpr auto identity() const -> std::string { return {}; }
 
-    auto combine(const std::string &lhs, const std::string &rhs) const
+    constexpr auto combine(const std::string &lhs, const std::string &rhs) const
         -> std::string {
         return lhs + rhs;
     }
@@ -264,10 +264,10 @@ template <class VALUE_TYPE>
 struct Monoid<std::vector<VALUE_TYPE>> {
     using value_type = std::vector<VALUE_TYPE>;
 
-    auto identity() const -> std::vector<VALUE_TYPE> { return {}; }
+    constexpr auto identity() const -> std::vector<VALUE_TYPE> { return {}; }
 
-    auto combine(std::vector<VALUE_TYPE> lhs,
-                 const std::vector<VALUE_TYPE> &rhs) const
+    constexpr auto combine(std::vector<VALUE_TYPE> lhs,
+                           const std::vector<VALUE_TYPE> &rhs) const
         -> std::vector<VALUE_TYPE> {
         lhs.insert(lhs.end(), rhs.begin(), rhs.end());
         return lhs;
@@ -276,13 +276,13 @@ struct Monoid<std::vector<VALUE_TYPE>> {
 
 /** Returns the identity element of the registered Monoid of VALUE_TYPE. */
 template <class VALUE_TYPE>
-auto monoid_identity() -> VALUE_TYPE {
+constexpr auto monoid_identity() -> VALUE_TYPE {
     return monoid<VALUE_TYPE>.identity();
 }
 
 /** Combines two values using the registered Monoid of VALUE_TYPE. */
 template <class VALUE_TYPE>
-auto monoid_combine(const VALUE_TYPE &lhs, const VALUE_TYPE &rhs)
+constexpr auto monoid_combine(const VALUE_TYPE &lhs, const VALUE_TYPE &rhs)
     -> VALUE_TYPE {
     return monoid<VALUE_TYPE>.combine(lhs, rhs);
 }

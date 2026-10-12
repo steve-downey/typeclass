@@ -50,8 +50,9 @@ struct VectorFoldableImpl {
     template <class FUNCTION, class MONOID>
         requires monoid_object<MONOID, std::remove_cvref_t<std::invoke_result_t<
                                            FUNCTION &, const VALUE_TYPE &>>>
-    auto fold_map(this auto &&, FUNCTION &&function,
-                  const std::vector<VALUE_TYPE> &values, MONOID monoid)
+    constexpr auto fold_map(this auto &&, FUNCTION &&function,
+                            const std::vector<VALUE_TYPE> &values,
+                            MONOID monoid)
         -> std::remove_cvref_t<
             std::invoke_result_t<FUNCTION &, const VALUE_TYPE &>> {
         using Result = std::remove_cvref_t<
@@ -65,7 +66,7 @@ struct VectorFoldableImpl {
     }
 
     //! \omit
-    auto length(this auto &&, const std::vector<VALUE_TYPE> &values)
+    constexpr auto length(this auto &&, const std::vector<VALUE_TYPE> &values)
         -> std::size_t {
         return values.size();
     }
@@ -103,12 +104,14 @@ struct vector_traversable_impl {
 
     // \ref{transpose.range.traverse}, traversable instance for vector
     template <class APPLICATIVE, class FUNCTION>
-    auto traverse(this auto &&, const APPLICATIVE &applicative,
-                  FUNCTION &&function, const std::vector<VALUE_TYPE> &values);
+    constexpr auto traverse(this auto &&, const APPLICATIVE &applicative,
+                            FUNCTION &&function,
+                            const std::vector<VALUE_TYPE> &values);
 
     template <class APPLICATIVE, class FUNCTION>
-    auto traverse(this auto &&, const APPLICATIVE &applicative,
-                  FUNCTION &&function, std::vector<VALUE_TYPE> &&values);
+    constexpr auto traverse(this auto &&, const APPLICATIVE &applicative,
+                            FUNCTION &&function,
+                            std::vector<VALUE_TYPE> &&values);
 };
 
 //! \expos
@@ -140,8 +143,8 @@ namespace detail {
 //! \omit
 template <class ELEMENT>
 struct vector_append_t {
-    auto operator()(std::vector<ELEMENT> collected, ELEMENT element) const
-        -> std::vector<ELEMENT> {
+    constexpr auto operator()(std::vector<ELEMENT> collected,
+                              ELEMENT element) const -> std::vector<ELEMENT> {
         collected.push_back(std::move(element));
         return collected;
     }
@@ -199,7 +202,7 @@ inline constexpr vector_append_t<ELEMENT> vector_append{};
 //! quadratic rather than linear in the elements it collects.
 template <class VALUE_TYPE>
 template <class APPLICATIVE, class FUNCTION>
-auto vector_traversable_impl<VALUE_TYPE>::traverse(
+constexpr auto vector_traversable_impl<VALUE_TYPE>::traverse(
     this auto &&, const APPLICATIVE &applicative, FUNCTION &&function,
     const std::vector<VALUE_TYPE> &values) {
     using Effect = std::remove_cvref_t<
@@ -238,7 +241,7 @@ auto vector_traversable_impl<VALUE_TYPE>::traverse(
 //! copied. `values` is left in a valid but unspecified state.
 template <class VALUE_TYPE>
 template <class APPLICATIVE, class FUNCTION>
-auto vector_traversable_impl<VALUE_TYPE>::traverse(
+constexpr auto vector_traversable_impl<VALUE_TYPE>::traverse(
     this auto &&, const APPLICATIVE &applicative, FUNCTION &&function,
     std::vector<VALUE_TYPE> &&values) {
     using Effect =

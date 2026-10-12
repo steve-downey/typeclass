@@ -29,7 +29,7 @@ template <class Impl>
 struct derive_functor : protected Impl {
     /** Applies `function` to every element of `value`. */
     template <class FUNCTION, class T>
-    auto fmap(this auto &&self, FUNCTION &&function, T &&value)
+    constexpr auto fmap(this auto &&self, FUNCTION &&function, T &&value)
         requires requires(const Impl &impl) {
             impl.fmap(std::forward<FUNCTION>(function), std::forward<T>(value));
         }
@@ -43,7 +43,7 @@ struct derive_functor : protected Impl {
      * instance supplies one.
      */
     template <class T, class U>
-    auto replace(this auto &&self, T &&value, U &&replacement)
+    constexpr auto replace(this auto &&self, T &&value, U &&replacement)
         requires requires(const Impl &impl) {
             impl.replace(std::forward<T>(value), std::forward<U>(replacement));
         } || requires(const Impl &impl) {
@@ -245,8 +245,8 @@ concept functor_object = requires(const OBJ &obj, const CONTEXT &context,
 template <class VALUE_TYPE>
 struct OptionalFunctorImpl {
     template <class F>
-    auto fmap(this auto &&, F &&function,
-              const std::optional<VALUE_TYPE> &value) {
+    constexpr auto fmap(this auto &&, F &&function,
+                        const std::optional<VALUE_TYPE> &value) {
         using Result = std::invoke_result_t<F, const VALUE_TYPE &>;
         if (!value) {
             return std::optional<std::remove_cvref_t<Result>>{};
@@ -259,8 +259,8 @@ struct OptionalFunctorImpl {
 template <class VALUE_TYPE>
 struct VectorFunctorImpl {
     template <class F>
-    auto fmap(this auto &&, F &&function,
-              const std::vector<VALUE_TYPE> &values) {
+    constexpr auto fmap(this auto &&, F &&function,
+                        const std::vector<VALUE_TYPE> &values) {
         // `F &`, unlike the optional instance above: that one forwards the
         // callable into a single std::invoke, this one invokes a captured
         // lvalue once per element.

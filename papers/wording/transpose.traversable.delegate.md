@@ -6,8 +6,8 @@
 
 ```cpp
 template<class TRAVERSABLE_MAP, class T, class F>
-auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& function,
-                   T&& value);
+constexpr auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
+                             F&& function, T&& value);
 ```
 
 [x]{.pnum} *Effects*: Traverses `value` using the traversable object `traversable_map` rather than `*this`. The element is presented through `$traversal-argument-t$<TRAVERSABLE_MAP, T>`. The applicative object is the one `applicative` names for the context `function` returns for that argument type.
@@ -16,8 +16,9 @@ auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& func
 
 ```cpp
 template<class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
-auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
-                   const APPLICATIVE_MAP& applicative_map, F&& function, T&& value);
+constexpr auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
+                             const APPLICATIVE_MAP& applicative_map, F&& function,
+                             T&& value);
 ```
 
 [x+2]{.pnum} *Effects*: Equivalent to:
@@ -29,8 +30,8 @@ return traversable_map.traverse(applicative_map, forward<F>(function),
 
 ```cpp
 template<class TRAVERSABLE_MAP, class T>
-auto transpose_with(this auto&& self, const TRAVERSABLE_MAP& traversable_map,
-                    T&& value);
+constexpr auto transpose_with(this auto&& self, const TRAVERSABLE_MAP& traversable_map,
+                              T&& value);
 ```
 
 [x+3]{.pnum} *Constraints*: `typename std::remove_cvref_t<TRAVERSABLE_MAP>::element_type` models `$applicative-context$`.

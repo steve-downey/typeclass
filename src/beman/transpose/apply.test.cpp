@@ -410,3 +410,33 @@ TEST_CASE("apply: an inapplicable callable still makes map and zip_with "
     static_assert(!has_zip_with<Map, StringOnlyCallable, std::optional<int>,
                                 std::optional<int>>);
 }
+
+// The derived operations are constant-evaluable: each is pinned by a
+// static_assert over the optional instance. The callables are
+// order-sensitive, so swapped operands give a different answer.
+TEST_CASE("apply: the derived operations are constexpr") {
+    constexpr const auto &a = bt::applicative<std::optional<int>>;
+    constexpr auto digits = [](int x, int y) { return x * 10 + y; };
+    static_assert(a.invoke(digits, std::optional<int>{1},
+                           std::optional<int>{2}) == std::optional<int>{12});
+    static_assert(a.invoke(digits, std::optional<int>{1},
+                           std::optional<int>{}) == std::optional<int>{});
+    static_assert(a.map([](int x) { return x + 1; }, std::optional<int>{41}) ==
+                  std::optional<int>{42});
+    static_assert(a.lift(7) == std::optional<int>{7});
+    static_assert(a.zip_with(digits, std::optional<int>{3},
+                             std::optional<int>{4}) == std::optional<int>{34});
+    static_assert(
+        a.discard_first(std::optional<int>{1}, std::optional<int>{2}) ==
+        std::optional<int>{2});
+    static_assert(
+        a.discard_second(std::optional<int>{1}, std::optional<int>{2}) ==
+        std::optional<int>{1});
+    constexpr auto plus_one = [](int x) { return x + 1; };
+    static_assert(a.ap(std::optional{plus_one}, std::optional<int>{41}) ==
+                  std::optional<int>{42});
+    static_assert(a.invoke_with(a, digits, std::optional<int>{5},
+                                std::optional<int>{6}) ==
+                  std::optional<int>{56});
+    SUCCEED();
+}

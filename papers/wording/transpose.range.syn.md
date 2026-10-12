@@ -10,12 +10,12 @@ namespace std {
 
     // @[transpose.range.traverse]{- .sref}@, traversable instance for vector
     template<class APPLICATIVE, class FUNCTION>
-    auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
-                  const vector<VALUE_TYPE>& values);
+    constexpr auto traverse(this auto&&, const APPLICATIVE& applicative,
+                            FUNCTION&& function, const vector<VALUE_TYPE>& values);
 
     template<class APPLICATIVE, class FUNCTION>
-    auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
-                  vector<VALUE_TYPE>&& values);
+    constexpr auto traverse(this auto&&, const APPLICATIVE& applicative,
+                            FUNCTION&& function, vector<VALUE_TYPE>&& values);
   }; // exposition only
 }
 ```

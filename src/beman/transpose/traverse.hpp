@@ -118,27 +118,30 @@ struct derive_traversable : protected Impl {
 
     // \ref{transpose.traversable.ops}, traversal operations
     template <class T, class F>
-    auto for_each(this auto &&self, T &&value, F &&function);
+    constexpr auto for_each(this auto &&self, T &&value, F &&function);
 
     template <class T>
         requires applicative_context<typename Impl::element_type>
-    auto transpose(this auto &&self, T &&value);
+    constexpr auto transpose(this auto &&self, T &&value);
 
     // \ref{transpose.traversable.delegate}, delegated traversal
     template <class TRAVERSABLE_MAP, class T, class F>
-    auto traverse_with(this auto &&, const TRAVERSABLE_MAP &traversable_map,
-                       F &&function, T &&value);
+    constexpr auto traverse_with(this auto &&,
+                                 const TRAVERSABLE_MAP &traversable_map,
+                                 F &&function, T &&value);
 
     template <class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
-    auto traverse_with(this auto &&, const TRAVERSABLE_MAP &traversable_map,
-                       const APPLICATIVE_MAP &applicative_map, F &&function,
-                       T &&value);
+    constexpr auto traverse_with(this auto &&,
+                                 const TRAVERSABLE_MAP &traversable_map,
+                                 const APPLICATIVE_MAP &applicative_map,
+                                 F &&function, T &&value);
 
     template <class TRAVERSABLE_MAP, class T>
         requires applicative_context<
             typename std::remove_cvref_t<TRAVERSABLE_MAP>::element_type>
-    auto transpose_with(this auto &&self,
-                        const TRAVERSABLE_MAP &traversable_map, T &&value);
+    constexpr auto transpose_with(this auto &&self,
+                                  const TRAVERSABLE_MAP &traversable_map,
+                                  T &&value);
 
   private:
     //! \omit
@@ -438,8 +441,8 @@ concept traversable_object =
 //! elements.
 template <class Impl>
 template <class T, class F>
-auto derive_traversable<Impl>::for_each(this auto &&self, T &&value,
-                                        F &&function) {
+constexpr auto derive_traversable<Impl>::for_each(this auto &&self, T &&value,
+                                                  F &&function) {
     using Context = std::remove_cvref_t<std::invoke_result_t<
         F &, detail::traversal_argument_t<decltype(self), T>>>;
     const auto &applicative_map = applicative<Context>;
@@ -461,7 +464,8 @@ auto derive_traversable<Impl>::for_each(this auto &&self, T &&value,
 template <class Impl>
 template <class T>
     requires applicative_context<typename Impl::element_type>
-auto derive_traversable<Impl>::transpose(this auto &&self, T &&value) {
+constexpr auto derive_traversable<Impl>::transpose(this auto &&self,
+                                                   T &&value) {
     using Context = element_type;
     const auto &applicative_map = applicative<Context>;
     return self.traverse(
@@ -479,9 +483,10 @@ auto derive_traversable<Impl>::transpose(this auto &&self, T &&value) {
 //! \returns The result of that traversal.
 template <class Impl>
 template <class TRAVERSABLE_MAP, class T, class F>
-auto derive_traversable<Impl>::traverse_with(
-    this auto &&, const TRAVERSABLE_MAP &traversable_map, F &&function,
-    T &&value) {
+constexpr auto
+derive_traversable<Impl>::traverse_with(this auto &&,
+                                        const TRAVERSABLE_MAP &traversable_map,
+                                        F &&function, T &&value) {
     using Context = std::remove_cvref_t<std::invoke_result_t<
         F &, detail::traversal_argument_t<TRAVERSABLE_MAP, T>>>;
     const auto &applicative_map = applicative<Context>;
@@ -492,7 +497,7 @@ auto derive_traversable<Impl>::traverse_with(
 //! \effects-equiv
 template <class Impl>
 template <class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
-auto derive_traversable<Impl>::traverse_with(
+constexpr auto derive_traversable<Impl>::traverse_with(
     this auto &&, const TRAVERSABLE_MAP &traversable_map,
     const APPLICATIVE_MAP &applicative_map, F &&function, T &&value) {
     return traversable_map.traverse(applicative_map, std::forward<F>(function),
@@ -504,7 +509,7 @@ template <class Impl>
 template <class TRAVERSABLE_MAP, class T>
     requires applicative_context<
         typename std::remove_cvref_t<TRAVERSABLE_MAP>::element_type>
-auto derive_traversable<Impl>::transpose_with(
+constexpr auto derive_traversable<Impl>::transpose_with(
     this auto &&self, const TRAVERSABLE_MAP &traversable_map, T &&value) {
     return self.traverse_with(
         traversable_map, [](auto &&x) { return std::forward<decltype(x)>(x); },

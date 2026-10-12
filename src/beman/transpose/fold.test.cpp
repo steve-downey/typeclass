@@ -213,3 +213,78 @@ TEST_CASE("fold: any_of, all_of, find_first") {
     REQUIRE_FALSE(f.all_of(seq, [](int x) { return x % 2 == 0; }));
     REQUIRE(f.find_first(seq, [](int x) { return x > 5; }) == 6);
 }
+
+// The derived operations are constant-evaluable: each is pinned by a
+// static_assert. The folds are order-sensitive (digits accumulate left to
+// right), so a fold in the wrong direction gives a different number.
+TEST_CASE("fold: the derived operations are constexpr") {
+    constexpr const auto &m = bt::foldable<std::vector<int>>;
+    static_assert(m.fold_map([](int x) { return x; }, std::vector<int>{1, 2, 3},
+                             bt::sum_monoid<int>{}) == 6);
+    static_assert(m.fold_map([](int x) { return std::vector<int>{x}; },
+                             std::vector<int>{1, 2, 3}) ==
+                  std::vector<int>{1, 2, 3});
+    static_assert(m.length(std::vector<int>{1, 2, 3}) == 3);
+    // fold_left and fold_right are not pinned here: derived through fold_map,
+    // they compose std::function endomorphisms, which cannot be constant
+    // evaluated. An instance with a native fold_left or fold_right reaches it
+    // through a constexpr forwarder; see the next test case.
+    static_assert(m.combine_all(std::vector<int>{2, 3, 4},
+                                bt::product_monoid<int>{}) == 24);
+    constexpr const auto &mm = bt::foldable<std::vector<std::vector<int>>>;
+    static_assert(mm.combine_all(std::vector<std::vector<int>>{{1}, {2, 3}}) ==
+                  std::vector<int>{1, 2, 3});
+    static_assert(m.fold(std::vector<int>{2, 3, 4}, bt::sum_monoid<int>{}) ==
+                  9);
+    static_assert(mm.fold(std::vector<std::vector<int>>{{1}, {2, 3}}) ==
+                  std::vector<int>{1, 2, 3});
+    static_assert(
+        m.any_of(std::vector<int>{1, 2, 3}, [](int x) { return x == 2; }));
+    static_assert(
+        !m.all_of(std::vector<int>{1, 2, 3}, [](int x) { return x < 3; }));
+    static_assert(m.empty(std::vector<int>{}));
+    static_assert(m.to_vector(std::vector<int>{1, 2, 3}) ==
+                  std::vector<int>{1, 2, 3});
+    static_assert(m.find_first(std::vector<int>{1, 2, 3, 4}, [](int x) {
+        return x % 2 == 0;
+    }) == std::optional<int>{2});
+    SUCCEED();
+}
+
+namespace {
+// A Foldable Impl with native fold_left and fold_right, so the derived
+// operations reach them through derive_foldable's forwarders rather than
+// through the std::function derivation.
+struct NativeFoldsImpl {
+    using element_type = int;
+    template <class STATE, class F>
+    constexpr auto fold_left(const std::vector<int> &values, STATE state,
+                             F &&function) const -> STATE {
+        for (int value : values) {
+            state = function(std::move(state), value);
+        }
+        return state;
+    }
+    template <class STATE, class F>
+    constexpr auto fold_right(const std::vector<int> &values, STATE state,
+                              F &&function) const -> STATE {
+        for (auto it = values.rbegin(); it != values.rend(); ++it) {
+            state = function(*it, std::move(state));
+        }
+        return state;
+    }
+};
+struct NativeFoldsMap : bt::derive_foldable<NativeFoldsImpl> {};
+} // namespace
+
+TEST_CASE("fold: fold_left and fold_right forward to a native Impl in a "
+          "constant expression") {
+    constexpr NativeFoldsMap m{};
+    static_assert(m.fold_left(std::vector<int>{1, 2, 3}, 0, [](int acc, int x) {
+        return acc * 10 + x;
+    }) == 123);
+    static_assert(m.fold_right(std::vector<int>{1, 2, 3}, 0,
+                               [](int x, int acc) { return acc * 10 + x; }) ==
+                  321);
+    SUCCEED();
+}

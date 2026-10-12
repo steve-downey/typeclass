@@ -6,8 +6,8 @@
 
 ```cpp
 template<class APPLICATIVE, class FUNCTION>
-auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
-              const vector<VALUE_TYPE>& values);
+constexpr auto traverse(this auto&&, const APPLICATIVE& applicative,
+                        FUNCTION&& function, const vector<VALUE_TYPE>& values);
 ```
 
 [x]{.pnum} *Effects*: Let `E` be the type `function` returns for an element of `values`. Applies `function` to each element of `values` in order. If `applicative.collect(v)` is a valid expression for an rvalue `vector<E>` `v`, composes the resulting contextual values by passing all of them to that one call; otherwise composes them pairwise with `applicative`, collecting the element results into a `vector`.
@@ -20,8 +20,8 @@ auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
 
 ```cpp
 template<class APPLICATIVE, class FUNCTION>
-auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
-              vector<VALUE_TYPE>&& values);
+constexpr auto traverse(this auto&&, const APPLICATIVE& applicative,
+                        FUNCTION&& function, vector<VALUE_TYPE>&& values);
 ```
 
 [x+4]{.pnum} *Effects*: Equivalent to the preceding overload, except that each element of `values` is passed to `function` as an rvalue.

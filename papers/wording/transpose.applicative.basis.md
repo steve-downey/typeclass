@@ -6,8 +6,9 @@
 
 ```cpp
 template<class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
-auto invoke(this auto&& self, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
-            REST_ARGUMENTS&&... rest_arguments);
+constexpr auto invoke(this auto&& self, FUNCTION&& function,
+                      FIRST_ARGUMENT&& first_argument,
+                      REST_ARGUMENTS&&... rest_arguments);
 ```
 
 [x]{.pnum} *Constraints*: `Impl` provides either an `invoke` accepting `function` and the arguments, or an `ap` accepting a callable in context and one argument in context.
@@ -20,8 +21,8 @@ auto invoke(this auto&& self, FUNCTION&& function, FIRST_ARGUMENT&& first_argume
 
 ```cpp
 template<class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
-auto ap(this auto&& self, FUNCTION_IN_CONTEXT&& function,
-        ARGUMENT_IN_CONTEXT&& argument);
+constexpr auto ap(this auto&& self, FUNCTION_IN_CONTEXT&& function,
+                  ARGUMENT_IN_CONTEXT&& argument);
 ```
 
 [x+4]{.pnum} *Constraints*: `Impl` provides either an `ap` accepting `function` and `argument`, or an `invoke` able to apply a callable held in the context to one argument in the context. The second alternative is satisfied only where the context can hold a callable, so `ap` does not participate in overload resolution for a context that cannot.

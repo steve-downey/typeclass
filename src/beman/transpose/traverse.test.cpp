@@ -68,3 +68,26 @@ TEST_CASE("traverse: the default policy retains the first failure and still "
     REQUIRE_FALSE(result.has_value());
     REQUIRE(applications == 4);
 }
+
+// The derived operations are constant-evaluable: each is pinned by a
+// static_assert, traversing a vector in the optional applicative. The
+// expected vectors are in order, so a traversal that reorders fails.
+TEST_CASE("traverse: the derived operations are constexpr") {
+    constexpr const auto &t = bt::traversable<std::vector<std::optional<int>>>;
+    constexpr const auto &ti = bt::traversable<std::vector<int>>;
+    constexpr auto some = [](int x) { return std::optional<int>{x * 10}; };
+    static_assert(t.transpose(std::vector<std::optional<int>>{1, 2, 3}) ==
+                  std::optional<std::vector<int>>{std::vector<int>{1, 2, 3}});
+    static_assert(t.transpose(std::vector<std::optional<int>>{1, {}, 3}) ==
+                  std::optional<std::vector<int>>{});
+    static_assert(ti.traverse_with(ti, some, std::vector<int>{1, 2}) ==
+                  std::optional<std::vector<int>>{std::vector<int>{10, 20}});
+    static_assert(ti.traverse_with(ti, bt::applicative<std::optional<int>>,
+                                   some, std::vector<int>{1, 2}) ==
+                  std::optional<std::vector<int>>{std::vector<int>{10, 20}});
+    static_assert(t.transpose_with(t, std::vector<std::optional<int>>{4, 5}) ==
+                  std::optional<std::vector<int>>{std::vector<int>{4, 5}});
+    static_assert(ti.for_each(std::vector<int>{1, 2}, some) ==
+                  std::optional<std::vector<int>>{std::vector<int>{10, 20}});
+    SUCCEED();
+}

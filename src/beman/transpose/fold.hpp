@@ -207,7 +207,8 @@ struct derive_foldable : protected Impl {
     // Impl::fold_map preferred; derived from fold_right otherwise.
     // foldMap f = foldr (\x acc -> f x <> acc) mempty
     template <class F, class T, class MONOID>
-    auto fold_map(this auto &&self, F &&function, T &&value, MONOID monoid)
+    constexpr auto fold_map(this auto &&self, F &&function, T &&value,
+                            MONOID monoid)
         requires requires(const Impl &impl) {
             impl.fold_map(std::forward<F>(function), std::forward<T>(value),
                           monoid);
@@ -255,7 +256,7 @@ struct derive_foldable : protected Impl {
     // not a candidate here; the caller passes the instance. An Impl may
     // still supply a native two-argument fold_map of its own.
     template <class F, class T>
-    auto fold_map(this auto &&self, F &&function, T &&value)
+    constexpr auto fold_map(this auto &&self, F &&function, T &&value)
         requires requires(const Impl &impl) {
             impl.fold_map(std::forward<F>(function), std::forward<T>(value));
         } || requires {
@@ -281,7 +282,7 @@ struct derive_foldable : protected Impl {
 
     /** Returns the number of elements in the foldable container. */
     template <class T>
-    auto length(this auto &&self, T &&value) -> std::size_t
+    constexpr auto length(this auto &&self, T &&value) -> std::size_t
         requires requires(const Impl &impl) {
             impl.length(std::forward<T>(value));
         } || requires {
@@ -309,8 +310,8 @@ struct derive_foldable : protected Impl {
      * element in traversal order, starting from `initial_state`.
      */
     template <class T, class STATE, class F>
-    auto fold_left(this auto &&self, T &&value, STATE initial_state,
-                   F &&function)
+    constexpr auto fold_left(this auto &&self, T &&value, STATE initial_state,
+                             F &&function)
         requires requires(const Impl &impl) {
             impl.fold_left(std::forward<T>(value), initial_state,
                            std::forward<F>(function));
@@ -357,8 +358,8 @@ struct derive_foldable : protected Impl {
      * element in reverse traversal order, starting from `initial_state`.
      */
     template <class T, class STATE, class F>
-    auto fold_right(this auto &&self, T &&value, STATE initial_state,
-                    F &&function)
+    constexpr auto fold_right(this auto &&self, T &&value, STATE initial_state,
+                              F &&function)
         requires requires(const Impl &impl) {
             impl.fold_right(std::forward<T>(value), initial_state,
                             std::forward<F>(function));
@@ -407,7 +408,7 @@ struct derive_foldable : protected Impl {
      * type.
      */
     template <class T, class MONOID>
-    auto combine_all(this auto &&self, T &&value, MONOID monoid)
+    constexpr auto combine_all(this auto &&self, T &&value, MONOID monoid)
         requires requires(const Impl &impl) {
             impl.combine_all(std::forward<T>(value), monoid);
         } || requires {
@@ -432,7 +433,7 @@ struct derive_foldable : protected Impl {
      * with several monoids takes the two-argument form.
      */
     template <class T>
-    auto combine_all(this auto &&self, T &&value)
+    constexpr auto combine_all(this auto &&self, T &&value)
         requires requires(const Impl &impl) {
             impl.combine_all(std::forward<T>(value));
         } || requires {
@@ -459,7 +460,7 @@ struct derive_foldable : protected Impl {
      * that provides a native combine_all directly but no fold_map at all.
      */
     template <class T, class MONOID>
-    auto fold(this auto &&self, T &&value, MONOID monoid)
+    constexpr auto fold(this auto &&self, T &&value, MONOID monoid)
         requires requires(const Impl &impl) {
             impl.fold(std::forward<T>(value), monoid);
         } || requires { self.combine_all(std::forward<T>(value), monoid); }
@@ -474,7 +475,7 @@ struct derive_foldable : protected Impl {
     }
 
     template <class T>
-    auto fold(this auto &&self, T &&value)
+    constexpr auto fold(this auto &&self, T &&value)
         requires requires(const Impl &impl) {
             impl.fold(std::forward<T>(value));
         } || requires { self.combine_all(std::forward<T>(value)); }
@@ -490,7 +491,8 @@ struct derive_foldable : protected Impl {
 
     /** Returns `true` if any element satisfies `predicate`. */
     template <class T, class PREDICATE>
-    auto any_of(this auto &&self, T &&value, PREDICATE &&predicate) -> bool
+    constexpr auto any_of(this auto &&self, T &&value, PREDICATE &&predicate)
+        -> bool
         requires requires(const Impl &impl) {
             impl.any_of(std::forward<T>(value),
                         std::forward<PREDICATE>(predicate));
@@ -520,7 +522,8 @@ struct derive_foldable : protected Impl {
 
     /** Returns `true` if all elements satisfy `predicate`. */
     template <class T, class PREDICATE>
-    auto all_of(this auto &&self, T &&value, PREDICATE &&predicate) -> bool
+    constexpr auto all_of(this auto &&self, T &&value, PREDICATE &&predicate)
+        -> bool
         requires requires(const Impl &impl) {
             impl.all_of(std::forward<T>(value),
                         std::forward<PREDICATE>(predicate));
@@ -552,7 +555,7 @@ struct derive_foldable : protected Impl {
      * no fold_map at all.
      */
     template <class T>
-    auto empty(this auto &&self, T &&value) -> bool
+    constexpr auto empty(this auto &&self, T &&value) -> bool
         requires requires(const Impl &impl) {
             impl.empty(std::forward<T>(value));
         } || requires {
@@ -574,7 +577,7 @@ struct derive_foldable : protected Impl {
      * element type: it is available where Impl declares `element_type`.
      */
     template <class T>
-    auto to_vector(this auto &&self, T &&value)
+    constexpr auto to_vector(this auto &&self, T &&value)
         requires requires(const Impl &impl) {
             impl.to_vector(std::forward<T>(value));
         } || requires {
@@ -602,7 +605,8 @@ struct derive_foldable : protected Impl {
      * type, so like `to_vector` it needs Impl to declare `element_type`.
      */
     template <class T, class PREDICATE>
-    auto find_first(this auto &&self, T &&value, PREDICATE &&predicate)
+    constexpr auto find_first(this auto &&self, T &&value,
+                              PREDICATE &&predicate)
         requires requires(const Impl &impl) {
             impl.find_first(std::forward<T>(value),
                             std::forward<PREDICATE>(predicate));

@@ -272,3 +272,27 @@ TEST_CASE("monad: as_functor is optimization-preserving -- a native "
 
     REQUIRE(f.replace(std::optional<int>{5}, 3) == std::optional<int>{6});
 }
+
+// The derived operations are constant-evaluable: each is pinned by a
+// static_assert over the optional instance.
+TEST_CASE("monad: the derived operations are constexpr") {
+    constexpr const auto &m = bt::monad<std::optional<int>>;
+    constexpr auto half = [](int x) {
+        return x % 2 == 0 ? std::optional<int>{x / 2} : std::optional<int>{};
+    };
+    constexpr auto digits = [](int x, int y) { return x * 10 + y; };
+    static_assert(m.fmap([](int x) { return x + 1; }, std::optional<int>{41}) ==
+                  std::optional<int>{42});
+    static_assert(m.invoke(digits, std::optional<int>{1},
+                           std::optional<int>{2}) == std::optional<int>{12});
+    static_assert(m.join(std::optional<std::optional<int>>{
+                      std::optional<int>{3}}) == std::optional<int>{3});
+    static_assert(m.kleisli(half, half)(8) == std::optional<int>{2});
+    static_assert(m.kleisli(half, half)(6) == std::optional<int>{});
+    constexpr auto plus_one = [](int x) { return x + 1; };
+    static_assert(m.ap(std::optional{plus_one}, std::optional<int>{41}) ==
+                  std::optional<int>{42});
+    static_assert(m.bind_with(m, std::optional<int>{8}, half) ==
+                  std::optional<int>{4});
+    SUCCEED();
+}

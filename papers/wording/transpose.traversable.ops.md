@@ -5,7 +5,8 @@
 ## Traversal operations [transpose.traversable.ops]{- .sref} {-}
 
 ```cpp
-template<class T, class F> auto for_each(this auto&& self, T&& value, F&& function);
+template<class T, class F>
+constexpr auto for_each(this auto&& self, T&& value, F&& function);
 ```
 
 [x]{.pnum} *Effects*: Applies `function` to each element of `value` and transposes the resulting contextual values, preserving the shape of `value`. The element is presented through `$traversal-argument-t$<decltype(self), T>`. The applicative object is the one `applicative` names for the context `function` returns for that argument type.
@@ -17,7 +18,7 @@ template<class T, class F> auto for_each(this auto&& self, T&& value, F&& functi
 [x+3]{.pnum} *Remarks*: Elements are visited in the structure's iteration order. If `self` declares consumption and `value` is a non-`const`, non-`volatile` rvalue, `function` receives rvalue elements; otherwise it receives `const` lvalue elements.
 
 ```cpp
-template<class T> auto transpose(this auto&& self, T&& value);
+template<class T> constexpr auto transpose(this auto&& self, T&& value);
 ```
 
 [x+4]{.pnum} *Constraints*: `element_type` is a context for which `applicative` names an applicative object.

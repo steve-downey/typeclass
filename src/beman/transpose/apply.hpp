@@ -144,13 +144,13 @@ struct derive_applicative : protected Impl {
 
     // \ref{transpose.applicative.basis}, basis operations
     template <class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
-    auto invoke(this auto &&self, FUNCTION &&function,
-                FIRST_ARGUMENT &&first_argument,
-                REST_ARGUMENTS &&...rest_arguments);
+    constexpr auto invoke(this auto &&self, FUNCTION &&function,
+                          FIRST_ARGUMENT &&first_argument,
+                          REST_ARGUMENTS &&...rest_arguments);
 
     template <class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
-    auto ap(this auto &&self, FUNCTION_IN_CONTEXT &&function,
-            ARGUMENT_IN_CONTEXT &&argument)
+    constexpr auto ap(this auto &&self, FUNCTION_IN_CONTEXT &&function,
+                      ARGUMENT_IN_CONTEXT &&argument)
         requires requires(const Impl &impl) {
             impl.ap(std::forward<FUNCTION_IN_CONTEXT>(function),
                     std::forward<ARGUMENT_IN_CONTEXT>(argument));
@@ -162,7 +162,8 @@ struct derive_applicative : protected Impl {
 
     // \ref{transpose.applicative.derived}, derived operations
     template <class FUNCTION, class ARGUMENT>
-    auto map(this auto &&self, FUNCTION &&function, ARGUMENT &&argument)
+    constexpr auto map(this auto &&self, FUNCTION &&function,
+                       ARGUMENT &&argument)
         requires requires(const Impl &impl) {
             impl.map(std::forward<FUNCTION>(function),
                      std::forward<ARGUMENT>(argument));
@@ -172,15 +173,15 @@ struct derive_applicative : protected Impl {
         };
 
     template <class VALUE>
-    auto lift(this auto &&self, VALUE &&value)
+    constexpr auto lift(this auto &&self, VALUE &&value)
         requires requires(const Impl &impl) {
             impl.lift(std::forward<VALUE>(value));
         } || requires { self.pure(std::forward<VALUE>(value)); };
 
     template <class FUNCTION, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-    auto zip_with(this auto &&self, FUNCTION &&function,
-                  FIRST_ARGUMENT &&first_argument,
-                  SECOND_ARGUMENT &&second_argument)
+    constexpr auto zip_with(this auto &&self, FUNCTION &&function,
+                            FIRST_ARGUMENT &&first_argument,
+                            SECOND_ARGUMENT &&second_argument)
         requires requires(const Impl &impl) {
             impl.zip_with(std::forward<FUNCTION>(function),
                           std::forward<FIRST_ARGUMENT>(first_argument),
@@ -192,8 +193,9 @@ struct derive_applicative : protected Impl {
         };
 
     template <class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-    auto discard_first(this auto &&self, FIRST_ARGUMENT &&first_argument,
-                       SECOND_ARGUMENT &&second_argument)
+    constexpr auto discard_first(this auto &&self,
+                                 FIRST_ARGUMENT &&first_argument,
+                                 SECOND_ARGUMENT &&second_argument)
         requires requires(const Impl &impl) {
             impl.discard_first(std::forward<FIRST_ARGUMENT>(first_argument),
                                std::forward<SECOND_ARGUMENT>(second_argument));
@@ -204,8 +206,9 @@ struct derive_applicative : protected Impl {
         };
 
     template <class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-    auto discard_second(this auto &&self, FIRST_ARGUMENT &&first_argument,
-                        SECOND_ARGUMENT &&second_argument)
+    constexpr auto discard_second(this auto &&self,
+                                  FIRST_ARGUMENT &&first_argument,
+                                  SECOND_ARGUMENT &&second_argument)
         requires requires(const Impl &impl) {
             impl.discard_second(std::forward<FIRST_ARGUMENT>(first_argument),
                                 std::forward<SECOND_ARGUMENT>(second_argument));
@@ -225,15 +228,16 @@ struct derive_applicative : protected Impl {
     // \ref{transpose.applicative.delegate}, delegated application
     template <class APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
               class... REST_ARGUMENTS>
-    auto invoke_with(this auto &&, const APPLICATIVE_MAP &applicative_map,
-                     FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
-                     REST_ARGUMENTS &&...rest_arguments);
+    constexpr auto
+    invoke_with(this auto &&, const APPLICATIVE_MAP &applicative_map,
+                FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
+                REST_ARGUMENTS &&...rest_arguments);
 
     template <const auto &APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
               class... REST_ARGUMENTS>
-    auto invoke_with(this auto &&, FUNCTION &&function,
-                     FIRST_ARGUMENT &&first_argument,
-                     REST_ARGUMENTS &&...rest_arguments);
+    constexpr auto invoke_with(this auto &&, FUNCTION &&function,
+                               FIRST_ARGUMENT &&first_argument,
+                               REST_ARGUMENTS &&...rest_arguments);
 
   private:
     //! \omit
@@ -244,15 +248,15 @@ struct derive_applicative : protected Impl {
 
     //! \omit
     template <class ACCUMULATED>
-    auto ap_chain(this auto &&, ACCUMULATED &&accumulated) {
+    constexpr auto ap_chain(this auto &&, ACCUMULATED &&accumulated) {
         return std::forward<ACCUMULATED>(accumulated);
     }
 
     //! \omit
     template <class ACCUMULATED, class NEXT_ARGUMENT, class... REST_ARGUMENTS>
-    auto ap_chain(this auto &&self, ACCUMULATED &&accumulated,
-                  NEXT_ARGUMENT &&next_argument,
-                  REST_ARGUMENTS &&...rest_arguments) {
+    constexpr auto ap_chain(this auto &&self, ACCUMULATED &&accumulated,
+                            NEXT_ARGUMENT &&next_argument,
+                            REST_ARGUMENTS &&...rest_arguments) {
         auto next = self.ap(std::forward<ACCUMULATED>(accumulated),
                             std::forward<NEXT_ARGUMENT>(next_argument));
         if constexpr (sizeof...(REST_ARGUMENTS) == 0) {
@@ -485,14 +489,14 @@ template <class VALUE_TYPE>
 struct optional_applicative_impl {
     // \ref{transpose.applicative.optional}, applicative instance for optional
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value)
+    constexpr auto pure(this auto &&, VALUE &&value)
         -> std::optional<std::remove_cvref_t<VALUE>>;
 
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_optional_v<FIRST> &&
                  (detail::is_optional_v<REST> && ...)
-    auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
-                REST &&...rest)
+    constexpr auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
+                          REST &&...rest)
         -> std::optional<std::remove_cvref_t<
             std::invoke_result_t<FUNCTION &, detail::contained_ref_t<FIRST>,
                                  detail::contained_ref_t<REST>...>>>;
@@ -526,9 +530,10 @@ inline constexpr auto applicative<std::optional<VALUE_TYPE>> =
 //! context depends on another argument's value.
 template <class Impl>
 template <class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
-auto derive_applicative<Impl>::invoke(this auto &&self, FUNCTION &&function,
-                                      FIRST_ARGUMENT &&first_argument,
-                                      REST_ARGUMENTS &&...rest_arguments) {
+constexpr auto
+derive_applicative<Impl>::invoke(this auto &&self, FUNCTION &&function,
+                                 FIRST_ARGUMENT &&first_argument,
+                                 REST_ARGUMENTS &&...rest_arguments) {
     if constexpr (requires {
                       impl_of(self).invoke(
                           std::forward<FUNCTION>(function),
@@ -571,9 +576,9 @@ auto derive_applicative<Impl>::invoke(this auto &&self, FUNCTION &&function,
 //! directly, so no derivation cycle with `invoke` arises.
 template <class Impl>
 template <class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
-auto derive_applicative<Impl>::ap(this auto &&self,
-                                  FUNCTION_IN_CONTEXT &&function,
-                                  ARGUMENT_IN_CONTEXT &&argument)
+constexpr auto derive_applicative<Impl>::ap(this auto &&self,
+                                            FUNCTION_IN_CONTEXT &&function,
+                                            ARGUMENT_IN_CONTEXT &&argument)
     requires requires(const Impl &impl) {
         impl.ap(std::forward<FUNCTION_IN_CONTEXT>(function),
                 std::forward<ARGUMENT_IN_CONTEXT>(argument));
@@ -610,8 +615,9 @@ auto derive_applicative<Impl>::ap(this auto &&self,
 //! `function` to the value held by `argument`.
 template <class Impl>
 template <class FUNCTION, class ARGUMENT>
-auto derive_applicative<Impl>::map(this auto &&self, FUNCTION &&function,
-                                   ARGUMENT &&argument)
+constexpr auto derive_applicative<Impl>::map(this auto &&self,
+                                             FUNCTION &&function,
+                                             ARGUMENT &&argument)
     requires requires(const Impl &impl) {
         impl.map(std::forward<FUNCTION>(function),
                  std::forward<ARGUMENT>(argument));
@@ -640,7 +646,7 @@ auto derive_applicative<Impl>::map(this auto &&self, FUNCTION &&function,
 //! \returns The single value in context holding `value`.
 template <class Impl>
 template <class VALUE>
-auto derive_applicative<Impl>::lift(this auto &&self, VALUE &&value)
+constexpr auto derive_applicative<Impl>::lift(this auto &&self, VALUE &&value)
     requires requires(const Impl &impl) {
         impl.lift(std::forward<VALUE>(value));
     } || requires { self.pure(std::forward<VALUE>(value)); }
@@ -664,9 +670,10 @@ auto derive_applicative<Impl>::lift(this auto &&self, VALUE &&value)
 //! `function` to the values held by `first_argument` and `second_argument`.
 template <class Impl>
 template <class FUNCTION, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-auto derive_applicative<Impl>::zip_with(this auto &&self, FUNCTION &&function,
-                                        FIRST_ARGUMENT &&first_argument,
-                                        SECOND_ARGUMENT &&second_argument)
+constexpr auto
+derive_applicative<Impl>::zip_with(this auto &&self, FUNCTION &&function,
+                                   FIRST_ARGUMENT &&first_argument,
+                                   SECOND_ARGUMENT &&second_argument)
     requires requires(const Impl &impl) {
         impl.zip_with(std::forward<FUNCTION>(function),
                       std::forward<FIRST_ARGUMENT>(first_argument),
@@ -708,9 +715,10 @@ auto derive_applicative<Impl>::zip_with(this auto &&self, FUNCTION &&function,
 //! `second_argument` holds.
 template <class Impl>
 template <class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-auto derive_applicative<Impl>::discard_first(this auto &&self,
-                                             FIRST_ARGUMENT &&first_argument,
-                                             SECOND_ARGUMENT &&second_argument)
+constexpr auto
+derive_applicative<Impl>::discard_first(this auto &&self,
+                                        FIRST_ARGUMENT &&first_argument,
+                                        SECOND_ARGUMENT &&second_argument)
     requires requires(const Impl &impl) {
         impl.discard_first(std::forward<FIRST_ARGUMENT>(first_argument),
                            std::forward<SECOND_ARGUMENT>(second_argument));
@@ -749,9 +757,10 @@ auto derive_applicative<Impl>::discard_first(this auto &&self,
 //! `first_argument` holds.
 template <class Impl>
 template <class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-auto derive_applicative<Impl>::discard_second(this auto &&self,
-                                              FIRST_ARGUMENT &&first_argument,
-                                              SECOND_ARGUMENT &&second_argument)
+constexpr auto
+derive_applicative<Impl>::discard_second(this auto &&self,
+                                         FIRST_ARGUMENT &&first_argument,
+                                         SECOND_ARGUMENT &&second_argument)
     requires requires(const Impl &impl) {
         impl.discard_second(std::forward<FIRST_ARGUMENT>(first_argument),
                             std::forward<SECOND_ARGUMENT>(second_argument));
@@ -800,7 +809,7 @@ constexpr auto derive_applicative<Impl>::subsume(this auto &&, CARRIER &&value)
 template <class Impl>
 template <class APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
           class... REST_ARGUMENTS>
-auto derive_applicative<Impl>::invoke_with(
+constexpr auto derive_applicative<Impl>::invoke_with(
     this auto &&, const APPLICATIVE_MAP &applicative_map, FUNCTION &&function,
     FIRST_ARGUMENT &&first_argument, REST_ARGUMENTS &&...rest_arguments) {
     return applicative_map.invoke(
@@ -813,9 +822,10 @@ auto derive_applicative<Impl>::invoke_with(
 template <class Impl>
 template <const auto &APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
           class... REST_ARGUMENTS>
-auto derive_applicative<Impl>::invoke_with(this auto &&, FUNCTION &&function,
-                                           FIRST_ARGUMENT &&first_argument,
-                                           REST_ARGUMENTS &&...rest_arguments) {
+constexpr auto
+derive_applicative<Impl>::invoke_with(this auto &&, FUNCTION &&function,
+                                      FIRST_ARGUMENT &&first_argument,
+                                      REST_ARGUMENTS &&...rest_arguments) {
     return APPLICATIVE_MAP.invoke(
         std::forward<FUNCTION>(function),
         std::forward<FIRST_ARGUMENT>(first_argument),
@@ -906,7 +916,8 @@ inline constexpr discard_second_fn discard_second{};
 //! \returns An engaged `optional` holding `value`.
 template <class VALUE_TYPE>
 template <class VALUE>
-auto optional_applicative_impl<VALUE_TYPE>::pure(this auto &&, VALUE &&value)
+constexpr auto optional_applicative_impl<VALUE_TYPE>::pure(this auto &&,
+                                                           VALUE &&value)
     -> std::optional<std::remove_cvref_t<VALUE>> {
     return std::optional<std::remove_cvref_t<VALUE>>{
         std::forward<VALUE>(value)};
@@ -924,10 +935,9 @@ template <class VALUE_TYPE>
 template <class FUNCTION, class FIRST, class... REST>
     requires detail::is_optional_v<FIRST> &&
              (detail::is_optional_v<REST> && ...)
-auto optional_applicative_impl<VALUE_TYPE>::invoke(this auto &&,
-                                                   FUNCTION &&function,
-                                                   FIRST &&first,
-                                                   REST &&...rest)
+constexpr auto
+optional_applicative_impl<VALUE_TYPE>::invoke(this auto &&, FUNCTION &&function,
+                                              FIRST &&first, REST &&...rest)
     -> std::optional<std::remove_cvref_t<
         std::invoke_result_t<FUNCTION &, detail::contained_ref_t<FIRST>,
                              detail::contained_ref_t<REST>...>>> {

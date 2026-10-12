@@ -60,3 +60,20 @@ TEST_CASE("functor: replace prefers a native Impl::replace") {
     REQUIRE(m.replace(std::vector<int>{1, 2, 3}, 5) ==
             std::vector<int>{10, 10, 10});
 }
+
+// The derived operations are constant-evaluable: each is pinned by a
+// static_assert, over both standard instances.
+TEST_CASE("functor: the derived operations are constexpr") {
+    static_assert(bt::functor<std::optional<int>>.fmap(
+                      [](int x) { return x + 1; }, std::optional<int>{41}) ==
+                  std::optional<int>{42});
+    static_assert(bt::functor<std::optional<int>>.replace(
+                      std::optional<int>{41}, 7) == std::optional<int>{7});
+    static_assert(
+        bt::functor<std::vector<int>>.fmap([](int x) { return x * 10; },
+                                           std::vector<int>{1, 2, 3}) ==
+        std::vector<int>{10, 20, 30});
+    static_assert(bt::functor<std::vector<int>>.replace(
+                      std::vector<int>{1, 2}, 0) == std::vector<int>{0, 0});
+    SUCCEED();
+}

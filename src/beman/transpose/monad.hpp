@@ -53,7 +53,7 @@ struct derive_monad : protected Impl {
      * BASIS only, so Functor's derived surface stays Functor's.
      */
     template <class FUNCTION, class MA>
-    auto fmap(this auto &&self, FUNCTION &&function, MA &&ma)
+    constexpr auto fmap(this auto &&self, FUNCTION &&function, MA &&ma)
         requires requires(const Impl &impl) {
             impl.fmap(std::forward<FUNCTION>(function), std::forward<MA>(ma));
         } || requires(const Impl &impl) {
@@ -82,8 +82,8 @@ struct derive_monad : protected Impl {
     // before bind returns), which holds for every Monad instance in this
     // repository.
     template <class FUNCTION, class FIRST, class... REST>
-    auto invoke(this auto &&self, FUNCTION &&function, FIRST &&first,
-                REST &&...rest)
+    constexpr auto invoke(this auto &&self, FUNCTION &&function, FIRST &&first,
+                          REST &&...rest)
         requires requires(const Impl &impl) {
             impl.invoke(std::forward<FUNCTION>(function),
                         std::forward<FIRST>(first),
@@ -136,7 +136,7 @@ struct derive_monad : protected Impl {
     // the one member in this step where the derivation, not just the probe,
     // addresses Impl rather than self.
     template <class MMA>
-    auto join(this auto &&self, MMA &&mma)
+    constexpr auto join(this auto &&self, MMA &&mma)
         requires requires(const Impl &impl) {
             impl.join(std::forward<MMA>(mma));
         } || requires(const Impl &impl) {
@@ -165,7 +165,7 @@ struct derive_monad : protected Impl {
     // unconditionally by this class's invariant (the static_assert above),
     // so the second alternative is trivially true rather than absent.
     template <class F, class G>
-    auto kleisli(this auto &&self, F f, G g)
+    constexpr auto kleisli(this auto &&self, F f, G g)
         requires requires(const Impl &impl) { impl.kleisli(f, g); } || true
     {
         if constexpr (requires { impl_of(self).kleisli(f, g); }) {
@@ -189,7 +189,7 @@ struct derive_monad : protected Impl {
      * than failing inside the body.
      */
     template <class MF, class MA>
-    auto ap(this auto &&self, MF &&mf, MA &&ma)
+    constexpr auto ap(this auto &&self, MF &&mf, MA &&ma)
         requires requires(const Impl &impl) {
             impl.ap(std::forward<MF>(mf), std::forward<MA>(ma));
         } || requires {
@@ -232,7 +232,8 @@ struct derive_monad : protected Impl {
 
     // bind_with: explicit monad object override.
     template <class MONAD_MAP, class MA, class F>
-    auto bind_with(this auto &&, const MONAD_MAP &monad_map, MA &&ma, F &&f) {
+    constexpr auto bind_with(this auto &&, const MONAD_MAP &monad_map, MA &&ma,
+                             F &&f) {
         return monad_map.bind(std::forward<MA>(ma), std::forward<F>(f));
     }
 
@@ -328,14 +329,14 @@ struct OptionalMonadImpl {
     using element_type = VALUE_TYPE;
 
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value)
+    constexpr auto pure(this auto &&, VALUE &&value)
         -> std::optional<std::remove_cvref_t<VALUE>> {
         return applicative<std::optional<VALUE_TYPE>>.pure(
             std::forward<VALUE>(value));
     }
 
     template <class A, class F>
-    auto bind(this auto &&, const std::optional<A> &ma, F &&f)
+    constexpr auto bind(this auto &&, const std::optional<A> &ma, F &&f)
         -> std::remove_cvref_t<std::invoke_result_t<F, const A &>> {
         using Result = std::remove_cvref_t<std::invoke_result_t<F, const A &>>;
         if (!ma)
