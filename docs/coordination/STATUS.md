@@ -5,6 +5,13 @@ repo's document (linked). Order within each repo is execution order.
 
 ## Decisions needed from Steve (unblock markers: [S-n])
 
+- Machinery deduplication
+  ([machinery-deduplication.md](machinery-deduplication.md)): no blocking
+  questions. The non-exhaustive overload set is deferred until the rest
+  of the plan is done, and proposed only if required; candidate names
+  are listed in
+  [fallback-overload-set](machinery-deduplication.md#fallback-overload-set).
+
 - [S-5] Existing punch-list items (repo owner swap, clang-18 floor,
   modules ship/waive) — `tree_algorithms/docs/notes/punch-list.md`.
   Partially resolved 2026-07-17 (Steve): the paper number is **D4322** —
