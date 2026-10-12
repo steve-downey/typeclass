@@ -23,8 +23,8 @@
 #
 # The "with running code" posts (graded-gadgets, transpose-at-work,
 # traverse-does-all-the-work) execute org-babel shell blocks during export
-# that run binaries from $(ROOT)/.build/build-gcc-16-cxx26/examples/RelWithDebInfo.
-# Run `make examples` (or `make -C $(ROOT) TOOLCHAIN=gcc-16-cxx26
+# that run binaries from $(ROOT)/.build/build-gcc-16/examples/transpose/RelWithDebInfo.
+# Run `make examples` (or `make -C $(ROOT) TOOLCHAIN=gcc-16
 # CONFIG=RelWithDebInfo compile`) before exporting them; gcc-16 is what
 # provides <simd> for the SIMD output.
 
@@ -42,7 +42,7 @@ MD        := $(ORGFILES:.org=.md)
 all: $(HTML)
 
 examples:
-	$(MAKE) -C $(ROOT) TOOLCHAIN=gcc-16-cxx26 CONFIG=RelWithDebInfo compile
+	$(MAKE) -C $(ROOT) TOOLCHAIN=gcc-16 CONFIG=RelWithDebInfo compile
 
 blog-md: $(MD)
 

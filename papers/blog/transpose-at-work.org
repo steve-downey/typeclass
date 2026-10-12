@@ -38,7 +38,7 @@ Here it is as a call, once with no gaps and once with one.
 #+transclude: [[orgit-file:~/src/transpose/main::blog/transpose-at-work::examples/transpose_post_example.cpp::05ce0358-d2a6-4908-a5b3-ec09da449bbd]] :lines 2- :src cpp :end "05ce0358-d2a6-4908-a5b3-ec09da449bbd end"
 
 #+begin_src sh :results output :exports results
-../../.build/build-gcc-16-cxx26/examples/RelWithDebInfo/beman.transpose.examples.transpose_post_example optional
+../../.build/build-gcc-16/examples/transpose/RelWithDebInfo/beman.transpose.examples.transpose_post_example optional
 #+end_src
 
 No reserve, no early exit, no accumulate.
@@ -61,7 +61,7 @@ To make the laziness visible, each sender announces itself when it actually exec
 #+transclude: [[orgit-file:~/src/transpose/main::blog/transpose-at-work::examples/transpose_post_example.cpp::680950c9-7c4f-4aac-9e7b-bd32d9c7056a]] :lines 2- :src cpp :end "680950c9-7c4f-4aac-9e7b-bd32d9c7056a end"
 
 #+begin_src sh :results output :exports results
-../../.build/build-gcc-16-cxx26/examples/RelWithDebInfo/beman.transpose.examples.transpose_post_example sender
+../../.build/build-gcc-16/examples/transpose/RelWithDebInfo/beman.transpose.examples.transpose_post_example sender
 #+end_src
 
 Read the output in order.
@@ -78,7 +78,7 @@ Three positions of four lanes each transpose into four complete result vectors, 
 #+transclude: [[orgit-file:~/src/transpose/main::blog/transpose-at-work::examples/transpose_post_example.cpp::e916da84-685b-40b3-aee5-c9df63321855]] :lines 2- :src cpp :end "e916da84-685b-40b3-aee5-c9df63321855 end"
 
 #+begin_src sh :results output :exports results
-../../.build/build-gcc-16-cxx26/examples/RelWithDebInfo/beman.transpose.examples.transpose_post_example simd
+../../.build/build-gcc-16/examples/transpose/RelWithDebInfo/beman.transpose.examples.transpose_post_example simd
 #+end_src
 
 Lane 0 holds the first element of each position's computation, lane 1 the second, and so on.

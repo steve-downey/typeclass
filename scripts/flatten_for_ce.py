@@ -5,8 +5,8 @@ Inlines all #include <beman/transpose/...> headers recursively, leaves standard
 library includes untouched, and adds comment markers showing provenance.
 
 Usage:
-    ./scripts/flatten_for_ce.py examples/simd_example.cpp > /tmp/ce_simd.cpp
-    ./scripts/flatten_for_ce.py examples/soa_aos_example.cpp -o /tmp/ce_soa.cpp
+    ./scripts/flatten_for_ce.py examples/transpose/simd_example.cpp > /tmp/ce_simd.cpp
+    ./scripts/flatten_for_ce.py examples/transpose/soa_aos_example.cpp -o /tmp/ce_soa.cpp
 """
 
 import argparse
@@ -14,7 +14,7 @@ import re
 import sys
 from pathlib import Path
 
-INCLUDE_DIR = Path(__file__).resolve().parent.parent / "include"
+INCLUDE_DIR = Path(__file__).resolve().parent.parent / "src"
 
 BEMAN_INCLUDE_RE = re.compile(r'^\s*#include\s+<(beman/transpose/[^>]+)>\s*$')
 IFNDEF_RE = re.compile(r'^\s*#ifndef\s+(\S+)\s*$')

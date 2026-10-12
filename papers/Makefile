@@ -10,7 +10,7 @@
 #   make                # every paper, in the default format
 #
 # defaults.yaml adds the wording transclusion filter; see
-# ../docs/wording-pipeline.md.
+# ../docs/transpose/wording-pipeline.md.
 
 include wg21/flat.mk
 

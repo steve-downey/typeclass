@@ -58,7 +58,7 @@ readonly HEADERS=(
 # database, because headers are not translation units in one.
 CLANG_ARGS=(
     -std=c++2c
-    "-I$REPO_ROOT/include"
+    "-I$REPO_ROOT/src"
 )
 if [[ -n "$GCC_TOOLCHAIN" ]]; then
     CLANG_ARGS+=("--gcc-toolchain=$GCC_TOOLCHAIN")
@@ -84,7 +84,7 @@ for entry in "${HEADERS[@]}"; do
     stem="${entry#*:}"
 
     echo "gen-wording: $header -> $stem.*"
-    "$SPECGEN" generate "$REPO_ROOT/include/beman/transpose/$header" \
+    "$SPECGEN" generate "$REPO_ROOT/src/beman/transpose/$header" \
         --emit-ir \
         --no-compile-commands \
         --output "$IR_DIR/$stem.ir.json" \

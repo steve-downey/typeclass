@@ -45,7 +45,7 @@ That refusal turns out to be the opportunity: the combination was ill-formed, so
 #+transclude: [[orgit-file:~/src/transpose/main::blog/graded-gadgets::examples/graded_gadgets_example.cpp::c74dfc6a-4ae4-4f21-82fa-2097a17d8b87]] :lines 2- :src cpp :end "c74dfc6a-4ae4-4f21-82fa-2097a17d8b87 end"
 
 #+begin_src sh :results output :exports results
-../../.build/build-gcc-16-cxx26/examples/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example mixing
+../../.build/build-gcc-16/examples/transpose/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example mixing
 #+end_src
 
 The ~static_assert~ is the point.
@@ -75,7 +75,7 @@ Its grade is the empty set, and joining with the empty set is a no-op, so mixing
 #+transclude: [[orgit-file:~/src/transpose/main::blog/graded-gadgets::examples/graded_gadgets_example.cpp::a1b0528a-16f7-4a62-9ae8-684b05fbc8ed]] :lines 2- :src cpp :end "a1b0528a-16f7-4a62-9ae8-684b05fbc8ed end"
 
 #+begin_src sh :results output :exports results
-../../.build/build-gcc-16-cxx26/examples/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example lazy-join
+../../.build/build-gcc-16/examples/transpose/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example lazy-join
 #+end_src
 
 This is what keeps grading additive rather than viral.
@@ -93,7 +93,7 @@ A second object, reached through ~accumulating_applicative~, visits every operan
 #+transclude: [[orgit-file:~/src/transpose/main::blog/graded-gadgets::examples/graded_gadgets_example.cpp::045991c1-1dd4-4f93-af8a-b3ac53ce7702]] :lines 2- :src cpp :end "045991c1-1dd4-4f93-af8a-b3ac53ce7702 end"
 
 #+begin_src sh :results output :exports results
-../../.build/build-gcc-16-cxx26/examples/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example accumulate
+../../.build/build-gcc-16/examples/transpose/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example accumulate
 #+end_src
 
 The accumulated ~error_set~ value /is/ the evidence; there is no side channel of diagnostics.
@@ -108,7 +108,7 @@ Grades widen at every mixing point, so there had better be a way back down.
 #+transclude: [[orgit-file:~/src/transpose/main::blog/graded-gadgets::examples/graded_gadgets_example.cpp::fb4194b2-a5cf-43eb-bed8-d50c09601efd]] :lines 2- :src cpp :end "fb4194b2-a5cf-43eb-bed8-d50c09601efd end"
 
 #+begin_src sh :results output :exports results
-../../.build/build-gcc-16-cxx26/examples/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example recover
+../../.build/build-gcc-16/examples/transpose/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example recover
 #+end_src
 
 The same set-difference happens at both levels.
@@ -123,7 +123,7 @@ The gadgets compose with the rest of the library.
 #+transclude: [[orgit-file:~/src/transpose/main::blog/graded-gadgets::examples/graded_gadgets_example.cpp::8ec1b0e5-e4e8-4dbb-8644-6293fc959e42]] :lines 2- :src cpp :end "8ec1b0e5-e4e8-4dbb-8644-6293fc959e42 end"
 
 #+begin_src sh :results output :exports results
-../../.build/build-gcc-16-cxx26/examples/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example traverse
+../../.build/build-gcc-16/examples/transpose/RelWithDebInfo/beman.transpose.examples.graded_gadgets_example traverse
 #+end_src
 
 One pass over the data, every distinct failure collected, and the result type says so.
