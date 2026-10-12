@@ -32,29 +32,29 @@ add_library(beman::tree_algorithms ALIAS beman.tree_algorithms)
 target_sources(
     beman.tree_algorithms
     ${_scope}
-        FILE_SET HEADERS
-            BASE_DIRS
-                "${PROJECT_SOURCE_DIR}/src"
-                "${PROJECT_BINARY_DIR}/src"
-            FILES
-                    binary_tree.hpp
-                    box.hpp
-                    child_slot.hpp
-                    config.hpp
-                    expression.hpp
-                    fix.hpp
-                    fold_map.hpp
-                    fold_map_lookup.hpp
-                    fringe_tree.hpp
-                    functor.hpp
-                    functors.hpp
-                    overloaded.hpp
-                    recursion_schemes.hpp
-                    recursion_schemes_lookup.hpp
-                    rose_tree.hpp
-                    tree_algorithms.hpp
-                    todo.hpp
-                    "${CMAKE_CURRENT_BINARY_DIR}/config_generated.hpp"
+    FILE_SET HEADERS
+    BASE_DIRS
+    "${PROJECT_SOURCE_DIR}/src"
+    "${PROJECT_BINARY_DIR}/src"
+    FILES
+    binary_tree.hpp
+    box.hpp
+    child_slot.hpp
+    config.hpp
+    expression.hpp
+    fix.hpp
+    fold_map.hpp
+    fold_map_lookup.hpp
+    fringe_tree.hpp
+    functor.hpp
+    functors.hpp
+    overloaded.hpp
+    recursion_schemes.hpp
+    recursion_schemes_lookup.hpp
+    rose_tree.hpp
+    tree_algorithms.hpp
+    todo.hpp
+    "${CMAKE_CURRENT_BINARY_DIR}/config_generated.hpp"
 )
 
 beman_install_library(beman.tree_algorithms TARGETS beman.tree_algorithms)
@@ -65,23 +65,26 @@ if(BEMAN_TYPECLASS_BUILD_TESTS)
         test
         IN
         ITEMS
-        todo
-        box
-        child_slot
-        fix
-        overloaded
-        recursion_schemes
-        functor
-        recursion_schemes_lookup
-        expression
-        functors
-        binary_tree
-        fold_map
-        fringe_tree
-        rose_tree
+            todo
+            box
+            child_slot
+            fix
+            overloaded
+            recursion_schemes
+            functor
+            recursion_schemes_lookup
+            expression
+            functors
+            binary_tree
+            fold_map
+            fringe_tree
+            rose_tree
     )
         add_executable(beman.tree_algorithms.tests.${test})
-        target_sources(beman.tree_algorithms.tests.${test} PRIVATE ${test}.test.cpp)
+        target_sources(
+            beman.tree_algorithms.tests.${test}
+            PRIVATE ${test}.test.cpp
+        )
         target_link_libraries(
             beman.tree_algorithms.tests.${test}
             PRIVATE beman::tree_algorithms Catch2::Catch2WithMain

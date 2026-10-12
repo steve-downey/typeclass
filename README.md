@@ -55,7 +55,7 @@ The `beman.fingertree` design documents are additionally offered under CC BY-SA 
 
 ### Requirements
 
-* A C++23 compiler for `beman.transpose` and `beman.tree_algorithms`: GCC 14, Clang 19, current AppleClang or MSVC.
+* The C++23 standard is the minimum for `beman.transpose` and `beman.tree_algorithms`, with GCC 14, Clang 19, current AppleClang or MSVC.
 * `beman.fingertree` needs `std::inplace_vector` at C++26, which today means GCC 16.
   The build probes for it and skips fingertree where it is missing; force the choice with `-DBEMAN_TYPECLASS_BUILD_FINGERTREE=ON|OFF`.
 * CMake 3.30 or later.

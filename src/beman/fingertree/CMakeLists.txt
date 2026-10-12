@@ -44,36 +44,36 @@ add_library(beman::fingertree ALIAS beman.fingertree)
 target_compile_options(
     beman.fingertree
     ${_scope}
-        $<BUILD_INTERFACE:$<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-declarations;-Wno-missing-braces>>
+    $<BUILD_INTERFACE:$<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-declarations;-Wno-missing-braces>>
 )
 
 target_sources(
     beman.fingertree
     ${_scope}
-        FILE_SET HEADERS
-            BASE_DIRS
-                "${PROJECT_SOURCE_DIR}/src"
-                "${PROJECT_BINARY_DIR}/src"
-            FILES
-                    config.hpp
-                    fingertree.hpp
-                    fixpoint/overloaded.hpp
-                    typeclass/typeclass_base.hpp
-                    typeclass/functor.hpp
-                    typeclass/applicative.hpp
-                    typeclass/foldable.hpp
-                    typeclass/traversable.hpp
-                    typeclass/monoid.hpp
-                    tree/finger_tree.hpp
-                    tree/finger_tree_iterator.hpp
-                    tree/finger_tree_pmr.hpp
-                    tree/finger_tree_foldable.hpp
-                    tree/finger_tree_traversable.hpp
-                    tree/finger_tree_random_access.hpp
-                    tree/finger_tree_rope.hpp
-                    tree/finger_tree_priority_queue.hpp
-                    tree/finger_tree_interval_index.hpp
-                    "${CMAKE_CURRENT_BINARY_DIR}/config_generated.hpp"
+    FILE_SET HEADERS
+    BASE_DIRS
+    "${PROJECT_SOURCE_DIR}/src"
+    "${PROJECT_BINARY_DIR}/src"
+    FILES
+    config.hpp
+    fingertree.hpp
+    fixpoint/overloaded.hpp
+    typeclass/typeclass_base.hpp
+    typeclass/functor.hpp
+    typeclass/applicative.hpp
+    typeclass/foldable.hpp
+    typeclass/traversable.hpp
+    typeclass/monoid.hpp
+    tree/finger_tree.hpp
+    tree/finger_tree_iterator.hpp
+    tree/finger_tree_pmr.hpp
+    tree/finger_tree_foldable.hpp
+    tree/finger_tree_traversable.hpp
+    tree/finger_tree_random_access.hpp
+    tree/finger_tree_rope.hpp
+    tree/finger_tree_priority_queue.hpp
+    tree/finger_tree_interval_index.hpp
+    "${CMAKE_CURRENT_BINARY_DIR}/config_generated.hpp"
 )
 
 beman_install_library(beman.fingertree TARGETS beman.fingertree)
@@ -84,15 +84,15 @@ if(BEMAN_TYPECLASS_BUILD_TESTS)
         test
         IN
         ITEMS
-        finger_tree
-        finger_tree_iterator
-        finger_tree_pmr
-        finger_tree_foldable
-        finger_tree_traversable
-        finger_tree_random_access
-        finger_tree_rope
-        finger_tree_priority_queue
-        finger_tree_interval_index
+            finger_tree
+            finger_tree_iterator
+            finger_tree_pmr
+            finger_tree_foldable
+            finger_tree_traversable
+            finger_tree_random_access
+            finger_tree_rope
+            finger_tree_priority_queue
+            finger_tree_interval_index
     )
         add_executable(beman.fingertree.tests.${test})
         target_sources(beman.fingertree.tests.${test} PRIVATE ${test}.test.cpp)

@@ -8,7 +8,12 @@ set(CMAKE_CXX_STANDARD 26)
 # time (tests, examples, and the compile-time benchmarks all do it), so the
 # default constexpr ceiling is lifted project-wide. Applied to the base flags
 # so every configuration is coherent.
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=gnu++26 -fconstexpr-ops-limit=1000000000" CACHE STRING "CXX_FLAGS" FORCE)
+set(CMAKE_CXX_FLAGS
+    "-Wall -Wextra -std=gnu++26 -fconstexpr-ops-limit=1000000000"
+    CACHE STRING
+    "CXX_FLAGS"
+    FORCE
+)
 
 set(CMAKE_CXX_FLAGS_DEBUG
     "-O0 -fno-inline -g3"

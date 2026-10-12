@@ -17,9 +17,7 @@ target_sources(
     beman.transpose
     INTERFACE
         FILE_SET HEADERS
-            BASE_DIRS
-                "${PROJECT_SOURCE_DIR}/src"
-                "${PROJECT_BINARY_DIR}/src"
+            BASE_DIRS "${PROJECT_SOURCE_DIR}/src" "${PROJECT_BINARY_DIR}/src"
             FILES
                 config.hpp
                 apply.hpp
