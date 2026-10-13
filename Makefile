@@ -207,11 +207,15 @@ WORDING_DIR ?= papers/wording
 wording: ## Regenerate the P3200 wording fragments from the headers
 	scripts/gen-wording.sh $(CURDIR)/$(WORDING_DIR)
 
+.PHONY: wording-verify
+wording-verify: ## Check, without specgen, that the checked-in wording was generated from the current headers
+	scripts/wording-verify.sh $(CURDIR)/$(WORDING_DIR)
+
 .PHONY: wording-check
-wording-check: ## Check the checked-in wording matches what the headers generate
+wording-check: ## Regenerate the wording with specgen and diff it against what is checked in
 	rm -rf $(BUILD_DIR)/wording-check
 	scripts/gen-wording.sh $(CURDIR)/$(BUILD_DIR)/wording-check
-	diff -r -x .stamp $(WORDING_DIR) $(BUILD_DIR)/wording-check
+	diff -r $(WORDING_DIR) $(BUILD_DIR)/wording-check
 
 .PHONY: clean-wording
 clean-wording: ## Delete the generated wording fragments
@@ -219,9 +223,12 @@ clean-wording: ## Delete the generated wording fragments
 
 clean: clean-wording
 
-# The generated fragments are checked in, so the papers build without specgen;
-# `wording-check` is what verifies they are current.
+# The generated fragments are checked in, so the papers build without specgen.
+# `wording-verify` is the content check that they still match the headers; a
+# header edited since the last `make wording` stops the build here rather than
+# producing a paper whose wording disagrees with the code it specifies.
 .PHONY: papers
+papers: wording-verify
 papers: ## Build every paper
 	$(MAKE) -C papers pdf
 

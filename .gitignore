@@ -33,7 +33,6 @@
 
 # Paper and blog builds (MPark.WG21, org export)
 /papers/generated/
-/papers/wording/.stamp
 /papers/blog/*.html
 *.deps
 /installtest/.build/
