@@ -1,0 +1,30 @@
+# docs/mrdocs.yml                                                   -*-yaml-*-
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+# $schema: https://mrdocs.com/docs/mrdocs/develop/_attachments/mrdocs.schema.json
+# yaml-language-server: $schema=https://mrdocs.com/docs/mrdocs/develop/_attachments/mrdocs.schema.json
+#
+# MrDocs configuration for the three libraries, run from docs/ (`make mrdocs`).
+# Output lands in docs/adoc, which is ignored.
+
+---
+source-root: ..
+input:
+  - ../src/beman
+includes:
+  - ../src
+file-patterns:
+  - '*.hpp'
+exclude-patterns:
+  - '../src/beman/**/*.test.cpp'
+  - '../src/beman/**/*.cppm'
+include-symbols:
+  - 'beman::transpose::**'
+  - 'beman::tree_algorithms::**'
+  - 'beman::fingertree::**'
+implementation-defined:
+  - 'beman::transpose::detail'
+  - 'beman::tree_algorithms::detail'
+  - 'beman::fingertree::detail'
+multipage: true
+generator: adoc
+output: adoc

@@ -25,12 +25,6 @@ TARGETS := test clean all ctest
 
 export
 
-.update-submodules:
-	git submodule update --init --recursive
-	touch .update-submodules
-
-.gitmodules: .update-submodules
-
 CONFIG?=Asan
 
 export
@@ -93,7 +87,7 @@ default: test
 $(_build_path):
 	mkdir -p $(_build_path)
 
-$(_build_path)/CMakeCache.txt: | $(_build_path) .gitmodules $(VENV)
+$(_build_path)/CMakeCache.txt: | $(_build_path) $(VENV)
 	cd $(_build_path) && $(run_cmake)
 
 $(_build_path)/compile_commands.json : $(_build_path)/CMakeCache.txt
@@ -225,8 +219,9 @@ clean-wording: ## Delete the generated wording fragments
 
 clean: clean-wording
 
+# The generated fragments are checked in, so the papers build without specgen;
+# `wording-check` is what verifies they are current.
 .PHONY: papers
-papers: wording
 papers: ## Build every paper
 	$(MAKE) -C papers pdf
 
@@ -318,26 +313,49 @@ coverage: venv $(_build_path)/CMakeCache.txt
 view-coverage: ## View the coverage report
 	sensible-browser $(_build_path)/coverage/coverage.html
 
+# ---------------------------------------------------------------------
+# API documentation. One Doxygen run over the three libraries (docs/Doxyfile);
+# the gh-pages workflow runs the same file. MrDocs is the alternative renderer
+# (docs/mrdocs.yml). Both write under docs/, which .gitignore covers.
+# ---------------------------------------------------------------------
+
 .PHONY: docs
-docs: ## Build the docs with Doxygen
+docs: ## Build the API docs with Doxygen into docs/html
 	doxygen docs/Doxyfile
 
 .PHONY: mrdocs
-mrdocs: ## Build the docs with Doxygen
+mrdocs: ## Build the API docs with MrDocs into docs/adoc
 	-rm -rf docs/adoc
 	cd docs && NO_COLOR=1 mrdocs mrdocs.yml 2>&1 | sed 's/\x1b\[[0-9;]*m//g'
 	find docs/adoc -name '*.adoc' | xargs asciidoctor
 
-.PHONY: testinstall
+.PHONY: clean-docs
+clean-docs: ## Delete the generated API docs
+	-rm -rf docs/html docs/adoc
+
+clean: clean-docs
+
+# ---------------------------------------------------------------------
+# Install test: installtest/ is a downstream project that find_packages the
+# installed libraries. It is configured with the same toolchain as the build
+# so the installed headers are compiled by the compiler they were tested with.
+# ---------------------------------------------------------------------
+
+_installtest_build := installtest/.build
+
+.PHONY: testinstall installtest
 testinstall: install
-testinstall: ## Test the installed package
-	mkdir -p installtest
-	$(CMAKE) -S installtest -B installtest/.build
-	$(CMAKE) --build  installtest/.build --target test
+testinstall: ## Install, then build and run installtest/ against the install
+	$(CMAKE) -S installtest -B $(_installtest_build) \
+		-DCMAKE_PREFIX_PATH=$(abspath $(INSTALL_PREFIX)) \
+		-DCMAKE_TOOLCHAIN_FILE=$(_toolchain)
+	$(CMAKE) --build $(_installtest_build)
+	$(CTEST) --test-dir $(_installtest_build) --output-on-failure
+installtest: testinstall
 
 .PHONY: clean-testinstall
 clean-testinstall:
-	-rm -rf installtest/.build
+	-rm -rf $(_installtest_build)
 
 realclean: clean-testinstall
 

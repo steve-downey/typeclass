@@ -20,3 +20,10 @@ include wg21/flat.mk
 # further input file. Depend on the stamp `make wording` writes instead.
 $(OUTDIR)/D3200R0.html $(OUTDIR)/D3200R0.latex $(OUTDIR)/D3200R0.pdf: \
     wording/.stamp filters/transclude.py
+
+# `make wording` (scripts/gen-wording.sh) writes the stamp when it regenerates
+# the fragments. The fragments are checked in and current without specgen, so
+# an absent stamp is created here rather than demanding a regeneration;
+# `make wording-check` at the top level is what verifies they are current.
+wording/.stamp:
+	@test -f $@ || date -u +%Y-%m-%dT%H:%M:%SZ > $@

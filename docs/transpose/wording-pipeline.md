@@ -81,9 +81,13 @@ their instances inside generated headers are `\omit`ted.
 ## Rules for marking up a header
 
 Comment spelling is significant. `//!` and `/*! */` are specgen docblocks and
-become wording; `///` and `/** */` are Doxygen and are stripped; plain `//`
-survives as a draft comment where the corresponding source is rendered. Design
-commentary belongs in `///` so that it does not land in a rendered synopsis.
+become wording; `///` and `/** */` are API documentation and are stripped by
+specgen; plain `//` survives as a draft comment where the corresponding source
+is rendered. Design commentary belongs in `///` so that it does not land in a
+rendered synopsis. Doxygen would read `//!` as a doc comment too, so the API
+docs build filters those lines out first
+([`scripts/doxygen-input-filter.sh`](../../scripts/doxygen-input-filter.sh),
+selected by [`docs/Doxyfile`](../Doxyfile)).
 A trailing `// NOLINT(...)` on a declaration renders too, so spell those
 `/// NOLINT(...)`: clang-tidy honours the marker in any comment form.
 

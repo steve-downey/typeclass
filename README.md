@@ -78,6 +78,8 @@ make TOOLCHAIN=gcc-16 test        # configure, build, run every test
 make TOOLCHAIN=gcc-16 compile-headers
 make wording-check                # P3200 wording still matches the headers
 make papers                       # build every paper
+make docs                         # API docs for all three libraries, into docs/html
+make TOOLCHAIN=gcc-16 testinstall # install, then build a downstream project against it
 make bench                        # tree_algorithms runtime benchmarks, Bench config
 make help
 ```
