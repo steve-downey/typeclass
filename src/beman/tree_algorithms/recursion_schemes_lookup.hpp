@@ -64,6 +64,7 @@ constexpr auto fold_fix(const Algebra& algebra, const Fix<F>& tree) -> Result {
 }
 // d4f69d2f-787b-4741-ae82-971f0ff36b9e end
 
+// The child seed is taken by value for the reason given in recursion_schemes.hpp.
 /** Recursive build (unfold), resolving fmap through transpose::functor.
  * Equivalent to unfold_fix<F>(coalgebra, fmap_fn, seed) with the looked-up
  * fmap for F<...>.
@@ -73,7 +74,7 @@ constexpr auto fold_fix(const Algebra& algebra, const Fix<F>& tree) -> Result {
 template <template <typename> class F, typename Coalgebra, typename Seed>
 constexpr auto unfold_fix(const Coalgebra& coalgebra, const Seed& seed) -> Fix<F> {
     auto layer    = coalgebra(seed);
-    auto expanded = layer_fmap([&](const Seed& child) -> Fix<F> { return unfold_fix<F>(coalgebra, child); }, layer);
+    auto expanded = layer_fmap([&](Seed child) -> Fix<F> { return unfold_fix<F>(coalgebra, child); }, layer);
     return wrap_fix<F>(std::move(expanded));
 }
 // 2df7f7e0-ee8b-42b6-a0a8-1dfed05c8230 end
@@ -89,7 +90,7 @@ template <typename Result, template <typename> class F, typename Algebra, typena
 constexpr auto refold(const Algebra& algebra, const Coalgebra& coalgebra, const Seed& seed) -> Result {
     auto layer = coalgebra(seed);
     auto evaluated =
-        layer_fmap([&](const Seed& child) -> Result { return refold<Result, F>(algebra, coalgebra, child); }, layer);
+        layer_fmap([&](Seed child) -> Result { return refold<Result, F>(algebra, coalgebra, child); }, layer);
     return algebra(evaluated);
 }
 // c75161e3-1aad-4549-86cc-1dc40d6623c8 end
