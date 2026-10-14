@@ -1,0 +1,4 @@
+var structbeman_1_1transpose_1_1grade__join_3_01error__set__of_3_01LEFT_8_8_8_01_4_00_01error__set__of_3_01RIGHT_8_8_8_01_4_01_4 =
+[
+    [ "type", "structbeman_1_1transpose_1_1grade__join_3_01error__set__of_3_01LEFT_8_8_8_01_4_00_01error__set__of_3_01RIGHT_8_8_8_01_4_01_4.html#af6be80c6b9c33c6683db188c13f5157d", null ]
+];
