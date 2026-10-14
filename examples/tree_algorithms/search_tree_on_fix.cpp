@@ -29,8 +29,9 @@
 // different shapes, but flatten to the same sorted sequence — in-order
 // traversal quotients away the shape.
 
-#include <beman/tree_algorithms/binary_tree.hpp>
-
+// Standard headers precede the library's own: under the module build the
+// library headers are imports, and gcc and msvc cannot include a standard
+// header after an import.
 #include <algorithm>
 #include <array>
 #include <cstddef>
@@ -39,6 +40,8 @@
 #include <string>
 #include <utility>
 #include <vector>
+
+#include <beman/tree_algorithms/binary_tree.hpp>
 
 using beman::tree_algorithms::BinaryTreeF;
 using beman::tree_algorithms::BinaryTreeFix;

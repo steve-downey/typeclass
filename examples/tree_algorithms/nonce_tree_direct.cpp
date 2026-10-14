@@ -8,14 +8,17 @@
 // ever materialized. (Contrast binary_tree_adapt.cpp, which converts a
 // shared_ptr tree to Fix form with to_fix and folds that.)
 
-#include <beman/tree_algorithms/recursion_schemes.hpp>
-
+// Standard headers precede the library's own: under the module build the
+// library headers are imports, and gcc and msvc cannot include a standard
+// header after an import.
 #include <memory>
 #include <optional>
 #include <print>
 #include <string>
 #include <type_traits>
 #include <utility>
+
+#include <beman/tree_algorithms/recursion_schemes.hpp>
 
 using beman::tree_algorithms::fold_with;
 using beman::tree_algorithms::unfold_with;

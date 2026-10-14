@@ -7,12 +7,15 @@
 // and from_fix rebuilds the original representation. The verbs and the
 // algebra never learn how the tree is really stored.
 
+// Standard headers precede the library's own: under the module build the
+// library headers are imports, and gcc and msvc cannot include a standard
+// header after an import.
+#include <print>
+#include <string>
+
 #include <beman/tree_algorithms/binary_tree.hpp>
 #include <beman/tree_algorithms/box.hpp>
 #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
-
-#include <print>
-#include <string>
 
 using beman::tree_algorithms::BinaryTree;
 using beman::tree_algorithms::BinaryTreeF;

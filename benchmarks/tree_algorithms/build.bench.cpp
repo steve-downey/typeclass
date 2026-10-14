@@ -36,21 +36,25 @@
 // hand-written InlineLayer fmap (inline_layer.hpp) — the experiment that
 // motivated child_slot, kept as a parity check on the registered path.
 
-#include <beman/tree_algorithms/binary_tree.hpp>
-
-#include "fix_unique_tree.hpp"
-#include "inline_layer.hpp"
-#include "naive_trees.hpp"
-
+// Standard headers precede the library's own: under the module build the
+// library headers are imports, and gcc and msvc cannot include a standard
+// header after an import.
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <type_traits>
 #include <utility>
+
+#include "fix_unique_tree.hpp"
+#include "inline_layer.hpp"
+#include "naive_trees.hpp"
+
+#include <beman/tree_algorithms/binary_tree.hpp>
 
 using beman::tree_algorithms::BinaryTree;
 using beman::tree_algorithms::BinaryTreeF;

@@ -32,12 +32,9 @@
 // The concept and derived algorithms are example-local evidence, not
 // proposed API; their names are placeholders, not decisions.
 
-#include <beman/tree_algorithms/fringe_tree.hpp>
-
-#include <beman/tree_algorithms/fold_map.hpp>
-#include <beman/tree_algorithms/fold_map_lookup.hpp>
-#include <beman/tree_algorithms/recursion_schemes.hpp>
-
+// Standard headers precede the library's own: under the module build the
+// library headers are imports, and gcc and msvc cannot include a standard
+// header after an import.
 #include <concepts>
 #include <functional>
 #include <print>
@@ -45,6 +42,14 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+
+#include <beman/transpose/functor.hpp>
+#include <beman/transpose/overloaded.hpp>
+
+#include <beman/tree_algorithms/fold_map.hpp>
+#include <beman/tree_algorithms/fold_map_lookup.hpp>
+#include <beman/tree_algorithms/fringe_tree.hpp>
+#include <beman/tree_algorithms/recursion_schemes.hpp>
 
 using beman::transpose::functor;
 using beman::transpose::overloaded;
