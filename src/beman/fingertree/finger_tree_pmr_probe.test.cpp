@@ -73,8 +73,26 @@ int           g_n_results = 0;
 // free() on a pointer it thinks came from operator new (which here calls
 // malloc).  These ARE matched — malloc/free is exactly the right pair when
 // replacing the global operators.  Suppress the false positive.
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wmismatched-new-delete"
+// ThreadSanitizer's runtime defines the global allocation functions itself,
+// and Clang links that runtime statically, so a translation unit that
+// replaces them does not link under TSan (transpose's all_of_allocation test
+// documents the same constraint). Under TSan the replacements are left out:
+// the counters stay at zero and the null_memory_resource upstream remains
+// the check that no allocation escapes the arena.
+#if defined(__SANITIZE_THREAD__)
+    #define BEMAN_FINGERTREE_TEST_UNDER_TSAN 1
+#elif defined(__has_feature)
+    #if __has_feature(thread_sanitizer)
+        #define BEMAN_FINGERTREE_TEST_UNDER_TSAN 1
+    #endif
+#endif
+#ifndef BEMAN_FINGERTREE_TEST_UNDER_TSAN
+    #define BEMAN_FINGERTREE_TEST_UNDER_TSAN 0
+#endif
+
+#if !BEMAN_FINGERTREE_TEST_UNDER_TSAN
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wmismatched-new-delete"
 
 void* operator new(std::size_t n) {
     if (g_tracking)
@@ -97,7 +115,8 @@ void operator delete[](void* p) noexcept { std::free(p); }
 void operator delete(void* p, std::size_t) noexcept { std::free(p); }
 void operator delete[](void* p, std::size_t) noexcept { std::free(p); }
 
-#pragma GCC diagnostic pop
+    #pragma GCC diagnostic pop
+#endif // !BEMAN_FINGERTREE_TEST_UNDER_TSAN
 
 // ============================================================================
 //                        Check harness
@@ -319,6 +338,8 @@ int main() {
     bool all_pass = true;
     std::fprintf(stdout, "\nFingerTree PMR allocation probe\n");
     std::fprintf(stdout, "%-50s  %s\n", "Operation", "Global new() calls");
+    if (BEMAN_FINGERTREE_TEST_UNDER_TSAN)
+        std::fprintf(stdout, "(global new() is not counted under ThreadSanitizer; the null upstream is the check)\n");
     std::fprintf(stdout, "%s\n", std::string(70, '-').c_str());
 
     for (int i = 0; i < g_n_results; ++i) {

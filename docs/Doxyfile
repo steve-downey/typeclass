@@ -1,0 +1,72 @@
+# docs/Doxyfile                                                    -*-conf-*-
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+#
+# One Doxygen run over the three libraries. Unlisted tags keep Doxygen's
+# defaults; `doxygen -x docs/Doxyfile` prints exactly what this file changes.
+#
+# Run from the repository root (`make docs`, or the gh-pages workflow); every
+# path below is relative to it. Output lands in docs/html, which is ignored.
+#
+# The three libraries are told apart by namespace: beman::transpose,
+# beman::tree_algorithms and beman::fingertree each get their own namespace
+# page, and the per-library READMEs are related pages beside the root README,
+# which is the main page.
+
+PROJECT_NAME           = "beman.typeclass"
+PROJECT_BRIEF          = "Typeclass Based Libraries for C++"
+OUTPUT_DIRECTORY       = docs
+HTML_OUTPUT            = html
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+QUIET                  = YES
+WARN_IF_UNDOCUMENTED   = NO
+
+INPUT                  = README.md \
+                         src/beman \
+                         docs/transpose/README.md \
+                         docs/tree_algorithms/README.md \
+                         docs/fingertree/README.md
+FILE_PATTERNS          = *.hpp \
+                         *.md
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = README.md
+EXAMPLE_PATH           = examples
+EXAMPLE_RECURSIVE      = YES
+
+# src/ is the include root, so a header's displayed path is the one a user
+# writes: beman/transpose/traverse.hpp.
+FULL_PATH_NAMES        = YES
+STRIP_FROM_PATH        = src
+STRIP_FROM_INC_PATH    = src
+
+# Implementation and test-support namespaces are not documented. The detail/
+# *headers* stay in the input because some of them declare names in the public
+# namespace.
+EXCLUDE_SYMBOLS        = beman::*::detail \
+                         beman::*::detail::* \
+                         beman::*::test \
+                         beman::*::test::*
+
+# transpose's headers carry two kinds of comment: `///` and `/** */` are for
+# readers of the code and the API docs; `//!` is specgen markup that becomes
+# the paper's wording (docs/transpose/wording-pipeline.md). Doxygen would read
+# `//!` as a Qt-style doc comment and attach normative text full of unknown
+# commands to every entity, so the filter drops those lines before Doxygen
+# parses a header.
+FILTER_PATTERNS        = *.hpp=scripts/doxygen-input-filter.sh
+
+# The headers are self-contained; the clang parse would only add a build
+# dependency to a documentation job.
+CLANG_ASSISTED_PARSING = NO
+
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+JAVADOC_AUTOBRIEF      = YES
+BUILTIN_STL_SUPPORT    = YES
+SORT_MEMBER_DOCS       = NO
+TAB_SIZE               = 4
+HAVE_DOT               = NO
+
+GENERATE_TREEVIEW      = YES
+HTML_COLORSTYLE        = LIGHT
+HTML_EXTRA_STYLESHEET  = docs/doxygen-awesome.css

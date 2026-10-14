@@ -47,6 +47,15 @@ constexpr auto fold_fix(const Algebra& algebra, const FMap& fmap_fn, const Fix<F
 }
 // 6859fdfc-3e1c-4d8a-9375-521df52ff499 end
 
+// The build verbs' recursive lambdas take the child seed by value, not by
+// reference as fold_fix's take the child tree. A layer holds a complete
+// seed inline (child_slot_t<Seed> is a std::optional), so the reference
+// fmap_fn hands the lambda points into the parent frame's layer, and MSVC's
+// constant evaluator (through 19.51) cannot read through it while the
+// recursive frame is initializing its own layer: "read of an uninitialized
+// symbol" on the slot's storage. Seeds are cheap handles by design, so the
+// copy costs nothing; fold_with keeps its children by reference because a
+// projection may hand out the subtree itself.
 /** Recursive build (unfold): grow a Fix<F> tree top-down from a seed.
  *
  * Expands @p seed one layer with @p coalgebra, recursively unfolds every
@@ -58,9 +67,8 @@ constexpr auto fold_fix(const Algebra& algebra, const FMap& fmap_fn, const Fix<F
  */
 template <template <typename> class F, typename Coalgebra, typename FMap, typename Seed>
 constexpr auto unfold_fix(const Coalgebra& coalgebra, const FMap& fmap_fn, const Seed& seed) -> Fix<F> {
-    auto layer = coalgebra(seed);
-    auto expanded =
-        fmap_fn([&](const Seed& child) -> Fix<F> { return unfold_fix<F>(coalgebra, fmap_fn, child); }, layer);
+    auto layer    = coalgebra(seed);
+    auto expanded = fmap_fn([&](Seed child) -> Fix<F> { return unfold_fix<F>(coalgebra, fmap_fn, child); }, layer);
     return wrap_fix<F>(std::move(expanded));
 }
 
@@ -80,9 +88,9 @@ template <typename Result,
           typename Seed>
 constexpr auto refold(const Algebra& algebra, const Coalgebra& coalgebra, const FMap& fmap_fn, const Seed& seed)
     -> Result {
-    auto layer     = coalgebra(seed);
-    auto evaluated = fmap_fn(
-        [&](const Seed& child) -> Result { return refold<Result, F>(algebra, coalgebra, fmap_fn, child); }, layer);
+    auto layer = coalgebra(seed);
+    auto evaluated =
+        fmap_fn([&](Seed child) -> Result { return refold<Result, F>(algebra, coalgebra, fmap_fn, child); }, layer);
     return algebra(evaluated);
 }
 
@@ -142,7 +150,7 @@ constexpr auto unfold_with(const Coalgebra& coalgebra, const FMap& fmap_fn, cons
     -> Tree {
     auto layer = coalgebra(seed);
     auto expanded =
-        fmap_fn([&](const auto& child) -> Tree { return unfold_with<Tree>(coalgebra, fmap_fn, embed, child); }, layer);
+        fmap_fn([&](auto child) -> Tree { return unfold_with<Tree>(coalgebra, fmap_fn, embed, child); }, layer);
     return embed(std::move(expanded));
 }
 // d160af7b-9a3c-4593-b8f5-fc1ff0404b37 end

@@ -70,8 +70,6 @@ if ! command -v "$SPECGEN" > /dev/null 2>&1; then
     exit 1
 fi
 
-mkdir -p "$OUT_DIR"
-
 # The IR is an intermediate, not an artifact: it exists only to carry each
 # header's document from its own parse into the one render that validates
 # them against each other.
@@ -93,11 +91,17 @@ for entry in "${HEADERS[@]}"; do
     render_args+=(--from-ir "$IR_DIR/$stem.ir.json" --root "$stem.syn")
 done
 
+# Render into a fresh directory, then replace what the previous render left.
+# `--split` never deletes files, so rendering in place would keep a fragment
+# whose subclause has since gone; replacing the whole set is what makes the
+# output a function of the inputs. Run from the render directory with a
+# relative `--split` so the manifest records `<stable name>.md` rather than a
+# path particular to this machine.
+RENDER_DIR="$IR_DIR/render"
+mkdir -p "$RENDER_DIR"
 echo "gen-wording: rendering ${#HEADERS[@]} documents as one paper"
-# Run from the output directory with a relative `--split` so the manifest
-# records `<stable name>.md` rather than a path particular to this machine.
 (
-    cd "$OUT_DIR"
+    cd "$RENDER_DIR"
     "$SPECGEN" render "${render_args[@]}" \
         --backend mpark \
         --validate \
@@ -106,9 +110,30 @@ echo "gen-wording: rendering ${#HEADERS[@]} documents as one paper"
         > "$MANIFEST"
 )
 
-# A stamp the paper build can depend on. The fragments themselves must not
-# become prerequisites of the paper: the vendored MPark.WG21 Makefile passes
-# every `%.md` prerequisite to pandoc as an input file.
-date -u +%Y-%m-%dT%H:%M:%SZ > "$OUT_DIR/.stamp"
+# The generation record. The paper build cannot depend on the headers through
+# make -- a fresh checkout gives every file an arbitrary mtime -- so the
+# dependency is recorded by content: the SHA-256 of each input, by path from
+# the repository root, and of each output, by name. scripts/wording-verify.sh
+# recomputes them without specgen; `make papers` runs it first.
+(
+    cd "$REPO_ROOT"
+    inputs=(scripts/gen-wording.sh)
+    for entry in "${HEADERS[@]}"; do
+        inputs+=("src/beman/transpose/${entry%%:*}")
+    done
+    sha256sum "${inputs[@]}" > "$RENDER_DIR/transpose.inputs.sha256"
+)
+(
+    cd "$RENDER_DIR"
+    sha256sum transpose.*.md "$MANIFEST" > transpose.outputs.sha256
+    {
+        "$SPECGEN" --version 2> /dev/null || echo "specgen (version not reported)"
+        echo "clang args: ${CLANG_ARGS[*]}"
+    } > transpose.generator
+)
+
+mkdir -p "$OUT_DIR"
+find "$OUT_DIR" -maxdepth 1 -type f -name 'transpose.*' -delete
+cp "$RENDER_DIR"/transpose.* "$OUT_DIR/"
 
 echo "gen-wording: wrote $OUT_DIR"

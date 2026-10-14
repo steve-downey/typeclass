@@ -49,4 +49,15 @@ repos:
     hooks:
     - id: beman-tidy
 
+    # The checked-in P3200 wording must be what the current headers generate.
+    # Content check only; needs no specgen. See docs/transpose/wording-pipeline.md.
+  - repo: local
+    hooks:
+    - id: wording-verify
+      name: wording matches headers
+      entry: scripts/wording-verify.sh
+      language: script
+      pass_filenames: false
+      files: ^(src/beman/transpose/.*\.hpp|scripts/gen-wording\.sh|papers/wording/.*)$
+
 exclude: '^(infra/|port/|papers/wg21/)'

@@ -20,7 +20,7 @@
 # build artifacts from Makefile workflow
 /.build/
 /.install/
-/.update-submodules
+/coverage.json
 
 # uv lock file (generated, not committed)
 /uv.lock
@@ -33,13 +33,16 @@
 
 # Paper and blog builds (MPark.WG21, org export)
 /papers/generated/
-/papers/wording/.stamp
 /papers/blog/*.html
 *.deps
+/installtest/.build/
+
+# API docs (make docs, make mrdocs)
 /docs/html/
-/installtest/*/.build/
+/docs/adoc/
 
 # Emacs packages installed by .emacs.d/init.el for blog export
 /.emacs.d/eln-cache/
 /.emacs.d/elpa/
 /.emacs.d/elpa-*/
+/.emacs.d/custom.el

@@ -10,9 +10,10 @@ fragments in at build time. See [`decisions.md#wording-generation`](decisions.md
 ## The loop
 
 ```sh
-make wording        # regenerate papers/wording from the headers
-make wording-check  # fail if the checked-in fragments have drifted
-make papers         # regenerate, then build the PDF
+make wording         # regenerate papers/wording from the headers (needs specgen)
+make wording-verify  # fail if the headers or fragments changed since (no specgen)
+make wording-check   # regenerate into a scratch directory and diff (needs specgen)
+make papers          # verify, then build the PDFs
 ```
 
 `make wording` runs [`scripts/gen-wording.sh`](../../scripts/gen-wording.sh),
@@ -81,9 +82,13 @@ their instances inside generated headers are `\omit`ted.
 ## Rules for marking up a header
 
 Comment spelling is significant. `//!` and `/*! */` are specgen docblocks and
-become wording; `///` and `/** */` are Doxygen and are stripped; plain `//`
-survives as a draft comment where the corresponding source is rendered. Design
-commentary belongs in `///` so that it does not land in a rendered synopsis.
+become wording; `///` and `/** */` are API documentation and are stripped by
+specgen; plain `//` survives as a draft comment where the corresponding source
+is rendered. Design commentary belongs in `///` so that it does not land in a
+rendered synopsis. Doxygen would read `//!` as a doc comment too, so the API
+docs build filters those lines out first
+([`scripts/doxygen-input-filter.sh`](../../scripts/doxygen-input-filter.sh),
+selected by [`docs/Doxyfile`](../Doxyfile)).
 A trailing `// NOLINT(...)` on a declaration renders too, so spell those
 `/// NOLINT(...)`: clang-tidy honours the marker in any comment form.
 
@@ -184,10 +189,46 @@ that file restates the whole filter chain; transclusion runs first, so the
 `[x]{.pnum}` and `[stable.name]{- .sref}` spans inside a fragment reach
 `wg21.py` exactly as if they had been typed into the paper.
 
-The fragments must not become prerequisites of the paper: `base.mk` computes
-its pandoc inputs as `$(filter %.md, $^)` and would hand each fragment to
-pandoc as a further input file. [`papers/Makefile`](../../papers/Makefile) depends
-on `wording/.stamp` instead, which `make wording` writes.
+The fragments cannot be prerequisites of the paper directly: `base.mk`
+computes its pandoc inputs as `$(filter %.md, $^)` and would hand each
+fragment to pandoc as a further input file. [`papers/Makefile`](../../papers/Makefile)
+instead reads the `include` divs out of each paper and gives the paper a
+dependency-only file, `generated/<paper>.transcluded`, whose prerequisites are
+those fragments and the filter; the paper's outputs depend on it. Make remakes
+it exactly when a fragment is newer, so the paper is out of date exactly when
+its wording is, and nothing but make writes it.
+
+## The generation record
+
+The fragments are checked in because specgen and a Clang 22 development
+install are not everywhere the papers are built. A checked-in derived file can
+go stale in two ways: a header is edited and the wording is not regenerated,
+or a fragment is edited by hand. Make cannot see either -- a fresh checkout
+gives every file an arbitrary mtime -- so `make wording` records what it ran
+on and what it wrote, by content:
+
+- `papers/wording/transpose.inputs.sha256` -- the SHA-256 of each header the
+  wording is generated from and of `scripts/gen-wording.sh`, by path from the
+  repository root;
+- `papers/wording/transpose.outputs.sha256` -- the SHA-256 of each fragment
+  and of the manifest, by name;
+- `papers/wording/transpose.generator` -- the specgen version and Clang
+  arguments, for the record.
+
+[`scripts/wording-verify.sh`](../../scripts/wording-verify.sh) recomputes
+both digests and also reports any `transpose.*` fragment the record does not
+list. It needs nothing but `sha256sum`; `make papers` runs it first, and the
+pre-commit hook `wording-verify` runs it whenever a transpose header, the
+generator, or anything under `papers/wording` is staged. A failure names the
+cause and the fix is always the same: `make wording` on a machine with
+specgen, then commit `papers/wording`. `make wording-check` remains the full
+check for machines that have specgen: it regenerates into a scratch directory
+and diffs against what is checked in.
+
+`make wording` renders into a fresh directory and replaces the previous
+`transpose.*` set rather than writing over it: specgen's `--split` never
+deletes a file, so rendering in place would keep a fragment whose subclause
+has since gone.
 
 Building the paper prints `mpark/wg21: stable name transpose.* not found` for
 every new subclause. That is expected: the names are not in the C++ draft's

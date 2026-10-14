@@ -214,6 +214,24 @@ struct GlobalAllocGuard {
 
 } // namespace
 
+// ThreadSanitizer's runtime defines the global allocation functions itself,
+// and Clang links that runtime statically, so a translation unit that
+// replaces them does not link under TSan (transpose's all_of_allocation test
+// documents the same constraint). Under TSan the replacements are left out:
+// the counters stay at zero and the null_memory_resource upstream remains
+// the check that no allocation escapes the arena.
+#if defined(__SANITIZE_THREAD__)
+    #define BEMAN_FINGERTREE_TEST_UNDER_TSAN 1
+#elif defined(__has_feature)
+    #if __has_feature(thread_sanitizer)
+        #define BEMAN_FINGERTREE_TEST_UNDER_TSAN 1
+    #endif
+#endif
+#ifndef BEMAN_FINGERTREE_TEST_UNDER_TSAN
+    #define BEMAN_FINGERTREE_TEST_UNDER_TSAN 0
+#endif
+
+#if !BEMAN_FINGERTREE_TEST_UNDER_TSAN
 void* operator new(std::size_t n) {
     ++g_global_new_count;
     return std::malloc(n);
@@ -238,6 +256,7 @@ void operator delete[](void* p, std::size_t) noexcept {
     ++g_global_delete_count;
     std::free(p);
 }
+#endif // !BEMAN_FINGERTREE_TEST_UNDER_TSAN
 
 // An allocator-aware value type that tracks which resource it was
 // constructed with.  Uses scoped_allocator_adaptor semantics.

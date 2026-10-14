@@ -33,6 +33,8 @@
 
 #include <algorithm>
 #include <array>
+#include <cstddef>
+#include <format>
 #include <print>
 #include <string>
 #include <utility>
@@ -197,6 +199,17 @@ static_assert([] {
     return ok && flatten(t) == std::vector<int>{1, 3, 5, 8};
 }());
 
+// Spelled element by element: formatting a range directly needs the C++23
+// range formatter, which libstdc++ ships from GCC 15 and this example's
+// floor is GCC 14.
+auto join(const std::vector<int>& values) -> std::string {
+    std::string out = "[";
+    for (std::size_t i = 0; i < values.size(); ++i) {
+        out += std::format("{}{}", i == 0 ? "" : ", ", values[i]);
+    }
+    return out + "]";
+}
+
 int main() {
     // Build by insertion, in scrambled order.
     SubTree by_insertion{};
@@ -205,14 +218,14 @@ int main() {
     }
 
     auto flat = flatten(by_insertion);
-    std::println("flatten after inserts: {}", flat);
+    std::println("flatten after inserts: {}", join(flat));
     bool ok = std::ranges::is_sorted(flat) && flat == std::vector<int>{1, 2, 3, 4, 5, 6, 7, 8, 9};
 
     ok = ok && contains(by_insertion, 7) && !contains(by_insertion, 10);
 
     // Erase an inner node (2: two children) and the root (5).
     auto pruned = erase(erase(by_insertion, 2), 5);
-    std::println("flatten after erases:  {}", flatten(pruned));
+    std::println("flatten after erases:  {}", join(flatten(pruned)));
     ok = ok && flatten(pruned) == std::vector<int>{1, 3, 4, 6, 7, 8, 9};
 
     // The same sequence, built balanced by unfold_fix: different shape,
