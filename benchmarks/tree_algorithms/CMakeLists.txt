@@ -4,11 +4,14 @@
 # Benchmark targets are ordinary targets in the default build: they always
 # compile, so a change that breaks them fails loudly and immediately rather
 # than rotting until someone next runs a benchmark. They are only *measured*
-# on demand, in the Bench configuration (make bench / bench-compile). No
-# target here sets its own compile flags — anything a benchmark build needs
-# (optimization, unsanitized, raised constexpr budget) lives in the Bench
-# configuration and the base flags in the toolchain files, so every object
-# in a given build directory is compiled the same way.
+# on demand, in the Bench configuration (make bench / bench-compile).
+# Anything that shapes the measurement (optimization, sanitizers) lives in
+# the Bench configuration and the toolchain files, so every object in a
+# build directory is compiled the same way. The one flag set here is the
+# constexpr evaluation budget of the compile-time matrix: that is a property
+# of those translation units, not of a build configuration -- the largest
+# tree is built and folded at compile time and exceeds every compiler's
+# default limit -- and it changes no generated code.
 
 # ---------------------------------------------------------------------
 # Runtime microbenchmarks (Catch2 Benchmark).
@@ -76,6 +79,13 @@ foreach(_size IN LISTS BEMAN_TREE_ALGORITHMS_BENCH_CT_SIZES)
         add_executable(${_target})
         target_sources(${_target} PRIVATE "${_generated}")
         target_link_libraries(${_target} PRIVATE beman::tree_algorithms)
+        target_compile_options(
+            ${_target}
+            PRIVATE
+                $<$<CXX_COMPILER_ID:GNU>:-fconstexpr-ops-limit=1000000000>
+                $<$<CXX_COMPILER_ID:Clang,AppleClang>:-fconstexpr-steps=100000000>
+                $<$<CXX_COMPILER_ID:MSVC>:/constexpr:steps100000000>
+        )
 
         add_dependencies(bench_ct_all ${_target})
     endforeach()
