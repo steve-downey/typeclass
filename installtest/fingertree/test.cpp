@@ -13,7 +13,9 @@ int main() {
     for (int i = 0; i < 10; ++i)
         seq = seq.snoc(i);
 
-    const auto split = seq.split_at_measure(std::size_t{4});
+    // The element whose prefix measure first reaches the threshold leads
+    // d_right, so a threshold of 5 leaves four elements on the left.
+    const auto split = seq.split_at_measure(std::size_t{5});
     if (seq.measure() != 10 || split.d_left.measure() != 4 || split.d_right.measure() != 6) {
         std::cerr << "expected 10 = 4 + 6, got " << seq.measure() << " = " << split.d_left.measure() << " + "
                   << split.d_right.measure() << '\n';
