@@ -91,7 +91,8 @@
         "_debug-base"
       ],
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake",
+        "CMAKE_CXX_STANDARD": "23"
       },
       "condition": {
         "type": "equals",
@@ -107,7 +108,8 @@
         "_release-base"
       ],
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/appleclang-toolchain.cmake",
+        "CMAKE_CXX_STANDARD": "23"
       },
       "condition": {
         "type": "equals",
@@ -123,7 +125,8 @@
         "_debug-base"
       ],
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/msvc-toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/msvc-toolchain.cmake",
+        "CMAKE_CXX_STANDARD": "23"
       },
       "condition": {
         "type": "equals",
@@ -139,7 +142,8 @@
         "_release-base"
       ],
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/msvc-toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/infra/cmake/msvc-toolchain.cmake",
+        "CMAKE_CXX_STANDARD": "23"
       },
       "condition": {
         "type": "equals",
