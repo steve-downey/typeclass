@@ -1,0 +1,3 @@
+specgen 0.2.0 (git 96461d868e8851a8d8066c874dbf223b79e10d16)
+clang args: -std=c++2c
+-I/home/sdowney/src/typeclass/typeclass/src
