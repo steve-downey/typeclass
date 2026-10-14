@@ -15,8 +15,8 @@ int main() {
 
     const auto split = seq.split_at_measure(std::size_t{4});
     if (seq.measure() != 10 || split.d_left.measure() != 4 || split.d_right.measure() != 6) {
-        std::cerr << "expected 10 = 4 + 6, got " << seq.measure() << " = "
-                  << split.d_left.measure() << " + " << split.d_right.measure() << '\n';
+        std::cerr << "expected 10 = 4 + 6, got " << seq.measure() << " = " << split.d_left.measure() << " + "
+                  << split.d_right.measure() << '\n';
         return 1;
     }
     std::cout << "split: " << split.d_left.measure() << " + " << split.d_right.measure() << '\n';

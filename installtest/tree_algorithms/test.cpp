@@ -16,10 +16,9 @@ int main() {
     namespace ta = beman::tree_algorithms;
 
     // 2 + 3 * 4
-    const ta::Expr expr =
-        ta::add_node(ta::const_node(2), ta::mul_node(ta::const_node(3), ta::const_node(4)));
+    const ta::Expr expr = ta::add_node(ta::const_node(2), ta::mul_node(ta::const_node(3), ta::const_node(4)));
 
-    const int looked_up = ta::eval(expr);
+    const int looked_up     = ta::eval(expr);
     const int explicit_fmap = ta::fold_fix<int>(ta::eval_algebra, beman::transpose::fmap, expr);
 
     if (looked_up != 14 || explicit_fmap != 14) {
