@@ -19,6 +19,7 @@
 #include <print>
 #include <type_traits>
 #include <utility>
+#include <variant>
 
 #include <beman/transpose/functor.hpp>
 #include <beman/transpose/overloaded.hpp>
