@@ -22,7 +22,7 @@ QUIET                  = YES
 WARN_IF_UNDOCUMENTED   = NO
 
 INPUT                  = README.md \
-                         src/beman \
+                         include/beman \
                          docs/transpose/README.md \
                          docs/tree_algorithms/README.md \
                          docs/fingertree/README.md
@@ -33,11 +33,11 @@ USE_MDFILE_AS_MAINPAGE = README.md
 EXAMPLE_PATH           = examples
 EXAMPLE_RECURSIVE      = YES
 
-# src/ is the include root, so a header's displayed path is the one a user
+# include/ is the include root, so a header's displayed path is the one a user
 # writes: beman/transpose/traverse.hpp.
 FULL_PATH_NAMES        = YES
-STRIP_FROM_PATH        = src
-STRIP_FROM_INC_PATH    = src
+STRIP_FROM_PATH        = include
+STRIP_FROM_INC_PATH    = include
 
 # Implementation and test-support namespaces are not documented. The detail/
 # *headers* stay in the input because some of them declare names in the public

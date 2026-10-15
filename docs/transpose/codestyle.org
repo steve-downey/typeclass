@@ -23,6 +23,13 @@ example > split include/src/tests example > Lakosian package-group principles >
 other guides.
 
 When patterns disagree, the merged-src pattern wins.
+
+Within beman.typeclass the split layout governs instead. As a Beman project
+it keeps public headers under =include/beman/transpose/= and tests under
+=tests/beman/transpose/=, parallel by namespace, with =src/beman/transpose/=
+holding only the build. The merged-src precedence describes the personal
+repositories this style comes from.
+
 The result is intentionally local, coherent, and target-oriented: a component's
 interface, implementation, and tests live together under =src/=; public headers
 have one canonical include name; ordinary functions are declared before being

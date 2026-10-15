@@ -80,7 +80,7 @@ e4beac7f (fold_map lookup), 8f25579d (ExprLayerFoldMap), and
 
 ## Missing anchors (comment-only additions in include/, owned by Task 4.4)
 
-- functor.hpp: `functor_typeclass` variable-template default → article L316 (since 2026-10-12 the anchor is on beman.transpose's `functor` default in `src/beman/transpose/functor.hpp`; tree_algorithms' `functor.hpp` is gone)
+- functor.hpp: `functor_typeclass` variable-template default → article L316 (since 2026-10-12 the anchor is on beman.transpose's `functor` default in `include/beman/transpose/functor.hpp`; tree_algorithms' `functor.hpp` is gone)
 - recursion_schemes.hpp: `fold_fix` explicit-fmap overload → article L448
 - recursion_schemes_lookup.hpp: `layer_fmap` → L511; `fold_fix` → L523; `unfold_fix` → L604; `refold` → L660
 - papers/D4322R0 synopsis is hand-mirrored (see its HTML comment) against the verb-signature anchors above; re-diff on any signature change.

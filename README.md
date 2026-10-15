@@ -35,7 +35,9 @@ Published blog posts were pinned to tags in those repositories; the tags are car
 ## Layout
 
 ```txt
-src/beman/<library>/    headers, tests and CMake for each library, side by side
+include/beman/<library>/ each library's public headers
+tests/beman/<library>/   each library's tests, in parallel with its headers
+src/beman/<library>/     each library's CMake and, for module builds, its interface unit
 examples/<library>/     runnable examples, several transcluded into papers and posts
 benchmarks/<library>/   benchmarks (tree_algorithms)
 papers/                 every paper, built by the vendored MPark.WG21 in papers/wg21/
@@ -44,7 +46,7 @@ docs/<library>/         design notes and decision logs for each library
 docs/coordination/      cross-library status, the coordination ledger, and the essay
 ```
 
-`src/` is the single include root: headers are included by their canonical names, `<beman/transpose/traverse.hpp>`, as they will be once installed.
+`include/` is the single include root: headers are included by their canonical names, `<beman/transpose/traverse.hpp>`, as they will be once installed.
 
 ## License
 

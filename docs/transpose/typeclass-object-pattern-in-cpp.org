@@ -53,7 +53,7 @@ The version in this codebase generalizes it in three ways: the operations are fu
 
 Here is the equivalent shape for Foldable:
 
-From [[file:../../src/beman/transpose/fold.hpp][=include/beman/transpose/fold.hpp=]]:
+From [[file:../../include/beman/transpose/fold.hpp][=include/beman/transpose/fold.hpp=]]:
 
 #+begin_src cpp
 template <class T>
@@ -90,7 +90,7 @@ I will use it to walk through the three layers.
 The Impl struct provides the primitive operation.
 Here is the Functor Impl for [[https://en.cppreference.com/w/cpp/utility/optional][=std::optional=]]:
 
-From [[file:../../src/beman/transpose/functor.hpp][=include/beman/transpose/functor.hpp=]]:
+From [[file:../../include/beman/transpose/functor.hpp][=include/beman/transpose/functor.hpp=]]:
 
 #+begin_src cpp
 template <class VALUE_TYPE>
@@ -116,7 +116,7 @@ It preserves value category and constness without boilerplate overload sets.
 The CRTP base provides derived operations.
 ~derive_functor<Impl>~ inherits from the Impl and adds ~replace~, defined in terms of ~fmap~:
 
-From [[file:../../src/beman/transpose/functor.hpp][=include/beman/transpose/functor.hpp=]]:
+From [[file:../../include/beman/transpose/functor.hpp][=include/beman/transpose/functor.hpp=]]:
 
 #+begin_src cpp
 template <class Impl>
@@ -319,7 +319,7 @@ The CRTP base asks the Impl which primitive it supplies and derives the other fr
 
 The default Foldable for ~Sequence~ uses ~fold_map~ as primitive:
 
-From [[file:../../src/beman/transpose/test_support.hpp][=tests/beman/transpose/test_support.hpp=]]:
+From [[file:../../tests/beman/transpose/test_support.hpp][=tests/beman/transpose/test_support.hpp=]]:
 
 #+begin_src cpp
 template <class VALUE_TYPE>
@@ -350,7 +350,7 @@ The monoid is an argument: ~fold_map~ never names one, so the same instance sums
 An alternate Impl can use ~fold_right~ as primitive instead.
 The CRTP base ~derive_foldable<Impl>~ sees which basis the Impl supplies and derives ~fold_map~ from ~fold_right~ automatically.
 
-From [[file:../../src/beman/transpose/fold.test.cpp][=tests/beman/transpose/fold.test.cpp=]]:
+From [[file:../../tests/beman/transpose/fold.test.cpp][=tests/beman/transpose/fold.test.cpp=]]:
 
 #+begin_src cpp
 struct FoldRightOnlyImpl {

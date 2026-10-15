@@ -15,15 +15,15 @@ these repos.
 
 transpose, tree_algorithms and fingertree were separate repositories until
 2026-10-12; they now live together in beman.typeclass (this repository),
-under `src/beman/<lib>/`, `docs/<lib>/`, `examples/<lib>/`, with every paper
+under `include/beman/<lib>/` (tests in `tests/beman/<lib>/`), `docs/<lib>/`, `examples/<lib>/`, with every paper
 in `papers/`. Their old repositories are retired. fixpoint and trees remain
 separate checkouts.
 
 | Where | Role | Authoritative documents |
 |------|------|------------------------|
-| `src/beman/tree_algorithms/` | **Paper D** — recursive tree algorithms: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters across representations | `docs/tree_algorithms/DECISIONS.md` (frozen), `papers/algorithms-for-trees.md`, `docs/tree_algorithms/notes/extraction-plan.md`, `docs/tree_algorithms/notes/punch-list.md`, `docs/tree_algorithms/notes/anchor-inventory.md` |
-| `src/beman/transpose/` | **Paper A / P3200 (D3200R0)** — traversal, transposition, bundled customization. Owns the mechanism: typeclass-object lookup, Functor/Foldable/Applicative/Traversable/Monad bases, `traverse`/`transpose`/`invoke`, `Monoid` | `papers/D3200R0.md`, `docs/transpose/decisions.md`, `docs/transpose/provenance.md`, `docs/transpose/typeclass-object-pattern.md` |
-| `src/beman/fingertree/` | **Paper C / D4325R0** — persistent measured sequence. Owns the container, measures, allocator/PMR story | `docs/fingertree/allocator-design.md`, `docs/fingertree/compile-time-design.md`, `docs/fingertree/measure-based-splitting.md` |
+| `include/beman/tree_algorithms/` | **Paper D** — recursive tree algorithms: `fold_fix`/`unfold_fix`/`refold`, `Fix`/`Box` as exposition, adapters across representations | `docs/tree_algorithms/DECISIONS.md` (frozen), `papers/algorithms-for-trees.md`, `docs/tree_algorithms/notes/extraction-plan.md`, `docs/tree_algorithms/notes/punch-list.md`, `docs/tree_algorithms/notes/anchor-inventory.md` |
+| `include/beman/transpose/` | **Paper A / P3200 (D3200R0)** — traversal, transposition, bundled customization. Owns the mechanism: typeclass-object lookup, Functor/Foldable/Applicative/Traversable/Monad bases, `traverse`/`transpose`/`invoke`, `Monoid` | `papers/D3200R0.md`, `docs/transpose/decisions.md`, `docs/transpose/provenance.md`, `docs/transpose/typeclass-object-pattern.md` |
+| `include/beman/fingertree/` | **Paper C / D4325R0** — persistent measured sequence. Owns the container, measures, allocator/PMR story | `docs/fingertree/allocator-design.md`, `docs/fingertree/compile-time-design.md`, `docs/fingertree/measure-based-splitting.md` |
 | `~/src/fixpoint/main` | **Evidence only, never proposed** — full recursion-scheme catalog (para/apo/zygo/histo/futu/…, distributive laws, gcata/gana/ghylo) proving the three verbs are the stable primitive layer | `docs/recursion-schemes-design.md` (D1–D11), `ops/DEVIATIONS.md` (DEV-01..04), `ops/PLAN.md` |
 | `~/src/trees/main` | **Origin/pedagogy** — CppNow26 talk, source of all extractions. Extraction is ONE-WAY; extracted repos diverge deliberately and do not backport | `docs/notes/standardization-inverted-triangle-plan.md` (three-paper strategy), `foldable-applicative-traversable.org`, `CLAUDE.md` |
 

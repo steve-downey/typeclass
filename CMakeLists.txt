@@ -96,6 +96,10 @@ endif()
 
 add_subdirectory(src/beman)
 
+if(BEMAN_TYPECLASS_BUILD_TESTS)
+    add_subdirectory(tests/beman)
+endif()
+
 configure_build_telemetry()
 
 if(BEMAN_TYPECLASS_BUILD_EXAMPLES)

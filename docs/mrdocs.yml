@@ -9,14 +9,11 @@
 ---
 source-root: ..
 input:
-  - ../src/beman
+  - ../include/beman
 includes:
-  - ../src
+  - ../include
 file-patterns:
   - '*.hpp'
-exclude-patterns:
-  - '../src/beman/**/*.test.cpp'
-  - '../src/beman/**/*.cppm'
 include-symbols:
   - 'beman::transpose::**'
   - 'beman::tree_algorithms::**'

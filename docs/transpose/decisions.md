@@ -1724,7 +1724,7 @@ consequence as one equation in its generated `docs/probe-harness.md`. This
 repository discharges that list in ONE translation unit,
 `tests/beman/transpose/probe_harness.test.cpp`, one `TEST_CASE` per
 equation, named `probe-harness: <Module>.<theorem>` after the Lean theorem
-it checks, with a second translation unit (`probe_harness_cross_tu.cpp`)
+it checks, with a second translation unit (`probe_harness_cross_tu.test.cpp`)
 for the one claim a `static_assert` cannot make — that two TUs spelling an
 `error_set` pack in different orders agree on the type. The file is a test
 deliverable in the sense of `tests/beman/transpose/laws.hpp`: checked by
