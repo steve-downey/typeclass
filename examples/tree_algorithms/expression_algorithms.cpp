@@ -10,16 +10,22 @@
 // EXAMPLE-LOCAL: defined in this translation unit, built on the public
 // fold_fix verb, and not part of the library surface.
 
-#include <beman/tree_algorithms/expression.hpp>
-#include <beman/transpose/overloaded.hpp>
-#include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
-
+// Standard headers precede the library's own: under the module build the
+// library headers are imports, and gcc and msvc cannot include a standard
+// header after an import.
 #include <cstddef>
 #include <functional>
 #include <optional>
 #include <print>
 #include <type_traits>
 #include <utility>
+#include <variant>
+
+#include <beman/transpose/functor.hpp>
+#include <beman/transpose/overloaded.hpp>
+
+#include <beman/tree_algorithms/expression.hpp>
+#include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
 namespace example {
 

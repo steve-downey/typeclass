@@ -22,14 +22,18 @@
 // this functor's materialized layers are allocation-free too and the
 // comparison stays purely about the knot.
 
-#include <beman/tree_algorithms/fix.hpp>
-#include <beman/transpose/functor.hpp>
-
+// Standard headers precede the library's own: under the module build the
+// library headers are imports, and gcc and msvc cannot include a standard
+// header after an import.
 #include <functional>
 #include <memory>
 #include <optional>
 #include <type_traits>
 #include <utility>
+
+#include <beman/transpose/functor.hpp>
+
+#include <beman/tree_algorithms/fix.hpp>
 
 namespace bench {
 

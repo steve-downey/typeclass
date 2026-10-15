@@ -19,11 +19,14 @@
 // across the generated TUs is meant to show a straight line, tracking
 // the control, not a template-instantiation blow-up.
 
-#include <beman/tree_algorithms/binary_tree.hpp>
-
+// Standard headers precede the library's own: under the module build the
+// library headers are imports, and gcc and msvc cannot include a standard
+// header after an import.
 #include <cstddef>
 #include <cstdint>
 #include <utility>
+
+#include <beman/tree_algorithms/binary_tree.hpp>
 
 namespace {
 

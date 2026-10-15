@@ -49,20 +49,24 @@
 // should match it, and both should sit on "hand recursion (Fix<Box>
 // tree)", the floor for this tree layout.
 
-#include <beman/tree_algorithms/binary_tree.hpp>
+// Standard headers precede the library's own: under the module build the
+// library headers are imports, and gcc and msvc cannot include a standard
+// header after an import.
+#include <catch2/benchmark/catch_benchmark.hpp>
+#include <catch2/catch_test_macros.hpp>
+
+#include <cstdint>
+#include <functional>
+#include <memory>
+#include <optional>
+#include <type_traits>
+#include <utility>
 
 #include "fix_unique_tree.hpp"
 #include "inline_layer.hpp"
 #include "naive_trees.hpp"
 
-#include <catch2/benchmark/catch_benchmark.hpp>
-#include <catch2/catch_test_macros.hpp>
-
-#include <cstdint>
-#include <memory>
-#include <optional>
-#include <type_traits>
-#include <utility>
+#include <beman/tree_algorithms/binary_tree.hpp>
 
 using beman::tree_algorithms::BinaryTree;
 using beman::tree_algorithms::BinaryTreeF;

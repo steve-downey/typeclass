@@ -1,5 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+// Standard and framework headers precede the library's own: under the module
+// build the library headers are imports, and gcc and msvc cannot include a
+// standard header after an import.
+#include <catch2/catch_test_macros.hpp>
+
+#include <functional>
+#include <string>
+#include <utility>
+#include <variant>
+
+#include <beman/transpose/functor.hpp>
+#include <beman/transpose/overloaded.hpp>
+
 #include <beman/tree_algorithms/fold_map.hpp>
 #include <beman/tree_algorithms/fold_map.hpp> // Re-inclusion: verifies include guard
 
@@ -8,14 +21,6 @@
 #include <beman/tree_algorithms/expression.hpp>
 #include <beman/tree_algorithms/fold_map_lookup.hpp>
 #include <beman/tree_algorithms/fringe_tree.hpp>
-#include <beman/transpose/overloaded.hpp>
-
-#include <catch2/catch_test_macros.hpp>
-
-#include <functional>
-#include <string>
-#include <utility>
-#include <variant>
 
 using beman::transpose::has_instance_v;
 using beman::transpose::overloaded;

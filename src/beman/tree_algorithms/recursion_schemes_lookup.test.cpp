@@ -1,11 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
-#include <beman/tree_algorithms/recursion_schemes_lookup.hpp> // Re-inclusion: verifies include guard
-
-#include <beman/tree_algorithms/box.hpp>
-#include <beman/transpose/overloaded.hpp>
-
+// Standard and framework headers precede the library's own: under the module
+// build the library headers are imports, and gcc and msvc cannot include a
+// standard header after an import.
 #include <catch2/catch_test_macros.hpp>
 
 #include <functional>
@@ -13,6 +10,14 @@
 #include <type_traits>
 #include <utility>
 #include <variant>
+
+#include <beman/transpose/functor.hpp>
+#include <beman/transpose/overloaded.hpp>
+
+#include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
+#include <beman/tree_algorithms/recursion_schemes_lookup.hpp> // Re-inclusion: verifies include guard
+
+#include <beman/tree_algorithms/box.hpp>
 
 using beman::transpose::derive_functor;
 using beman::transpose::functor;

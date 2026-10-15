@@ -136,7 +136,7 @@ Found and fixed on the way, each its own commit:
 
 Left open:
 - **P3200 text for `overloaded`**: the section motivating it for algebras, its design and the catch-all as a diagnostic, P0051 as prior art, and wording. Paper D's examples should then say they use P3200's `overloaded`. Neither is written.
-- **Module-build tests**: the module unit builds, but tests and examples built against it include standard headers after `import`, which gcc 15 and 16 reject. Predates this work.
+- **Module-build tests**: the module unit builds, but tests and examples built against it include standard headers after `import`, which gcc 15 and 16 reject. Predates this work. Closed on 2026-10-14: the tests, examples and benchmarks now include the test framework's, the standard and beman.transpose's headers before the library's own, which are imports under the module build; whether the module build is required, advisory or waived stays with [module-build-status](review/2026-10-13-reunification/REVIEW.md).
 - **`fold_left`/`fold_right` derived through `fold_map`** compose `std::function`, so they are not constant-evaluable; see the log of [derived-op-constant-evaluation](../transpose/decisions.md#derived-op-constant-evaluation).
 - **`examples/tree_algorithms/fixpoint_tree_example.cpp`** defines its own `overloaded`, and `expression_algorithms.cpp` its own `example_*_typeclass` lookups. Both are self-contained teaching examples and were left alone.
 - **gcc 14**: `examples/tree_algorithms/search_tree_on_fix.cpp` formats a `std::vector` with `std::format`, which libstdc++ 14 cannot; every test passes there. Predates this work.
