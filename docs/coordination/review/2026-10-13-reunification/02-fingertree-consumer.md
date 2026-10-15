@@ -185,16 +185,16 @@ Smaller hygiene before drafting: the Doxygen `@tparam Tree` comments say "Defaul
 
 ## Appendix: file:line index of the load-bearing evidence
 
-- Instance keying and rationale: `src/beman/fingertree/tree/finger_tree.hpp:43-54, 291-300, 338-348, 959-960`
+- Instance keying and rationale: `include/beman/fingertree/tree/finger_tree.hpp:43-54, 291-300, 338-348, 959-960`
 - `append` rebuild under `MONOID{}`: `finger_tree.hpp:1183-1189` vs correct sites `:916, :931, :947`
 - `reversed()` and dual: `finger_tree.hpp:1241-1260`; O(N) consequences `finger_tree_iterator.hpp:414-432`
-- Traversable rebuild to default tree: `src/beman/fingertree/tree/finger_tree_traversable.hpp:14-26, 42-62, 77-80`
-- Foldable Impl: `src/beman/fingertree/tree/finger_tree_foldable.hpp:18-52`
-- Wrapper-local monoids: `src/beman/fingertree/tree/finger_tree_priority_queue.hpp:207-258`
-- transpose monoid vocabulary: `src/beman/transpose/monoid.hpp:20-67, 117-153, 174-187, 195-230`
-- Foldable base and `std::function` fold programs: `src/beman/transpose/fold.hpp:25-69, 143-155, 182-250, 283-355`
-- Consuming traversal (persistent-structure accommodation): `src/beman/transpose/traverse.hpp:33-69, 116-117`; `papers/D3200R0.md:215-240`
+- Traversable rebuild to default tree: `include/beman/fingertree/tree/finger_tree_traversable.hpp:14-26, 42-62, 77-80`
+- Foldable Impl: `include/beman/fingertree/tree/finger_tree_foldable.hpp:18-52`
+- Wrapper-local monoids: `include/beman/fingertree/tree/finger_tree_priority_queue.hpp:207-258`
+- transpose monoid vocabulary: `include/beman/transpose/monoid.hpp:20-67, 117-153, 174-187, 195-230`
+- Foldable base and `std::function` fold programs: `include/beman/transpose/fold.hpp:25-69, 143-155, 182-250, 283-355`
+- Consuming traversal (persistent-structure accommodation): `include/beman/transpose/traverse.hpp:33-69, 116-117`; `papers/D3200R0.md:215-240`
 - Rulings: `docs/transpose/decisions.md:2964-3172` (monoid-selection, fingertree bullets at :3023-3041, consequences :3044-3056), `:3174-3206` (registered-instance-state), `:3445-3471` (derived-op-constant-evaluation)
 - Merge adaptation: `docs/coordination/machinery-deduplication.md:9-19, 54-71, 158-166`; commits `af05316`, `046bcc9`, `bc9d892`
-- Tests: `src/beman/fingertree/finger_tree.test.cpp:20-57, 616-660, 716-760`; `finger_tree_foldable.test.cpp:62-80`; `finger_tree_traversable.test.cpp:13-51`
+- Tests: `tests/beman/fingertree/finger_tree.test.cpp:20-57, 616-660, 716-760`; `finger_tree_foldable.test.cpp:62-80`; `finger_tree_traversable.test.cpp:13-51`
 - Paper C status: `README.md:22`; `docs/fingertree/README.md:15-30, 49-59`; `docs/coordination/STATUS.md:523-528`; essay `docs/coordination/essay/trees-and-transposition-for-29.md:115`; skill `.claude/skills/tree-proposals-coherence/SKILL.md` ("Paper numbers in flux")

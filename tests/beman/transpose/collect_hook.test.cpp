@@ -1,9 +1,10 @@
 // tests/beman/transpose/collect_hook.test.cpp                        -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-// The Traversable side of docs/decisions.md#runtime-arity-composition: the
-// vector traversal prefers an applicative object's native `collect` and
-// derives against `pure`/`invoke` otherwise.
+// The Traversable side of
+// docs/transpose/decisions.md#runtime-arity-composition: the vector traversal
+// prefers an applicative object's native `collect` and derives against
+// `pure`/`invoke` otherwise.
 //
 // Everything here is generic. No sender, no execution dependency, nothing
 // that needs BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE -- which is the point:
@@ -111,8 +112,8 @@ struct CollectingApplicativeMap
 /// A context that its own object's `pure` does not produce. `pure` returns a
 /// `boxed`; composition returns a `labelled`. That is the shape the P2300
 /// applicative object has and the reason
-/// docs/decisions.md#collect-hook part 2 exists -- one object serves every
-/// context, so `pure` returns a type of its own choosing.
+/// docs/transpose/decisions.md#collect-hook part 2 exists -- one object serves
+/// every context, so `pure` returns a type of its own choosing.
 ///
 /// Spelled here, generically, rather than only over senders: the concept it
 /// exercises lives in `include/` and the sender tests are behind an
@@ -173,10 +174,10 @@ struct CollectingWideningApplicativeMap
 
 // -- deliverable 3: `collect` is optional in `applicative_object` ---------
 //
-// docs/decisions.md#collect-hook. Both objects above conform over the same
-// context, and they differ only in whether they supply `collect`. An object
-// that has it is not thereby a different kind of thing, and an object that
-// lacks it -- every instance this library registers -- is not thereby
+// docs/transpose/decisions.md#collect-hook. Both objects above conform over the
+// same context, and they differ only in whether they supply `collect`. An
+// object that has it is not thereby a different kind of thing, and an object
+// that lacks it -- every instance this library registers -- is not thereby
 // deficient.
 
 static_assert(bt::applicative_object<FoldingApplicativeMap, boxed<int>>);
@@ -276,7 +277,8 @@ TEST_CASE("collect hook: registered instances are unchanged by it") {
     REQUIRE_FALSE(bt::transpose(with_gap).has_value());
 }
 
-// -- docs/decisions.md#collect-hook part 2, ruled 2026-09-19 --------------
+// -- docs/transpose/decisions.md#collect-hook part 2, ruled 2026-09-19
+// --------------
 //
 // `applicative_object_for`, the policy concept the free `traverse` carries,
 // asks for whichever composition the traversal will perform: `pure` returning

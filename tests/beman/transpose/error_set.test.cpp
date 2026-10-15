@@ -242,8 +242,8 @@ TEST_CASE("error_set: laws hold in a consteval context") {
 }
 
 // =========================================================================
-// Value-level amendment (docs/decisions.md#accumulation-evidence): a value
-// is a non-empty WITNESSED SUBSET, not a one-of union. The tests above
+// Value-level amendment (docs/transpose/decisions.md#accumulation-evidence): a
+// value is a non-empty WITNESSED SUBSET, not a one-of union. The tests above
 // already cover the singleton case -- every one of them holds exactly one
 // witness, which is the short-circuit special case of the general
 // invariant. These tests exercise the general case: more than one witness
@@ -378,12 +378,12 @@ consteval auto count_after_combining_same_type() -> std::size_t {
 static_assert(count_after_combining_same_type() == 1);
 
 // =========================================================================
-// recover (docs/transpose-grading-plan.md#recover-narrowing): narrows the
-// grade by set difference. HANDLED is ANNOTATED (explicit template
+// recover (docs/transpose/transpose-grading-plan.md#recover-narrowing): narrows
+// the grade by set difference. HANDLED is ANNOTATED (explicit template
 // arguments) and CHECKED (membership, and the handler's result shape) --
-// docs/decisions.md#recover-grade-inference. Elimination is a static fold
-// over HANDLED with runtime presence filtering, built from the existing
-// public API only -- docs/decisions.md#multi-witness-elimination.
+// docs/transpose/decisions.md#recover-grade-inference. Elimination is a static
+// fold over HANDLED with runtime presence filtering, built from the existing
+// public API only -- docs/transpose/decisions.md#multi-witness-elimination.
 // =========================================================================
 
 using exp_ab = std::expected<int, set_ab>;
@@ -400,8 +400,8 @@ static_assert(
                    exp_b>);
 
 // Handling every member of the grade collapses to the bare value: ∅ is bare
-// T, per docs/decisions.md#empty-grade-spelling, and rebind_grade already
-// mechanizes that collapse.
+// T, per docs/transpose/decisions.md#empty-grade-spelling, and rebind_grade
+// already mechanizes that collapse.
 static_assert(std::is_same_v<decltype(bt::recover<err_alpha, err_beta>(
                                  std::declval<const exp_ab &>(),
                                  [](const auto &e) { return e.value; })),
@@ -467,8 +467,8 @@ TEST_CASE("recover: handling every member of the grade collapses to the "
 }
 
 // -- The multi-witness case: "set-difference at the value level" ----------
-// docs/decisions.md#accumulation-evidence, in the section's own words:
-// "recovering type A from a value that raised {a,b} ... the handler
+// docs/transpose/decisions.md#accumulation-evidence, in the section's own
+// words: "recovering type A from a value that raised {a,b} ... the handler
 // consumes the A witness, {b} remains an error, empty means success."
 
 TEST_CASE("recover: a multi-witness value keeps the unhandled witness as a "
@@ -533,14 +533,15 @@ TEST_CASE("recover: a handler that succeeds still narrows, and drops the "
     REQUIRE(*result == 5);
 }
 
-// -- Negative controls, per docs/decisions.md#recover-grade-inference's
-// CHECKED half. Both static_asserts below were hand-verified to fire:
-// inverted (recover<err_gamma> against set_ab; a handler returning `double`
-// instead of `int`/`std::expected<int,...>`), the build failed with the
-// static_assert's own message naming the reason, then restored. A
-// permanently-failing translation unit cannot live in this suite, so the
-// verification is documented rather than encoded, matching the precedent in
-// accumulating_object.test.cpp for the accumulating object's refused bind.
+// -- Negative controls, per
+// docs/transpose/decisions.md#recover-grade-inference's CHECKED half. Both
+// static_asserts below were hand-verified to fire: inverted (recover<err_gamma>
+// against set_ab; a handler returning `double` instead of
+// `int`/`std::expected<int,...>`), the build failed with the static_assert's
+// own message naming the reason, then restored. A permanently-failing
+// translation unit cannot live in this suite, so the verification is documented
+// rather than encoded, matching the precedent in accumulating_object.test.cpp
+// for the accumulating object's refused bind.
 //
 //   bt::recover<err_gamma>(std::declval<const exp_ab &>(), recover_to_int);
 //     -- fails: "recover's HANDLED types must be members of the

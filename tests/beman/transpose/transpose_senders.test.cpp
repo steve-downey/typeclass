@@ -14,10 +14,11 @@
 // `transpose` carries `applicative_object`, which says nothing about what
 // `pure` returns. The free `traverse` carries `applicative_object_for`,
 // which asks for the pairwise composition's requirement OR for `collect` --
-// disjoined by Steve's ruling of 2026-09-19, docs/decisions.md#collect-hook
-// part 2. The underlying fact that ruling was made against is unchanged and
-// still pinned, here and in p2300.test.cpp: `pure` is always `just`, so the
-// first alternative holds for one sender shape only.
+// disjoined by Steve's ruling of 2026-09-19,
+// docs/transpose/decisions.md#collect-hook part 2. The underlying fact that
+// ruling was made against is unchanged and still pinned, here and in
+// p2300.test.cpp: `pure` is always `just`, so the first alternative holds for
+// one sender shape only.
 
 #include "p2300_adapter.hpp"
 
@@ -195,8 +196,8 @@ static_assert(std::is_same_v<decltype(bt::transpose(
                              all_of_sender<adapted_sender>>);
 
 // Nothing about the result type is erased: it is spelled from the element
-// sender, which is docs/decisions.md#erasure-boundary's own test applied at
-// the front door rather than at `all_of`.
+// sender, which is docs/transpose/decisions.md#erasure-boundary's own test
+// applied at the front door rather than at `all_of`.
 static_assert(!std::is_polymorphic_v<all_of_sender<adapted_sender>>);
 
 // And the transposed sender sends the structure, not a wrapper of it.
@@ -338,9 +339,10 @@ TEST_CASE("transpose: a transposed structure composes again") {
 
 // -- the free `traverse` reaches the same shapes the front door does -----
 //
-// docs/decisions.md#collect-hook part 2, ruled by Steve on 2026-09-19.
-// `applicative_object_for`, the policy concept `traverse` carries, asks for
-// whichever composition the traversal will actually perform: `pure(element)
+// docs/transpose/decisions.md#collect-hook part 2, ruled by Steve on
+// 2026-09-19. `applicative_object_for`, the policy concept `traverse` carries,
+// asks for whichever composition the traversal will actually perform:
+// `pure(element)
 // -> same_as<CONTEXT>` for the pairwise fold, OR `collect` for the one-shot
 // composition that is preferred over it. One object serves every sender type
 // and its `pure` is always `just`, so the first alternative holds only where

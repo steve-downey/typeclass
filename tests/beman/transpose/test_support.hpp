@@ -50,7 +50,7 @@ concept has_apply_form =
  * parameter here prevents -- is a second copy of the four equations written
  * in sender vocabulary, which would be a suite that can drift from the one
  * `optional` is checked against. See
- * docs/transpose-execution-plan.md#sender-registration deliverable 3.
+ * docs/transpose/transpose-execution-plan.md#sender-registration deliverable 3.
  *
  * An observer is called with an rvalue, so it may consume what it is given;
  * the helpers copy where they must to supply one.

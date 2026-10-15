@@ -74,7 +74,7 @@ Unblocked: [fingertree-public-names](#fingertree-public-names) is decided (no al
 
 `overloaded` moves into transpose and P3200 proposes it ([overloaded-home](#overloaded-home)); both copies go.
 
-- `src/beman/transpose/overloaded.hpp` and `overloaded.test.cpp`, in `beman::transpose`, from tree_algorithms' copy and tests, without the module guard (transpose has no module unit), with transpose's prolog, guard and clang-format style. Add it to transpose's header file set.
+- `include/beman/transpose/overloaded.hpp` and `overloaded.test.cpp`, in `beman::transpose`, from tree_algorithms' copy and tests, without the module guard (transpose has no module unit), with transpose's prolog, guard and clang-format style. Add it to transpose's header file set.
 - Delete `fingertree/fixpoint/overloaded.hpp` and `tree_algorithms/overloaded.hpp`. Point `finger_tree.hpp`, `finger_tree_iterator.hpp` and tree_algorithms' headers, tests and examples at `<beman/transpose/overloaded.hpp>`.
 - tree_algorithms' uses are in the lookup-tier example trees (`expression`, `fringe_tree`, `functors`), never the explicit tier, so [explicit-tier-isolation](#explicit-tier-isolation) still holds. Check that when the test lands.
 - The module build needs the same global-module-fragment include as stage 5's `functor.hpp`.

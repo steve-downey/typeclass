@@ -1,6 +1,6 @@
 # Engineering Reality — publication-ready drafts (plan Task 4.3)
 
-Distilled from `fixpoint/main/src/smd/fixpoint/replacing_vist.md` lines 52–59 ("The Engineering Reality of the Abstraction"), per `docs/notes/article-reconciliation-memo.md` §4 and `docs/DECISIONS.md` Decisions 2 and 6.
+Distilled from `fixpoint/main/src/smd/fixpoint/replacing_vist.md` lines 52–59 ("The Engineering Reality of the Abstraction"), per `docs/tree_algorithms/notes/article-reconciliation-memo.md` §4 and `docs/tree_algorithms/DECISIONS.md` Decisions 2 and 6.
 Lines 1–49 of the source essay are discarded as a stale duplicate; its code excerpts (deprecated `cata`, wrong call shapes) are not authoritative (DECISIONS.md, "Decision 4 citation" notes, lines 129–131).
 
 Required edits applied:

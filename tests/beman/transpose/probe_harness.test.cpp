@@ -731,9 +731,9 @@ TEST_CASE("probe-harness: Accum.ap_comp") {
 // The model's accumulating carrier holds a LIST of errors in source order
 // and projects to the short-circuiting carrier by its head. This object
 // stores one witness PER KIND, left-biased, in canonical type order
-// (docs/decisions.md#accumulation-evidence), so which kind failed first is
-// not recorded and no projection from the accumulated value recovers the
-// short-circuit result -- `Kinds.noFirstError` proves that in the model.
+// (docs/transpose/decisions.md#accumulation-evidence), so which kind failed
+// first is not recorded and no projection from the accumulated value recovers
+// the short-circuit result -- `Kinds.noFirstError` proves that in the model.
 // What the model states about the carrier this library actually has is
 // the per-kind set `Accum.Kinds`, and the four cases below are named for
 // its theorems: which kinds a traversal's evidence holds, that widening
@@ -1342,8 +1342,8 @@ using bare_fn = int (*)(int);
 //     traverse(fromEmpty compose f, xs) == fromEmpty(transform(xs, f))
 //
 // FINDING: neither equation has a left side here. At the empty grade the
-// carrier is bare T (docs/decisions.md#empty-grade-spelling), and bare T
-// is not a context, so a function returning `int` cannot be traversed.
+// carrier is bare T (docs/transpose/decisions.md#empty-grade-spelling), and
+// bare T is not a context, so a function returning `int` cannot be traversed.
 // The explicit uniform form `expected<T, error_set<>>` is a graded
 // context, but re-indexing it at its own grade yields bare T, so it
 // cannot satisfy `applicative_object`'s subsumption requirement and

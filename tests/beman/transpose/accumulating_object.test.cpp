@@ -2,18 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // Stage accumulating-object
-// (docs/transpose-grading-plan.md#accumulating-object).
+// (docs/transpose/transpose-grading-plan.md#accumulating-object).
 //
 // The claim under test: a SECOND NTTP-pinned applicative object over the same
 // carrier and grade algebra as the short-circuit one
-// (docs/decisions.md#applicative-objects), which COLLECTS every failing
-// operand's witness at the joined grade rather than stopping at the first
-// (docs/decisions.md#accumulation-evidence). Three things distinguish it from
-// the short-circuit object, and each gets its own test group below:
+// (docs/transpose/decisions.md#applicative-objects), which COLLECTS every
+// failing operand's witness at the joined grade rather than stopping at the
+// first (docs/transpose/decisions.md#accumulation-evidence). Three things
+// distinguish it from the short-circuit object, and each gets its own test
+// group below:
 //
 //   1. It exists as a distinct object, reachable via
 //      `accumulating_applicative<Context>` and as the explicit
-//      `traverse` policy (docs/decisions.md#traverse-policy-surface).
+//      `traverse` policy (docs/transpose/decisions.md#traverse-policy-surface).
 //   2. Where short-circuit keeps only the FIRST failure's witness, it unions
 //      witnesses of DISTINCT types from every failing operand, examined in
 //      the normative left-to-right order.
@@ -119,8 +120,8 @@ TEST_CASE("accumulating-object: the short-circuit object keeps only the "
 // =========================================================================
 // 2. Left-to-right order and left-biased combining: same-type collisions
 //    keep the LEFTMOST witness, which is what makes combining deterministic
-//    (docs/decisions.md#accumulation-evidence,
-//    docs/decisions.md#applicative-objects).
+//    (docs/transpose/decisions.md#accumulation-evidence,
+//    docs/transpose/decisions.md#applicative-objects).
 // =========================================================================
 
 TEST_CASE("accumulating-object: two failures of the SAME type keep the "
@@ -152,7 +153,7 @@ TEST_CASE("accumulating-object: order-observing probe over three operands") {
 
 // =========================================================================
 // 3. traverse with the accumulating object as the trailing policy
-//    (docs/decisions.md#traverse-policy-surface). This is the stage's
+//    (docs/transpose/decisions.md#traverse-policy-surface). This is the stage's
 //    front-door acceptance case: a single vector, one per-element function,
 //    different elements raising different members of the SAME declared
 //    grade.
@@ -254,13 +255,13 @@ TEST_CASE("accumulating-object: a non-applicative third argument is "
 // static_assert message on accumulating_expected_applicative_map::bind
 // (expected.hpp) naming the value-flow reason -- "sequencing needs a value
 // from the first computation ... there is none when that computation
-// failed" -- then removed. See docs/decisions.md#applicative-objects.
+// failed" -- then removed. See docs/transpose/decisions.md#applicative-objects.
 // =========================================================================
 
 TEST_CASE("accumulating-object: no Monad instance is registered for it") {
     // There is no monad entry keyed by the accumulating object --
     // only by carrier type, and the carrier's monad is still the
-    // short-circuit bind (docs/decisions.md#applicative-objects: bind
+    // short-circuit bind (docs/transpose/decisions.md#applicative-objects: bind
     // belongs to the short-circuit object only). This does not, by itself,
     // prove `.bind` is refused on the accumulating object -- that half is
     // the hand-verified static_assert documented above -- but it does pin
@@ -272,13 +273,13 @@ TEST_CASE("accumulating-object: no Monad instance is registered for it") {
 }
 
 // =========================================================================
-// 6. THE CONSUMER STORY (docs/transpose-grading-plan.md#recover-narrowing).
-// Accumulating traverse is where a multi-witness value first reaches user
-// hands. This is what a caller actually does with one: check with
-// witness_count(), inspect with witness<E>(), and narrow it with recover --
-// the story that has to exist before anyone asks for the multi-witness
-// eliminator the plan declined to ship
-// (docs/decisions.md#multi-witness-elimination).
+// 6. THE CONSUMER STORY
+// (docs/transpose/transpose-grading-plan.md#recover-narrowing). Accumulating
+// traverse is where a multi-witness value first reaches user hands. This is
+// what a caller actually does with one: check with witness_count(), inspect
+// with witness<E>(), and narrow it with recover -- the story that has to exist
+// before anyone asks for the multi-witness eliminator the plan declined to ship
+// (docs/transpose/decisions.md#multi-witness-elimination).
 // =========================================================================
 
 TEST_CASE("recover-narrowing: the consumer story -- inspect an accumulated "
@@ -298,15 +299,15 @@ TEST_CASE("recover-narrowing: the consumer story -- inspect an accumulated "
     REQUIRE_FALSE(accumulated.has_value());
 
     // Inspection: witness_count() and witness<E>(), the two verbs
-    // docs/decisions.md#multi-witness-elimination leaves as the whole story
-    // for a multi-witness value.
+    // docs/transpose/decisions.md#multi-witness-elimination leaves as the whole
+    // story for a multi-witness value.
     REQUIRE(accumulated.error().witness_count() == 2);
     REQUIRE(accumulated.error().witness<alpha>() == std::optional{alpha{1}});
     REQUIRE(accumulated.error().witness<beta>() == std::optional{beta{2}});
 
     // Narrowing: recover consumes alpha, leaving beta as a still-failing,
     // narrower error -- "set-difference at the value level"
-    // (docs/decisions.md#accumulation-evidence).
+    // (docs/transpose/decisions.md#accumulation-evidence).
     // The handler produces the computation's VALUE, which here is the
     // TRAVERSED VECTOR and not the witness's int: recovery substitutes a
     // whole result, not an element of one. Getting this wrong is easy
@@ -345,7 +346,8 @@ TEST_CASE("recover-narrowing: consuming every accumulated witness recovers "
 
     // Every witness was recovered, so the resulting grade is empty -- and an
     // empty grade is spelled as the BARE value type, never
-    // expected<T, error_set<>> (docs/decisions.md#empty-grade-spelling).
+    // expected<T, error_set<>>
+    // (docs/transpose/decisions.md#empty-grade-spelling).
     static_assert(std::is_same_v<decltype(recovered), std::vector<int>>);
     // Leftmost by canonical order (alpha precedes beta) wins when both
     // recover independently.
@@ -354,8 +356,8 @@ TEST_CASE("recover-narrowing: consuming every accumulated witness recovers "
 
 // =========================================================================
 // 7. recover INSIDE A FOLD: the annotate-and-check path
-// (docs/decisions.md#recover-grade-inference). `recovering` below is the
-// per-element function of a `traverse` -- a fold boundary. Its return type
+// (docs/transpose/decisions.md#recover-grade-inference). `recovering` below is
+// the per-element function of a `traverse` -- a fold boundary. Its return type
 // is an ANNOTATION the author writes down (`-> std::expected<int,
 // bt::error_set<beta>>`), not something inferred by a lattice fixpoint over
 // the traversal; the compiler CHECKS it against what `recover<alpha>`
@@ -374,8 +376,8 @@ using exp_recovered = std::expected<int, recovered_grade>;
  * (the wrong remaining member) fails to compile -- `recover<alpha>`'s actual
  * result, `std::expected<int, bt::error_set<beta>>`, is not convertible to
  * it (incomparable error_sets do not convert in either direction,
- * docs/decisions.md#error-set-identity) -- then was restored. This is the
- * CHECK half of annotate-and-check, exercised at the fold boundary itself
+ * docs/transpose/decisions.md#error-set-identity) -- then was restored. This is
+ * the CHECK half of annotate-and-check, exercised at the fold boundary itself
  * rather than on a standalone recover call.
  */
 auto recovering(int x) -> exp_recovered {

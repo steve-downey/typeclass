@@ -45,7 +45,7 @@ struct VectorFoldableImpl {
     // that body, and an availability probe would diagnose from inside it
     // rather than fail to match. The monoid is an instance object over that
     // result type, passed by value; the Impl never chooses one
-    // (docs/decisions.md#monoid-selection).
+    // (docs/transpose/decisions.md#monoid-selection).
     //! \omit
     template <class FUNCTION, class MONOID>
         requires monoid_object<MONOID, std::remove_cvref_t<std::invoke_result_t<

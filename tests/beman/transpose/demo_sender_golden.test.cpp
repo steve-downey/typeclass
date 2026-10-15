@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // GOLDEN -- stage execution-baseline of the execution plan
-// (docs/transpose-execution-plan.md#execution-baseline, deliverable 4),
-// pinning docs/decisions.md#demo-sender-fate.
+// (docs/transpose/transpose-execution-plan.md#execution-baseline, deliverable
+// 4), pinning docs/transpose/decisions.md#demo-sender-fate.
 //
 // EVERY assertion here is a golden in the sense
-// docs/decisions.md#golden-vs-scheduled-assertions fixes: no stage of the
-// execution plan is due to move any of it, and one that fails is a
+// docs/transpose/decisions.md#golden-vs-scheduled-assertions fixes: no stage of
+// the execution plan is due to move any of it, and one that fails is a
 // regression, never a line to update (divergence protocol rule 4).
 //
 // WHAT THIS ADDS THAT baseline_deduction.test.cpp DOES NOT. That file already
@@ -68,9 +68,9 @@ static_assert(std::is_same_v<bt::applicative_value_t<bt::sender<int>>, int>);
 // names a new type. sender.hpp's own header comment says so; this pins it,
 // so the contrast the paper draws rests on a checked fact.
 //
-// This is also the reason docs/decisions.md#erasure-boundary can be measured
-// at all: the invariance is bought with std::function, and the boundary
-// decision forbids exactly that purchase in all_of.hpp.
+// This is also the reason docs/transpose/decisions.md#erasure-boundary can be
+// measured at all: the invariance is bought with std::function, and the
+// boundary decision forbids exactly that purchase in all_of.hpp.
 
 using acc = bt::sender<std::vector<int>>;
 using elem = bt::sender<int>;

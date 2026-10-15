@@ -30,8 +30,8 @@
 //
 // Build (RelWithDebInfo config, no sanitizer):
 //   uv run cmake --build .build/build-gcc-16
-//       --config RelWithDebInfo --target smd_tree_pmr_probe
-//   .build/build-gcc-16/src/beman/fingertree/tree/RelWithDebInfo/smd_tree_pmr_probe
+//       --config RelWithDebInfo --target beman.fingertree.tests.pmr_probe
+//   .build/build-gcc-16/tests/beman/fingertree/RelWithDebInfo/beman.fingertree.tests.pmr_probe
 //
 // Exit code: 0 = all checks pass, 1 = one or more unexpected allocations.
 

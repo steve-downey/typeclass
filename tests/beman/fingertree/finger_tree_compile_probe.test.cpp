@@ -16,18 +16,18 @@
 //
 // Measuring compile time (from .build/build-gcc-16):
 //
-//   touch ../../src/beman/fingertree/tree/finger_tree_compile_probe.cpp
+//   touch ../../tests/beman/fingertree/finger_tree_compile_probe.test.cpp
 //   time ninja -j1
-//   src/beman/fingertree/tree/CMakeFiles/smd_tree_compile_probes.dir/Debug/finger_tree_compile_probe.cpp.o
+//   tests/beman/fingertree/CMakeFiles/beman.fingertree.tests.compile_probe.dir/Debug/finger_tree_compile_probe.test.cpp.o
 //
 // Counting DWARF class-type entries:
 //
 //   readelf --debug-dump=info
-//   src/beman/fingertree/tree/CMakeFiles/smd_tree_compile_probes.dir/Debug/finger_tree_compile_probe.cpp.o
+//   tests/beman/fingertree/CMakeFiles/beman.fingertree.tests.compile_probe.dir/Debug/finger_tree_compile_probe.test.cpp.o
 //   | grep -c DW_TAG_class_type
 //
 // GCC per-phase time breakdown (add temporarily; produces verbose output):
-//   target_compile_options(smd_tree_compile_probes PRIVATE -ftime-report)
+//   target_compile_options(beman.fingertree.tests.compile_probe PRIVATE -ftime-report)
 
 #include <beman/fingertree/tree/finger_tree.hpp>
 

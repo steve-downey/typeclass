@@ -28,7 +28,8 @@ namespace beman::transpose {
 // - Where a type carries more than one monoid -- numbers, booleans -- no
 //   instance is registered; the caller passes one (`sum_monoid<int>{}`,
 //   `max_monoid<int>{}`, `any_monoid{}`, ...). The value type is never
-//   wrapped to select a monoid. See docs/decisions.md#monoid-selection.
+//   wrapped to select a monoid. See
+//   docs/transpose/decisions.md#monoid-selection.
 // - Instances may carry state. The library may copy them and pass them by
 //   value; the expectation (not a requirement) is that they are shaped like
 //   stateless objects whose calls resolve statically.

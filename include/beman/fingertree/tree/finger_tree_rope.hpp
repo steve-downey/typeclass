@@ -140,7 +140,7 @@ struct FingerTreeRopeFoldableImpl {
 
     // The monoid is an instance object over the result type, passed by
     // value; the Impl never chooses one (beman.transpose
-    // docs/decisions.md#monoid-selection).
+    // docs/transpose/decisions.md#monoid-selection).
     template <class F, class RESULT_MONOID>
     auto fold_map(this auto&&,
                   F&&                                                  function,

@@ -1,8 +1,8 @@
 # Design-Fidelity Review — Grading Branch (interim, pre-delivery)
 
 Reviewed at commit `e955c62` ("Stage model-dispatched-mixing repair") by a
-fresh agent working only from `docs/transpose-grading-plan.md`,
-`docs/decisions.md`, the branch history, and the review brief. Read-only:
+fresh agent working only from `docs/transpose/transpose-grading-plan.md`,
+`docs/transpose/decisions.md`, the branch history, and the review brief. Read-only:
 no code, no `decisions.md` edits; proposed log entries are drafts for Steve
 to integrate.
 

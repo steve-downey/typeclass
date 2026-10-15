@@ -4,10 +4,11 @@
 // `when_all` at runtime arity, and the measurement the design rests on.
 //
 // Built only when BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE is ON. See
-// examples/all_of.hpp for what this establishes, and
-// docs/decisions.md#erasure-boundary for what "no wrapper materialized"
-// was defined to mean: ONE allocation whose size is n times a compile-time
-// constant, plus the result vector, and a result type spelled from S.
+// examples/transpose/all_of.hpp for what this establishes, and
+// docs/transpose/decisions.md#erasure-boundary for what "no wrapper
+// materialized" was defined to mean: ONE allocation whose size is n times a
+// compile-time constant, plus the result vector, and a result type spelled from
+// S.
 //
 // THE MEASUREMENT IS NOT HERE. Counting allocations means replacing global
 // `operator new`, and the ThreadSanitizer runtime defines those symbols
@@ -64,7 +65,7 @@ static_assert(
 static_assert(ex::sender<ax::all_of_sender<just_int>>);
 
 // No virtual dispatch anywhere in the shape --
-// docs/decisions.md#erasure-boundary forbids it by name.
+// docs/transpose/decisions.md#erasure-boundary forbids it by name.
 static_assert(!std::is_polymorphic_v<ax::all_of_sender<just_int>>);
 
 // The composition CLOSES: all_of's own result is itself a registered
@@ -400,10 +401,10 @@ TEST_CASE("all_of: a move-only value composes and keeps its position") {
 }
 
 TEST_CASE("all_of: the applicative object offers it as the native collect") {
-    // docs/decisions.md#runtime-arity-composition: collect is the range twin
-    // of invoke, and for senders it IS all_of. The Traversable side of this
-    // is stage collect-hook's; what is checked here is only that the object
-    // supplies the operation and that it agrees with all_of.
+    // docs/transpose/decisions.md#runtime-arity-composition: collect is the
+    // range twin of invoke, and for senders it IS all_of. The Traversable side
+    // of this is stage collect-hook's; what is checked here is only that the
+    // object supplies the operation and that it agrees with all_of.
     auto children = make_children(4);
 
     auto collected = ax::p2300_applicative.collect(make_children(4));

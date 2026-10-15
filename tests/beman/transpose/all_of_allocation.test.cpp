@@ -1,7 +1,8 @@
 // tests/beman/transpose/all_of_allocation.test.cpp                   -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-// THE MEASUREMENT docs/decisions.md#erasure-boundary names as its sentinel.
+// THE MEASUREMENT docs/transpose/decisions.md#erasure-boundary names as its
+// sentinel.
 //
 // The claim under test is "no wrapper materialized". Its measurable form,
 // fixed by that decision, is ONE allocation whose size is n times a
@@ -122,9 +123,9 @@ struct discarding_receiver {
 
 TEST_CASE("all_of: the cost is one block of n times a compile-time constant, "
           "plus the result") {
-    // THE MEASUREMENT docs/decisions.md#erasure-boundary calls its sentinel.
-    // The claim under test is "no wrapper materialized"; its measurable form
-    // is one allocation sized n * sizeof(holder) with holder a
+    // THE MEASUREMENT docs/transpose/decisions.md#erasure-boundary calls its
+    // sentinel. The claim under test is "no wrapper materialized"; its
+    // measurable form is one allocation sized n * sizeof(holder) with holder a
     // compile-time-known type, plus the result vector -- and nothing else.
     constexpr std::size_t count = 1000u;
 

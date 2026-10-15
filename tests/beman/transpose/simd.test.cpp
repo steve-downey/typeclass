@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // Tests for the std::simd::basic_vec applicative: the invoke-only context.
-// Gated exactly like examples/simd_example.cpp -- real code only on a C++26
-// toolchain with <simd>; otherwise a single SUCCEED so Catch2 discovery
+// Gated exactly like examples/transpose/simd_example.cpp -- real code only on a
+// C++26 toolchain with <simd>; otherwise a single SUCCEED so Catch2 discovery
 // never sees an empty binary.
 
 #include <version>

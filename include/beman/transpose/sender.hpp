@@ -17,7 +17,7 @@
 // whole of it. This type has no completion signatures, no error or stopped
 // channel, no environment or scheduler, no one-shot operation state -- none
 // of what makes a P2300 sender a sender. The Applicative surface is checked
-// against genuine senders separately, at examples/p2300_adapter.hpp.
+// against genuine senders separately, at examples/transpose/p2300_adapter.hpp.
 //
 // AND WHAT IT HIDES. Being a std::function<T()> wrapper makes this type
 // invariant under composition: sender<vector<T>> composed with sender<T> is
@@ -26,7 +26,7 @@
 // type -- so transposing a runtime-sized structure of real senders is not
 // merely slower here, it cannot be written as a loop at all. The convenience
 // that makes this a good demonstration is the same property that conceals
-// that limit. See docs/decisions.md#p2300-front-door-shape.
+// that limit. See docs/transpose/decisions.md#p2300-front-door-shape.
 
 #include <beman/transpose/apply.hpp>
 

@@ -62,13 +62,12 @@ static_assert(
 
 // Sentinel: no bare-numeric or boolean Monoid is registered, so the choice
 // among addition, product, max, min, ... must be spelled by passing an
-// instance (docs/decisions.md#monoid-selection). A future re-registration
-// of Monoid<int> (or long, size_t, bool) fails these static_asserts rather
-// than silently restoring an unnamed default.
-// Probed on the specialization itself, never through monoid<T>: naming
-// monoid<T> declares a variable of the undefined type Monoid<T>, and that
-// failure is outside the requires-expression's immediate context -- a hard
-// error, not `false`.
+// instance (docs/transpose/decisions.md#monoid-selection). A future
+// re-registration of Monoid<int> (or long, size_t, bool) fails these
+// static_asserts rather than silently restoring an unnamed default. Probed on
+// the specialization itself, never through monoid<T>: naming monoid<T> declares
+// a variable of the undefined type Monoid<T>, and that failure is outside the
+// requires-expression's immediate context -- a hard error, not `false`.
 template <class T>
 concept has_monoid = requires {
     sizeof(beman::transpose::Monoid<T>);
@@ -180,8 +179,9 @@ TEST_CASE("monoid: tuple_monoid is elementwise over std::tuple") {
 }
 
 TEST_CASE("monoid: a combinator holds a stateful operand by value") {
-    // A monoid instance may carry state (docs/decisions.md#monoid-selection,
-    // point 4); the combinator stores its operand as given, copies included.
+    // A monoid instance may carry state
+    // (docs/transpose/decisions.md#monoid-selection, point 4); the combinator
+    // stores its operand as given, copies included.
     struct modular_sum {
         int d_modulus;
         auto identity() const -> int { return 0; }

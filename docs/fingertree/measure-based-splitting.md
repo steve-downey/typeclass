@@ -297,7 +297,7 @@ struct sum_monoid {
 There is deliberately no `Monoid<std::size_t>` registration to fall back on:
 a number carries addition, product, maximum and minimum, and the library does
 not pick one on the caller's behalf (beman.transpose
-`docs/decisions.md#monoid-selection`). Change the instance and you change what
+`docs/transpose/decisions.md#monoid-selection`). Change the instance and you change what
 "prefix" means --- a count, a maximum endpoint, a total weight, a concatenated
 string --- without changing the tag type. `reversed()` is the same move: it
 returns a tree keyed on `transpose::dual_monoid<MONOID>`, same tag, combine

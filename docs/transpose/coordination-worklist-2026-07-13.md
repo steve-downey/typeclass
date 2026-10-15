@@ -17,7 +17,7 @@ below and tree-coordination SYNC entry 4.**
 
 ## 1. Add a "Why not Monad" section to D3200R0
 
-`papers/wg21/D3200R0.md` currently contains zero mentions of Monad while
+`papers/D3200R0.md` currently contains zero mentions of Monad while
 `include/beman/transpose/monad.hpp` ships bind/join/kleisli with an
 optional instance. Silence plus shipped code invites the obvious LEWG
 question unprepared. Add a short section framing Monad as **deferred,
@@ -51,7 +51,7 @@ reading the repo don't mistake shipped code for proposed wording:
   `monad.hpp`: implementation evidence, not proposed by D3200R0; the
   fold family is proposed by the recursive-tree-algorithms companion
   paper (Paper D); Monad is deliberately unproposed.
-- Matching paragraph in `docs/provenance.md` (it already tracks
+- Matching paragraph in `docs/transpose/provenance.md` (it already tracks
   intentional deviations — this is the same genre).
 - One line in D3200R0's non-goals if not covered by item 1.
 
@@ -130,7 +130,7 @@ no applicative surface.
 
 ## 6. BinaryTree example cross-check (standing item)
 
-`examples/binary_tree.hpp` here and
+`examples/transpose/binary_tree.hpp` here and
 `tree_algorithms/include/beman/tree_algorithms/binary_tree.hpp` are
 independent ports of the same origin tree. Traversal order is
 contractual (in-order). Any semantic change to either copy must be

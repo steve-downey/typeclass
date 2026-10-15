@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 // GOLDEN DEDUCTION TESTS -- stage baseline-capture of the grading plan
-// (docs/transpose-grading-plan.md#baseline-capture).
+// (docs/transpose/transpose-grading-plan.md#baseline-capture).
 //
 // EVERY assertion in this file is a golden: it pins the EXACT type the
 // library deduces, and no remaining stage will legitimately change it. What
 // makes a golden gold is precisely that nothing in the plan is due to move
 // it. The additive-compatibility claim of
-// docs/decisions.md#grading-footprint -- "for any input combination that
-// deduces a type today, the graded framework deduces the same type" -- is
+// docs/transpose/decisions.md#grading-footprint -- "for any input combination
+// that deduces a type today, the graded framework deduces the same type" -- is
 // proved by keeping them green, not by argument. A golden that fails is a
 // regression. Never update one to make a stage pass; that inverts the sensor
 // (divergence protocol rule 4).
@@ -18,8 +18,8 @@
 // live in their own translation unit with a stated expiry, because a golden
 // with a scheduled flip is a to-do wearing a sensor's clothes and teaches the
 // reader that a red build is routine. See
-// docs/decisions.md#golden-vs-scheduled-assertions. There is no such file at
-// present: the mixing frontier was the only scheduled block, stage
+// docs/transpose/decisions.md#golden-vs-scheduled-assertions. There is no such
+// file at present: the mixing frontier was the only scheduled block, stage
 // graded-deduction retired it, and section 9 below is what it became.
 //
 // Everything here lives in unevaluated context, so the file is a
@@ -269,8 +269,8 @@ static_assert(monad_registered<exp_int>);
 static_assert(!functor_registered<exp_int>);
 
 // Bare values carry no registration, and must never acquire one. Under
-// docs/decisions.md#empty-grade-spelling bare `T` IS the empty grade, so the
-// promotion of bare values at grade zero (stage crtp-absorption) has to
+// docs/transpose/decisions.md#empty-grade-spelling bare `T` IS the empty grade,
+// so the promotion of bare values at grade zero (stage crtp-absorption) has to
 // arrive WITHOUT registering `int` as a context. This is the load-bearing
 // negative in the file: it holds for the whole run, and stage
 // crtp-absorption is the one most likely to break it by taking the easy
@@ -305,9 +305,9 @@ static_assert(functor_registered<vec_int>);
 //
 // These are the deductions the graded framework must reproduce
 // character-for-character. Read them as the statement that
-// docs/decisions.md#grading-footprint's no-spontaneous-singletons corollary
-// is measurable: every result below is `expected<T, E>` with a bare error
-// type, and not one of them is `expected<T, error_set<E>>`. A later stage
+// docs/transpose/decisions.md#grading-footprint's no-spontaneous-singletons
+// corollary is measurable: every result below is `expected<T, E>` with a bare
+// error type, and not one of them is `expected<T, error_set<E>>`. A later stage
 // that turns any of these into a singleton error_set has manufactured a
 // grade out of an unmixed pipeline, which is the thing the corollary forbids.
 // =========================================================================

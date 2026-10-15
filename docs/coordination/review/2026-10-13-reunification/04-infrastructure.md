@@ -341,7 +341,7 @@ which is a legitimate reason for *one* preserved style, not three divergent ones
   and `/** */` are "Doxygen" and `//!` is specgen — but Doxygen treats `//!` as a Qt-style doc comment
   too. A Doxygen run over transpose will therefore attach both the rationale (`///`) and the normative
   text with its specgen commands (`//! \seebelow`, `\omit`, `\expos`, `\rSec3[...]`, `\ref{...}`,
-  e.g. `src/beman/transpose/apply.hpp:19-31, 44, 53`) to each entity, and warn on every unknown
+  e.g. `include/beman/transpose/apply.hpp:19-31, 44, 53`) to each entity, and warn on every unknown
   command. Doxygen has no idea these are two audiences.
 - The only `doxygen-awesome` copy is `docs/transpose/doxygen-awesome.css` + `-darkmode-toggle.js`
   (3004 lines). Not duplicated, but mis-referenced (see above) and the toggle JS is not wired in
@@ -422,7 +422,7 @@ was verified against behaviour; the prose is stale.
   `flat.mk` leaves at `papers/`. Nested includes to depth 4; a missing file is a hard `fail()`. It parses
   the included file as *markdown*, so it is a wording splicer, not a code splicer.
 - Code anchors are UUID pairs `// <uuid>` / `// <uuid> end` (75 pairs across `examples/` and
-  `src/beman/tree_algorithms/*.hpp`, 2 in `src/beman/transpose/functor.hpp`). **No UUID is defined in
+  `include/beman/tree_algorithms/*.hpp`, 2 in `include/beman/transpose/functor.hpp`). **No UUID is defined in
   more than one source file** (checked across `examples/` and `src/`). Consumers: the tree_algorithms
   article (68 references, `docs/tree_algorithms/recursive-tree-algorithms.org`), the blog posts, the
   essay, `docs/tree_algorithms/notes/anchor-inventory.md`, and `papers/algorithms-for-trees.md:200-224`
@@ -561,8 +561,8 @@ Grouped; each is verified unless marked.
 
 ### 5.2 Stale paths
 
-- `include/` in code comments: `src/beman/transpose/laws.hpp:18`, `examples/transpose/p2300_adapter.hpp:10,17`,
-  `src/beman/transpose/collect_hook.test.cpp:118`, `execution_probe.test.cpp:35`,
+- `include/` in code comments: `tests/beman/transpose/laws.hpp:18`, `examples/transpose/p2300_adapter.hpp:10,17`,
+  `tests/beman/transpose/collect_hook.test.cpp:118`, `execution_probe.test.cpp:35`,
   `src/beman/transpose/CMakeLists.txt:107`; `.claude/skills/tree-proposals-coherence/SKILL.md:161`;
   `docs/fingertree/compile-time-design.md:13`, `measure-based-splitting.md:88`;
   `docs/transpose/typeclass-object-pattern.md:32,42,68,88,123`; `docs/tree_algorithms/DECISIONS.md:137`,

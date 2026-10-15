@@ -11,10 +11,10 @@
 
 // Every typeclass base uses deducing this (explicit object parameters,
 // P0847). Fail once, here, on GCC 13 -- the compiler measured without it
-// (docs/decisions.md#execution-toolchain-floor) -- instead of with a parser
-// error at every `this auto &&self` member. The test is the compiler version,
-// not __cpp_explicit_this_parameter: Clang 19 implements the feature without
-// defining the macro.
+// (docs/transpose/decisions.md#execution-toolchain-floor) -- instead of with a
+// parser error at every `this auto &&self` member. The test is the compiler
+// version, not __cpp_explicit_this_parameter: Clang 19 implements the feature
+// without defining the macro.
 #if defined(__GNUC__) && !defined(__clang__) && __GNUC__ < 14
 #error "beman.transpose requires C++23 deducing this (P0847): GCC 14 or later."
 #endif
@@ -53,7 +53,7 @@ inline constexpr bool always_false_v = false;
  * The cast itself cannot live here. Each base inherits its `Impl`
  * protectedly, so only a member of that base may perform the conversion;
  * each base carries a three-line private `impl_of` that does, and they all
- * name this alias. See `docs/decisions.md#impl-access-through-bases`.
+ * name this alias. See `docs/transpose/decisions.md#impl-access-through-bases`.
  */
 template <class IMPL, class SELF>
 using impl_ref_t =
@@ -70,7 +70,7 @@ using impl_ref_t =
  * not use it: each is constrained on the call it makes through the instance,
  * so `std::is_invocable` answers the narrower question for one call, and an
  * unregistered type is a call that does not match rather than an error from
- * inside the object (docs/decisions.md#operation-object-wording).
+ * inside the object (docs/transpose/decisions.md#operation-object-wording).
  */
 template <class LOOKUP_RESULT>
 inline constexpr bool has_instance_v =

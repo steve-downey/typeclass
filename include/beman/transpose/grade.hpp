@@ -10,22 +10,23 @@
 /// It says nothing whatever about errors. `error_set`, `recover`, and
 /// ⊆-as-may-raise are the vocabulary of one particular MODEL, and they live in
 /// the model's header; an abstraction whose framework layer names its only
-/// model is renamed, not generic. See docs/decisions.md#grade-generality and
-/// docs/decisions.md#grade-machinery-home.
+/// model is renamed, not generic. See
+/// docs/transpose/decisions.md#grade-generality and
+/// docs/transpose/decisions.md#grade-machinery-home.
 ///
 /// Nothing here is on the typeclass surface. `grade_of` and `rebind_grade` are
 /// framework traits; `grade_of` defaults unregistered carriers to the
 /// ungraded sentinel, while models own registered carrier specializations.
 /// The algebra verbs are free functions in the shape the library already uses
 /// for `monoid_combine` and `monoid_identity` -- see
-/// docs/decisions.md#grade-operation-spelling for why they carry the `grade_`
-/// prefix rather than taking the bare name `join`, which is already the
-/// monadic join.
+/// docs/transpose/decisions.md#grade-operation-spelling for why they carry the
+/// `grade_` prefix rather than taking the bare name `join`, which is already
+/// the monadic join.
 ///
 /// The load-bearing default is `grade_of`: an instance that knows nothing
 /// about grades is treated as uniformly ∅-graded and keeps working verbatim.
 /// That default IS the backward-compatibility mechanism of
-/// docs/decisions.md#grading-footprint, not a convenience.
+/// docs/transpose/decisions.md#grading-footprint, not a convenience.
 
 #include <beman/transpose/detail/typeclass_base.hpp>
 

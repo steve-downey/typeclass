@@ -150,7 +150,7 @@ story Paper D should tell, in prose plus one worked example:
   that this repo does not vendor).
 
 **Coordination hazard**: beman.transpose already carries its own
-`examples/binary_tree.hpp` with Foldable/Applicative/Traversable
+`examples/transpose/binary_tree.hpp` with Foldable/Applicative/Traversable
 instances — a second, independently evolving port of the same
 `smd::tree::BinaryTree`. Neither repo should treat the other's copy as
 authoritative; both derive from `trees/main`. Any change to the
@@ -208,7 +208,7 @@ equivalence-law static_asserts (`fold_with ∘ unwrap_fix ≡ fold_fix`,
 `unfold_with ∘ wrap_fix ≡ unfold_fix`), nonce-tree runtime tests
 (DEV-01 shape + decrement discriminators, move-only `unique_ptr`
 carrier build via `unfold_with`), the adapter-vs-direct agreement law in
-`binary_tree.test.cpp`, and `examples/nonce_tree_direct.cpp`.
+`binary_tree.test.cpp`, and `examples/tree_algorithms/nonce_tree_direct.cpp`.
 
 **Prerequisite check.** `project` returning `F<Tree>` by value copies one
 layer per node (value semantics, consistent with Decision 6). The
@@ -336,7 +336,7 @@ New/changed sections, in document order:
    proposed here.
 3. **Proposed API synopsis** grows the direct verbs (item C) and the
    explicit-monoid fold spelling (item A.3), each with anchored regions
-   in the headers (extend `docs/notes/anchor-inventory.md`; re-diff rule
+   in the headers (extend `docs/tree_algorithms/notes/anchor-inventory.md`; re-diff rule
    from the synopsis HTML comment applies — and note `unfold_fix`/`refold`
    explicit-fmap overloads are currently unanchored, carried on the punch
    list).

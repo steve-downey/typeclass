@@ -21,7 +21,7 @@ struct FingerTreeFoldableImpl {
     // The result monoid is an instance object over the result type, passed
     // by value and distinct from the tree's own measure monoid MONOID; the
     // Impl never chooses one (beman.transpose
-    // docs/decisions.md#monoid-selection).
+    // docs/transpose/decisions.md#monoid-selection).
     template <class F, class RESULT_MONOID>
     auto fold_map(this auto&&,
                   F&&                                                                              function,

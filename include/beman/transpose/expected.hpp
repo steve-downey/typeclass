@@ -13,7 +13,7 @@
 // spelling when ungraded operands participate. The graded core handles real
 // mixing -- operands declaring different model grades -- and deduces their
 // join. The constraints are complements, so the choice is never a matter of
-// overload ranking (docs/decisions.md#grading-footprint).
+// overload ranking (docs/transpose/decisions.md#grading-footprint).
 //
 // Every combination the graded core accepts was ILL-FORMED before grading:
 // there was no instance that would take operands with differing error types.
@@ -31,10 +31,10 @@
 //
 // Short-circuit semantics, first error wins, operands examined left to right.
 // That order is observable and therefore part of the contract, per the
-// Traversable rules in docs/CODING_RULES.md and the normative left-to-right
-// order of docs/decisions.md#applicative-objects. Note that the grade is
-// order-blind while the observed error is not: ∪ commutes, so operand order
-// cannot change the deduced type, only which error you get back.
+// Traversable rules in docs/transpose/CODING_RULES.md and the normative
+// left-to-right order of docs/transpose/decisions.md#applicative-objects. Note
+// that the grade is order-blind while the observed error is not: ∪ commutes, so
+// operand order cannot change the deduced type, only which error you get back.
 
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>
@@ -191,7 +191,7 @@ struct expected_applicative_impl {
      * Reached exactly when the operands do NOT all declare this instance's
      * error type -- the ungraded core above handles that case, and the two
      * constraints are complementary, so the choice is never a matter of
-     * overload ranking (docs/decisions.md#grading-footprint).
+     * overload ranking (docs/transpose/decisions.md#grading-footprint).
      *
      * The result carries the join of the operands' semantic grades. Carrier
      * spelling remains lazy: identical alternatives are carried verbatim,
@@ -236,8 +236,9 @@ inline constexpr auto applicative<std::expected<VALUE_TYPE, ERROR_TYPE>> =
 // -- The accumulating applicative instance ---------------------------------
 //
 // The second NTTP-pinned object over the SAME carrier and grade algebra as
-// expected_applicative_map above, per docs/decisions.md#applicative-objects.
-// Stage accumulating-object of docs/transpose-grading-plan.md.
+// expected_applicative_map above, per
+// docs/transpose/decisions.md#applicative-objects. Stage accumulating-object of
+// docs/transpose/transpose-grading-plan.md.
 //
 // Where the short-circuit object above keeps only the LEFTMOST failing
 // operand's witness, this object COMBINES every failing operand's witness
@@ -373,7 +374,7 @@ struct accumulating_expected_applicative_map
             "-- a value-flow obstruction, not something grade bookkeeping "
             "can fix. Use the short-circuit (monad-derived) applicative "
             "object (applicative) for sequential composition. "
-            "See docs/decisions.md#applicative-objects.");
+            "See docs/transpose/decisions.md#applicative-objects.");
     }
 };
 

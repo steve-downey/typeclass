@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# papers/wg21/filters/transclude.py
+# papers/filters/transclude.py
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
 # Splices generated wording fragments into a paper.

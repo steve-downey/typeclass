@@ -1,10 +1,10 @@
 // examples/transpose/transpose_execution_example.cpp                 -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 //
-// The receipts. `examples/transpose_example.cpp` shows the second motivating
-// domain over `beman::transpose::sender<T>`, a `std::function<T()>` thunk: it
-// proves the typeclass story -- three unrelated types answer to one verb --
-// and nothing at all about cost or concurrency, because there is no
+// The receipts. `examples/transpose/transpose_example.cpp` shows the second
+// motivating domain over `beman::transpose::sender<T>`, a `std::function<T()>`
+// thunk: it proves the typeclass story -- three unrelated types answer to one
+// verb -- and nothing at all about cost or concurrency, because there is no
 // concurrency in it to have.
 //
 // This one runs the same front door over genuine std::execution senders.

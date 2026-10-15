@@ -21,7 +21,7 @@ drafted — answering very nearly the same question.
 originally stated that "a survey of every steve-downey repository on
 2026-09-11 found no implementation over real `std::execution` senders
 anywhere". That was false of *this* repository on that date:
-`examples/p2300_adapter.hpp` and `tests/beman/transpose/p2300.test.cpp` are
+`examples/transpose/p2300_adapter.hpp` and `tests/beman/transpose/p2300.test.cpp` are
 exactly such an implementation. **That paragraph has been replaced**; §1 now
 points at the adapter and tells the next agent to read it first.
 
@@ -29,8 +29,8 @@ points at the adapter and tells the next agent to read it first.
 execution-dependent enters `include/`.** Consequences, all now written into
 the plan and the log:
 
-- Stages 1–3 build on `examples/p2300_adapter.hpp` where it lives.
-- `all_of` lands as `examples/all_of.hpp` under
+- Stages 1–3 build on `examples/transpose/p2300_adapter.hpp` where it lives.
+- `all_of` lands as `examples/transpose/all_of.hpp` under
   `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE`, pinned `d24898d`.
 - The Stage 3 `collect` hook in `sequence.hpp` is the **only** `include/`
   change the plan makes, and it stays sender-free — which
@@ -184,7 +184,7 @@ the sensor and stands, the layout is what gives.
 
 ## 4. What the next stage's agent needs that the plan does not say
 
-**Stage 1 is an audit. Read `examples/p2300_adapter.hpp` first.** It is 90
+**Stage 1 is an audit. Read `examples/transpose/p2300_adapter.hpp` first.** It is 90
 lines, already does the `pure`/`invoke` half correctly — including the
 forwarding the plan calls out as a correction to the demo sender's `const&`
 spelling — and its header comment states what writing it established that it
@@ -213,7 +213,7 @@ because `type_identity_t` is not variadic.
 > in the log under
 > [sender-value-type-reading](../decisions.md#sender-value-type-reading).
 
-**There is a working adapter to read.** `examples/p2300_adapter.hpp` is 90
+**There is a working adapter to read.** `examples/transpose/p2300_adapter.hpp` is 90
 lines and already does the `pure`/`invoke` half correctly, including the
 forwarding that the plan calls out as a correction to the demo sender's
 `const&` spelling. Its header comment states what writing it established that
@@ -266,7 +266,7 @@ written" is very nearly literally true.
 
 Also done under the ruling, beyond the original deliverables: the plan's §1
 survey paragraph replaced; Stage 0 shrunk; Stage 1 rewritten as an audit;
-Stage 2 relocated to `examples/all_of.hpp`, corrected on both counts above,
+Stage 2 relocated to `examples/transpose/all_of.hpp`, corrected on both counts above,
 and given the refutation log entry as deliverable 7; Stage 3 marked as the
 only `include/` change with a sender-free tripwire.
 

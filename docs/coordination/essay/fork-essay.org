@@ -310,7 +310,7 @@ We should standardize those tools, and provide the hooks so your current handwri
 #+begin_comment
 TODO — exhibit E3 placeholder (move 6): fold_with over a tree you
 already own. Layer struct, fmap, projection, no Fix, no conversion.
-examples/nonce_tree_direct.cpp is already anchored. This paragraph
+examples/tree_algorithms/nonce_tree_direct.cpp is already anchored. This paragraph
 makes the claim; the exhibit is what makes it believed.
 
 TODO — this section has the P4322 proposal sentence that the paper

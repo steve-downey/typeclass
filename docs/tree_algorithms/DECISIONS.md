@@ -114,7 +114,7 @@ unit_test_library      = catch2
 
 Ratified by Steve in the coordinated-set review of 2026-07-13 (recorded
 in the tree-coordination meta-repo, SYNC entries 1–3, and
-`docs/notes/extraction-plan.md` §3/§5); this amendment supersedes the
+`docs/tree_algorithms/notes/extraction-plan.md` §3/§5); this amendment supersedes the
 scope sentence of Decision 1 and extends Decision 4's pattern.
 Everything else in Decisions 2–8 stands unchanged and applies to the new
 code.

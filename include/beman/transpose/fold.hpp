@@ -29,9 +29,9 @@ namespace beman::transpose::detail {
 // combine returns what it takes: a monoid's value type must close under
 // combine, and a bare lambda type does not. One value type, two instances
 // -- composition in traversal order for fold_left, in reverse for
-// fold_right -- which is docs/decisions.md#monoid-selection in miniature:
-// the choice between them is made at the operation, not by wrapping the
-// function in a differently named carrier.
+// fold_right -- which is docs/transpose/decisions.md#monoid-selection in
+// miniature: the choice between them is made at the operation, not by wrapping
+// the function in a differently named carrier.
 
 /** Composition monoid on `std::function<STATE(STATE)>` in application
  * order: `combine(l, r)` runs `l` first, then `r`. Identity is the identity
@@ -143,7 +143,7 @@ namespace beman::transpose {
 // Foldable pattern invariants:
 // - Generic entry point is fold_map(F, T, MONOID) via foldable<T>.
 //   The monoid is an instance object over the result type of F, passed by
-//   value (docs/decisions.md#monoid-selection); the two-argument
+//   value (docs/transpose/decisions.md#monoid-selection); the two-argument
 //   fold_map(F, T) is derived, defaulting to the registered Monoid of the
 //   result type, and exists only where the Impl declares `element_type`
 //   and that type has a registration.
@@ -676,7 +676,7 @@ inline constexpr auto foldable = std::false_type{};
  *
  * The container type keys the lookup and is deduced from the second
  * argument. The monoid instance is the trailing argument, as it is on the
- * instance (docs/decisions.md#monoid-selection); without it the call
+ * instance (docs/transpose/decisions.md#monoid-selection); without it the call
  * defaults to the registered Monoid of the result type, and where that type
  * has no registration the two-argument form is not a candidate.
  */

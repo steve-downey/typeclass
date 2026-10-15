@@ -151,11 +151,11 @@ TEST_CASE("fold: fold_map does not exist when Impl provides neither basis") {
 }
 
 TEST_CASE("fold: a fold over a type with several monoids names its instance") {
-    // docs/decisions.md#monoid-selection: int carries addition, product,
-    // max, min, ... so no Monoid<int> is registered, and the two-argument
-    // fold_map is not a candidate -- not a hard error from inside the body.
-    // The caller passes the instance. std::string has one canonical monoid,
-    // so the two-argument form is available and defaults to it.
+    // docs/transpose/decisions.md#monoid-selection: int carries addition,
+    // product, max, min, ... so no Monoid<int> is registered, and the
+    // two-argument fold_map is not a candidate -- not a hard error from inside
+    // the body. The caller passes the instance. std::string has one canonical
+    // monoid, so the two-argument form is available and defaults to it.
     using Map = bt::VectorFoldableMap<int>;
     using Identity = decltype([](int x) { return x; });
     static_assert(!has_fold_map<Map, Identity, std::vector<int>>);

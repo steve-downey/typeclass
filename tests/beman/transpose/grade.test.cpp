@@ -84,7 +84,7 @@ static_assert(order_agrees_with_join<set_ab, set_a>);
 //    the ungraded sentinel except registered carriers.
 //
 // This is the tripwire of stage grade-concept
-// (docs/transpose-grading-plan.md#grade-concept): any matrix type
+// (docs/transpose/transpose-grading-plan.md#grade-concept): any matrix type
 // classified as graded without a model decision means the framework has
 // conscripted an unwilling type.
 // =========================================================================
@@ -144,8 +144,8 @@ static_assert(
     std::is_same_v<bt::rebind_grade_t<std::expected<int, std::errc>, set_ab>,
                    std::expected<int, set_ab>>);
 
-// SENTINEL (docs/decisions.md#empty-grade-spelling): re-indexing at the empty
-// set yields the BARE value. No framework path may materialize
+// SENTINEL (docs/transpose/decisions.md#empty-grade-spelling): re-indexing at
+// the empty set yields the BARE value. No framework path may materialize
 // expected<T, error_set<>>; the uniform form stays an explicit spelling only.
 static_assert(std::is_same_v<bt::rebind_grade_t<int, bt::error_set<>>, int>);
 static_assert(

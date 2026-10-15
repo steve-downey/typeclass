@@ -16,7 +16,7 @@
 // monoid on its context lifted from a monoid on the element. Both are
 // monoid *instances* over bare value types -- an erased arrow type, and the
 // context itself -- and neither registers anything for any raw carrier; see
-// docs/decisions.md#monoid-selection. This header exists to show the
+// docs/transpose/decisions.md#monoid-selection. This header exists to show the
 // mechanism carries the induction without strain, and to record, once, the
 // one thing worth not rediscovering: the categorical statement "a monad is
 // a monoid in the category of endofunctors" is inexpressible at `Monoid<T>`,

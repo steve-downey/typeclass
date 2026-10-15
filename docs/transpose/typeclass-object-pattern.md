@@ -63,7 +63,7 @@ It keeps instance selection explicit, testable, and overridable while preserving
 The NTTP style in practice:
 
 - `template <typename P, const auto& functor = beman::transpose::functor<P>>`
-- See `examples/lookup_modes_example.cpp` for NTTP pinning examples.
+- See `examples/transpose/lookup_modes_example.cpp` for NTTP pinning examples.
 
 In `include/beman/transpose/`, preserve this spirit through the per-concept lookup objects (`functor<T>`, `foldable<T>`, and siblings).
 If additional wrapper APIs are introduced, they should keep explicit object override and NTTP pinning available for generic code.
@@ -199,7 +199,7 @@ struct transform_if_large_impl
 - `decltype` on a `const auto&` NTTP gives a reference type; use `std::remove_cvref_t<decltype(TC)>` at base specifiers, nested type extraction, and qualified disambiguation calls.
 - ADL is suppressed because the CPO is an object, not a function.
 - The NTTP defaults pin the typeclass lookup; callers can override if needed.
-- Working example: see `examples/algorithm_object_example.cpp`.
+- Working example: see `examples/transpose/algorithm_object_example.cpp`.
 
 ## Applicative: Derived invoke via terminating partial application
 

@@ -178,7 +178,7 @@ TEST_CASE("monad: ap falls back to the bind + pure derivation") {
 // ============================================================================
 // as-functor-presentation: Monad::as_functor(), the one visible free call
 // that names which functor a monad object presents. See
-// docs/decisions.md#functor-monad-grounding.
+// docs/transpose/decisions.md#functor-monad-grounding.
 // ============================================================================
 
 TEST_CASE("monad: as_functor is usable in a constant expression and empty") {

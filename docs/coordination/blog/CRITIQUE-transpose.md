@@ -39,7 +39,7 @@ falsify it by cloning the repo. `writing-algorithms` lines 253 and 269
 
 In `writing-algorithms-with-typeclass-objects.org`:
 
-- Lines 62–69, attributed to `examples/lookup_modes_example.cpp`: no
+- Lines 62–69, attributed to `examples/transpose/lookup_modes_example.cpp`: no
   `OptionalFunctorObject`, no `explicit_object_lookup_example` there —
   the file demonstrates mode 2 with an `fmap_with` lambda.
 - Lines 80–86, attributed to `fold.test.cpp`: no

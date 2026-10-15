@@ -63,7 +63,7 @@ inline constexpr auto foldable = std::false_type{};
 Default: no instance.
 A type opts in by specializing.
 
-From [[file:../../examples/transpose/binary_tree.hpp][=examples/binary_tree.hpp=]]:
+From [[file:../../examples/transpose/binary_tree.hpp][=examples/transpose/binary_tree.hpp=]]:
 
 #+begin_src cpp
 template <>
@@ -185,7 +185,7 @@ auto mapped = functor.fmap([](int x) { return x + 1; }, value);
 Pass a specific instance at the call site.
 This is local policy override --- you can swap in a different implementation without changing the type.
 
-From [[file:../../examples/transpose/lookup_modes_example.cpp][=examples/lookup_modes_example.cpp=]]:
+From [[file:../../examples/transpose/lookup_modes_example.cpp][=examples/transpose/lookup_modes_example.cpp=]]:
 
 #+begin_src cpp
 auto fmap_with = [](const auto &tc, const auto &val) {
@@ -200,7 +200,7 @@ Bind the looked-up object as a non-type template parameter default.
 Lookup happens at instantiation time.
 Callers can override it, but the default is stable.
 
-From [[file:../../examples/transpose/lookup_modes_example.cpp][=examples/lookup_modes_example.cpp=]]:
+From [[file:../../examples/transpose/lookup_modes_example.cpp][=examples/transpose/lookup_modes_example.cpp=]]:
 
 #+begin_src cpp
 template <class CONTEXT, const auto &FUNCTOR = bt::functor<CONTEXT>>
@@ -401,7 +401,7 @@ The inheritance is purely a mechanism to bring the operation names into scope.
 An algorithm implementation struct inherits from the typeclass, parameterized by an NTTP that defaults to the standard lookup.
 The algorithm body calls typeclass operations through ~this->~.
 
-From [[file:../../examples/transpose/algorithm_object_example.cpp][=examples/algorithm_object_example.cpp=]]:
+From [[file:../../examples/transpose/algorithm_object_example.cpp][=examples/transpose/algorithm_object_example.cpp=]]:
 
 #+begin_src cpp
 template <class T,

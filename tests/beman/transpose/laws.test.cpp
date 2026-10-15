@@ -67,15 +67,15 @@ static_assert(laws::check_graded_laws<error_set_model>());
 //
 // TEST-ONLY. Where it lives long-term -- here, or shipped as std::optional's
 // official grade registration -- is the still-open question
-// docs/decisions.md#optional-grade-model, and this stage does not settle it.
-// That is why the carrier below is a purpose-built `Fallible`, not
+// docs/transpose/decisions.md#optional-grade-model, and this stage does not
+// settle it. That is why the carrier below is a purpose-built `Fallible`, not
 // std::optional: registering std::optional as a graded carrier would answer
 // the open question by fiat, and would contradict the ∅-default assertions
 // tests/beman/transpose/grade.test.cpp pins on it.
 //
 // Its job here is to be a LEAK DETECTOR, per
-// docs/decisions.md#grade-generality: an abstraction with one model is
-// renamed, not generic. Every place this fails to slide in cleanly is a
+// docs/transpose/decisions.md#grade-generality: an abstraction with one model
+// is renamed, not generic. Every place this fails to slide in cleanly is a
 // framework/model leak and gets logged as a divergence -- never patched
 // around, and never smoothed by special-casing the framework to accommodate
 // it.
@@ -422,7 +422,7 @@ static_assert(!accepts_accumulating_expected_invoke<bare_c, boolean_may>);
 // full Functor instance is spelled derive_functor<OptionalMonadMap<int>>{}
 // rather than registered anywhere. This section checks that layered instance
 // compiles, satisfies the functor laws, and agrees with the hand-written
-// one -- see docs/decisions.md#functor-monad-grounding.
+// one -- see docs/transpose/decisions.md#functor-monad-grounding.
 // =========================================================================
 
 namespace functor_monad_grounding {

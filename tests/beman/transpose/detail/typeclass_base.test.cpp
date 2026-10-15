@@ -53,11 +53,11 @@ struct InnerMap : Inner<Probe> {};
 // `derive_functor<SomeMonadMap>`. `derived` is exposed as Outer's own member,
 // forwarding through Outer's own `impl_of`, never as `using
 // Impl::derived;`. That is the own-member rule
-// (docs/decisions.md#impl-access-through-bases): a `using`-declaration here
-// would let `Inner<Probe>::impl_of` see a `self` typed as `Outer<InnerMap>`
-// instead of `InnerMap`, and the cast fails with `'Probe' is an inaccessible
-// base of 'Outer<InnerMap>'` -- measured in the amendment consult's
-// throwaway worktree, not re-derived here.
+// (docs/transpose/decisions.md#impl-access-through-bases): a
+// `using`-declaration here would let `Inner<Probe>::impl_of` see a `self` typed
+// as `Outer<InnerMap>` instead of `InnerMap`, and the cast fails with `'Probe'
+// is an inaccessible base of 'Outer<InnerMap>'` -- measured in the amendment
+// consult's throwaway worktree, not re-derived here.
 template <class Impl>
 struct Outer : protected Impl {
     template <class SELF>

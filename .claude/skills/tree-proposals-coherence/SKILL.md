@@ -131,12 +131,12 @@ blog posts, and org files; either update all in one coordinated pass or
 record the divergence explicitly in the consuming repo's notes.
 
 **Before relitigating a design choice** in tree_algorithms: read
-`docs/DECISIONS.md`. If a change is genuinely needed, update DECISIONS.md
+`docs/tree_algorithms/DECISIONS.md`. If a change is genuinely needed, update DECISIONS.md
 first (with rationale and source citations), then the code.
 
 **When extracting code from `trees/main`**: extraction is one-way. Record
 what was taken, from which commit, and every intentional deviation in the
-destination repo (transpose uses `docs/provenance.md` — follow that
+destination repo (transpose uses `docs/transpose/provenance.md` — follow that
 model). Never backport.
 
 **When editing paper text about a companion paper**: read the companion's
@@ -145,7 +145,7 @@ independence claims accurate — Paper D must remain fully valid if P3200
 stalls, and vice versa.
 
 **When adding API surface to tree_algorithms**: check the fixpoint
-compatibility checklist in `docs/notes/extraction-plan.md` §7 — new
+compatibility checklist in `docs/tree_algorithms/notes/extraction-plan.md` §7 — new
 surface must stay upgradeable to the unproposed catalog (plain callables
 usable as gcata/gana algebras/coalgebras; layer Functor instance remains
 the only hook carriers need).
@@ -153,13 +153,13 @@ the only hook carriers need).
 **When touching the paper synopsis or anchored examples**: the synopsis
 is a hand-maintained mirror of the headers — re-diff against
 `recursion_schemes.hpp`/`recursion_schemes_lookup.hpp` on any signature
-change, and keep `docs/notes/anchor-inventory.md` current.
+change, and keep `docs/tree_algorithms/notes/anchor-inventory.md` current.
 
 ## Known coordination hazards
 
 - **Two BinaryTree ports exist**: tree_algorithms'
   `include/beman/tree_algorithms/binary_tree.hpp` and transpose's
-  `examples/binary_tree.hpp`. Both derive from `trees/main`; neither is
+  `examples/transpose/binary_tree.hpp`. Both derive from `trees/main`; neither is
   authoritative for the other. Semantics changes (traversal order,
   applicative behavior) must be cross-checked.
 - **Foldable spans two repos with one proposal home**: beman.transpose

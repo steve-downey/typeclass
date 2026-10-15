@@ -19,7 +19,7 @@ Repository: `/home/user/typeclass` at `71129ec` (2026-10-12 merge). All paths be
 ### Finding 1.1 — Explicit tier is mechanism-free in code (verified); the check is real
 **Severity:** note (positive).
 **Evidence:**
-- `src/beman/tree_algorithms/fix.hpp:14-16` includes only `<utility>`; `box.hpp:14-16` only `<utility>`; `child_slot.hpp:14-21` `box.hpp`, `fix.hpp`, std; `recursion_schemes.hpp:14-18` `fix.hpp`, `<utility>`; `fold_map.hpp:14-15` `fix.hpp`, `recursion_schemes.hpp`.
+- `include/beman/tree_algorithms/fix.hpp:14-16` includes only `<utility>`; `box.hpp:14-16` only `<utility>`; `child_slot.hpp:14-21` `box.hpp`, `fix.hpp`, std; `recursion_schemes.hpp:14-18` `fix.hpp`, `<utility>`; `fold_map.hpp:14-15` `fix.hpp`, `recursion_schemes.hpp`.
 - `clang++-18 -std=c++23 -Isrc -MM` on each of the five headers: 0 lines matching `beman/transpose`. On `recursion_schemes_lookup.hpp` the closure adds exactly `transpose/functor.hpp` and `transpose/detail/typeclass_base.hpp`.
 - `src/beman/tree_algorithms/CMakeLists.txt:105-153` generates one TU per explicit-tier header that `#error`s if any `BEMAN_TRANSPOSE_*` include guard is defined (commit `05ea8b4`).
 **Why it matters:** This is the paper's independence claim ("remains fully valid even if P3200 does not progress", `papers/algorithms-for-trees.md:193`) made checkable.
@@ -28,7 +28,7 @@ Repository: `/home/user/typeclass` at `71129ec` (2026-10-12 merge). All paths be
 ### Finding 1.2 — The explicit tier's *tests* and Paper D's *primary-tier examples* depend on P3200's `overloaded`
 **Severity:** significant (independence claim in the paper).
 **Evidence:**
-- `src/beman/tree_algorithms/recursion_schemes.test.cpp:7` and `fold_map.test.cpp:11` include `<beman/transpose/overloaded.hpp>`; every algebra in those tests is `std::visit(overloaded{…})`.
+- `tests/beman/tree_algorithms/recursion_schemes.test.cpp:7` and `fold_map.test.cpp:11` include `<beman/transpose/overloaded.hpp>`; every algebra in those tests is `std::visit(overloaded{…})`.
 - `papers/algorithms-for-trees.md:44,67`: both the Before and After cells use `overloaded{…}`; `:78` passes `expr_fmap` — this *is* the explicit tier, yet the example's vocabulary is now proposed by P3200 (`docs/transpose/decisions.md` `## overloaded-home`, 3415-3443). The paper never says where `overloaded` comes from. The dedup ledger lists this as undone: `docs/coordination/machinery-deduplication.md:82` ("say so where the examples first use it") and `:138` ("Neither is written").
 - `examples/tree_algorithms/fixpoint_tree_example.cpp:63-68` shows the plain `struct overloaded : Ts... { using Ts::operator()...; }` works for the same algebra without any library.
 **Why it matters:** A reader checking "what remains valid if P3200 stalls" (`:534-535`) finds the primary example leaning on a P3200 facility. The claim is still true (any overload set works), but the text does not say so.
@@ -36,7 +36,7 @@ Repository: `/home/user/typeclass` at `71129ec` (2026-10-12 merge). All paths be
 
 ### Finding 1.3 — "Consumes, never respecifies" is true of `functor` and not quite true of `layer_fold`/`project`
 **Severity:** minor (paper accuracy).
-**Evidence:** `src/beman/tree_algorithms/fold_map_lookup.hpp:46-55` defines two new lookup variables `layer_fold<Layer>` and `project<Tree>` (`std::false_type` default, the P3200 pattern). `papers/algorithms-for-trees.md:188` says "following the same pattern"; `:191-192` says the headers "are explicitly *consumers* … never respecifies it"; `:459` calls them "the three consumer-stub lookup objects" — stale on two counts: none is a stub since `77180c5`, and `functor` is transpose's own, not Paper D's.
+**Evidence:** `include/beman/tree_algorithms/fold_map_lookup.hpp:46-55` defines two new lookup variables `layer_fold<Layer>` and `project<Tree>` (`std::false_type` default, the P3200 pattern). `papers/algorithms-for-trees.md:188` says "following the same pattern"; `:191-192` says the headers "are explicitly *consumers* … never respecifies it"; `:459` calls them "the three consumer-stub lookup objects" — stale on two counts: none is a stub since `77180c5`, and `functor` is transpose's own, not Paper D's.
 **Why it matters:** Paper D does propose two typeclass-object lookup variables of its own. That is fine, but it means Paper D's lookup tier carries mechanism-shaped surface that LEWG will see as *new* customization points, and the paper should own that rather than file it under "consume".
 **Recommendation:** Rewrite `:459` ("the lookup tier registers layer functors with P3200's `functor<Layer>` and adds two lookup objects of its own, `layer_fold<Layer>` and `project<Tree>`") and add the two declarations to the synopsis (see 5.2).
 
@@ -44,7 +44,7 @@ Repository: `/home/user/typeclass` at `71129ec` (2026-10-12 merge). All paths be
 
 **Explicit tier — one lambda for `fmap`, passed at every call:**
 ```cpp
-// src/beman/tree_algorithms/recursion_schemes.test.cpp:139-153
+// tests/beman/tree_algorithms/recursion_schemes.test.cpp:139-153
 template <typename A, typename F>
 constexpr auto fmap_tree(F&& f, const TreeF<A>& tree) {
     using B = std::remove_cvref_t<std::invoke_result_t<F, const A&>>;
@@ -57,13 +57,13 @@ constexpr auto fmap_tree(F&& f, const TreeF<A>& tree) {
 inline constexpr auto fmap_tree_fn = [](auto&& f, const auto& t) { return fmap_tree(std::forward<decltype(f)>(f), t); };
 // :206
 fold_fix<int>(subtract_algebra, fmap_tree_fn, tree);
-// fold_map, six arguments — src/beman/tree_algorithms/fold_map.test.cpp:120
+// fold_map, six arguments — tests/beman/tree_algorithms/fold_map.test.cpp:120
 fold_map<std::string>(show_digit, concat, std::string{}, list_layer_fold_map, fmap_list_fn, list);
 ```
 
 **Lookup tier — register once (three declarations, with a namespace hop), then two-argument calls:**
 ```cpp
-// src/beman/tree_algorithms/expression.hpp:83-115  (33 lines for one fmap)
+// include/beman/tree_algorithms/expression.hpp:83-115  (33 lines for one fmap)
 template <typename A> struct ExprFFunctorImpl { template <typename Fn> constexpr auto fmap(this auto&&, Fn&& fn, const ExprF<A>& layer) { … } };
 template <typename A> struct ExprFFunctorMap : transpose::derive_functor<ExprFFunctorImpl<A>> { using ExprFFunctorImpl<A>::fmap; };
 } // namespace beman::tree_algorithms
@@ -73,7 +73,7 @@ template <typename A> inline constexpr auto functor<beman::tree_algorithms::Expr
 namespace beman::tree_algorithms {
 // :200
 constexpr auto eval(const Expr& expr) -> int { return fold_fix<int>(eval_algebra, expr); }
-// fold_map over Fix — src/beman/tree_algorithms/fold_map.test.cpp:217 (after registering layer_fold<ExprF<A>>, expression.hpp:175-194)
+// fold_map over Fix — tests/beman/tree_algorithms/fold_map.test.cpp:217 (after registering layer_fold<ExprF<A>>, expression.hpp:175-194)
 fold_map<std::string>(show_digit, concat, std::string{}, tree);
 // fold_map over a tree in its own representation — fold_map.test.cpp:279
 // requires project<BinaryTree<T>> and layer_fold<BinaryTreeF<T,A>> (binary_tree.hpp:225-268)
@@ -89,7 +89,7 @@ The per-call saving (two arguments instead of three or six) is paid for by a per
 **Severity:** significant (coherence of one codebase, one `beman::` surface).
 **Evidence (verified):**
 
-| | `beman::transpose` (`src/beman/transpose/fold.hpp`) | `beman::tree_algorithms` (`fold_map.hpp`, `fold_map_lookup.hpp`) |
+| | `beman::transpose` (`include/beman/transpose/fold.hpp`) | `beman::tree_algorithms` (`fold_map.hpp`, `fold_map_lookup.hpp`) |
 |---|---|---|
 | Kind | member of `derive_foldable` (`:209-211`) + operation object `fold_map_fn` (`:683-711`) | free function template (`fold_map.hpp:49-60, 72-85`; `fold_map_lookup.hpp:77-79, 91-93`) |
 | Call | `fold_map(f, structure, monoid)`; 2-arg form defaults to `Monoid<result>` | `fold_map<Result>(map_fn, combine, identity, tree)`; explicit forms add `layer_fold, fmap_fn[, project]` before `tree` |
@@ -109,9 +109,9 @@ Semantics agree: both map each element then combine under an associative operati
 **Severity:** significant (design).
 **Evidence:**
 - The hazard text still speaks of "two repos" (`SKILL.md:165-168`); `papers/algorithms-for-trees.md:528` says the derived operations "live with the Foldable surfaces in the companion repositories — one definition each".
-- In fact `fold_left` has two derivations in this repo: `src/beman/transpose/fold.hpp:312-355` and `examples/tree_algorithms/sequence_algorithms.cpp:103-114` (labelled example-local). `examples/tree_algorithms/expression_algorithms.cpp:50-111` builds an example-local `ExprFoldableMap`/`ExprTraversableMap` and its own `example_foldable_typeclass` lookup — a third pattern copy, noted but left alone in the ledger (`docs/coordination/machinery-deduplication.md:141`).
+- In fact `fold_left` has two derivations in this repo: `include/beman/transpose/fold.hpp:312-355` and `examples/tree_algorithms/sequence_algorithms.cpp:103-114` (labelled example-local). `examples/tree_algorithms/expression_algorithms.cpp:50-111` builds an example-local `ExprFoldableMap`/`ExprTraversableMap` and its own `example_foldable_typeclass` lookup — a third pattern copy, noted but left alone in the ledger (`docs/coordination/machinery-deduplication.md:141`).
 - The question is already filed and open: `docs/coordination/machinery-deduplication.md:202-208` `### layer-fold-and-foldable` — "Is `layer_fold<Layer>` a Foldable instance for the base functor under another name?"
-- transpose's `Traversable` deliberately does not require Foldable (`src/beman/transpose/traverse.hpp:86, 391-398`), so registering Foldable instances for trees later creates no inversion.
+- transpose's `Traversable` deliberately does not require Foldable (`include/beman/transpose/traverse.hpp:86, 391-398`), so registering Foldable instances for trees later creates no inversion.
 **Why it matters:** The "evidence vs proposal" split made sense across repos. Inside one repo, `fold.hpp` (897 lines, ten derived ops, operation objects) sits beside a 96-line `fold_map.hpp` that proposes the primitive and re-derives the queries by hand in tests and examples. Neither consumes the other.
 **Recommendation (decide, record under a slug):** Either (a) register `foldable<Fix<F>>` and `foldable<BinaryTree<T>>`/`foldable<FringeTree<T>>` instances in the lookup tier, implemented as `fold_map(f, t, m) = tree_algorithms::fold_map<monoid_value_t<M>>(f, m, t)` with `element_type` from the layer — so transpose's derived `length/any_of/to_vector/find_first` come free for every tree and the example-local Foldables disappear; or (b) state in both papers that tree_algorithms' `fold_map` is *not* Foldable's `fold_map` and give the mapping. (a) is small once 2.1 is done; it is the natural "layer_fold is the per-layer Foldable" answer to the open question.
 
@@ -156,7 +156,7 @@ Semantics agree: both map each element then combine under an associative operati
 
 ### Finding 4.1 — `functor_object` cannot be satisfied by any layer: the nested-`value_type` requirement does not fit base functors
 **Severity:** significant (this is the "design resistance" the owner asked for).
-**Evidence:** `src/beman/transpose/detail/typeclass_base.hpp:82-100`: `applicative_value<T>` is defined only when `T::value_type` exists (plus `std::optional`). `functor_object<OBJ, CONTEXT>` (`transpose/functor.hpp:260-264`) and `functor_impl` (`:241-243`) both name `applicative_value_t<CONTEXT>`. Probe: `static_assert(functor_object<ExprFFunctorMap<int>, ExprF<int>>)` fails — "implicit instantiation of undefined template `applicative_value<std::variant<Const<int>, Add<int>, Mul<int>>>`". No layer type (`ExprF`, `NatF`, `FringeTreeF`, `BinaryTreeF`, `RoseF`) has a `value_type`, and none should: a layer's "element" for Functor purposes is the child position `A`, which is a template parameter, not a member typedef. tree_algorithms accordingly uses only `has_instance_v` (`recursion_schemes_lookup.hpp:44`; every `*.test.cpp`) and never transpose's concepts.
+**Evidence:** `include/beman/transpose/detail/typeclass_base.hpp:82-100`: `applicative_value<T>` is defined only when `T::value_type` exists (plus `std::optional`). `functor_object<OBJ, CONTEXT>` (`transpose/functor.hpp:260-264`) and `functor_impl` (`:241-243`) both name `applicative_value_t<CONTEXT>`. Probe: `static_assert(functor_object<ExprFFunctorMap<int>, ExprF<int>>)` fails — "implicit instantiation of undefined template `applicative_value<std::variant<Const<int>, Add<int>, Mul<int>>>`". No layer type (`ExprF`, `NatF`, `FringeTreeF`, `BinaryTreeF`, `RoseF`) has a `value_type`, and none should: a layer's "element" for Functor purposes is the child position `A`, which is a template parameter, not a member typedef. tree_algorithms accordingly uses only `has_instance_v` (`recursion_schemes_lookup.hpp:44`; every `*.test.cpp`) and never transpose's concepts.
 **Why it matters:** transpose's conformance vocabulary (`functor_object`, `functor_impl`) is unusable for the one consumer that registers the most Functor instances. The owner guessed that costs might be invisible from the consumer side; this one is.
 **Recommendation:** Make `applicative_value` customizable by specialization (layers could then say `applicative_value<ExprF<A>> { using type = A; }`), or let the Functor concepts take the element type as an explicit parameter / probe `fmap` with a generic witness. Record the ruling under a slug in `docs/transpose/decisions.md` and add one layer to transpose's concept tests as the regression.
 

@@ -9,22 +9,22 @@
 // public surface is deliberately impoverished -- injection, subsumption,
 // membership, visitation -- because "the set of errors this computation may
 // raise" is an interpretation, not a representation, and interpretations
-// need names. See docs/decisions.md#error-set-identity.
+// need names. See docs/transpose/decisions.md#error-set-identity.
 //
 // VALUE LEVEL: a WITNESSED SUBSET, not a one-of union. The TYPE says "may
 // raise {A,B}"; a VALUE says "did raise", and did-raise is a non-empty subset
 // of may-raise: one witness per raised type, at most. Storage is per-type
 // slots (a tuple of `std::optional<Es>...`) bounded by |grade|, never
 // allocation, never a discriminated one-of. This is the amendment recorded
-// at docs/decisions.md#error-set-identity, made by
-// docs/decisions.md#accumulation-evidence: the short-circuit applicative
-// object only ever produces a singleton witness (exactly the old "one
-// alternative" behavior, preserved as a special case); the accumulating
-// object (docs/transpose-grading-plan.md#accumulating-object) combines
-// witnesses from multiple failures, left-biased per type via
+// at docs/transpose/decisions.md#error-set-identity, made by
+// docs/transpose/decisions.md#accumulation-evidence: the short-circuit
+// applicative object only ever produces a singleton witness (exactly the old
+// "one alternative" behavior, preserved as a special case); the accumulating
+// object (docs/transpose/transpose-grading-plan.md#accumulating-object)
+// combines witnesses from multiple failures, left-biased per type via
 // `error_set_combine` -- two witnesses of the SAME type keep the leftmost,
 // which is deterministic only because left-to-right traversal is already
-// normative (docs/decisions.md#applicative-objects).
+// normative (docs/transpose/decisions.md#applicative-objects).
 //
 // CANONICAL BY CONSTRUCTION. `error_set<Es...>` is the spelling users and the
 // framework write; it is an alias that sorts and deduplicates its pack, so
@@ -261,10 +261,11 @@ struct error_set_from_list<type_list<ERRORS...>> {
 
 // -- Per-type witness storage ----------------------------------------------
 // One std::optional slot per alternative, never a discriminated one-of. See
-// docs/decisions.md#accumulation-evidence for why: the grade join needs no
-// monoid, but accumulating VALUE-level evidence does, and the semigroup it
-// needs is "per type, keep one witness" -- which a tuple of optionals gives
-// for free, with no allocation and no extra discriminant to keep in sync.
+// docs/transpose/decisions.md#accumulation-evidence for why: the grade join
+// needs no monoid, but accumulating VALUE-level evidence does, and the
+// semigroup it needs is "per type, keep one witness" -- which a tuple of
+// optionals gives for free, with no allocation and no extra discriminant to
+// keep in sync.
 
 /** The slot for ERROR, set from `error` when it is the injected alternative,
  * empty otherwise. Called once per member of the target pack, so exactly one
@@ -413,7 +414,7 @@ class error_set_of {
                 "beman::transpose::error_set::visit requires exactly one "
                 "witness, but this value witnesses a different number. Use "
                 "witness<E>() per alternative for a multi-witness subset; "
-                "see docs/decisions.md#accumulation-evidence.");
+                "see docs/transpose/decisions.md#accumulation-evidence.");
         }
 
         std::optional<std::variant<ERRORS...>> found;
@@ -615,7 +616,7 @@ inline constexpr bool
 // VALUE level, not grade level: the grade join above is type-level union and
 // needs no semigroup at all. What the accumulating applicative object needs
 // is a semigroup on the witnessed evidence, which is what this section
-// supplies. See docs/decisions.md#accumulation-evidence.
+// supplies. See docs/transpose/decisions.md#accumulation-evidence.
 
 //! \effects-equiv
 //! \returns The combination of `lhs` and `rhs` at their common grade.
@@ -642,22 +643,23 @@ constexpr auto combine_grade_evidence(const error_set_of<ERRORS...> &lhs,
 } // namespace detail
 
 // -- recover: narrowing the grade by set difference ------------------------
-// Stage recover-narrowing (docs/transpose-grading-plan.md#recover-narrowing).
-// Error vocabulary, per grade.hpp's own comment that `recover` lives in the
-// model's header, not the framework's.
+// Stage recover-narrowing
+// (docs/transpose/transpose-grading-plan.md#recover-narrowing). Error
+// vocabulary, per grade.hpp's own comment that `recover` lives in the model's
+// header, not the framework's.
 //
-// docs/decisions.md#recover-grade-inference: the handled set {H} is
+// docs/transpose/decisions.md#recover-grade-inference: the handled set {H} is
 // ANNOTATED -- explicit template arguments, never inferred from the
 // handler's shape -- and CHECKED: one static_assert enforces H is a subset
 // of the computation's grade (reusing error_set_of::contains, the same
-// membership primitive docs/decisions.md#multi-witness-elimination names),
-// another enforces the handler's result shape. The resulting grade
+// membership primitive docs/transpose/decisions.md#multi-witness-elimination
+// names), another enforces the handler's result shape. The resulting grade
 // `(e \ H) ∪ raised` is then a direct, non-recursive computation -- no
 // lattice fixpoint, because one recover call is not a recursive fold
 // ("inference only where no fixpoint is required").
 //
-// docs/decisions.md#multi-witness-elimination: recover needs no new public
-// verb. Elimination is a static fold over H with runtime presence
+// docs/transpose/decisions.md#multi-witness-elimination: recover needs no new
+// public verb. Elimination is a static fold over H with runtime presence
 // filtering, built entirely from the existing public API --
 // error_set_of's injecting constructor and `combined_with` -- never from
 // private access to the representation.
@@ -873,7 +875,8 @@ recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
     static_assert(
         (error_set_of<ERRORS...>::template contains<HANDLED>() && ...),
         "recover's HANDLED types must be members of the computation's grade "
-        "-- CHECKED, per docs/decisions.md#recover-grade-inference. The "
+        "-- CHECKED, per docs/transpose/decisions.md#recover-grade-inference. "
+        "The "
         "handled set is ANNOTATED (explicit template arguments on recover), "
         "never inferred.");
     static_assert(
@@ -883,7 +886,8 @@ recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
          ...),
         "recover's handler must return either the recovered VALUE directly, "
         "or std::expected<VALUE, error_set<...>> if the recovery attempt can "
-        "itself raise. See docs/decisions.md#recover-grade-inference.");
+        "itself raise. See "
+        "docs/transpose/decisions.md#recover-grade-inference.");
 
     using Grade = error_set_of<ERRORS...>;
     using FinalGrade =
@@ -925,7 +929,7 @@ recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
 // vocabulary; everything below translates it into grade vocabulary, and is
 // the only place the two meet. A second algebra registers the same way and
 // needs nothing from here -- which is the claim the law harness exists to
-// test (docs/decisions.md#grade-generality).
+// test (docs/transpose/decisions.md#grade-generality).
 
 /// Whether T is a specialization of std::expected. Exposition-only: it is
 /// named by the re-indexing constraints below and by the expected instance's
@@ -1002,9 +1006,9 @@ struct rebind_grade<VALUE, error_set_of<HEAD, TAIL...>> {
  * `expected<T, error_set<>>`.
  *
  * This is the mechanized form of the sentinel in
- * docs/decisions.md#empty-grade-spelling: the uniform degenerate-expected
- * form stays available as an explicit spelling, and no framework path
- * materializes it on a user's behalf.
+ * docs/transpose/decisions.md#empty-grade-spelling: the uniform
+ * degenerate-expected form stays available as an explicit spelling, and no
+ * framework path materializes it on a user's behalf.
  */
 template <class VALUE>
     requires(!is_expected_v<VALUE>)

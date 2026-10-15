@@ -5,7 +5,7 @@
 //
 // Built only when BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE is ON, because it is
 // the one thing in this repository with an external dependency. See
-// examples/p2300_adapter.hpp for what this establishes and, just as
+// examples/transpose/p2300_adapter.hpp for what this establishes and, just as
 // important, what writing it established that it cannot.
 
 #include "p2300_adapter.hpp"
@@ -108,8 +108,9 @@ TEST_CASE("p2300: a move-only value composes") {
 // =========================================================================
 // Stage sender-registration (2026-09-13). The cases above were written when
 // this adapter supplied only the pure/invoke basis. Everything below audits
-// it against docs/decisions.md#sender-instance-keying and
-// docs/decisions.md#sender-value-type-reading, which is what that stage is.
+// it against docs/transpose/decisions.md#sender-instance-keying and
+// docs/transpose/decisions.md#sender-value-type-reading, which is what that
+// stage is.
 // =========================================================================
 
 namespace {
@@ -189,8 +190,8 @@ static_assert(
     !std::is_same_v<decltype(p2300_applicative.pure(1)), then_adapted>);
 static_assert(std::is_same_v<decltype(p2300_applicative.pure(1)), just_int>);
 
-// SENTINEL for docs/decisions.md#sender-instance-keying: the demonstration
-// sender must not be an ex::sender. If it ever becomes one, this
+// SENTINEL for docs/transpose/decisions.md#sender-instance-keying: the
+// demonstration sender must not be an ex::sender. If it ever becomes one, this
 // concept-keyed registration and the demo's per-type one both match and the
 // keying decision requires the ambiguity be resolved by subsumption, never
 // by a tie-breaker tag -- so this failing is a design question, not a fix.
@@ -225,8 +226,9 @@ static_assert(
     beman::transpose::examples::has_value_type_member<std::optional<int>>);
 
 // -- 4. Deep conformance, structurally. -----------------------------------
-// docs/decisions.md#typeclass-conformance-depth: the object must satisfy the
-// full Applicative object surface over the carrier, not merely the basis.
+// docs/transpose/decisions.md#typeclass-conformance-depth: the object must
+// satisfy the full Applicative object surface over the carrier, not merely the
+// basis.
 
 static_assert(
     bt::applicative_object<
@@ -339,17 +341,17 @@ TEST_CASE("p2300: a move-only payload survives registration and the basis") {
 // adapted sender, which is what a caller actually has. That is finding (b) --
 // one object for all sender types, pure free to return a type of its own
 // choosing -- showing up as a consequence rather than a virtue, and it is
-// still true. Recorded at docs/review/execution-sender-registration.md
-// section 4.
+// still true. Recorded at
+// docs/transpose/review/execution-sender-registration.md section 4.
 //
 // WHAT CHANGED IS THE CONSEQUENCE, NOT THE FACT. Steve's ruling of 2026-09-19
-// (docs/decisions.md#collect-hook part 2) disjoined applicative_object_for on
-// `collect`: a policy that composes the whole structure in one operation is
-// not bound by what pure returns, because the pairwise composition that
-// constraint describes is one it will not perform. So all three shapes now
-// satisfy the policy concept -- by the second alternative, not the first.
-// Both halves are pinned, so a later reading can tell which one is carrying
-// each row.
+// (docs/transpose/decisions.md#collect-hook part 2) disjoined
+// applicative_object_for on `collect`: a policy that composes the whole
+// structure in one operation is not bound by what pure returns, because the
+// pairwise composition that constraint describes is one it will not perform. So
+// all three shapes now satisfy the policy concept -- by the second alternative,
+// not the first. Both halves are pinned, so a later reading can tell which one
+// is carrying each row.
 
 namespace {
 template <class S>
@@ -397,7 +399,7 @@ static_assert(
 // body dies inside sequence.hpp at `accumulated = applicative.invoke(...)`
 // -- "no viable overloaded '='" -- which is a hard error, not something a
 // concept can evaluate to false. Measured; see the 2026-09-13 entry under
-// docs/decisions.md#sender-instance-keying.
+// docs/transpose/decisions.md#sender-instance-keying.
 //
 // That assignment is exactly the invariance the left fold needs and a real
 // sender does not have, so the message is honest. It is also worse than

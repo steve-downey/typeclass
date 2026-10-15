@@ -1,13 +1,14 @@
 // tests/beman/transpose/crtp_absorption.test.cpp                     -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-// Stage crtp-absorption (docs/transpose-grading-plan.md#crtp-absorption).
+// Stage crtp-absorption
+// (docs/transpose/transpose-grading-plan.md#crtp-absorption).
 //
 // The claim under test is an ERGONOMICS invariant, not a behavioural one:
 // registering a kind must stay "a couple of functions", and an instance that
 // has never heard of grades must keep working verbatim, treated as uniformly
-// ∅-graded (docs/decisions.md#grade-machinery-home). The sentinel for that
-// decision is that a typeclass instance never has to declare grade
+// ∅-graded (docs/transpose/decisions.md#grade-machinery-home). The sentinel for
+// that decision is that a typeclass instance never has to declare grade
 // participation -- so the test that matters is one whose instance says
 // nothing about grades at all and still gets the whole surface.
 
@@ -135,7 +136,7 @@ static_assert(!subsumable<set_a, std::expected<int, set_ab>>);
 // =========================================================================
 // 3. Promotion of bare values at ∅ is subsumption, not a separate mechanism.
 //
-// docs/decisions.md#empty-grade-spelling: the coercion out of ∅ is
+// docs/transpose/decisions.md#empty-grade-spelling: the coercion out of ∅ is
 // expected's existing converting constructor from T. The standard already
 // implements η, so the framework contributes nothing but the constraint.
 // =========================================================================

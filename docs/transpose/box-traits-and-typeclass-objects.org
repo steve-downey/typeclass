@@ -109,7 +109,7 @@ But you provide very little, and you get a lot.
 
 The Foldable instance for a fixpoint tree provides one function --- ~fold_map~:
 
-From [[file:../../examples/transpose/binary_tree.hpp][=examples/binary_tree.hpp=]]:
+From [[file:../../examples/transpose/binary_tree.hpp][=examples/transpose/binary_tree.hpp=]]:
 
 #+begin_src cpp
 struct BinaryTreeFoldableImpl {

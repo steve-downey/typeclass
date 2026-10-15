@@ -17,14 +17,14 @@
 // constraint are pay-per-use. See `grade_semilattice` in
 // include/beman/transpose/grade.hpp, which says the same thing from the other
 // side, and the deliberate-omissions item in
-// docs/transpose-grading-plan.md#paper-revision.
+// docs/transpose/transpose-grading-plan.md#paper-revision.
 //
 // FRAMEWORK VOCABULARY ONLY. This header includes grade.hpp and nothing else
 // from the library. It never names `error_set`, `recover`, or `expected`. If
 // it ever has to, the claim of
-// docs/decisions.md#grade-generality -- that the framework layer speaks only
-// grade vocabulary and `error_set` is merely one model -- is false, and the
-// right response is to log the leak, not to add the include.
+// docs/transpose/decisions.md#grade-generality -- that the framework layer
+// speaks only grade vocabulary and `error_set` is merely one model -- is false,
+// and the right response is to log the leak, not to add the include.
 //
 // A MODEL UNDER TEST supplies two type lists and nothing else:
 //   - `grades`: a `grade_sample<...>` of elements to quantify over. For a
@@ -137,7 +137,7 @@ consteval auto check_graded_laws() -> bool;
 // -- The algebra laws, one grade at a time --------------------------------
 //
 // Idempotence and the unit are the two properties
-// docs/decisions.md#grade-generality calls load-bearing on their own:
+// docs/transpose/decisions.md#grade-generality calls load-bearing on their own:
 // idempotent makes fold grades shape-independent, so recursive data types
 // stay ungraded while effects are graded; the unit is what lets an ungraded
 // computation sit in a graded pipeline unchanged.
@@ -244,8 +244,8 @@ consteval auto check_carrier_at() -> bool {
 
     // grade_of ∘ rebind_grade is the identity, with ONE licensed exception:
     // at the model's bottom the carrier is the bare value again
-    // (docs/decisions.md#empty-grade-spelling), and a bare value reports the
-    // framework's ungraded sentinel rather than a model grade.
+    // (docs/transpose/decisions.md#empty-grade-spelling), and a bare value
+    // reports the framework's ungraded sentinel rather than a model grade.
     static_assert(
         std::is_same_v<grade_of_t<carrier>, GRADE> ||
             (std::is_same_v<GRADE, grade_bottom_t<GRADE>> &&
@@ -258,9 +258,9 @@ consteval auto check_carrier_at() -> bool {
     // grade it already has changes nothing, and narrowing it to the model's ∅
     // hands back the bare value rather than a degenerate carrier. The second
     // of these is the mechanized form of
-    // docs/decisions.md#empty-grade-spelling's sentinel, generalized off the
-    // shipped model: NO model's framework path may materialize an ∅-graded
-    // carrier the user did not write.
+    // docs/transpose/decisions.md#empty-grade-spelling's sentinel, generalized
+    // off the shipped model: NO model's framework path may materialize an
+    // ∅-graded carrier the user did not write.
     static_assert(std::is_same_v<rebind_grade_t<carrier, GRADE>, carrier>,
                   "Re-indexing a carrier at its own grade is the identity. A "
                   "model that nests here builds carrier<carrier<T>> the first "

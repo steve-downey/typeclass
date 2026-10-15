@@ -190,7 +190,7 @@ class FringeTree {
 // views, concat, or the elementwise folds can tell. Sequence-generic
 // algorithms — cons/snoc, from_range, fold_left, sequence equality —
 // derive from empty/leaf/concat plus the views alone; see
-// examples/sequence_algorithms.cpp.
+// examples/tree_algorithms/sequence_algorithms.cpp.
 
 // f4f21f0a-6b7e-4f0d-9a3c-58f1c2d7ab26
 /** One step of end-wise decomposition: the end element and the rest of

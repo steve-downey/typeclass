@@ -106,13 +106,13 @@ inline constexpr auto functor = std::false_type{};
 //
 // This comment is the reference for the operation objects; the other
 // typeclass headers point back to it. The rulings are
-// docs/decisions.md#operation-objects, #lookup-variable-naming and
+// docs/transpose/decisions.md#operation-objects, #lookup-variable-naming and
 // #empty-predicate-name.
 //
 // A fourth lookup mode, on top of implicit lookup, explicit object argument,
-// and NTTP pinning (examples/lookup_modes_example.cpp): the operation as an
-// object that does the lookup itself. `fmap(f, v)` names the operation the
-// caller means, rather than the object the operation is reached through.
+// and NTTP pinning (examples/transpose/lookup_modes_example.cpp): the operation
+// as an object that does the lookup itself. `fmap(f, v)` names the operation
+// the caller means, rather than the object the operation is reached through.
 //
 // Two cases motivate them. First, everything-is-local code -- a container on
 // the stack that one algorithm maps or traverses -- where naming a lookup
@@ -144,9 +144,9 @@ inline constexpr auto functor = std::false_type{};
 // free to provide the Functor names because they can not mean anything else.
 // That commitment is already load-bearing elsewhere -- it is what lets an
 // algorithm inherit from two typeclass instances at once and call both
-// unqualified (see examples/algorithm_object_example.cpp). Collecting the
-// operations in one namespace makes the commitment checkable in one place. A
-// namespace per typeclass would let `fmap` mean two things and hide it.
+// unqualified (see examples/transpose/algorithm_object_example.cpp). Collecting
+// the operations in one namespace makes the commitment checkable in one place.
+// A namespace per typeclass would let `fmap` mean two things and hide it.
 //
 // It also keeps the operations away from std, where `empty`, `length`,
 // `invoke`, `to_vector`, `any_of` and `all_of` all exist with related

@@ -145,7 +145,7 @@ The more interesting case is an algorithm that needs /both/ Foldable and Travers
 Inherit from both.
 Both bases are empty; no diamond, no ambiguity (the typeclass surfaces have disjoint names by design).
 
-From [[file:../../examples/transpose/algorithm_object_example.cpp][=examples/algorithm_object_example.cpp=]]:
+From [[file:../../examples/transpose/algorithm_object_example.cpp][=examples/transpose/algorithm_object_example.cpp=]]:
 
 #+begin_src cpp
 template <class T,
@@ -244,7 +244,7 @@ Construction of ~validate_impl<T>{}~ is zero-cost: no allocation, no initializat
 
 * Where This Lives
 
-The working implementation is in [[file:../../examples/transpose/algorithm_object_example.cpp][=examples/algorithm_object_example.cpp=]].
+The working implementation is in [[file:../../examples/transpose/algorithm_object_example.cpp][=examples/transpose/algorithm_object_example.cpp=]].
 
 Two algorithms demonstrate the pattern:
 

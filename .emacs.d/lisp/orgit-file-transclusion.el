@@ -13,8 +13,8 @@
 ;; Where the sibling `orgit:' adapter in init.el resolves PATH against the
 ;; worktree -- showing the file as of now -- this one resolves it against REV,
 ;; so an epistolary post keeps showing the code its prose was written about.
-;; REV is normally an annotated `blog/<post-basename>' tag; see
-;; papers/blog/pins.md for the post-to-tag mapping.
+;; REV is normally an annotated `<library>/blog/<post-basename>' tag; the tags
+;; came from the libraries' retired repositories (see README.md).
 ;;
 ;; No magit dependency: the blob comes from a `git show' subprocess, so batch
 ;; export stays light. The interactive `orgit-file' package (gggion/orgit-file)

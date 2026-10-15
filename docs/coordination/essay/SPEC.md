@@ -56,7 +56,7 @@ Caption claim: this is the structure axis. → Paper D.
 
 **E3 — Yesterday's tree, no conversion.** The nonce tree's three
 ingredients (layer struct, fmap, projection) then `fold_with` over
-`unique_ptr` nodes. (examples/nonce_tree_direct.cpp, anchored.)
+`unique_ptr` nodes. (examples/tree_algorithms/nonce_tree_direct.cpp, anchored.)
 Caption claim: the verbs meet your types where they are; no blessed
 tree, no Fix in sight. → Paper D.
 

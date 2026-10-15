@@ -4,7 +4,7 @@
 // trees repository (smd::tree::algorithm, fixpoint_tree_algorithm.hpp),
 // reworked against beman::tree_algorithms' expression tree.
 //
-// The library deliberately ships functor-only lookup (docs/DECISIONS.md,
+// The library deliberately ships functor-only lookup (docs/tree_algorithms/DECISIONS.md,
 // Decision 1: minimal algorithms core). The Foldable- and
 // Traversable-shaped operations these algorithms compose are therefore
 // EXAMPLE-LOCAL: defined in this translation unit, built on the public

@@ -266,8 +266,9 @@ namespace detail {
 ///
 /// DELIBERATE CONSTRAINT: this names no context, no carrier and no concept
 /// beyond the member itself. Whether anything answers it is the applicative
-/// object's business. See `docs/decisions.md#runtime-arity-composition`,
-/// whose Sentinel this spelling exists to keep.
+/// object's business. See
+/// `docs/transpose/decisions.md#runtime-arity-composition`, whose Sentinel this
+/// spelling exists to keep.
 //! \expos
 template <class APPLICATIVE, class CONTEXT>
 concept collecting_applicative = requires(const APPLICATIVE &applicative) {
@@ -545,7 +546,7 @@ struct traverse_fn {
 // with the arguments the other way round, so an object would be a second name
 // for the same call. (Sitting beside std::for_each is not the reason: `invoke`
 // sits beside std::invoke and keeps its object; see
-// docs/decisions.md#operation-object-wording.)
+// docs/transpose/decisions.md#operation-object-wording.)
 
 // \rSec3[transpose.alg.traverse]{traverse}
 

@@ -180,11 +180,11 @@
 ;; Pinned transclusion for the blog series.
 ;;
 ;; Blog posts transclude via `orgit-file:REPO::REV::PATH::UUID' links pinned to
-;; an annotated `blog/<post-basename>' tag, so a later refactor cannot rewrite
-;; the code inside a published entry. The adapter resolves REV with `git show'
-;; and hands off to `org-transclusion-add-src-lines', which applies the post's
-;; :lines/:src/:end attributes unchanged. See papers/blog/pins.md for the
-;; post-to-tag mapping.
+;; an annotated `<library>/blog/<post-basename>' tag, so a later refactor
+;; cannot rewrite the code inside a published entry. The adapter resolves REV
+;; with `git show' and hands off to `org-transclusion-add-src-lines', which
+;; applies the post's :lines/:src/:end attributes unchanged. Each post's
+;; links name the tag it is pinned to.
 (add-to-list 'load-path
              (expand-file-name
               "lisp" (or (and load-file-name

@@ -27,7 +27,7 @@
 // This file's assertions cut across five headers (functor.hpp, apply.hpp,
 // monad.hpp, fold.hpp, traverse.hpp), so they get their own translation
 // unit rather than being scattered across each header's own test file. See
-// docs/decisions.md#typeclass-conformance-depth.
+// docs/transpose/decisions.md#typeclass-conformance-depth.
 
 namespace bt = beman::transpose;
 
@@ -117,7 +117,8 @@ struct FoldRightOnlyImpl {
 // -- bind, fold_map, fold_right, element_type, nor traverse. Plain, not
 // -- CRTP-wrapped, so probing it against any *_impl concept is always a
 // -- safe name-lookup failure rather than the CRTP-base body-instantiation
-// -- hazard docs/decisions.md#typeclass-conformance-depth's rider records.
+// -- hazard docs/transpose/decisions.md#typeclass-conformance-depth's rider
+// records.
 struct NoBasisImpl {};
 
 } // namespace
@@ -221,11 +222,12 @@ static_assert(
 // -- A bare monad object fails functor_object --
 //
 // OptionalMonadMap carries the Functor basis (fmap, grown by Monad per
-// docs/decisions.md#functor-monad-grounding) and never the derived surface
-// (replace), so it correctly fails functor_object. This is expected, not a
-// bug: the remedy is docs/decisions.md#typeclass-conformance-depth's
-// forward pointer to as-functor-presentation, which gives Monad a member
-// naming the same derive_functor<> wrapping the next assertion spells by hand.
+// docs/transpose/decisions.md#functor-monad-grounding) and never the derived
+// surface (replace), so it correctly fails functor_object. This is expected,
+// not a bug: the remedy is
+// docs/transpose/decisions.md#typeclass-conformance-depth's forward pointer to
+// as-functor-presentation, which gives Monad a member naming the same
+// derive_functor<> wrapping the next assertion spells by hand.
 static_assert(
     !bt::functor_object<bt::OptionalMonadMap<int>, std::optional<int>>);
 
@@ -242,7 +244,8 @@ static_assert(bt::functor_object<
 // ============================================================================
 // typeclass-impl-concepts: the restricted Impl concepts, one per class,
 // naming only the minimal complete basis -- the MINIMAL pragma to the deep
-// object concepts above. See docs/decisions.md#typeclass-conformance-depth.
+// object concepts above. See
+// docs/transpose/decisions.md#typeclass-conformance-depth.
 // ============================================================================
 
 // -- Every shipped Impl satisfies its concept --
@@ -279,9 +282,9 @@ static_assert(
 // This is the assertion that keeps the dual basis honest at the Impl-concept
 // level, load-bearing beyond this step: an Impl-directed probe can be a
 // statement about the wrong object
-// (docs/decisions.md#derived-op-native-preference), and applicative_impl and
-// foldable_impl are exactly where a concept written only against one basis
-// would bake that defect back in.
+// (docs/transpose/decisions.md#derived-op-native-preference), and
+// applicative_impl and foldable_impl are exactly where a concept written only
+// against one basis would bake that defect back in.
 static_assert(bt::applicative_impl<ApOnlyImpl, std::optional<int>>); // ap-only
 static_assert(bt::applicative_impl<bt::optional_applicative_impl<int>,
                                    std::optional<int>>); // invoke-only

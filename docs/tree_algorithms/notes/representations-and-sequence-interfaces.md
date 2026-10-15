@@ -30,7 +30,7 @@ a tested law). So "an example built ON Fix" and "algorithms not coupled
 TO Fix" are the same claim exercised from both ends:
 
 - The naive `Node{data, left, right}` never materializes a Fix
-  (`examples/nonce_tree_direct.cpp`, already shipped).
+  (`examples/tree_algorithms/nonce_tree_direct.cpp`, already shipped).
 - Fix<F> is itself one more representation a user may build on
   directly — and that demonstration was missing until now.
 
@@ -47,7 +47,7 @@ The representation matrix, after this round:
 
 ## 2. What was added (2026-07-17)
 
-**`examples/search_tree_on_fix.cpp`** — ask 1. A full working binary
+**`examples/tree_algorithms/search_tree_on_fix.cpp`** — ask 1. A full working binary
 search tree on `BinaryTreeFix<int>`: a whole tree is
 `Box<BinaryTreeFix<int>>`, so "possibly-empty tree" and "child slot" are
 the same type. The honest division of labor is the example's thesis:
@@ -93,7 +93,7 @@ byte-identical), returning `std::optional<FringeView<T>>` with
 The contract is a **quotient contract**: the rest's element sequence is
 specified, its shape is not.
 
-**`examples/sequence_algorithms.cpp`** — the concrete demonstration that
+**`examples/tree_algorithms/sequence_algorithms.cpp`** — the concrete demonstration that
 quotient equivalence is all the sequence-facing algorithms require, with
 each operation coming from its proper home. Construction and
 decomposition derive from a five-operation interface (`empty`, `leaf`,
@@ -181,7 +181,7 @@ version; no normative dependence either way.
    contrast. **Drafted 2026-07-17** in `papers/algorithms-for-trees.md`
    (the paper's real number, assigned by Steve; supersedes DnnnnR0),
    together with a blog pass adding the direct verbs, fold_map, and the
-   rose tree to `docs/recursive-tree-algorithms.org`.
+   rose tree to `docs/tree_algorithms/recursive-tree-algorithms.org`.
 
 ## 5. Discipline compliance
 

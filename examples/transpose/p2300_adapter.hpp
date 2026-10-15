@@ -24,7 +24,7 @@
 // move-only values all compose (see p2300.test.cpp).
 //
 // WHAT IT DOES NOT ESTABLISH, AND WHY -- two limits found by writing it, both
-// recorded at docs/decisions.md#p2300-front-door-shape:
+// recorded at docs/transpose/decisions.md#p2300-front-door-shape:
 //
 //   1. THE FIRST LIMIT IS NOW HALF LIFTED -- see the registration at the
 //      bottom of this header, added by stage sender-registration on
@@ -38,11 +38,11 @@
 //      `then(when_all(acc, elem))` names a new type at every step.
 //      This header originally continued "a runtime-sized traversal of real
 //      senders needs a type-erased sender". That claim is now CONTESTED by
-//      docs/decisions.md#runtime-arity-composition, which says it needs a
-//      native n-ary composition instead, and it is settled by measurement at
-//      stage all-of-algorithm -- not by either comment being more recent.
-//      The toy sender<T> passes only because std::function<T()> is already
-//      type-erased.
+//      docs/transpose/decisions.md#runtime-arity-composition, which says it
+//      needs a native n-ary composition instead, and it is settled by
+//      measurement at stage all-of-algorithm -- not by either comment being
+//      more recent. The toy sender<T> passes only because std::function<T()> is
+//      already type-erased.
 //   2. `just_error(...)` and `just_stopped()` cannot be operands: `when_all`
 //      requires each child to have exactly one value completion, and those
 //      have none. Error propagation is therefore shown with an operand that
@@ -91,9 +91,9 @@ struct P2300ApplicativeImpl {
     /** The range twin of `invoke`: compose a RUNTIME-SIZED collection of
      * operands into one context holding a vector of their values.
      *
-     * docs/decisions.md#runtime-arity-composition. `invoke` is variadic, so
-     * it cannot serve a structure whose size is not known until run time,
-     * and the vector Traversable's left fold cannot either -- its
+     * docs/transpose/decisions.md#runtime-arity-composition. `invoke` is
+     * variadic, so it cannot serve a structure whose size is not known until
+     * run time, and the vector Traversable's left fold cannot either -- its
      * accumulator assignment needs the context type to be invariant under
      * composition, and no real sender is. `collect` moves the n-ary
      * knowledge to the one place that has it, this object, and leaves the
@@ -129,7 +129,7 @@ inline constexpr P2300ApplicativeMap p2300_applicative{};
  * THE EMPTY ENVIRONMENT IS SPELLED `env<>`. P2300 called it `empty_env`
  * until LWG replaced the dedicated type with the zero-argument case of the
  * `env<...>` template, and the pinned beman.execution exports only the newer
- * spelling. See docs/decisions.md#sender-value-type-reading.
+ * spelling. See docs/transpose/decisions.md#sender-value-type-reading.
  *
  * THE ARITY CHECK IS SFINAE-FRIENDLY, which is not obvious and was initially
  * recorded the other way round. `std::type_identity_t` is not variadic, so
@@ -210,7 +210,7 @@ struct applicative_value<
  * template's `std::false_type` gives the framework's existing
  * "No applicative<T> specialization found" diagnostic.
  *
- * SENTINEL (docs/decisions.md#sender-instance-keying): any
+ * SENTINEL (docs/transpose/decisions.md#sender-instance-keying): any
  * `applicative<some_specific_adaptor_type>` specialization is a
  * regression to per-type keying. Ambiguity between this and any future
  * concept-keyed registration must be resolved by subsumption, never by

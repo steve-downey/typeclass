@@ -48,7 +48,7 @@ using beman::transpose::overloaded;
 // and max over std::size_t, say) must not share Elem nodes. The value type is
 // derived from the instance; the instance itself is stored on the tree and
 // passed down to every helper that combines. See beman.transpose
-// docs/decisions.md#monoid-selection.
+// docs/transpose/decisions.md#monoid-selection.
 
 template <typename MONOID>
 using tag_t = beman::transpose::monoid_value_t<MONOID>;
