@@ -1,6 +1,6 @@
 # Anchor inventory — transclusion contract (Tasks 3a/3b → 4.4)
 
-Complete UUID-anchor map for docs/recursive-tree-algorithms.org and papers/algorithms-for-trees.md (formerly DnnnnR0).
+Complete UUID-anchor map for docs/tree_algorithms/recursive-tree-algorithms.org and papers/algorithms-for-trees.md (formerly DnnnnR0).
 "Serves" line numbers refer to the article's TRANSCLUDE-TODO markers.
 
 ## Fold family additions (2026-07-14)
@@ -22,11 +22,11 @@ Complete UUID-anchor map for docs/recursive-tree-algorithms.org and papers/algor
 | 321edf34-488f-4322-ac5c-320fa5c4d1fc | include/.../fringe_tree.hpp | project + embed (measure invariant) | follow-up article; measures bridge |
 | e6cd1dd3-85b1-4ce2-bf7f-2ab1783d16f8 | include/.../fringe_tree.hpp | FringeTreeLayerFoldMap + lookup registrations | follow-up article |
 | 8f25579d-443a-4685-b3af-01f8103f6863 | include/.../expression.hpp | ExprLayerFoldMap (6-vs-9 contrast) | paper §Folding; essay exhibit-fold-map-queries candidate |
-| 04e450a4-3614-4f09-a185-1835f935673a | examples/nonce_tree_direct.cpp | nonce Node + NodeF + fmap + project | paper §Trees you don't own; essay exhibit-yesterdays-tree |
+| 04e450a4-3614-4f09-a185-1835f935673a | examples/tree_algorithms/nonce_tree_direct.cpp | nonce Node + NodeF + fmap + project | paper §Trees you don't own; essay exhibit-yesterdays-tree |
 
 ## Rose tree and fringe views (2026-07-17)
 
-Added with `docs/notes/representations-and-sequence-interfaces.md`.
+Added with `docs/tree_algorithms/notes/representations-and-sequence-interfaces.md`.
 Consumed 2026-07-17: the article transcludes 8f0e2d0a and 4b9d17f2 (§Not
 Every Tree Has an In-Order), and D4322R0 carries the §4.5 paper delta as
 hand-mirrored prose (rose tree in implementation experience, the
@@ -46,14 +46,14 @@ e4beac7f (fold_map lookup), 8f25579d (ExprLayerFoldMap), and
 
 | Anchor | File | Region | Serves |
 |---|---|---|---|
-| ec8e7f28-10c3-43ea-bfa9-a54f4c63ef9c | examples/fixpoint_tree_example.cpp | compact Box + make_box | article L34 |
-| 3959d7ab-f1fa-4fd7-b2b9-886a1f7610a2 | examples/fixpoint_tree_example.cpp | expression type system | article L69 |
-| 02640f07-f080-4eec-bd90-b414fabd4b7b | examples/fixpoint_tree_example.cpp | smart constructors | article L91 |
-| 2526ec45-2e52-4b56-aab0-1034b078a459 | examples/fixpoint_tree_example.cpp | main + one-layer eval + local fold | article L110 (region includes working local fold; trim decision at wiring time) |
-| a66c0122-f24d-4858-a802-cf76f87969e9 | examples/expression_algorithms.cpp | example-local Foldable/Traversable maps | follow-up article (spare) |
-| 868a8228-44a7-4761-8822-28b622d6b9a0 | examples/expression_algorithms.cpp | validate_impl | algorithm-object story |
-| 7226de56-d7ce-44c6-9e99-849da548d3e4 | examples/expression_algorithms.cpp | transform_if_large_impl | algorithm-object story |
-| fba6bbba-6cd8-4f4f-ba18-b584cf672a79 | examples/binary_tree_adapt.cpp | to_fix + shape algebra + fold + from_fix | article TODO(3a) L714 |
+| ec8e7f28-10c3-43ea-bfa9-a54f4c63ef9c | examples/tree_algorithms/fixpoint_tree_example.cpp | compact Box + make_box | article L34 |
+| 3959d7ab-f1fa-4fd7-b2b9-886a1f7610a2 | examples/tree_algorithms/fixpoint_tree_example.cpp | expression type system | article L69 |
+| 02640f07-f080-4eec-bd90-b414fabd4b7b | examples/tree_algorithms/fixpoint_tree_example.cpp | smart constructors | article L91 |
+| 2526ec45-2e52-4b56-aab0-1034b078a459 | examples/tree_algorithms/fixpoint_tree_example.cpp | main + one-layer eval + local fold | article L110 (region includes working local fold; trim decision at wiring time) |
+| a66c0122-f24d-4858-a802-cf76f87969e9 | examples/tree_algorithms/expression_algorithms.cpp | example-local Foldable/Traversable maps | follow-up article (spare) |
+| 868a8228-44a7-4761-8822-28b622d6b9a0 | examples/tree_algorithms/expression_algorithms.cpp | validate_impl | algorithm-object story |
+| 7226de56-d7ce-44c6-9e99-849da548d3e4 | examples/tree_algorithms/expression_algorithms.cpp | transform_if_large_impl | algorithm-object story |
+| fba6bbba-6cd8-4f4f-ba18-b584cf672a79 | examples/tree_algorithms/binary_tree_adapt.cpp | to_fix + shape algebra + fold + from_fix | article TODO(3a) L714 |
 
 ## Library headers and tests (Task 3a)
 
@@ -80,10 +80,10 @@ e4beac7f (fold_map lookup), 8f25579d (ExprLayerFoldMap), and
 
 ## Missing anchors (comment-only additions in include/, owned by Task 4.4)
 
-- functor.hpp: `functor_typeclass` variable-template default → article L316 (since 2026-10-12 the anchor is on beman.transpose's `functor` default in `src/beman/transpose/functor.hpp`; tree_algorithms' `functor.hpp` is gone)
+- functor.hpp: `functor_typeclass` variable-template default → article L316 (since 2026-10-12 the anchor is on beman.transpose's `functor` default in `include/beman/transpose/functor.hpp`; tree_algorithms' `functor.hpp` is gone)
 - recursion_schemes.hpp: `fold_fix` explicit-fmap overload → article L448
 - recursion_schemes_lookup.hpp: `layer_fmap` → L511; `fold_fix` → L523; `unfold_fix` → L604; `refold` → L660
-- papers/D4322R0 synopsis is hand-mirrored (see its HTML comment) against the verb-signature anchors above; re-diff on any signature change.
+- papers/algorithms-for-trees.md synopsis is hand-mirrored (see its HTML comment) against the verb-signature anchors above; re-diff on any signature change.
 
 ## Snippet gate
 
@@ -95,4 +95,4 @@ Added for the tree-coordination essay `trees-and-transposition-for-29.org`, exhi
 
 | Anchor | File | Region | Serves |
 |---|---|---|---|
-| 78958c3f-7ae7-4933-bc32-57c5ec1e8ea2 | examples/nonce_tree_direct.cpp | shape algebra + fold_with call over the unique_ptr tree | essay exhibit-yesterdays-tree (second half) |
+| 78958c3f-7ae7-4933-bc32-57c5ec1e8ea2 | examples/tree_algorithms/nonce_tree_direct.cpp | shape algebra + fold_with call over the unique_ptr tree | essay exhibit-yesterdays-tree (second half) |

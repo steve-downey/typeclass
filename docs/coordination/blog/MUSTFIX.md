@@ -66,10 +66,10 @@ papers/blog/` → zero hits; the transcluded block diffs clean against
   justify prose.
   - Explicit-object snippet (62–69): quote the actual mode-2
     demonstration — the `fmap_with` lambda in
-    `examples/lookup_modes_example.cpp` — and adjust the surrounding
+    `examples/transpose/lookup_modes_example.cpp` — and adjust the surrounding
     two sentences to describe what it shows.
   - NTTP snippet (80–86): quote `fmap_plus_one`
-    (`examples/lookup_modes_example.cpp:17–20`), the real NTTP-pinned
+    (`examples/transpose/lookup_modes_example.cpp:17–20`), the real NTTP-pinned
     demo, and drop the claim that it lives in `fold.test.cpp`.
 - Alternative (only if the prose's specific shapes matter to the
   argument): add `explicit_object_lookup_example` and

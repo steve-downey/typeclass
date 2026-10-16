@@ -15,9 +15,9 @@ disabled_rules:
   - cmake.passive_targets
   # This repository holds three libraries (beman.transpose,
   # beman.tree_algorithms, beman.fingertree) rather than one named after the
-  # repository, and colocates each library's headers and tests under
-  # src/beman/<lib>/ rather than splitting include/ and tests/. These rules
-  # assume a single beman.typeclass library in the split layout; see README.md.
+  # repository, each split across include/beman/<lib>/, src/beman/<lib>/ and
+  # tests/beman/<lib>/. These rules assume a single beman.typeclass library;
+  # see README.md.
   - cmake.library_name
   - cmake.library_alias
   - directory.sources

@@ -149,7 +149,7 @@ In this paper both `Fix` and `Box` are exposition-level implementation detail: t
 ## Building on Fix directly
 
 Exposition-level does not mean toy.
-The subsections below treat the fixed-point wrapper as an adapter target for trees that already exist; it is equally a representation a user can build on from the start, and the reference implementation includes a full working container that does: a binary search tree whose tree type is `Fix` over a binary base functor directly, with a disengaged `Box` doing double duty as both "empty tree" and "absent child" (`examples/search_tree_on_fix.cpp`).
+The subsections below treat the fixed-point wrapper as an adapter target for trees that already exist; it is equally a representation a user can build on from the start, and the reference implementation includes a full working container that does: a binary search tree whose tree type is `Fix` over a binary base functor directly, with a disengaged `Box` doing double duty as both "empty tree" and "absent child" (`examples/tree_algorithms/search_tree_on_fix.cpp`).
 
 The example's value to this paper is its honest division of labor.
 `unfold_fix` builds the tree balanced from a sorted range; `fold_fix` and `fold_map` implement the whole-tree consumers — flatten, height, shape.

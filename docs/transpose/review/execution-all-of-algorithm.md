@@ -12,7 +12,7 @@ where the contested claim lives, per the standing instruction.
 
 ## 1. The result
 
-`examples/all_of.hpp` is `when_all` at runtime arity: a sender owning a
+`examples/transpose/all_of.hpp` is `when_all` at runtime arity: a sender owning a
 `std::vector<S>`, completing with a `std::vector<T>`, with an operation state
 that owns *n* child operation states directly.
 

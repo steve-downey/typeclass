@@ -18,7 +18,7 @@
 >   `empty_env` is spelled `env<>` at the pinned commit.
 > - `runtime-arity-composition`, `erasure-boundary`,
 >   `all-of-failure-semantics` — kept. `all_of` lands as
->   `examples/all_of.hpp`, not under `include/`.
+>   `examples/transpose/all_of.hpp`, not under `include/`.
 > - This file's "PROPOSED entries default to as drafted at Stage 0" rule was
 >   **not** applied wholesale; Steve ruled on 2026-09-13 instead.
 >

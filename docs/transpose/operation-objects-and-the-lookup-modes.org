@@ -37,7 +37,7 @@ One namespace holds the whole family, which in the standard would be =std::typec
 
 * Three modes, and the one that isn't there
 
-[[file:../../examples/transpose/lookup_modes_example.cpp][=examples/lookup_modes_example.cpp=]] lays out the three ways to reach an operation through a typeclass object.
+[[file:../../examples/transpose/lookup_modes_example.cpp][=examples/transpose/lookup_modes_example.cpp=]] lays out the three ways to reach an operation through a typeclass object.
 Implicit lookup through the variable template:
 
 #+begin_src cpp
@@ -152,7 +152,7 @@ Before, this function either opened with a block of lookup declarations, or beca
 Neither is terrible.
 Making a function generic to get at a customization mechanism is the kind of thing that spreads, though, and =std::vector<int>= is exactly the case where the instances were never going to vary.
 
-Both cases are in [[file:../examples/cpo_example.cpp][=examples/cpo_example.cpp=]].
+Both cases are in [[file:../../examples/transpose/operation_objects_example.cpp][=examples/transpose/operation_objects_example.cpp=]].
 
 * What it costs
 

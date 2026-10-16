@@ -58,6 +58,6 @@ repos:
       entry: scripts/wording-verify.sh
       language: script
       pass_filenames: false
-      files: ^(src/beman/transpose/.*\.hpp|scripts/gen-wording\.sh|papers/wording/.*)$
+      files: ^(include/beman/transpose/.*\.hpp|scripts/gen-wording\.sh|papers/wording/.*)$
 
 exclude: '^(infra/|port/|papers/wg21/)'

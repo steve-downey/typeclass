@@ -4,13 +4,13 @@ Status: APPROVED 2026-09-11; RECONCILED 2026-09-13 against
 [p2300-front-door-shape](decisions.md#p2300-front-door-shape), which the plan
 was drafted without in view. Steve's ruling of 2026-09-13: that entry stands,
 **nothing execution-dependent enters `include/`**, stages 1–3 build on
-`examples/p2300_adapter.hpp` where it lives, and `all_of` lands as
-`examples/all_of.hpp` under `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE`. Two
+`examples/transpose/p2300_adapter.hpp` where it lives, and `all_of` lands as
+`examples/transpose/all_of.hpp` under `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE`. Two
 addendum entries are withdrawn as superseded
 ([execution-dependency-shape](decisions.md#execution-dependency-shape),
 [demo-sender-fate](decisions.md#demo-sender-fate)); Stage 0's
 dependency-wiring deliverable is struck; Stage 1 becomes an audit. See
-[docs/review/execution-baseline.md](review/execution-baseline.md).
+[docs/transpose/review/execution-baseline.md](review/execution-baseline.md).
 Audience: a Claude Code agent executing concrete work in `beman.transpose`
 (P3200). Fresh agent per stage; this document and `decisions.md` are the only
 inherited context. **The Why sections are load-bearing.**
@@ -34,7 +34,7 @@ applies verbatim. It is not repeated here.
 P3200's second motivating domain is the deferred result:
 `vector<sender<T>> → sender<vector<T>>`. The paper, the blog series
 ("Transposing Structure and Context", "Transpose at Work"), and
-`examples/transpose_example.cpp` all show it — over `beman::transpose::sender<T>`,
+`examples/transpose/transpose_example.cpp` all show it — over `beman::transpose::sender<T>`,
 a `std::function<T()>` thunk in `include/beman/transpose/sender.hpp`, labeled
 non-normative. The claim being made to readers is that `transpose` works over
 *senders*. What the repository demonstrates is that it works over a callable
@@ -43,7 +43,7 @@ that has been type-erased to look like one. That is precisely the move
 
 **What already exists, and what therefore does not need writing.** An
 Applicative object over genuine senders is already in this repository:
-`examples/p2300_adapter.hpp`, exercised by
+`examples/transpose/p2300_adapter.hpp`, exercised by
 `tests/beman/transpose/p2300.test.cpp`, behind
 `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE` and pinned at `d24898d`. It is decided
 and ruled at
@@ -148,13 +148,13 @@ New from Stage 0:
 
 Branch: `execution-stage-0-baseline`, then one branch per stage off the
 previous, same cadence as the grading work. Each stage ends with a
-`docs/review/` note (what was pinned, what diverged) and a log entry under
+`docs/transpose/review/` note (what was pinned, what diverged) and a log entry under
 each slug it touched.
 
 ### Stage 0 — [execution-baseline](#execution-baseline) {#execution-baseline}
 
 **Status: COMPLETE 2026-09-13.** See
-[docs/review/execution-baseline.md](review/execution-baseline.md).
+[docs/transpose/review/execution-baseline.md](review/execution-baseline.md).
 
 **Why.** Every later stage is "does the real thing compile and behave"; the
 dependency, its spelling, and the untouched goldens have to be nailed down
@@ -199,7 +199,7 @@ existing golden → STOP.
 ### Stage 1 — [sender-registration](#sender-registration) {#sender-registration}
 
 **Status: COMPLETE 2026-09-13.** See
-[docs/review/execution-sender-registration.md](review/execution-sender-registration.md).
+[docs/transpose/review/execution-sender-registration.md](review/execution-sender-registration.md).
 
 **Why.** The typeclass object is looked up by carrier type
 (`applicative_typeclass<S>`), and P2300 has no single `M`: every adaptor is
@@ -211,7 +211,7 @@ element type has to be read from completion signatures rather than a
 (PROPOSED, kept as written).
 
 **This stage is an AUDIT, not a build** — revised 2026-09-13 by Steve's
-ruling. `examples/p2300_adapter.hpp` already supplies the `pure`/`invoke`
+ruling. `examples/transpose/p2300_adapter.hpp` already supplies the `pure`/`invoke`
 basis those entries compose, written and green since 2026-09-11. The stage's
 job is to hold the adapter up against the two entries above and bring it up
 to them, not to write a second object beside it.
@@ -220,7 +220,7 @@ to them, not to write a second object beside it.
 `include/`.
 
 **Deliverables.**
-1. Audit `examples/p2300_adapter.hpp` against
+1. Audit `examples/transpose/p2300_adapter.hpp` against
    [sender-instance-keying](decisions.md#sender-instance-keying) and
    [sender-value-type-reading](decisions.md#sender-value-type-reading), and
    close the gaps. The known starting gap, stated by the adapter's own
@@ -269,7 +269,7 @@ Anything execution-dependent landing under `include/` → STOP; that is the
 ### Stage 2 — [all-of-algorithm](#all-of-algorithm) {#all-of-algorithm}
 
 **Status: COMPLETE 2026-09-14.** See
-[docs/review/execution-all-of-algorithm.md](review/execution-all-of-algorithm.md).
+[docs/transpose/review/execution-all-of-algorithm.md](review/execution-all-of-algorithm.md).
 The contested consequence of
 [p2300-front-door-shape](decisions.md#p2300-front-door-shape) is refuted by
 measurement, and the refutation is logged there.
@@ -282,7 +282,7 @@ states and joins them itself. Design fixed by
 and
 [all-of-failure-semantics](decisions.md#all-of-failure-semantics).
 
-**Deliverables.** **`examples/all_of.hpp`**, under
+**Deliverables.** **`examples/transpose/all_of.hpp`**, under
 `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE` — location fixed 2026-09-13 by Steve's
 ruling; nothing execution-dependent enters `include/`:
 1. `all_of(std::vector<S>) -> all_of_sender<S>` (also a range overload that
@@ -341,7 +341,7 @@ ruling; nothing execution-dependent enters `include/`:
    that `decltype(all_of(v))` is `all_of_sender<S>` — the type is spelled
    from `S`, nothing hidden.
 6. Add `all_of` as the native n-ary member on the Stage-1 object — that is,
-   on `P2300ApplicativeImpl` in `examples/p2300_adapter.hpp`:
+   on `P2300ApplicativeImpl` in `examples/transpose/p2300_adapter.hpp`:
    `collect(std::vector<S>) = all_of(std::move(v))` — the name is fixed by
    the runtime-arity decision; it is the range twin of `invoke`.
 7. **When the allocation-count test in (5) passes, add a dated Log entry
@@ -421,7 +421,7 @@ ruling.
 
 **Note on deliverable 2.** `transpose(std::vector<S>)` over a P2300 `S`
 works only where the concept-keyed registration is visible, and after the
-2026-09-13 ruling that registration lives in `examples/p2300_adapter.hpp`
+2026-09-13 ruling that registration lives in `examples/transpose/p2300_adapter.hpp`
 rather than in a header `transpose.hpp` pulls in. So this deliverable's tests
 live beside the evidence, under the option, and include the adapter — the
 front door reaches real senders for a translation unit that asked for them,
@@ -435,7 +435,7 @@ matters here is the one the demo sender could not give: concurrency
 actually happening and cost actually being linear and un-erased.
 
 **Deliverables.**
-1. `examples/transpose_execution_example.cpp`: `vector<S>` of
+1. `examples/transpose/transpose_execution_example.cpp`: `vector<S>` of
   `schedule(pool) | then(work)` senders, transposed, run; prints completion
   order vs result order; a second scene with `run_loop` showing the
   single-threaded, still-lazy case; a third with a child error.

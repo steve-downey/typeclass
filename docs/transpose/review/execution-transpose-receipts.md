@@ -15,7 +15,7 @@ an upstream defect, recorded rather than decided.
 
 ## 1. The result
 
-`examples/transpose_execution_example.cpp` builds and runs under the option,
+`examples/transpose/transpose_execution_example.cpp` builds and runs under the option,
 on gcc-debug and llvm-debug, as a registered test. Its whole output:
 
 ```text

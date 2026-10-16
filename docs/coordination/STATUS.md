@@ -41,7 +41,7 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
   dirs are where code and text come together, so draft wherever
   convenient and export as usual.
 
-## tree_algorithms (Paper D) — plan: `docs/notes/extraction-plan.md`
+## tree_algorithms (Paper D) — plan: `docs/tree_algorithms/notes/extraction-plan.md`
 
 1. ~~Direct verbs~~ **DONE 2026-07-14** (commit 6cba179, merged to main):
    `fold_with`/`unfold_with`, equivalence-law static_asserts, nonce-tree
@@ -70,13 +70,13 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    carried on the punch list.
 5. Representation round per Steve's 2026-07-16 direction — **in working
    tree 2026-07-17, uncommitted**: Fix-native BST example
-   (`examples/search_tree_on_fix.cpp` — verbs where they fit, plain
+   (`examples/tree_algorithms/search_tree_on_fix.cpp` — verbs where they fit, plain
    wrap/unwrap recursion where they don't), rose tree
-   (`include/rose_tree.hpp` + tests; Fix-native, no Box, pre-order
+   (`include/beman/tree_algorithms/rose_tree.hpp` + tests; Fix-native, no Box, pre-order
    contract; pins that in-order is binary-only, not generic), fringe
    `view_l`/`view_r` mirroring Paper C's View vocabulary +
-   `examples/sequence_algorithms.cpp` (quotient-interface derivations),
-   design note `docs/notes/representations-and-sequence-interfaces.md`,
+   `examples/tree_algorithms/sequence_algorithms.cpp` (quotient-interface derivations),
+   design note `docs/tree_algorithms/notes/representations-and-sequence-interfaces.md`,
    anchor inventory extended. Opens [S-6]. Paper delta drafted in the
    2026-07-17 documentation pass (next item).
 6. Relationships essay — specified in `tree-coordination/essay/SPEC.md`
@@ -93,7 +93,7 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    "superseded Catch2 stash" note turned out stale — the stash list is
    empty; nothing to drop.
 
-## transpose (Paper A) — worklist: `docs/coordination-worklist-2026-07-13.md`
+## transpose (Paper A) — worklist: `docs/transpose/coordination-worklist-2026-07-13.md`
 
 1. ~~"Why not Monad"~~ **DONE 2026-07-14** (commit b21e8da): deferred-
    not-rejected framing per SYNC entry 4, with P0798/P2505 citations.
@@ -114,7 +114,7 @@ Resolved 2026-07-13 (see SYNC.md entry 2):
    (it has no applicative instance) but any future one follows the
    n-ary formulation.
 
-## fingertree (Paper C) — worklist: `docs/coordination-worklist-2026-07-13.md`
+## fingertree (Paper C) — worklist: `docs/coordination-worklist-2026-07-13.md` in the retired fingertree repository (not carried into this one)
 
 1. Track direct-verb naming (blocked on [S-1]); update pencils.
 2. Companion-section hygiene when the C draft is written (cite essay;

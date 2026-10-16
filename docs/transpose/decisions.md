@@ -1077,7 +1077,7 @@ the marker that would end the chain -- `\seebelow` on an exposition-only alias
   concept's own requires-expression, not only on a trailing return type or a
   constraint, was the open question this step existed to answer; it does.
   `applicative_value_t` was deliberately left alone as public vocabulary the
-  baseline audit lists and `examples/binary_tree.hpp` uses -- its wording
+  baseline audit lists and `examples/transpose/binary_tree.hpp` uses -- its wording
   problem is the pipeline's, not the library's, and the specification does
   not get to change the library to suit itself. Filed upstream as
   steve-downey/specgen#84 (`--validate` should catch a name that appears in
@@ -1126,7 +1126,7 @@ which are named instead?
 **Status:** DECIDED 2026-09-07
 **Decided by:** Steve Downey, in the typeclass-relationships design
 discussion of 2026-09-07, recorded in
-`docs/coordination-worklist-2026-09-07.md`.
+`docs/transpose/coordination-worklist-2026-09-07.md`.
 **Decision:** A raw carrier gets a default `Monoid<T>` registration only where
 one instance is canonical: string and vector concatenation, and `Count`.
 Where no instance is so right that any one of them can be the default —
@@ -1724,7 +1724,7 @@ consequence as one equation in its generated `docs/probe-harness.md`. This
 repository discharges that list in ONE translation unit,
 `tests/beman/transpose/probe_harness.test.cpp`, one `TEST_CASE` per
 equation, named `probe-harness: <Module>.<theorem>` after the Lean theorem
-it checks, with a second translation unit (`probe_harness_cross_tu.cpp`)
+it checks, with a second translation unit (`probe_harness_cross_tu.test.cpp`)
 for the one claim a `static_assert` cannot make — that two TUs spelling an
 `error_set` pack in different orders agree on the type. The file is a test
 deliverable in the sense of `tests/beman/transpose/laws.hpp`: checked by
@@ -1913,7 +1913,7 @@ accommodate `std::execution` (P2300) senders, and what evidence says so?
 **Status:** DECIDED 2026-09-11
 **Decided by:** Steve, answering the P3200 reference-implementation review.
 **Decision:** An Applicative object over genuine senders lives at
-`examples/p2300_adapter.hpp`, written against `bemanproject/execution` and
+`examples/transpose/p2300_adapter.hpp`, written against `bemanproject/execution` and
 exercised by `tests/beman/transpose/p2300.test.cpp`. It is opt-in behind
 `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE`, OFF by default, and lives under
 `examples/` rather than `include/` so that nothing an installation of this
@@ -1975,7 +1975,7 @@ promising it does.
   [transpose-execution-plan.md §1](transpose-execution-plan.md#context) states
   that "a survey of every steve-downey repository on 2026-09-11 found no
   implementation over real `std::execution` senders anywhere". That is false
-  of this repository on that date: `examples/p2300_adapter.hpp` and
+  of this repository on that date: `examples/transpose/p2300_adapter.hpp` and
   `tests/beman/transpose/p2300.test.cpp` are this entry, and they were built
   and ruled on the same day. The survey sentence is a Context claim, not a
   Why, and the plan's load-bearing argument survives it — but three of the
@@ -2014,8 +2014,8 @@ promising it does.
     2026-09-11 is still open on 2026-09-13; nothing in Stage 0 closed it.
 - 2026-09-13 — THIS ENTRY STANDS, ruled by Steve the same day, resolving the
   divergence above. **Nothing execution-dependent enters `include/`.** The
-  execution plan's stages 1–3 build on `examples/p2300_adapter.hpp` where it
-  lives; `all_of` lands as `examples/all_of.hpp` under this entry's existing
+  execution plan's stages 1–3 build on `examples/transpose/p2300_adapter.hpp` where it
+  lives; `all_of` lands as `examples/transpose/all_of.hpp` under this entry's existing
   `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE`, pinned at this entry's existing
   `d24898d`; and the Stage 3 `collect` hook in `sequence.hpp` is the only
   `include/` change the plan makes, staying sender-free. Two addendum entries
@@ -2040,7 +2040,7 @@ promising it does.
   the standing instruction above. This entry's Consequences paragraph reads
   "Transposing a runtime-sized structure of senders needs a type-erased
   sender, which `bemanproject/execution` does not ship." **It does not.** It
-  needs a native n-ary composition, and `examples/all_of.hpp` is one:
+  needs a native n-ary composition, and `examples/transpose/all_of.hpp` is one:
   `all_of(std::vector<S>) -> all_of_sender<S>`, an operation state owning
   *n* child operation states constructed in place and never moved.
   The numbers, from `tests/beman/transpose/all_of_allocation.test.cpp` at
@@ -2116,8 +2116,8 @@ the installer never asked for. That is the outcome
 two entries' Whys never disagreed about it — both want the front door light.
 Only the What differed, and the decided one is stricter.
 **Consequence for the execution plan:** stages 1–3 build on
-`examples/p2300_adapter.hpp` where it lives. `all_of` lands as
-`examples/all_of.hpp` under the same option. The Stage 3 `collect` hook in
+`examples/transpose/p2300_adapter.hpp` where it lives. `all_of` lands as
+`examples/transpose/all_of.hpp` under the same option. The Stage 3 `collect` hook in
 `sequence.hpp` is the only `include/` change the plan makes, and it stays
 sender-free — which is what
 [runtime-arity-composition](#runtime-arity-composition) already required of
@@ -2184,7 +2184,7 @@ specialization is a regression to per-type keying.
   [sender-value-type-reading](#sender-value-type-reading).
 - 2026-09-13 — THIS SLUG IS NOW STAGE 1'S LOGBOOK, by Steve's ruling of the
   same day. Stage 1 is no longer "write a registration"; it is **audit
-  `examples/p2300_adapter.hpp` against this entry and
+  `examples/transpose/p2300_adapter.hpp` against this entry and
   [sender-value-type-reading](#sender-value-type-reading), and bring it up to
   them** — concept-keyed rather than per-type, one object for all sender
   types, element type read from completion signatures — plus the law harness
@@ -2404,7 +2404,7 @@ could offer it for performance (a single-pass `expected` collect avoids
   Whether `collect` is optional in `applicative_object` — this entry said it
   is — is now decided and logged at [collect-hook](#collect-hook).
 - 2026-09-13 — Location and division of labour fixed by Steve's ruling.
-  `all_of` lands as **`examples/all_of.hpp`** under
+  `all_of` lands as **`examples/transpose/all_of.hpp`** under
   `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE`. The Stage 3 `collect` hook in
   `sequence.hpp` is **the only `include/` change this plan makes, and it
   stays sender-free** — which this entry's own Sentinel already demanded for
@@ -2453,7 +2453,7 @@ demo sender in a different coat.
   substance — the boundary is about what the code may contain, not where it
   lives.
 - 2026-09-13 — Location fixed by Steve's ruling: the header this boundary
-  governs is **`examples/all_of.hpp`**, under
+  governs is **`examples/transpose/all_of.hpp`**, under
   `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE`, not `include/beman/transpose/`.
   Nothing about the boundary itself changes — it is a rule about what the
   code may contain, and one allocation is one allocation wherever the file
@@ -2491,7 +2491,7 @@ demo sender in a different coat.
   the drafted layout (divergence protocol rule 4).
 - 2026-09-14 — SENTINEL FIRED, AND PASSED. Stage
   [all-of-algorithm](transpose-execution-plan.md#all-of-algorithm) built
-  `examples/all_of.hpp` and measured it at n = 1000: one allocation at
+  `examples/transpose/all_of.hpp` and measured it at n = 1000: one allocation at
   `connect` of n x sizeof(holder) = 32,000 bytes, plus the result vector at
   completion, and nothing else. This entry's own words -- "its size is a
   function of `n` and `sizeof(connect_result_t<S, R>)`, known at `connect`"
@@ -2542,7 +2542,7 @@ same children, which is the property the paper wants to state: `all_of`
   `when_all_range` differs, if it does.
 - 2026-09-13 — Merged at Stage 0, default-as-drafted. The prior-art survey
   this entry asked for is at
-  [docs/review/prior-art-when-all-range.md](review/prior-art-when-all-range.md);
+  [docs/transpose/review/prior-art-when-all-range.md](review/prior-art-when-all-range.md);
   where it bears on the choices above, it is cited there rather than
   restated here. Two results belong in the log rather than only the note.
   * THIS ENTRY PICKED THE STANDARD OVER THE ONLY IMPLEMENTATION, CORRECTLY.
@@ -2569,11 +2569,11 @@ same children, which is the property the paper wants to state: `all_of`
     review note; this is not a licence to change anything else in the
     signature set.
 - 2026-09-13 — Kept by Steve's ruling, unchanged. The algorithm these
-  semantics govern lands as `examples/all_of.hpp` under
+  semantics govern lands as `examples/transpose/all_of.hpp` under
   `BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE`; the failure and ordering rules are
   unaffected by where the header sits.
 - 2026-09-14 — IMPLEMENTED, with the P3887R1 correction applied and checked.
-  `examples/all_of.hpp` follows `when_all` as this entry directs: the first
+  `examples/transpose/all_of.hpp` follows `when_all` as this entry directs: the first
   error or stop to ARRIVE requests stop on all siblings and is reported once
   every child has completed; error outranks stopped, spelled the way P2300's
   own `when_all` spells it -- `set_error` uses `exchange` and so claims the
@@ -2720,7 +2720,7 @@ has been reversed and that entry is what needs revisiting, not this one.
   `papers/wording/transpose.traversable.syn.md`, because
   `applicative_object_for`'s definition and Remarks changed with the ruling.
   Neither was regenerated: `make wording` does not currently succeed
-  (docs/wording-pipeline.md, tracked at steve-downey/specgen#109) and
+  (docs/transpose/wording-pipeline.md, tracked at steve-downey/specgen#109) and
   `specgen` is not installed in this environment, and hand-editing a
   generated fragment would make the checked-in file agree with its header by
   a route the pipeline cannot reproduce. This adds two files to the five
@@ -3101,7 +3101,7 @@ through it.
   allowing state, and keying on the type does not catch it.
 - *Every Foldable instance changes signature.* That covers
   `VectorFoldableImpl`, `test_support.hpp`, the test Impls,
-  `examples/binary_tree.hpp`, and the fingertree's Foldable Impls. It also
+  `examples/transpose/binary_tree.hpp`, and the fingertree's Foldable Impls. It also
   covers the `foldable_impl` and `foldable_object` probes, which witness
   with `Count`. `induced_monoid.hpp`'s `LiftedMonoid` and `KleisliEndo`
   become combinators over instances, and the `fold_map` sections of the two

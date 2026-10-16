@@ -8,7 +8,7 @@ Run 2026-09-13.
 in both option states, `include/` untouched, goldens untouched.
 
 This stage was an audit, not a build — Steve's ruling of 2026-09-13 turned it
-into one after Stage 0 found that `examples/p2300_adapter.hpp` already
+into one after Stage 0 found that `examples/transpose/p2300_adapter.hpp` already
 supplied the basis the plan had scheduled as new work. The audit found the
 basis correct and the two gaps the adapter's own header comment had already
 declared.
@@ -17,7 +17,7 @@ declared.
 
 ## 1. What changed
 
-**`examples/p2300_adapter.hpp`** gained three things and lost nothing:
+**`examples/transpose/p2300_adapter.hpp`** gained three things and lost nothing:
 
 - `single_value_sender` — `ex::sender<S>` plus exactly one value completion
   of exactly one argument, read under `env<>`.

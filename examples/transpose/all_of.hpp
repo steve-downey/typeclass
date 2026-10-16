@@ -7,9 +7,9 @@
 // a sender owning a std::vector of children, completing with a
 // std::vector of their values.
 //
-// WHY THIS EXISTS. docs/decisions.md#runtime-arity-composition. The vector
-// Traversable composes contexts with a left fold, `acc = invoke(f, acc, x)`,
-// and that assignment requires the context type to be invariant under
+// WHY THIS EXISTS. docs/transpose/decisions.md#runtime-arity-composition. The
+// vector Traversable composes contexts with a left fold, `acc = invoke(f, acc,
+// x)`, and that assignment requires the context type to be invariant under
 // composition. It is for optional<vector<T>>. It is not for a real sender:
 // `when_all(acc, elem) | then(f)` names a new type at every step, so the
 // loop cannot hold the accumulator at all. The way through is not a
@@ -17,12 +17,12 @@
 // all n children at once -- which the applicative object then offers as
 // `collect`, leaving the Traversable generic.
 //
-// WHAT IT IS MEASURED AGAINST. docs/decisions.md#erasure-boundary forbids
-// std::function/move_only_function, any_sender/task-style wrappers, virtual
-// dispatch, and per-element heap allocation of operation states. It permits
-// exactly two allocations: ONE block holding the n child operation states
-// and their result slots, whose size is `n * sizeof(holder)` with `holder`
-// a compile-time-known type; and the result vector<T>.
+// WHAT IT IS MEASURED AGAINST. docs/transpose/decisions.md#erasure-boundary
+// forbids std::function/move_only_function, any_sender/task-style wrappers,
+// virtual dispatch, and per-element heap allocation of operation states. It
+// permits exactly two allocations: ONE block holding the n child operation
+// states and their result slots, whose size is `n * sizeof(holder)` with
+// `holder` a compile-time-known type; and the result vector<T>.
 // `all_of_allocation.test.cpp` counts both, separately, for n = 1000 -- it is
 // a separate executable from `all_of.test.cpp` because counting allocations
 // means replacing global operator new, and the ThreadSanitizer runtime
@@ -32,15 +32,16 @@
 // caller keeps composing on the real thing. This header includes no
 // <functional>, declares no virtual function, and stores no callable.
 //
-// FAILURE SEMANTICS follow docs/decisions.md#all-of-failure-semantics, which
-// is to say they follow `when_all`: the first error or stop to arrive
-// requests stop on all siblings and is reported once every child has
-// completed; error outranks stopped; among errors the first to ARRIVE wins.
-// Result ORDER is input order, never completion order -- transpose promises
-// shape preservation, and for a vector that is positional.
+// FAILURE SEMANTICS follow
+// docs/transpose/decisions.md#all-of-failure-semantics, which is to say they
+// follow `when_all`: the first error or stop to arrive requests stop on all
+// siblings and is reported once every child has completed; error outranks
+// stopped; among errors the first to ARRIVE wins. Result ORDER is input order,
+// never completion order -- transpose promises shape preservation, and for a
+// vector that is positional.
 //
 // It lives under examples/ and behind BEMAN_TRANSPOSE_BUILD_P2300_EVIDENCE
-// because docs/decisions.md#p2300-front-door-shape says nothing an
+// because docs/transpose/decisions.md#p2300-front-door-shape says nothing an
 // installation of this library pulls in may depend on beman.execution.
 
 #include <beman/execution/execution.hpp>
@@ -110,7 +111,7 @@ using errors_as_signatures =
     ex::completion_signatures<ex::set_error_t(ERROR)...>;
 
 /** The element type a child sends, decayed -- read from its completion
- * signatures, per docs/decisions.md#sender-value-type-reading. */
+ * signatures, per docs/transpose/decisions.md#sender-value-type-reading. */
 template <class SENDER, class ENV>
 using child_value_t = ::std::remove_cvref_t<ex::value_types_of_t<
     SENDER, ENV, ::std::type_identity_t, ::std::type_identity_t>>;
@@ -126,8 +127,8 @@ using child_value_t = ::std::remove_cvref_t<ex::value_types_of_t<
  * listed `set_stopped_t()` unconditionally. P3887R1, "Make `when_all` a
  * Ronseal Algorithm", was LWG-approved in 2025-11 and says `when_all`
  * advertises `set_stopped` only if a child does. Since
- * docs/decisions.md#all-of-failure-semantics defines this algorithm BY
- * REFERENCE to `when_all`, following the approved `when_all` is following
+ * docs/transpose/decisions.md#all-of-failure-semantics defines this algorithm
+ * BY REFERENCE to `when_all`, following the approved `when_all` is following
  * the decision; an `all_of` that hallucinates a stopped completion is not
  * `when_all` at runtime arity. The plan's text is corrected in place.
  */
@@ -253,11 +254,12 @@ struct all_of_operation {
      *
      * Colocating them is what keeps the budget at one block. A separate
      * `vector<optional<T>>` for the slots would be a second allocation
-     * before the result vector, which docs/decisions.md#erasure-boundary
-     * does not permit and the Stage 2 tripwire stops on. The operation
-     * state is immovable, so this is constructed in place and never
-     * relocated: `connect` is called in the mem-initializer, where
-     * guaranteed elision initializes `operation` directly. */
+     * before the result vector, which
+     * docs/transpose/decisions.md#erasure-boundary does not permit and the
+     * Stage 2 tripwire stops on. The operation state is immovable, so this is
+     * constructed in place and never relocated: `connect` is called in the
+     * mem-initializer, where guaranteed elision initializes `operation`
+     * directly. */
     struct holder {
         ::std::optional<value_type> value{};
         ex::connect_result_t<SENDER, element_receiver> operation;
@@ -275,7 +277,7 @@ struct all_of_operation {
 
     /** Forwarding the outer stop request inward. A plain struct holding one
      * pointer: a stop callback is a place `std::function` would be reached
-     * for, and docs/decisions.md#erasure-boundary forbids it here. */
+     * for, and docs/transpose/decisions.md#erasure-boundary forbids it here. */
     struct on_stop_request {
         ex::inplace_stop_source *source;
         auto operator()() const noexcept -> void { source->request_stop(); }
@@ -365,8 +367,8 @@ struct all_of_operation {
         stop_callback_.emplace(ex::get_stop_token(ex::get_env(receiver_)),
                                on_stop_request{&stop_source_});
 
-        // Left to right, per docs/decisions.md#applicative-objects. A child
-        // may complete synchronously and inside its own `start`, so the
+        // Left to right, per docs/transpose/decisions.md#applicative-objects. A
+        // child may complete synchronously and inside its own `start`, so the
         // count begins at n + 1 and this loop's own arrival is the +1:
         // without it a synchronous first child could finish the whole before
         // the second is started.

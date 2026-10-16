@@ -3,6 +3,19 @@
 Pins each repo's state at each coordination decision. Append-only;
 newest entry first.
 
+## 2026-10-15 — split layout
+
+Decision (Steve): beman.typeclass follows the Beman split layout. Each
+library's public headers are under `include/beman/<lib>/` and its tests
+under `tests/beman/<lib>/`, parallel by namespace; `src/beman/<lib>/`
+keeps the library's CMake and, for tree_algorithms and fingertree, the
+module interface unit. The colocated `src/beman/<lib>/` layout recorded
+at the merge was the personal-repository practice. The move changes no
+target, test or installed header. P3200's wording generation record
+names the old header paths, so it needs one `make wording` with specgen.
+
+Start state: beman.typeclass `main` at `f812036`.
+
 ## 2026-10-12 (entry 3) — machinery deduplication done
 
 The copied machinery is gone: beman.transpose is the one definition, and

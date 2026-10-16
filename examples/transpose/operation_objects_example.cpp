@@ -4,11 +4,12 @@
 // A fourth lookup mode: the typeclass operation as an object that does its
 // own lookup.
 //
-// examples/lookup_modes_example.cpp shows the three modes the typeclass-object
-// pattern has always had -- implicit lookup through the variable template, an
-// explicit instance passed as an argument, and NTTP pinning. All three name
-// the instance. This file shows the mode that does not: `bt::fmap(f, tree)`
-// names the operation and lets the call site deduce the rest.
+// examples/transpose/lookup_modes_example.cpp shows the three modes the
+// typeclass-object pattern has always had -- implicit lookup through the
+// variable template, an explicit instance passed as an argument, and NTTP
+// pinning. All three name the instance. This file shows the mode that does not:
+// `bt::fmap(f, tree)` names the operation and lets the call site deduce the
+// rest.
 //
 // Two situations motivate it, and both appear below:
 //

@@ -17,7 +17,8 @@ Rules for working here:
   repo-surface ≠ paper-surface, DEV-01/03/04 test discipline) bind work
   on all three libraries and in fixpoint and trees.
 - Cross-library greps: transpose, tree_algorithms and fingertree are in
-  this repository (`src/beman/<lib>/`, `docs/<lib>/`, `papers/`).
+  this repository (`include/beman/<lib>/`, `tests/beman/<lib>/`,
+  `docs/<lib>/`, `papers/`).
   fixpoint and trees are still sibling checkouts under `~/src`.
 - Each library keeps its own conventions (`docs/transpose/decisions.md`
   and `CODING_RULES.md`, `docs/tree_algorithms/DECISIONS.md`); they

@@ -4,9 +4,9 @@ Coordinating the intertwined tree-standardization work:
 
 | Where | Role | Paper |
 |---|---|---|
-| `src/beman/transpose/` (this repo) | beman.transpose — mechanism + Applicative/Traversable | Paper A / P3200 ([`papers/D3200R0.md`](../../papers/D3200R0.md)) |
-| `src/beman/fingertree/` (this repo) | beman.fingertree — persistent measured sequence | Paper C (unnumbered) |
-| `src/beman/tree_algorithms/` (this repo) | beman.tree_algorithms — the fold family + direct verbs | Paper D (D4322, [`papers/algorithms-for-trees.md`](../../papers/algorithms-for-trees.md)) |
+| `include/beman/transpose/` (this repo) | beman.transpose — mechanism + Applicative/Traversable | Paper A / P3200 ([`papers/D3200R0.md`](../../papers/D3200R0.md)) |
+| `include/beman/fingertree/` (this repo) | beman.fingertree — persistent measured sequence | Paper C (unnumbered) |
+| `include/beman/tree_algorithms/` (this repo) | beman.tree_algorithms — the fold family + direct verbs | Paper D (D4322, [`papers/algorithms-for-trees.md`](../../papers/algorithms-for-trees.md)) |
 | `~/src/fixpoint/main` | smd::fixpoint — recursion-scheme catalog, evidence only | never proposed |
 | `~/src/trees/main` | origin/pedagogy (CppNow26); one-way extraction source | — |
 
