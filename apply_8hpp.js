@@ -14,7 +14,7 @@ var apply_8hpp =
     [ "applicative_eval", "apply_8hpp.html#ab45a1fba92026eb4438ae55c3538089b", null ],
     [ "discard_first_eval", "apply_8hpp.html#a669ddd20f385c1612a3332b96674c2db", null ],
     [ "discard_second_eval", "apply_8hpp.html#adb96a4f83cb84456fb344a32b0aa1b7a", null ],
-    [ "applicative", "apply_8hpp.html#a75a157a5883befe0fe44b50729a57904", null ],
+    [ "applicative", "apply_8hpp.html#acb8e20e3d78eab757dc41d5041d40b64", null ],
     [ "accumulating_applicative", "apply_8hpp.html#a32e15c3cb9b99eeac61286bc962b6187", null ],
     [ "invoke", "apply_8hpp.html#a66c285a86cc3624bc83fefd648e57df4", null ],
     [ "ap", "apply_8hpp.html#a01fe90066997f5d64ec063d4f6fff430", null ],

@@ -324,21 +324,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1sum__monoid.html">sum_monoid</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Additive monoid on <code>T</code>: identity is the zero of <code>T</code>, combine adds.  <a href="structbeman_1_1transpose_1_1sum__monoid.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1TestIdentityApplicativeImpl.html">TestIdentityApplicativeImpl</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applicative implementation for Identity&lt;V&gt;: pure wraps, invoke unwraps every operand and calls the plain function once.  <a href="structbeman_1_1transpose_1_1TestIdentityApplicativeImpl.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1TestIdentityApplicativeMap.html">TestIdentityApplicativeMap</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1TestIdentityTraversableImpl.html">TestIdentityTraversableImpl</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversable implementation for Identity&lt;V&gt;.  <a href="structbeman_1_1transpose_1_1TestIdentityTraversableImpl.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1TestIdentityTraversableMap.html">TestIdentityTraversableMap</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1TestSequenceFoldableImpl.html">TestSequenceFoldableImpl</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foldable implementation for Sequence&lt;V&gt;: fold_map walks values left-to-right.  <a href="structbeman_1_1transpose_1_1TestSequenceFoldableImpl.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1TestSequenceFoldableMap.html">TestSequenceFoldableMap</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1to__vector__fn.html">to_vector_fn</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Operation object for the derived <code>to_vector</code>.  <a href="structbeman_1_1transpose_1_1to__vector__fn.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -472,7 +457,7 @@ Typedefs</h2></td></tr>
 <tr class="memdesc:abccfdf725542381b0db7028489ea39c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The value type a monoid instance <code>M</code> operates on: what its <code>identity()</code> returns.  <br /></td></tr>
 <tr class="separator:abccfdf725542381b0db7028489ea39c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64b70c2b28b9beac322cc5f1cea4f5cc"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
-<tr class="memitem:a64b70c2b28b9beac322cc5f1cea4f5cc"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a64b70c2b28b9beac322cc5f1cea4f5cc">traversable_object_t</a> = std::remove_cvref_t&lt; decltype(<a class="el" href="namespacebeman_1_1transpose.html#ae5d0a0b4681dc87e489ba342977bdead">traversable</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;)&gt;</td></tr>
+<tr class="memitem:a64b70c2b28b9beac322cc5f1cea4f5cc"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a64b70c2b28b9beac322cc5f1cea4f5cc">traversable_object_t</a> = std::remove_cvref_t&lt; decltype(<a class="el" href="namespacebeman_1_1transpose.html#a49e0c8561d2d876ceaf3ee5b49e5c995">traversable</a>&lt; std::remove_cvref_t&lt; T &gt; &gt;)&gt;</td></tr>
 <tr class="memdesc:a64b70c2b28b9beac322cc5f1cea4f5cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The Traversable object <code>traversable</code> names for a structure type, and that object's element type.  <br /></td></tr>
 <tr class="separator:a64b70c2b28b9beac322cc5f1cea4f5cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a26ba55822aa7e6c39ad28b5f85e84530"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
@@ -526,10 +511,10 @@ Variables</h2></td></tr>
 <tr class="memitem:adb96a4f83cb84456fb344a32b0aa1b7a"><td class="memItemLeft" align="right" valign="top">constexpr detail::discard_second_eval_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#adb96a4f83cb84456fb344a32b0aa1b7a">discard_second_eval</a> {}</td></tr>
 <tr class="memdesc:adb96a4f83cb84456fb344a32b0aa1b7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Namespace-scope spelling of the evaluator named by <code>discard_second</code>'s constraint; see <code>discard_first_eval</code> above.  <br /></td></tr>
 <tr class="separator:adb96a4f83cb84456fb344a32b0aa1b7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75a157a5883befe0fe44b50729a57904"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
-<tr class="memitem:a75a157a5883befe0fe44b50729a57904"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a75a157a5883befe0fe44b50729a57904">applicative</a> = std::false_type{}</td></tr>
-<tr class="memdesc:a75a157a5883befe0fe44b50729a57904"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applicative instance for <code>std::optional&lt;VALUE_TYPE&gt;</code>.  <br /></td></tr>
-<tr class="separator:a75a157a5883befe0fe44b50729a57904"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb8e20e3d78eab757dc41d5041d40b64"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:acb8e20e3d78eab757dc41d5041d40b64"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a> = std::false_type{}</td></tr>
+<tr class="memdesc:acb8e20e3d78eab757dc41d5041d40b64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applicative instance for <code>std::optional&lt;VALUE_TYPE&gt;</code>.  <br /></td></tr>
+<tr class="separator:acb8e20e3d78eab757dc41d5041d40b64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32e15c3cb9b99eeac61286bc962b6187"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a32e15c3cb9b99eeac61286bc962b6187"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a32e15c3cb9b99eeac61286bc962b6187">accumulating_applicative</a> = std::false_type{}</td></tr>
 <tr class="separator:a32e15c3cb9b99eeac61286bc962b6187"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -568,10 +553,10 @@ Variables</h2></td></tr>
 <tr class="memitem:a8e88a987eaa791484826781501eef3a9"><td class="memTemplItemLeft" align="right" valign="top">constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a8e88a987eaa791484826781501eef3a9">is_expected_v</a> = false</td></tr>
 <tr class="memdesc:a8e88a987eaa791484826781501eef3a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether T is a specialization of std::expected.  <br /></td></tr>
 <tr class="separator:a8e88a987eaa791484826781501eef3a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8f57536fb91e9cf15e0cd3f01db6610"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
-<tr class="memitem:ae8f57536fb91e9cf15e0cd3f01db6610"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#ae8f57536fb91e9cf15e0cd3f01db6610">foldable</a> = std::false_type{}</td></tr>
-<tr class="memdesc:ae8f57536fb91e9cf15e0cd3f01db6610"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typeclass lookup variable for Foldable; specialize for each container type.  <br /></td></tr>
-<tr class="separator:ae8f57536fb91e9cf15e0cd3f01db6610"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57e350881f367d4918a43f34e51ab16d"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a57e350881f367d4918a43f34e51ab16d"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a57e350881f367d4918a43f34e51ab16d">foldable</a> = std::false_type{}</td></tr>
+<tr class="memdesc:a57e350881f367d4918a43f34e51ab16d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Typeclass lookup variable for Foldable; specialize for each container type.  <br /></td></tr>
+<tr class="separator:a57e350881f367d4918a43f34e51ab16d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e1d10d9e16af348c9d167dd06d8ad24"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="structbeman_1_1transpose_1_1fold__map__fn.html">fold_map_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a5e1d10d9e16af348c9d167dd06d8ad24">fold_map</a> {}</td></tr>
 <tr class="memdesc:a5e1d10d9e16af348c9d167dd06d8ad24"><td class="mdescLeft">&#160;</td><td class="mdescRight">The semantic centre of Foldable: <code><a class="el" href="namespacebeman_1_1transpose.html#a5e1d10d9e16af348c9d167dd06d8ad24" title="The semantic centre of Foldable: fold_map(f, container[, monoid]).">fold_map(f, container[, monoid])</a></code>.  <br /></td></tr>
 <tr class="separator:a5e1d10d9e16af348c9d167dd06d8ad24"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -642,10 +627,10 @@ Variables</h2></td></tr>
 <tr class="separator:a7e597c6a18eec82d1cb5e01b367c89ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4ec1d59015f2ff0dc53f1a8a182367d"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="structbeman_1_1transpose_1_1transpose__fn.html">transpose_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d">transpose</a> {}</td></tr>
 <tr class="separator:ae4ec1d59015f2ff0dc53f1a8a182367d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5d0a0b4681dc87e489ba342977bdead"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
-<tr class="memitem:ae5d0a0b4681dc87e489ba342977bdead"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#ae5d0a0b4681dc87e489ba342977bdead">traversable</a> = std::false_type{}</td></tr>
-<tr class="memdesc:ae5d0a0b4681dc87e489ba342977bdead"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversable instance for <code>std::vector&lt;VALUE_TYPE&gt;</code>.  <br /></td></tr>
-<tr class="separator:ae5d0a0b4681dc87e489ba342977bdead"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49e0c8561d2d876ceaf3ee5b49e5c995"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
+<tr class="memitem:a49e0c8561d2d876ceaf3ee5b49e5c995"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a49e0c8561d2d876ceaf3ee5b49e5c995">traversable</a> = std::false_type{}</td></tr>
+<tr class="memdesc:a49e0c8561d2d876ceaf3ee5b49e5c995"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversable instance for <code>std::vector&lt;VALUE_TYPE&gt;</code>.  <br /></td></tr>
+<tr class="separator:a49e0c8561d2d876ceaf3ee5b49e5c995"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adca9192380d7c029a8d882576a9c7031"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="structbeman_1_1transpose_1_1traverse__fn.html">traverse_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#adca9192380d7c029a8d882576a9c7031">traverse</a> {}</td></tr>
 <tr class="separator:adca9192380d7c029a8d882576a9c7031"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a991f0acec452db9587f59701c13e1abc"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
@@ -655,9 +640,9 @@ Variables</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The grade algebra: framework vocabulary only. </p>
-<p>A grade is a compile-time index on an effectful computation. This header says what a grade algebra IS and how the framework asks questions of one. It says nothing whatever about errors. <code>error_set</code>, <code>recover</code>, and ⊆-as-may-raise are the vocabulary of one particular MODEL, and they live in the model's header; an abstraction whose framework layer names its only model is renamed, not generic. See docs/decisions.md#grade-generality and docs/decisions.md#grade-machinery-home.</p>
-<p>Nothing here is on the typeclass surface. <code><a class="el" href="structbeman_1_1transpose_1_1grade__of.html">grade_of</a></code> and <code><a class="el" href="structbeman_1_1transpose_1_1rebind__grade.html">rebind_grade</a></code> are framework traits; <code><a class="el" href="structbeman_1_1transpose_1_1grade__of.html">grade_of</a></code> defaults unregistered carriers to the ungraded sentinel, while models own registered carrier specializations. The algebra verbs are free functions in the shape the library already uses for <code>monoid_combine</code> and <code>monoid_identity</code> &ndash; see docs/decisions.md#grade-operation-spelling for why they carry the <code>grade_</code> prefix rather than taking the bare name <code>join</code>, which is already the monadic join.</p>
-<p>The load-bearing default is <code><a class="el" href="structbeman_1_1transpose_1_1grade__of.html">grade_of</a></code>: an instance that knows nothing about grades is treated as uniformly ∅-graded and keeps working verbatim. That default IS the backward-compatibility mechanism of docs/decisions.md#grading-footprint, not a convenience. </p>
+<p>A grade is a compile-time index on an effectful computation. This header says what a grade algebra IS and how the framework asks questions of one. It says nothing whatever about errors. <code>error_set</code>, <code>recover</code>, and ⊆-as-may-raise are the vocabulary of one particular MODEL, and they live in the model's header; an abstraction whose framework layer names its only model is renamed, not generic. See docs/transpose/decisions.md#grade-generality and docs/transpose/decisions.md#grade-machinery-home.</p>
+<p>Nothing here is on the typeclass surface. <code><a class="el" href="structbeman_1_1transpose_1_1grade__of.html">grade_of</a></code> and <code><a class="el" href="structbeman_1_1transpose_1_1rebind__grade.html">rebind_grade</a></code> are framework traits; <code><a class="el" href="structbeman_1_1transpose_1_1grade__of.html">grade_of</a></code> defaults unregistered carriers to the ungraded sentinel, while models own registered carrier specializations. The algebra verbs are free functions in the shape the library already uses for <code>monoid_combine</code> and <code>monoid_identity</code> &ndash; see docs/transpose/decisions.md#grade-operation-spelling for why they carry the <code>grade_</code> prefix rather than taking the bare name <code>join</code>, which is already the monadic join.</p>
+<p>The load-bearing default is <code><a class="el" href="structbeman_1_1transpose_1_1grade__of.html">grade_of</a></code>: an instance that knows nothing about grades is treated as uniformly ∅-graded and keeps working verbatim. That default IS the backward-compatibility mechanism of docs/transpose/decisions.md#grading-footprint, not a convenience. </p>
 </div><h2 class="groupheader">Typedef Documentation</h2>
 <a id="a87f80674c8200e2169a16600d1f0ee38" name="a87f80674c8200e2169a16600d1f0ee38"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a87f80674c8200e2169a16600d1f0ee38">&#9670;&#160;</a></span>impl_ref_t</h2>
@@ -675,7 +660,7 @@ template&lt;class IMPL , class SELF &gt; </div>
 
 <p>The <code>Impl</code> sub-object reference a typeclass base's member should address, given the deduced type of its <code>self</code> parameter. </p>
 <p>Every derived operation on a typeclass base takes the same shape: probe <code>Impl</code> for a native version of the operation, forward to it if it is there, derive otherwise. Both halves address <code>Impl</code> rather than <code>self</code>, which is what keeps two mutually-derivable operations from recursing into each other. This spells the const propagation that addressing needs, once.</p>
-<p>The cast itself cannot live here. Each base inherits its <code>Impl</code> protectedly, so only a member of that base may perform the conversion; each base carries a three-line private <code>impl_of</code> that does, and they all name this alias. See <code>docs/decisions.md#impl-access-through-bases</code>. </p>
+<p>The cast itself cannot live here. Each base inherits its <code>Impl</code> protectedly, so only a member of that base may perform the conversion; each base carries a three-line private <code>impl_of</code> that does, and they all name this alias. See <code>docs/transpose/decisions.md#impl-access-through-bases</code>. </p>
 
 </div>
 </div>
@@ -850,7 +835,7 @@ template&lt;class M &gt; </div>
 template&lt;class T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespacebeman_1_1transpose.html#a64b70c2b28b9beac322cc5f1cea4f5cc">beman::transpose::traversable_object_t</a> = typedef std::remove_cvref_t&lt;decltype(<a class="el" href="namespacebeman_1_1transpose.html#ae5d0a0b4681dc87e489ba342977bdead">traversable</a>&lt;std::remove_cvref_t&lt;T&gt; &gt;)&gt;</td>
+          <td class="memname">using <a class="el" href="namespacebeman_1_1transpose.html#a64b70c2b28b9beac322cc5f1cea4f5cc">beman::transpose::traversable_object_t</a> = typedef std::remove_cvref_t&lt;decltype(<a class="el" href="namespacebeman_1_1transpose.html#a49e0c8561d2d876ceaf3ee5b49e5c995">traversable</a>&lt;std::remove_cvref_t&lt;T&gt; &gt;)&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -1219,8 +1204,8 @@ template&lt;class VALUE_TYPE &gt; </div>
 
 </div>
 </div>
-<a id="a75a157a5883befe0fe44b50729a57904" name="a75a157a5883befe0fe44b50729a57904"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75a157a5883befe0fe44b50729a57904">&#9670;&#160;</a></span>applicative</h2>
+<a id="acb8e20e3d78eab757dc41d5041d40b64" name="acb8e20e3d78eab757dc41d5041d40b64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb8e20e3d78eab757dc41d5041d40b64">&#9670;&#160;</a></span>applicative</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1231,7 +1216,7 @@ template&lt;class T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr auto beman::transpose::applicative&lt; test::Identity&lt; VALUE_TYPE &gt; &gt; = std::false_type{}</td>
+          <td class="memname">constexpr auto beman::transpose::applicative&lt; std::optional&lt; VALUE_TYPE &gt; &gt; = std::false_type{}</td>
         </tr>
       </table>
   </td>
@@ -1458,7 +1443,7 @@ template&lt;class LOOKUP_RESULT &gt; </div>
 <p>True when a typeclass lookup variable has been specialized away from its <code>std::false_type</code> default, i.e. </p>
 <p>the type has an instance of that typeclass.</p>
 <p>Pass <code>decltype(functor&lt;T&gt;)</code> or a sibling lookup; the reference and cv-qualification a <code>const auto &amp;</code> NTTP picks up are stripped here.</p>
-<p>This asks whether a type has an instance at all. The operation objects do not use it: each is constrained on the call it makes through the instance, so <code>std::is_invocable</code> answers the narrower question for one call, and an unregistered type is a call that does not match rather than an error from inside the object (docs/decisions.md#operation-object-wording). </p>
+<p>This asks whether a type has an instance at all. The operation objects do not use it: each is constrained on the call it makes through the instance, so <code>std::is_invocable</code> answers the narrower question for one call, and an unregistered type is a call that does not match rather than an error from inside the object (docs/transpose/decisions.md#operation-object-wording). </p>
 
 </div>
 </div>
@@ -1566,8 +1551,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="ae8f57536fb91e9cf15e0cd3f01db6610" name="ae8f57536fb91e9cf15e0cd3f01db6610"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae8f57536fb91e9cf15e0cd3f01db6610">&#9670;&#160;</a></span>foldable</h2>
+<a id="a57e350881f367d4918a43f34e51ab16d" name="a57e350881f367d4918a43f34e51ab16d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a57e350881f367d4918a43f34e51ab16d">&#9670;&#160;</a></span>foldable</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1578,7 +1563,7 @@ template&lt;class T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr auto beman::transpose::foldable&lt; test::Sequence&lt; VALUE_TYPE &gt; &gt; = std::false_type{}</td>
+          <td class="memname">constexpr auto beman::transpose::foldable&lt; std::vector&lt; VALUE_TYPE &gt; &gt; = std::false_type{}</td>
         </tr>
       </table>
   </td>
@@ -2074,7 +2059,7 @@ template&lt;class T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr auto <a class="el" href="namespacebeman_1_1transpose.html#a75a157a5883befe0fe44b50729a57904">beman::transpose::applicative</a>&lt; <a class="el" href="structbeman_1_1transpose_1_1sender.html">sender</a>&lt; T &gt; &gt; = <a class="el" href="structbeman_1_1transpose_1_1SenderApplicativeMap.html">SenderApplicativeMap</a>&lt;T&gt;{}</td>
+          <td class="memname">constexpr auto <a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">beman::transpose::applicative</a>&lt; <a class="el" href="structbeman_1_1transpose_1_1sender.html">sender</a>&lt; T &gt; &gt; = <a class="el" href="structbeman_1_1transpose_1_1SenderApplicativeMap.html">SenderApplicativeMap</a>&lt;T&gt;{}</td>
         </tr>
       </table>
   </td>
@@ -2100,7 +2085,7 @@ template&lt;class T , int N&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr auto <a class="el" href="namespacebeman_1_1transpose.html#a75a157a5883befe0fe44b50729a57904">beman::transpose::applicative</a>&lt; <a class="el" href="structbeman_1_1transpose_1_1simd__lanes.html">simd_lanes</a>&lt; T, N &gt; &gt;</td>
+          <td class="memname">constexpr auto <a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">beman::transpose::applicative</a>&lt; <a class="el" href="structbeman_1_1transpose_1_1simd__lanes.html">simd_lanes</a>&lt; T, N &gt; &gt;</td>
         </tr>
       </table>
   </td>
@@ -2136,8 +2121,8 @@ template&lt;class T , int N&gt; </div>
 
 </div>
 </div>
-<a id="ae5d0a0b4681dc87e489ba342977bdead" name="ae5d0a0b4681dc87e489ba342977bdead"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5d0a0b4681dc87e489ba342977bdead">&#9670;&#160;</a></span>traversable</h2>
+<a id="a49e0c8561d2d876ceaf3ee5b49e5c995" name="a49e0c8561d2d876ceaf3ee5b49e5c995"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49e0c8561d2d876ceaf3ee5b49e5c995">&#9670;&#160;</a></span>traversable</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2148,7 +2133,7 @@ template&lt;class T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr auto beman::transpose::traversable&lt; test::Identity&lt; VALUE_TYPE &gt; &gt; = std::false_type{}</td>
+          <td class="memname">constexpr auto beman::transpose::traversable&lt; std::vector&lt; VALUE_TYPE &gt; &gt; = std::false_type{}</td>
         </tr>
       </table>
   </td>
@@ -2196,7 +2181,7 @@ template&lt;class T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr auto <a class="el" href="namespacebeman_1_1transpose.html#a75a157a5883befe0fe44b50729a57904">beman::transpose::applicative</a>&lt; <a class="el" href="structbeman_1_1transpose_1_1zip__list.html">zip_list</a>&lt; T &gt; &gt; = <a class="el" href="structbeman_1_1transpose_1_1ZipListApplicativeMap.html">ZipListApplicativeMap</a>&lt;T&gt;{}</td>
+          <td class="memname">constexpr auto <a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">beman::transpose::applicative</a>&lt; <a class="el" href="structbeman_1_1transpose_1_1zip__list.html">zip_list</a>&lt; T &gt; &gt; = <a class="el" href="structbeman_1_1transpose_1_1ZipListApplicativeMap.html">ZipListApplicativeMap</a>&lt;T&gt;{}</td>
         </tr>
       </table>
   </td>

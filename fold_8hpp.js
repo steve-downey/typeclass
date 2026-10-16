@@ -13,7 +13,7 @@ var fold_8hpp =
     [ "beman::transpose::find_first_fn", "structbeman_1_1transpose_1_1find__first__fn.html", "structbeman_1_1transpose_1_1find__first__fn" ],
     [ "beman::transpose::foldable_impl", "conceptbeman_1_1transpose_1_1foldable__impl.html", null ],
     [ "beman::transpose::foldable_object", "conceptbeman_1_1transpose_1_1foldable__object.html", null ],
-    [ "foldable", "fold_8hpp.html#ae8f57536fb91e9cf15e0cd3f01db6610", null ],
+    [ "foldable", "fold_8hpp.html#a57e350881f367d4918a43f34e51ab16d", null ],
     [ "fold_map", "fold_8hpp.html#a5e1d10d9e16af348c9d167dd06d8ad24", null ],
     [ "fold_left", "fold_8hpp.html#a2f8a822a977974223e263f24214c74a8", null ],
     [ "fold_right", "fold_8hpp.html#a63c6b13754a8b0c400395b6f98bb02ad", null ],

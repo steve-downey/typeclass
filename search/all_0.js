@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['a_0',['a',['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node3.html#adf987b59b047fcf34572b56b0ac23735',1,'beman::fingertree::tree::ft::Elem::Node3::a()'],['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node2.html#a32a8edb300221c14e588856df0d3563c',1,'beman::fingertree::tree::ft::Elem::Node2::a()']]],
-  ['a_1',['A',['../structbeman_1_1transpose_1_1lifted__monoid.html#af4916259b22f35e8ad961d224224bd6a',1,'beman::transpose::lifted_monoid']]],
+  ['a_0',['A',['../structbeman_1_1transpose_1_1lifted__monoid.html#af4916259b22f35e8ad961d224224bd6a',1,'beman::transpose::lifted_monoid']]],
+  ['a_1',['a',['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node3.html#adf987b59b047fcf34572b56b0ac23735',1,'beman::fingertree::tree::ft::Elem::Node3::a()'],['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node2.html#a32a8edb300221c14e588856df0d3563c',1,'beman::fingertree::tree::ft::Elem::Node2::a()']]],
   ['accumulating_5fapplicative_2',['accumulating_applicative',['../namespacebeman_1_1transpose.html#a32e15c3cb9b99eeac61286bc962b6187',1,'beman::transpose']]],
   ['accumulating_5fexpected_5fapplicative_5fimpl_3',['accumulating_expected_applicative_impl',['../structbeman_1_1transpose_1_1accumulating__expected__applicative__impl.html',1,'beman::transpose']]],
   ['accumulating_5fexpected_5fapplicative_5fmap_4',['accumulating_expected_applicative_map',['../structbeman_1_1transpose_1_1accumulating__expected__applicative__map.html',1,'beman::transpose']]],
@@ -18,7 +18,7 @@ var searchData=
   ['ap_15',['ap',['../namespacebeman_1_1transpose.html#a01fe90066997f5d64ec063d4f6fff430',1,'beman::transpose::ap()'],['../structbeman_1_1transpose_1_1derive__applicative.html#adaebf7f879238a65d41f806e59d100be',1,'beman::transpose::derive_applicative::ap()'],['../structbeman_1_1transpose_1_1derive__monad.html#ae7acb97b271179a05adcdce0db98bca9',1,'beman::transpose::derive_monad::ap()']]],
   ['ap_5ffn_16',['ap_fn',['../structbeman_1_1transpose_1_1ap__fn.html',1,'beman::transpose']]],
   ['append_17',['append',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a7e0ceb4cb0a7e1b67c50a35596dbec15',1,'beman::fingertree::tree::FingerTree']]],
-  ['applicative_18',['applicative',['../namespacebeman_1_1transpose.html#a75a157a5883befe0fe44b50729a57904',1,'beman::transpose']]],
+  ['applicative_18',['applicative',['../namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64',1,'beman::transpose']]],
   ['applicative_3c_20sender_3c_20t_20_3e_20_3e_19',['applicative&lt; sender&lt; T &gt; &gt;',['../namespacebeman_1_1transpose.html#acdabb99fe2497d0d328fa99ce9137aa8',1,'beman::transpose']]],
   ['applicative_3c_20simd_5flanes_3c_20t_2c_20n_20_3e_20_3e_20',['applicative&lt; simd_lanes&lt; T, N &gt; &gt;',['../namespacebeman_1_1transpose.html#a7e597c6a18eec82d1cb5e01b367c89ff',1,'beman::transpose']]],
   ['applicative_3c_20zip_5flist_3c_20t_20_3e_20_3e_21',['applicative&lt; zip_list&lt; T &gt; &gt;',['../namespacebeman_1_1transpose.html#a991f0acec452db9587f59701c13e1abc',1,'beman::transpose']]],

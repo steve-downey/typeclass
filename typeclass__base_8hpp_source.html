@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('typeclass__base_8hpp_source.html','');
   <div class="headertitle"><div class="title">typeclass_base.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="typeclass__base_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// src/beman/transpose/detail/typeclass_base.hpp                      -*-C++-*-</span></div>
+<a href="typeclass__base_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// include/beman/transpose/detail/typeclass_base.hpp                  -*-C++-*-</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#ifndef BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#define BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP</span></div>
@@ -107,10 +107,10 @@ $(document).ready(function(){initNavTree('typeclass__base_8hpp_source.html','');
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">// Every typeclass base uses deducing this (explicit object parameters,</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">// P0847). Fail once, here, on GCC 13 -- the compiler measured without it</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">// (docs/decisions.md#execution-toolchain-floor) -- instead of with a parser</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// error at every `this auto &amp;&amp;self` member. The test is the compiler version,</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// not __cpp_explicit_this_parameter: Clang 19 implements the feature without</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">// defining the macro.</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">// (docs/transpose/decisions.md#execution-toolchain-floor) -- instead of with a</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// parser error at every `this auto &amp;&amp;self` member. The test is the compiler</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// version, not __cpp_explicit_this_parameter: Clang 19 implements the feature</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">// without defining the macro.</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#if defined(__GNUC__) &amp;&amp; !defined(__clang__) &amp;&amp; __GNUC__ &lt; 14</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#error &quot;beman.transpose requires C++23 deducing this (P0847): GCC 14 or later.&quot;</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#endif</span></div>
@@ -239,7 +239,7 @@ $(document).ready(function(){initNavTree('typeclass__base_8hpp_source.html','');
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_39d741fbdc6166b543955aba0e4ca9d8.html">beman</a></li><li class="navelem"><a class="el" href="dir_71fb1006ab4051324dd8475e572d9578.html">transpose</a></li><li class="navelem"><a class="el" href="dir_1542dc70fc1f0d265e75b751a8f7ed45.html">detail</a></li><li class="navelem"><a class="el" href="typeclass__base_8hpp.html">typeclass_base.hpp</a></li>
+    <li class="navelem"><a class="el" href="dir_94cf5e36d6dc57d8747f5a546f07158a.html">beman</a></li><li class="navelem"><a class="el" href="dir_dcca3582e3abd91b3ef0fe1a8f79e9b7.html">transpose</a></li><li class="navelem"><a class="el" href="dir_f2a3eb6db913f831e1ff106000cd0ab6.html">detail</a></li><li class="navelem"><a class="el" href="typeclass__base_8hpp.html">typeclass_base.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>

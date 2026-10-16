@@ -114,15 +114,17 @@ History</h1>
 <p>Each library was developed in its own repository: <code>steve-downey/transpose</code>, <code>steve-downey/tree_algorithms</code>, and <code>steve-downey/fingertree</code>, coordinated from <code>steve-downey/tree-coordination</code>. Those repositories are retired. Their histories were merged here with every commit's SHA unchanged, so commit references in the decision logs and coordination ledger still resolve. Published blog posts were pinned to tags in those repositories; the tags are carried here with the repository's name as a prefix (<code>transpose/blog/graded-gadgets</code>).</p>
 <h1><a class="anchor" id="autotoc_md2"></a>
 Layout</h1>
-<div class="fragment"><div class="line">src/<a class="code hl_namespace" href="namespacebeman.html">beman</a>/&lt;library&gt;/    headers, tests and CMake <span class="keywordflow">for each</span> library, side by side</div>
-<div class="line">examples/&lt;library&gt;/     runnable examples, several transcluded into papers and posts</div>
-<div class="line">benchmarks/&lt;library&gt;/   benchmarks (tree_algorithms)</div>
-<div class="line">papers/                 every paper, built by the vendored MPark.WG21 in papers/wg21/</div>
-<div class="line">papers/blog/            the blog series</div>
-<div class="line">docs/&lt;library&gt;/         design notes and decision logs <span class="keywordflow">for each</span> library</div>
-<div class="line">docs/coordination/      cross-library status, the coordination ledger, and the essay</div>
+<div class="fragment"><div class="line">include/<a class="code hl_namespace" href="namespacebeman.html">beman</a>/&lt;library&gt;/ each library<span class="stringliteral">&#39;s public headers</span></div>
+<div class="line"><span class="stringliteral">tests/beman/&lt;library&gt;/   each library&#39;</span>s tests, in parallel with its headers</div>
+<div class="line">src/<a class="code hl_namespace" href="namespacebeman.html">beman</a>/&lt;library&gt;/     each library<span class="stringliteral">&#39;s CMake and, for module builds, its interface unit</span></div>
+<div class="line"><span class="stringliteral">examples/&lt;library&gt;/     runnable examples, several transcluded into papers and posts</span></div>
+<div class="line"><span class="stringliteral">benchmarks/&lt;library&gt;/   benchmarks (tree_algorithms)</span></div>
+<div class="line"><span class="stringliteral">papers/                 every paper, built by the vendored MPark.WG21 in papers/wg21/</span></div>
+<div class="line"><span class="stringliteral">papers/blog/            the blog series</span></div>
+<div class="line"><span class="stringliteral">docs/&lt;library&gt;/         design notes and decision logs for each library</span></div>
+<div class="line"><span class="stringliteral">docs/coordination/      cross-library status, the coordination ledger, and the essay</span></div>
 <div class="ttc" id="anamespacebeman_html"><div class="ttname"><a href="namespacebeman.html">beman</a></div><div class="ttdef"><b>Definition:</b> finger_tree.hpp:33</div></div>
-</div><!-- fragment --><p><code>src/</code> is the single include root: headers are included by their canonical names, <code>&lt;<a class="el" href="traverse_8hpp.html">beman/transpose/traverse.hpp</a>&gt;</code>, as they will be once installed.</p>
+</div><!-- fragment --><p><code>include/</code> is the single include root: headers are included by their canonical names, <code>&lt;<a class="el" href="traverse_8hpp.html">beman/transpose/traverse.hpp</a>&gt;</code>, as they will be once installed.</p>
 <h1><a class="anchor" id="autotoc_md3"></a>
 License</h1>
 <p>The libraries are licensed under the Apache License v2.0 with LLVM Exceptions. The <code><a class="el" href="namespacebeman_1_1fingertree.html">beman.fingertree</a></code> design documents are additionally offered under CC BY-SA 4.0; see <a href="docs/fingertree/LICENSE.CC-BY-SA-4.0"><code>docs/fingertree/LICENSE.CC-BY-SA-4.0</code></a>.</p>

@@ -94,7 +94,7 @@ $(document).ready(function(){initNavTree('array_8hpp_source.html',''); initResiz
   <div class="headertitle"><div class="title">array.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="array_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// src/beman/transpose/array.hpp                                      -*-C++-*-</span></div>
+<a href="array_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// include/beman/transpose/array.hpp                                  -*-C++-*-</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#ifndef BEMAN_TRANSPOSE_ARRAY_HPP</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#define BEMAN_TRANSPOSE_ARRAY_HPP</span></div>
@@ -167,7 +167,7 @@ $(document).ready(function(){initNavTree('array_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keyword">auto</span> transpose_tuple_impl(<span class="keyword">const</span> std::tuple&lt;std::array&lt;Ts, N&gt;...&gt; &amp;soa,</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                          std::index_sequence&lt;Is...&gt;)</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    -&gt; std::array&lt;std::tuple&lt;Ts...&gt;, N&gt; {</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keyword">const</span> <span class="keyword">auto</span> &amp;app = <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a75a157a5883befe0fe44b50729a57904">applicative</a>&lt;std::array&lt;std::tuple&lt;Ts...&gt;, N&gt;&gt;;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keyword">const</span> <span class="keyword">auto</span> &amp;app = <a class="code hl_variable" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;std::array&lt;std::tuple&lt;Ts...&gt;, N&gt;&gt;;</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keywordflow">return</span> app.invoke([](<span class="keyword">const</span> Ts &amp;...elems) { <span class="keywordflow">return</span> std::tuple{elems...}; },</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>                      std::get&lt;Is&gt;(soa)...);</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>}</div>
@@ -226,7 +226,7 @@ $(document).ready(function(){initNavTree('array_8hpp_source.html',''); initResiz
 <div class="ttc" id="aapply_8hpp_html"><div class="ttname"><a href="apply_8hpp.html">apply.hpp</a></div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html"><div class="ttname"><a href="namespacebeman_1_1transpose.html">beman::transpose</a></div><div class="ttdoc">The grade algebra: framework vocabulary only.</div><div class="ttdef"><b>Definition:</b> finger_tree_foldable.hpp:45</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_a66c285a86cc3624bc83fefd648e57df4"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">beman::transpose::invoke</a></div><div class="ttdeci">constexpr invoke_fn invoke</div><div class="ttdef"><b>Definition:</b> apply.hpp:675</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a75a157a5883befe0fe44b50729a57904"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a75a157a5883befe0fe44b50729a57904">beman::transpose::applicative</a></div><div class="ttdeci">constexpr auto applicative</div><div class="ttdoc">Applicative instance for std::optional&lt;VALUE_TYPE&gt;.</div><div class="ttdef"><b>Definition:</b> apply.hpp:241</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_acb8e20e3d78eab757dc41d5041d40b64"><div class="ttname"><a href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">beman::transpose::applicative</a></div><div class="ttdeci">constexpr auto applicative</div><div class="ttdoc">Applicative instance for std::optional&lt;VALUE_TYPE&gt;.</div><div class="ttdef"><b>Definition:</b> apply.hpp:241</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_acd1445589caf95a255ebcd7159cdb272"><div class="ttname"><a href="namespacebeman_1_1transpose.html#acd1445589caf95a255ebcd7159cdb272">beman::transpose::transpose_tuple</a></div><div class="ttdeci">auto transpose_tuple(const std::tuple&lt; std::array&lt; Ts, N &gt;... &gt; &amp;soa) -&gt; std::array&lt; std::tuple&lt; Ts... &gt;, N &gt;</div><div class="ttdef"><b>Definition:</b> array.hpp:133</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_ad69281e3689121b8f7f023021d7423d2"><div class="ttname"><a href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">beman::transpose::pure</a></div><div class="ttdeci">constexpr pure_fn&lt; CONTEXT &gt; pure</div><div class="ttdef"><b>Definition:</b> apply.hpp:680</div></div>
 <div class="ttc" id="astructbeman_1_1transpose_1_1array__applicative__impl_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1array__applicative__impl.html">beman::transpose::array_applicative_impl</a></div><div class="ttdef"><b>Definition:</b> array.hpp:55</div></div>
@@ -238,7 +238,7 @@ $(document).ready(function(){initNavTree('array_8hpp_source.html',''); initResiz
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_39d741fbdc6166b543955aba0e4ca9d8.html">beman</a></li><li class="navelem"><a class="el" href="dir_71fb1006ab4051324dd8475e572d9578.html">transpose</a></li><li class="navelem"><a class="el" href="array_8hpp.html">array.hpp</a></li>
+    <li class="navelem"><a class="el" href="dir_94cf5e36d6dc57d8747f5a546f07158a.html">beman</a></li><li class="navelem"><a class="el" href="dir_dcca3582e3abd91b3ef0fe1a8f79e9b7.html">transpose</a></li><li class="navelem"><a class="el" href="array_8hpp.html">array.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>

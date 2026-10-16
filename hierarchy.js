@@ -253,21 +253,6 @@ var hierarchy =
     [ "beman::tree_algorithms::Succ< A >", "structbeman_1_1tree__algorithms_1_1Succ.html", null ],
     [ "beman::transpose::sum_monoid< T >", "structbeman_1_1transpose_1_1sum__monoid.html", null ],
     [ "beman::transpose::sum_monoid< std::size_t >", "structbeman_1_1transpose_1_1sum__monoid.html", null ],
-    [ "beman::transpose::TestIdentityApplicativeImpl< VALUE_TYPE >", "structbeman_1_1transpose_1_1TestIdentityApplicativeImpl.html", [
-      [ "beman::transpose::derive_applicative< TestIdentityApplicativeImpl< VALUE_TYPE > >", "structbeman_1_1transpose_1_1derive__applicative.html", [
-        [ "beman::transpose::TestIdentityApplicativeMap< VALUE_TYPE >", "structbeman_1_1transpose_1_1TestIdentityApplicativeMap.html", null ]
-      ] ]
-    ] ],
-    [ "beman::transpose::TestIdentityTraversableImpl< VALUE_TYPE >", "structbeman_1_1transpose_1_1TestIdentityTraversableImpl.html", [
-      [ "beman::transpose::derive_traversable< TestIdentityTraversableImpl< VALUE_TYPE > >", "structbeman_1_1transpose_1_1derive__traversable.html", [
-        [ "beman::transpose::TestIdentityTraversableMap< VALUE_TYPE >", "structbeman_1_1transpose_1_1TestIdentityTraversableMap.html", null ]
-      ] ]
-    ] ],
-    [ "beman::transpose::TestSequenceFoldableImpl< VALUE_TYPE >", "structbeman_1_1transpose_1_1TestSequenceFoldableImpl.html", [
-      [ "beman::transpose::derive_foldable< TestSequenceFoldableImpl< VALUE_TYPE > >", "structbeman_1_1transpose_1_1derive__foldable.html", [
-        [ "beman::transpose::TestSequenceFoldableMap< VALUE_TYPE >", "structbeman_1_1transpose_1_1TestSequenceFoldableMap.html", null ]
-      ] ]
-    ] ],
     [ "beman::transpose::to_vector_fn", "structbeman_1_1transpose_1_1to__vector__fn.html", null ],
     [ "beman::transpose::transpose_fn", "structbeman_1_1transpose_1_1transpose__fn.html", null ],
     [ "beman::transpose::traverse_fn", "structbeman_1_1transpose_1_1traverse__fn.html", null ],

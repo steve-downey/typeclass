@@ -300,7 +300,7 @@ requires (sizeof...(CARRIERS) &gt; 0) &amp;&amp; (<a class="el" href="namespaceb
 </div><div class="memdoc">
 
 <p>Graded n-ary core: the mixing point. </p>
-<p>Reached exactly when the operands do NOT all declare this instance's error type &ndash; the ungraded core above handles that case, and the two constraints are complementary, so the choice is never a matter of overload ranking (docs/decisions.md#grading-footprint).</p>
+<p>Reached exactly when the operands do NOT all declare this instance's error type &ndash; the ungraded core above handles that case, and the two constraints are complementary, so the choice is never a matter of overload ranking (docs/transpose/decisions.md#grading-footprint).</p>
 <p>The result carries the join of the operands' semantic grades. Carrier spelling remains lazy: identical alternatives are carried verbatim, only genuinely different ones become an error_set, and bare operands lift to the model bottom without leaving a trace in the deduced type.</p>
 <p>This is the ONLY behavioural change grading makes to existing code, and it makes previously-ill-formed combinations well-formed. Nothing that deduced a type before deduces a different one now. </p>
 
