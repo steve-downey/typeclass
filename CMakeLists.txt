@@ -78,6 +78,32 @@ endif()
 
 if(BEMAN_TYPECLASS_BUILD_TESTS OR BEMAN_TYPECLASS_BUILD_BENCHMARKS)
     find_package(Catch2 3 REQUIRED)
+    # Under vcpkg, Catch2 must come from the target triplet's tree, which is
+    # built with this project's toolchain. A Catch2 found anywhere else (a
+    # system package, a host-triplet build) may use a different standard
+    # library, and that surfaces only as undefined std:: symbols at link time.
+    if(DEFINED VCPKG_INSTALLED_DIR AND DEFINED VCPKG_TARGET_TRIPLET)
+        set(_vcpkg_triplet_dir "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}")
+        cmake_path(
+            IS_PREFIX
+            _vcpkg_triplet_dir
+            "${Catch2_DIR}"
+            NORMALIZE
+            _catch2_under_triplet
+        )
+        if(NOT _catch2_under_triplet)
+            message(
+                FATAL_ERROR
+                "Catch2 was found at \"${Catch2_DIR}\", outside the vcpkg "
+                "target triplet tree \"${_vcpkg_triplet_dir}\". It would not "
+                "be built with this project's toolchain. Check that "
+                "vcpkg.json lists catch2 as a target (not host) dependency, "
+                "and reconfigure from a clean build directory."
+            )
+        endif()
+        unset(_catch2_under_triplet)
+        unset(_vcpkg_triplet_dir)
+    endif()
     # The fetch-content dependency provider makes Catch2 available inside a
     # function scope, so its extras/ directory never reaches
     # CMAKE_MODULE_PATH and catch2_SOURCE_DIR is not visible here; recover it
