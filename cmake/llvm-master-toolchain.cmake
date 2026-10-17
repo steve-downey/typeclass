@@ -28,7 +28,7 @@ set(CMAKE_CXX_FLAGS_DEBUG
     FORCE
 )
 set(CMAKE_CXX_FLAGS_RELEASE
-    "-Ofast -g0 -DNDEBUG"
+    "-O3 -g0 -DNDEBUG"
     CACHE STRING
     "C++ Release Flags"
     FORCE
