@@ -213,19 +213,19 @@ $(document).ready(function(){initNavTree('typeclass__base_8hpp_source.html','');
 <div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    }</div>
 <div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>};</div>
 <div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span> </div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> RESULT&gt;</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span><span class="keyword">struct </span>probe_witness2 {</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> FIRST, <span class="keyword">class</span> SECOND&gt;</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> operator()(<span class="keyword">const</span> FIRST &amp;, <span class="keyword">const</span> SECOND &amp;) <span class="keyword">const</span> -&gt; RESULT {</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        std::unreachable();</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    }</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>};</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>} <span class="comment">// namespace detail</span></div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span> </div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>} <span class="comment">// namespace beman::transpose</span></div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span><span class="preprocessor">#endif </span><span class="comment">// BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP</span></div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> RESULT&gt;</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span><span class="keyword">struct </span>probe_witness2 {</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> FIRST, <span class="keyword">class</span> SECOND&gt;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> operator()(<span class="keyword">const</span> FIRST &amp;, <span class="keyword">const</span> SECOND &amp;) <span class="keyword">const</span> -&gt; RESULT {</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        std::unreachable();</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>    }</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>};</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>} <span class="comment">// namespace detail</span></div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span> </div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>} <span class="comment">// namespace beman::transpose</span></div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span><span class="preprocessor">#endif </span><span class="comment">// BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP</span></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html"><div class="ttname"><a href="namespacebeman_1_1transpose.html">beman::transpose</a></div><div class="ttdoc">The grade algebra: framework vocabulary only.</div><div class="ttdef"><b>Definition:</b> finger_tree_foldable.hpp:45</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_a1a4d7b1a15f9b55cb0970912130ddfff"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a1a4d7b1a15f9b55cb0970912130ddfff">beman::transpose::has_instance_v</a></div><div class="ttdeci">constexpr bool has_instance_v</div><div class="ttdoc">True when a typeclass lookup variable has been specialized away from its std::false_type default,...</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:76</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_a46e5acce5433886d8105e0e6de949760"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">beman::transpose::applicative_value_t</a></div><div class="ttdeci">typename applicative_value&lt; std::remove_cvref_t&lt; T &gt; &gt;::type applicative_value_t</div><div class="ttdoc">Convenience alias for applicative_value&lt;T&gt;::type.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:99</div></div>
