@@ -1627,6 +1627,45 @@ add one.
   against the shipped `optional` object. Monad and Traversable have
   public derived members of the same unconstrained, deduced-return shape,
   but they are untested and left for a separate issue.
+- 2026-10-18 — That separate issue is steve-downey/typeclass#8, now fixed.
+  Probing each member from inside a concept showed hard errors from
+  `bind_with`, `for_each`, both `traverse_with` forms, and `transpose` and
+  `transpose_with` given a structure that is not theirs. The shipped
+  instances' own `traverse` was the root: `vector`'s two overloads and all
+  five finger-tree instances were unconstrained, with deduced return types.
+  Each instance's `traverse` is now constrained on the function being
+  invocable with the element as it will be passed, and on the policy
+  satisfying `applicative_object_for` for the context it returns. That is
+  the contract `traverse_fn` already imposes, so a direct call and the
+  operation object now accept the same things. Each derived member is
+  constrained on the call it forwards to, per this entry's rule. `transpose`
+  and `transpose_with` now use `std::identity` rather than a lambda, so
+  that the constraint can name the same callable the body passes.
+  `detail::traversal_argument_t` moved above `derive_traversable` so the
+  in-class constraints can name it. `bind_with` is constrained on the
+  delegate's `bind`.
+  One design change to specified surface: `vector`'s two `traverse`
+  overloads (`const vector&` and `vector&&`) are now one, taking `VALUES&&`
+  and passing each element as `$traversal-argument-t$<vector_traversable_impl,
+  VALUES>`. With two constrained overloads, an rvalue `vector` made both
+  viable, so both constraints were checked. Checking the `const&` one asked
+  whether the function accepts a `const` element, which for a generic
+  lambda over a move-only element instantiates a copy inside the lambda: a
+  hard error. `type_requirements.test.cpp`'s move-only traversal caught
+  this. One overload asks only about the category the traversal will
+  actually pass, and the two identical bodies became one.
+  `transpose.range.*` and `transpose.traversable.*` were regenerated. The
+  range synopsis renders a lone `;` after the merged declaration's
+  `requires`-clause. The header is formatted normally; specgen's reflow
+  leaves a clause's deeply nested final line over-width and puts the
+  terminator on a line of its own
+  ([steve-downey/specgen#157](https://github.com/steve-downey/specgen/issues/157)).
+  Tests: vector `traverse` probes in `traverse.test.cpp` (including an
+  rvalue-only callable, accepted for an rvalue `vector` and rejected for an
+  lvalue one), probes of every derived Traversable member, `bind_with`
+  against `bind` in `monad.test.cpp`, and a template test over the five
+  finger-tree structures in `finger_tree_traversable.test.cpp`. All fail
+  against the previous headers.
 
 ## typeclass-conformance-depth
 

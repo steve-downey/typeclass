@@ -18,6 +18,7 @@
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/traverse.hpp>
 
+#include <concepts>
 #include <functional>
 #include <type_traits>
 #include <utility>
@@ -36,8 +37,12 @@ struct FingerTreeTraversableImpl {
     auto traverse(this auto&&,
                   const APPLICATIVE&                                                               applicative,
                   F&&                                                                              function,
-                  const beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>& tree) {
-        using Context = std::remove_cvref_t<std::invoke_result_t<F, const T&>>;
+                  const beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>& tree)
+        requires std::invocable<F&, const T&> &&
+                 beman::transpose::applicative_object_for<APPLICATIVE,
+                                                          std::remove_cvref_t<std::invoke_result_t<F&, const T&>>>
+    {
+        using Context = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
         using U       = beman::transpose::applicative_value_t<Context>;
 
         auto accumulated = applicative.pure(std::vector<U>{});

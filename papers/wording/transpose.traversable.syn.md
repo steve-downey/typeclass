@@ -31,6 +31,24 @@ namespace std {
 
 ```cpp
 namespace std {
+  template<class OBJ, class T>
+  using $traversal-argument-t$ =
+      conditional_t<!is_lvalue_reference_v<T> && !is_const_v<remove_reference_t<T>> &&
+                        !is_volatile_v<remove_reference_t<T>> &&
+                        $consuming-traversable-object$<remove_cvref_t<OBJ>>,
+                    typename remove_cvref_t<OBJ>::element_type&&,
+                    const typename remove_cvref_t<OBJ>::element_type&>; // exposition only
+}
+```
+
+::: wording
+
+[x+2]{.pnum} *Remarks*: `$traversal-argument-t$<OBJ, T>` is the type through which the Traversable object `OBJ` presents an element when handed a structure of type and value category `T`. It is an rvalue reference only for a non-`const`, non-`volatile` rvalue structure and an object satisfying `$consuming-traversable-object$`; otherwise it is a `const` lvalue reference.
+
+:::
+
+```cpp
+namespace std {
   template<class Impl>
   struct derive_traversable : protected Impl {
     // Alternate-core: Impl::traverse is the primitive; transpose is derived
@@ -42,39 +60,61 @@ namespace std {
 
     // @[transpose.traversable.ops]{- .sref}@, traversal operations
     template<class T, class F>
-    constexpr auto for_each(this auto&& self, T&& value, F&& function);
+    constexpr auto for_each(this auto&& self, T&& value, F&& function)
+      requires requires {
+        self.traverse(applicative<remove_cvref_t<
+                          invoke_result_t<F&, $traversal-argument-t$<decltype(self), T>>>>,
+                      forward<F>(function), forward<T>(value));
+      };
 
     template<class T>
       requires $applicative-context$<typename Impl::element_type>
-    constexpr auto transpose(this auto&& self, T&& value);
+    constexpr auto transpose(this auto&& self, T&& value)
+      requires requires {
+        self.traverse(applicative<typename Impl::element_type>, identity{},
+                      forward<T>(value));
+      };
 
     // @[transpose.traversable.delegate]{- .sref}@, delegated traversal
     template<class TRAVERSABLE_MAP, class T, class F>
     constexpr auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
-                                 F&& function, T&& value);
+                                 F&& function, T&& value)
+      requires requires {
+        traversable_map.traverse(
+            applicative<remove_cvref_t<
+                invoke_result_t<F&, $traversal-argument-t$<TRAVERSABLE_MAP, T>>>>,
+            forward<F>(function), forward<T>(value));
+      };
 
     template<class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
     constexpr auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
                                  const APPLICATIVE_MAP& applicative_map, F&& function,
-                                 T&& value);
+                                 T&& value)
+      requires requires {
+        traversable_map.traverse(applicative_map, forward<F>(function),
+                                 forward<T>(value));
+      };
 
     template<class TRAVERSABLE_MAP, class T>
       requires $applicative-context$<typename remove_cvref_t<TRAVERSABLE_MAP>::element_type>
     constexpr auto transpose_with(this auto&& self,
-                                  const TRAVERSABLE_MAP& traversable_map, T&& value);
+                                  const TRAVERSABLE_MAP& traversable_map, T&& value)
+      requires requires {
+        self.traverse_with(traversable_map, identity{}, forward<T>(value));
+      };
   };
 }
 ```
 
 ::: wording
 
-[x+2]{.pnum} A program that instantiates `derive_traversable<Impl>` is ill-formed unless `is_same_v<Impl, false_type>` is `false` and `requires { typename Impl::element_type; }` is `true`.
+[x+3]{.pnum} A program that instantiates `derive_traversable<Impl>` is ill-formed unless `is_same_v<Impl, false_type>` is `false` and `requires { typename Impl::element_type; }` is `true`.
 
 :::
 
 ::: wording
 
-[x+3]{.pnum} *Remarks*: `derive_traversable<Impl>::consumes_rvalue_structure` re-exports the capability declared by `Impl`. If `Impl` makes no declaration, its value is `false`.
+[x+4]{.pnum} *Remarks*: `derive_traversable<Impl>::consumes_rvalue_structure` re-exports the capability declared by `Impl`. If `Impl` makes no declaration, its value is `false`.
 
 :::
 
@@ -84,7 +124,7 @@ namespace std {
 template<class T> inline constexpr auto traversable = false_type{};
 ```
 
-[x+4]{.pnum} *Remarks*: This variable template is the lookup point for the Traversable object of a structure type. A program may specialize it for a program-defined structure. The primary template names no traversable object. The type of each object named by a specialization this document declares is a class type that is not final and models `semiregular`, so a program may derive from it to combine several objects in one algorithm object.
+[x+5]{.pnum} *Remarks*: This variable template is the lookup point for the Traversable object of a structure type. A program may specialize it for a program-defined structure. The primary template names no traversable object. The type of each object named by a specialization this document declares is a class type that is not final and models `semiregular`, so a program may derive from it to combine several objects in one algorithm object.
 
 :::
 
@@ -103,24 +143,6 @@ namespace std {
       typename $traversable-object-t$<T>::element_type; // exposition only
 }
 ```
-
-```cpp
-namespace std {
-  template<class OBJ, class T>
-  using $traversal-argument-t$ =
-      conditional_t<!is_lvalue_reference_v<T> && !is_const_v<remove_reference_t<T>> &&
-                        !is_volatile_v<remove_reference_t<T>> &&
-                        $consuming-traversable-object$<remove_cvref_t<OBJ>>,
-                    typename remove_cvref_t<OBJ>::element_type&&,
-                    const typename remove_cvref_t<OBJ>::element_type&>; // exposition only
-}
-```
-
-::: wording
-
-[x+5]{.pnum} *Remarks*: `$traversal-argument-t$<OBJ, T>` is the type through which the Traversable object `OBJ` presents an element when handed a structure of type and value category `T`. It is an rvalue reference only for a non-`const`, non-`volatile` rvalue structure and an object satisfying `$consuming-traversable-object$`; otherwise it is a `const` lvalue reference.
-
-:::
 
 ```cpp
 namespace std {
