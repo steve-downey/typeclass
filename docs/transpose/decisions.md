@@ -1563,6 +1563,70 @@ add one.
   a `has_map`/`has_zip_with` concept pair proving an inapplicable callable
   still makes `map`/`zip_with` disappear rather than hard-error against the
   shipped invoke-basis object).
+- 2026-10-17 — The item left open above turned out to be a defect, not
+  only a weak probe. A bug report from the steve-downey/overload project,
+  which checks typeclass obligations in Lean, showed it: with an ap-only
+  basis, `invoke(not_callable{}, optional<int>{1})` compiled, satisfied a
+  `requires`-expression, and returned `optional<terminating_partial<...>>`.
+  The cause was the partial inferring its own arity. It invoked as soon as
+  the function accepted the bound arguments and otherwise bound one more,
+  so a callable that could not take the arguments, or was given too few,
+  just produced a half-applied function in the context. Over-application
+  differed from native `invoke` too: it applied the unary function's result
+  to the next argument. Fixed in three parts. `terminating_partial` now
+  takes its arity from the number of arguments `invoke` was given, and its
+  saturating call is constrained and spells its result type. A recursive
+  trait, `detail::ap_chain_valid`, names each `ap` step's type, which makes
+  the derivation probeable after all: the single-expression probe this
+  entry said did not exist is a trait over each step, relying on the
+  existing rule that every `Impl`'s `ap` is SFINAE-friendly.
+  `derive_applicative::invoke` now carries a `requires`-clause: native
+  `invoke`, or `detail::invocable_through_ap` (`\expos`), or no basis at
+  all. The last alternative keeps the GHC-`MINIMAL` `static_assert`
+  reachable for an `Impl` with no basis, now reported as a *Mandates*
+  element. Making `invoke` strong makes the four `self.invoke`-routed
+  alternatives strong as well. The rider above no longer applies: a
+  `has_map` probe on an ap-only `Map` now fails for an inapplicable
+  callable. Also fixed: the old non-const extend step moved its bound
+  arguments into the next partial, so a context whose `ap` calls one held
+  function more than once (a list's cartesian `ap`) gave every call after
+  the first a moved-from argument. Extension now copies. No shipped
+  instance has an ap-only basis, so no shipped behaviour changes.
+  `transpose.applicative.basis.md` and `transpose.applicative.syn.md` were
+  regenerated. Three test cases were added in `apply.test.cpp`: an ap-only
+  `invoke` rejects wrong-type, under- and over-applied callables (and `map`
+  and `zip_with` follow); it agrees with native `invoke` on what it
+  accepts; and a vector ap-only instance reuses its bound strings across
+  calls. All three fail against the previous header.
+- 2026-10-18 — Filed as steve-downey/typeclass#7 (the ap-only defect
+  above) and #6 (an invoke-basis `Map` without `using Impl::invoke;` made
+  every invalid probe a hard error, since `invoke`'s deduced return type
+  instantiated the body). Checking both reproductions against the previous
+  entry's fix found two gaps. First, its third alternative, "`Impl` has no
+  basis for the first argument's context", is true for any foreign
+  argument. A probe passing an `optional<int>`, or an `int`, to a `box`
+  object's `invoke` therefore still reached the `static_assert` as a hard
+  error. The alternative and its *Mandates* element are removed.
+  `invoke` is now constrained the way `Foldable::fold_map` is: native
+  basis or derivation, nothing else, with the MINIMAL `static_assert`
+  kept as a provably redundant last-resort message. An `Impl` with no
+  basis at all now gets "constraints not satisfied", as a Foldable `Impl`
+  already does. Second, `invoke_with` (both forms) was unconstrained with a
+  deduced return type. That made a probe with a rejected callable a hard
+  error even against the shipped `optional` object, where the
+  using-declaration convention does not help. Both forms are now
+  constrained on the delegate's `invoke` call. The `derive_applicative`
+  doc comment now says re-exposing `Impl::invoke` is an optimization, not
+  an obligation. That was #6's alternative fix, and it is no longer needed.
+  `transpose.applicative.basis.md`, `.delegate.md` and `.syn.md` were
+  regenerated. The tests added to `apply.test.cpp`: a template test over
+  three `box` instances (invoke basis without the using-declaration,
+  invoke basis with it, ap only) that checks the member call, `bt::invoke`
+  and `invoke_with` probes are soft for valid, rejected-callable,
+  foreign-context and non-context arguments; and an `invoke_with` test
+  against the shipped `optional` object. Monad and Traversable have
+  public derived members of the same unconstrained, deduced-return shape,
+  but they are untested and left for a separate issue.
 
 ## typeclass-conformance-depth
 

@@ -11,13 +11,13 @@ constexpr auto invoke(this auto&& self, FUNCTION&& function,
                       REST_ARGUMENTS&&... rest_arguments);
 ```
 
-[x]{.pnum} *Constraints*: `Impl` provides either an `invoke` accepting `function` and the arguments, or an `ap` accepting a callable in context and one argument in context.
+[x]{.pnum} *Constraints*: Either `Impl` provides an `invoke` accepting `function` and the arguments, or `Impl` provides an `ap` and the application described in the *Effects* element below is well-formed, which requires that `function` be invocable with the values held by all of the arguments.
 
 [x+1]{.pnum} *Effects*: Lifts `function` into the context and applies it to the arguments, left to right. If `Impl` provides `invoke`, the effect is that of `Impl`'s own `invoke`; otherwise `function` is embedded with `pure` and applied one argument at a time using `ap`.
 
 [x+2]{.pnum} *Returns*: The single value in context holding the result of applying `function` to the values held by the arguments.
 
-[x+3]{.pnum} *Remarks*: The arguments are evaluated in the order written. No argument's context depends on another argument's value.
+[x+3]{.pnum} *Remarks*: The arguments are evaluated in the order written. No argument's context depends on another argument's value. When `invoke` is expressed using `ap`, `function` is invoked only once it has been applied to every argument; its arity is the number of arguments, never inferred from what `function` accepts.
 
 ```cpp
 template<class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
