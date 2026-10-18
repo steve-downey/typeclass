@@ -1656,8 +1656,10 @@ add one.
   actually pass, and the two identical bodies became one.
   `transpose.range.*` and `transpose.traversable.*` were regenerated. The
   range synopsis renders a lone `;` after the merged declaration's
-  `requires`-clause, which looks like a specgen reflow quirk; the header
-  is formatted normally.
+  `requires`-clause. The header is formatted normally; specgen's reflow
+  leaves a clause's deeply nested final line over-width and puts the
+  terminator on a line of its own
+  ([steve-downey/specgen#157](https://github.com/steve-downey/specgen/issues/157)).
   Tests: vector `traverse` probes in `traverse.test.cpp` (including an
   rvalue-only callable, accepted for an rvalue `vector` and rejected for an
   lvalue one), probes of every derived Traversable member, `bind_with`
