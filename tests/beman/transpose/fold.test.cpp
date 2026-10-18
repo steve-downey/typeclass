@@ -348,15 +348,15 @@ concept has_find_first_object =
     requires(P p) { bt::find_first(std::vector<int>{1}, p); };
 
 auto left_step = [](int acc, int x) { return acc + x; };
-auto right_step = [](int x, int acc) { return acc + x; };
-auto to_not_bool = [](int) { return NotBool{}; };
+using RightStep = decltype([](int x, int acc) { return acc + x; });
+using ToNotBool = decltype([](int) { return NotBool{}; });
 auto is_even = [](int x) { return x % 2 == 0; };
 // A step whose result cannot become the next state.
-auto stateless_step = [](int, int) { return NotBool{}; };
+using StatelessStep = decltype([](int, int) { return NotBool{}; });
 // A step that takes its operands in fold_right's order, which fold_left
 // cannot call; and the reverse.
-auto string_left_step = [](std::string acc, int) { return acc; };
-auto string_right_step = [](int, std::string acc) { return acc; };
+using StringLeftStep = decltype([](std::string acc, int) { return acc; });
+using StringRightStep = decltype([](int, std::string acc) { return acc; });
 
 } // namespace
 
@@ -366,30 +366,27 @@ TEST_CASE("fold: derived members over a fold_map basis reject callables the "
 
     STATIC_REQUIRE(has_fold_left<Map, int, decltype(left_step)>);
     STATIC_REQUIRE(!has_fold_left<Map, int, NotCallable>);
-    STATIC_REQUIRE(!has_fold_left<Map, int, decltype(stateless_step)>);
-    STATIC_REQUIRE(has_fold_left<Map, std::string, decltype(string_left_step)>);
-    STATIC_REQUIRE(
-        !has_fold_left<Map, std::string, decltype(string_right_step)>);
+    STATIC_REQUIRE(!has_fold_left<Map, int, StatelessStep>);
+    STATIC_REQUIRE(has_fold_left<Map, std::string, StringLeftStep>);
+    STATIC_REQUIRE(!has_fold_left<Map, std::string, StringRightStep>);
 
-    STATIC_REQUIRE(has_fold_right<Map, int, decltype(right_step)>);
+    STATIC_REQUIRE(has_fold_right<Map, int, RightStep>);
     STATIC_REQUIRE(!has_fold_right<Map, int, NotCallable>);
-    STATIC_REQUIRE(!has_fold_right<Map, int, decltype(stateless_step)>);
-    STATIC_REQUIRE(
-        has_fold_right<Map, std::string, decltype(string_right_step)>);
-    STATIC_REQUIRE(
-        !has_fold_right<Map, std::string, decltype(string_left_step)>);
+    STATIC_REQUIRE(!has_fold_right<Map, int, StatelessStep>);
+    STATIC_REQUIRE(has_fold_right<Map, std::string, StringRightStep>);
+    STATIC_REQUIRE(!has_fold_right<Map, std::string, StringLeftStep>);
 
     STATIC_REQUIRE(has_any_of<Map, decltype(is_even)>);
     STATIC_REQUIRE(!has_any_of<Map, NotCallable>);
-    STATIC_REQUIRE(!has_any_of<Map, decltype(to_not_bool)>);
+    STATIC_REQUIRE(!has_any_of<Map, ToNotBool>);
 
     STATIC_REQUIRE(has_all_of<Map, decltype(is_even)>);
     STATIC_REQUIRE(!has_all_of<Map, NotCallable>);
-    STATIC_REQUIRE(!has_all_of<Map, decltype(to_not_bool)>);
+    STATIC_REQUIRE(!has_all_of<Map, ToNotBool>);
 
     STATIC_REQUIRE(has_find_first<Map, decltype(is_even)>);
     STATIC_REQUIRE(!has_find_first<Map, NotCallable>);
-    STATIC_REQUIRE(!has_find_first<Map, decltype(to_not_bool)>);
+    STATIC_REQUIRE(!has_find_first<Map, ToNotBool>);
 
     // empty derives through any_of with a predicate of its own, so it is
     // unaffected.
@@ -405,11 +402,11 @@ TEST_CASE("fold: derived members over a fold_map basis reject callables the "
 TEST_CASE("fold: the operation objects inherit the derived members' answers") {
     STATIC_REQUIRE(has_fold_left_object<int, decltype(left_step)>);
     STATIC_REQUIRE(!has_fold_left_object<int, NotCallable>);
-    STATIC_REQUIRE(has_fold_right_object<int, decltype(right_step)>);
+    STATIC_REQUIRE(has_fold_right_object<int, RightStep>);
     STATIC_REQUIRE(!has_fold_right_object<int, NotCallable>);
     STATIC_REQUIRE(has_any_of_object<decltype(is_even)>);
     STATIC_REQUIRE(!has_any_of_object<NotCallable>);
-    STATIC_REQUIRE(!has_any_of_object<decltype(to_not_bool)>);
+    STATIC_REQUIRE(!has_any_of_object<ToNotBool>);
     STATIC_REQUIRE(has_all_of_object<decltype(is_even)>);
     STATIC_REQUIRE(!has_all_of_object<NotCallable>);
     STATIC_REQUIRE(has_find_first_object<decltype(is_even)>);
@@ -424,13 +421,13 @@ TEST_CASE("fold: derived members over a fold_right basis reject callables "
     STATIC_REQUIRE(
         has_fold_map_sum<FoldRightOnlyMap, decltype([](int x) { return x; })>);
     STATIC_REQUIRE(!has_fold_map_sum<FoldRightOnlyMap, NotCallable>);
-    STATIC_REQUIRE(!has_fold_map_sum<FoldRightOnlyMap, decltype(to_not_bool)>);
+    STATIC_REQUIRE(!has_fold_map_sum<FoldRightOnlyMap, ToNotBool>);
 
     STATIC_REQUIRE(has_fold_left<FoldRightOnlyMap, int, decltype(left_step)>);
     STATIC_REQUIRE(!has_fold_left<FoldRightOnlyMap, int, NotCallable>);
     STATIC_REQUIRE(has_any_of<FoldRightOnlyMap, decltype(is_even)>);
     STATIC_REQUIRE(!has_any_of<FoldRightOnlyMap, NotCallable>);
-    STATIC_REQUIRE(!has_all_of<FoldRightOnlyMap, decltype(to_not_bool)>);
+    STATIC_REQUIRE(!has_all_of<FoldRightOnlyMap, ToNotBool>);
     STATIC_REQUIRE(has_find_first<FoldRightOnlyMap, decltype(is_even)>);
     STATIC_REQUIRE(!has_find_first<FoldRightOnlyMap, NotCallable>);
 

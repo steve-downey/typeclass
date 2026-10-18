@@ -353,7 +353,7 @@ concept callable_with = requires(const COMPOSITION &c, ARGUMENT a) { c(a); };
 
 auto plus_one = [](int x) { return x + 1; };
 auto plus = [](int x, int y) { return x + y; };
-auto takes_string = [](const std::string &s) { return s.size(); };
+using TakesString = decltype([](const std::string &s) { return s.size(); });
 auto half_of = [](int x) {
     return x % 2 == 0 ? std::optional<int>{x / 2} : std::optional<int>{};
 };
@@ -364,7 +364,7 @@ TEST_CASE("monad: fmap derived from bind rejects functions it cannot apply") {
     using Map = std::remove_cvref_t<decltype(bt::monad<std::optional<int>>)>;
     STATIC_REQUIRE(has_optional_fmap<Map, decltype(plus_one)>);
     STATIC_REQUIRE(!has_optional_fmap<Map, NotCallable>);
-    STATIC_REQUIRE(!has_optional_fmap<Map, decltype(takes_string)>);
+    STATIC_REQUIRE(!has_optional_fmap<Map, TakesString>);
     STATIC_REQUIRE(!has_optional_fmap<Map, decltype(plus)>);
 
     const auto &m = bt::monad<std::optional<int>>;
@@ -383,7 +383,7 @@ TEST_CASE("monad: invoke derived from bind rejects functions it cannot "
     // Too few, or too many, arguments for the function.
     STATIC_REQUIRE(!has_invoke<Map, decltype(plus), O>);
     STATIC_REQUIRE(!has_invoke<Map, decltype(plus_one), O, O>);
-    STATIC_REQUIRE(!has_invoke<Map, decltype(takes_string), O>);
+    STATIC_REQUIRE(!has_invoke<Map, TakesString, O>);
 
     const auto &m = bt::monad<std::optional<int>>;
     REQUIRE(m.invoke(plus, O{40}, O{2}) == O{42});
