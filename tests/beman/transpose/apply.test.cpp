@@ -6,8 +6,10 @@
 
 #include "test_support.hpp"
 
+#include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+#include <concepts>
 #include <functional>
 #include <optional>
 #include <string>
@@ -199,6 +201,113 @@ struct ApOnlyImpl {
 
 struct ApOnlyMap : bt::derive_applicative<ApOnlyImpl> {};
 
+// An ap-only Impl over std::vector with the list (cartesian) ap: one held
+// function is called once for every argument element. The witness for the
+// invoke-from-ap currying binding by copy -- a partial that moved its bound
+// arguments into the next one would hand every call after the first a
+// moved-from value.
+struct VectorApOnlyImpl {
+    template <class VALUE>
+    auto pure(this auto &&, VALUE &&value)
+        -> std::vector<std::remove_cvref_t<VALUE>> {
+        return std::vector<std::remove_cvref_t<VALUE>>{
+            std::forward<VALUE>(value)};
+    }
+
+    template <class FUNCTION, class ARGUMENT>
+    auto ap(this auto &&, const std::vector<FUNCTION> &functions,
+            const std::vector<ARGUMENT> &arguments)
+        -> std::vector<std::remove_cvref_t<
+            std::invoke_result_t<FUNCTION &, const ARGUMENT &>>> {
+        std::vector<std::remove_cvref_t<
+            std::invoke_result_t<FUNCTION &, const ARGUMENT &>>>
+            results;
+        for (auto function : functions) {
+            for (const auto &argument : arguments) {
+                results.push_back(std::invoke(function, argument));
+            }
+        }
+        return results;
+    }
+};
+
+struct VectorApOnlyMap : bt::derive_applicative<VectorApOnlyImpl> {};
+
+template <class MAP, class F, class... ARGS>
+concept has_invoke = requires(const MAP &m, const F &f, const ARGS &...args) {
+    m.invoke(f, args...);
+};
+
+struct NotCallable {};
+
+template <class MAP, class APPLICATIVE_MAP, class F, class... ARGS>
+concept has_invoke_with =
+    requires(const MAP &m, const APPLICATIVE_MAP &delegate, const F &f,
+             const ARGS &...args) { m.invoke_with(delegate, f, args...); };
+
+template <class F, class... ARGS>
+concept has_invoke_object =
+    std::invocable<decltype(bt::invoke) const &, F, ARGS...>;
+
+// Three program-defined contexts, one per way an instance can be written,
+// so each gets its own applicative<> specialization. The instances are
+// steve-downey/typeclass#6 and #7's reproductions. invoke_box's object
+// supplies invoke and does not re-expose it; reexposed_box's re-exposes it
+// with a using-declaration, the way the library's own instances do;
+// ap_box's supplies only ap. Re-exposing must be an optimization, never the
+// thing that keeps a probe soft.
+template <class V>
+struct invoke_box {
+    using value_type = V;
+    V v;
+};
+template <class V>
+struct reexposed_box {
+    using value_type = V;
+    V v;
+};
+template <class V>
+struct ap_box {
+    using value_type = V;
+    V v;
+};
+
+template <template <class> class BOX>
+struct box_invoke_impl {
+    template <class X>
+    constexpr auto pure(this auto &&, X &&x) -> BOX<std::remove_cvref_t<X>> {
+        return {std::forward<X>(x)};
+    }
+    template <class F, class A>
+    constexpr auto invoke(this auto &&, F &&f, const BOX<A> &a)
+        -> BOX<std::remove_cvref_t<std::invoke_result_t<F &, const A &>>> {
+        return {f(a.v)};
+    }
+};
+
+struct box_ap_impl {
+    template <class X>
+    constexpr auto pure(this auto &&, X &&x) -> ap_box<std::remove_cvref_t<X>> {
+        return {std::forward<X>(x)};
+    }
+    template <class F, class A>
+    constexpr auto ap(this auto &&, const ap_box<F> &f, const ap_box<A> &a)
+        -> ap_box<
+            std::remove_cvref_t<std::invoke_result_t<const F &, const A &>>> {
+        return {f.v(a.v)};
+    }
+};
+
+struct invoke_box_map : bt::derive_applicative<box_invoke_impl<invoke_box>> {};
+struct reexposed_box_map
+    : bt::derive_applicative<box_invoke_impl<reexposed_box>> {
+    using box_invoke_impl<reexposed_box>::invoke;
+    using box_invoke_impl<reexposed_box>::pure;
+};
+struct ap_box_map : bt::derive_applicative<box_ap_impl> {
+    using box_ap_impl::pure;
+};
+
 template <class MAP, class F, class A>
 concept has_map =
     requires(const MAP &m, const F &f, const A &a) { m.map(f, a); };
@@ -217,6 +326,13 @@ struct StringOnlyCallable {
 };
 
 } // namespace
+
+template <class V>
+inline constexpr auto bt::applicative<invoke_box<V>> = invoke_box_map{};
+template <class V>
+inline constexpr auto bt::applicative<reexposed_box<V>> = reexposed_box_map{};
+template <class V>
+inline constexpr auto bt::applicative<ap_box<V>> = ap_box_map{};
 
 TEST_CASE("apply: optional invoke combines effectful arguments") {
     const auto &app = bt::applicative<std::optional<int>>;
@@ -409,6 +525,107 @@ TEST_CASE("apply: an inapplicable callable still makes map and zip_with "
     static_assert(!has_map<Map, StringOnlyCallable, std::optional<int>>);
     static_assert(!has_zip_with<Map, StringOnlyCallable, std::optional<int>,
                                 std::optional<int>>);
+}
+
+TEST_CASE("apply: an ap-only invoke rejects a callable that cannot take "
+          "the arguments") {
+    // invoke derived from ap curries through a partial. Its arity is the
+    // number of arguments invoke was given, so a callable that cannot take
+    // them -- of the wrong type, or wanting more or fewer -- leaves invoke
+    // out of overload resolution instead of yielding a half-applied
+    // function in the context.
+    using O = std::optional<int>;
+    auto unary = [](int a) { return a; };
+    auto binary = [](int a, int b) { return a + b; };
+    STATIC_REQUIRE(!has_invoke<ApOnlyMap, NotCallable, O>);
+    STATIC_REQUIRE(!has_invoke<ApOnlyMap, NotCallable, O, O>);
+    STATIC_REQUIRE(!has_invoke<ApOnlyMap, StringOnlyCallable, O>);
+    STATIC_REQUIRE(!has_invoke<ApOnlyMap, decltype(binary), O>);
+    STATIC_REQUIRE(!has_invoke<ApOnlyMap, decltype(unary), O, O>);
+    STATIC_REQUIRE(has_invoke<ApOnlyMap, decltype(unary), O>);
+    STATIC_REQUIRE(has_invoke<ApOnlyMap, decltype(binary), O, O>);
+
+    // map and zip_with probe through self.invoke, so they inherit the
+    // constraint rather than being vacuously satisfied.
+    STATIC_REQUIRE(!has_map<ApOnlyMap, NotCallable, O>);
+    STATIC_REQUIRE(!has_map<ApOnlyMap, decltype(binary), O>);
+    STATIC_REQUIRE(!has_zip_with<ApOnlyMap, decltype(unary), O, O>);
+    STATIC_REQUIRE(has_zip_with<ApOnlyMap, decltype(binary), O, O>);
+
+    // The result is the saturated application, never a partial.
+    ApOnlyMap m{};
+    STATIC_REQUIRE(std::is_same_v<decltype(m.invoke(binary, O{1}, O{2})), O>);
+    REQUIRE(m.invoke(binary, O{1}, O{2}) == O{3});
+}
+
+TEST_CASE("apply: an ap-only invoke agrees with the native invoke on what "
+          "it accepts") {
+    using O = std::optional<int>;
+    using Native = std::remove_cvref_t<decltype(bt::applicative<O>)>;
+    auto unary = [](int a) { return a; };
+    auto binary = [](int a, int b) { return a + b; };
+    STATIC_REQUIRE(has_invoke<Native, decltype(unary), O> ==
+                   has_invoke<ApOnlyMap, decltype(unary), O>);
+    STATIC_REQUIRE(has_invoke<Native, decltype(binary), O> ==
+                   has_invoke<ApOnlyMap, decltype(binary), O>);
+    STATIC_REQUIRE(has_invoke<Native, decltype(unary), O, O> ==
+                   has_invoke<ApOnlyMap, decltype(unary), O, O>);
+    STATIC_REQUIRE(has_invoke<Native, NotCallable, O> ==
+                   has_invoke<ApOnlyMap, NotCallable, O>);
+}
+
+// A probe of invoke must be false, not a hard error, whatever the instance
+// leaves out: steve-downey/typeclass#6 (an invoke-basis object without the
+// using-declaration) and #7 (an ap-only object, where the probe said yes).
+TEMPLATE_TEST_CASE("apply: an invalid invoke is a soft failure for every "
+                   "way of writing an instance",
+                   "", invoke_box<int>, reexposed_box<int>, ap_box<int>) {
+    using Box = TestType;
+    using Map = std::remove_cvref_t<decltype(bt::applicative<Box>)>;
+    auto increment = [](int x) { return x + 1; };
+    using Increment = decltype(increment);
+
+    STATIC_REQUIRE(has_invoke<Map, Increment, Box>);
+    STATIC_REQUIRE(has_invoke_object<Increment, Box>);
+    STATIC_REQUIRE(has_invoke_with<Map, Map, Increment, Box>);
+
+    STATIC_REQUIRE(!has_invoke<Map, NotCallable, Box>);
+    STATIC_REQUIRE(!has_invoke_object<NotCallable, Box>);
+    STATIC_REQUIRE(!has_invoke_with<Map, Map, NotCallable, Box>);
+
+    // A foreign context, and something that is not a context at all.
+    STATIC_REQUIRE(!has_invoke<Map, Increment, std::optional<int>>);
+    STATIC_REQUIRE(!has_invoke<Map, Increment, int>);
+
+    REQUIRE(bt::applicative<Box>.invoke(increment, Box{1}).v == 2);
+    REQUIRE(bt::invoke(increment, Box{1}).v == 2);
+}
+
+TEST_CASE("apply: invoke_with is a soft failure when the delegate rejects "
+          "the call") {
+    // invoke_with forwards to the delegate's invoke. Its constraint is that
+    // call, so even the shipped optional object -- whose own invoke is
+    // constrained -- does not turn an invoke_with probe into a hard error.
+    using O = std::optional<int>;
+    using Map = std::remove_cvref_t<decltype(bt::applicative<O>)>;
+    auto increment = [](int x) { return x + 1; };
+    STATIC_REQUIRE(has_invoke_with<Map, Map, decltype(increment), O>);
+    STATIC_REQUIRE(!has_invoke_with<Map, Map, NotCallable, O>);
+    STATIC_REQUIRE(!has_invoke_with<Map, Map, StringOnlyCallable, O>);
+    const auto &app = bt::applicative<O>;
+    REQUIRE(app.invoke_with(app, increment, O{41}) == O{42});
+}
+
+TEST_CASE("apply: an ap-only invoke reuses its bound arguments across calls") {
+    // The list ap calls each held partial once per argument element, so the
+    // bound strings must survive the first call.
+    VectorApOnlyMap m{};
+    using V = std::vector<std::string>;
+    auto concat = [](const std::string &a, const std::string &b,
+                     const std::string &c) { return a + b + c; };
+    REQUIRE(m.invoke(concat, V{"a", "b"}, V{"x", "y"}, V{"1", "2"}) ==
+            V{"ax1", "ax2", "ay1", "ay2", "bx1", "bx2", "by1", "by2"});
+    STATIC_REQUIRE(!has_invoke<VectorApOnlyMap, NotCallable, V>);
 }
 
 // The derived operations are constant-evaluable: each is pinned by a

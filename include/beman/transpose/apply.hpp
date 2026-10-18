@@ -133,6 +133,11 @@ concept applicative_impl =
 /// `ap(f_in_context, arg_in_context)`; the base derives the missing one and
 /// every other operation. invoke is the user-facing interface; ap is the
 /// classic basis.
+/// A Map may re-expose `Impl::invoke` with a using-declaration, as the
+/// library's own instances do, but it need not: the base's `invoke` is
+/// constrained on whichever basis `Impl` supplies, so leaving the
+/// using-declaration out never turns a probe of `invoke` into a hard error.
+/// Re-exposing is an optimization that skips the base's dispatch.
 template <class Impl>
 struct derive_applicative : protected Impl {
     static_assert(
@@ -146,7 +151,13 @@ struct derive_applicative : protected Impl {
     template <class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
     constexpr auto invoke(this auto &&self, FUNCTION &&function,
                           FIRST_ARGUMENT &&first_argument,
-                          REST_ARGUMENTS &&...rest_arguments);
+                          REST_ARGUMENTS &&...rest_arguments)
+        requires requires(const Impl &impl) {
+            impl.invoke(std::forward<FUNCTION>(function),
+                        std::forward<FIRST_ARGUMENT>(first_argument),
+                        std::forward<REST_ARGUMENTS>(rest_arguments)...);
+        } || detail::invocable_through_ap<decltype(self), FUNCTION,
+                                          FIRST_ARGUMENT, REST_ARGUMENTS...>;
 
     template <class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
     constexpr auto ap(this auto &&self, FUNCTION_IN_CONTEXT &&function,
@@ -231,13 +242,25 @@ struct derive_applicative : protected Impl {
     constexpr auto
     invoke_with(this auto &&, const APPLICATIVE_MAP &applicative_map,
                 FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
-                REST_ARGUMENTS &&...rest_arguments);
+                REST_ARGUMENTS &&...rest_arguments)
+        requires requires {
+            applicative_map.invoke(
+                std::forward<FUNCTION>(function),
+                std::forward<FIRST_ARGUMENT>(first_argument),
+                std::forward<REST_ARGUMENTS>(rest_arguments)...);
+        };
 
     template <const auto &APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
               class... REST_ARGUMENTS>
     constexpr auto invoke_with(this auto &&, FUNCTION &&function,
                                FIRST_ARGUMENT &&first_argument,
-                               REST_ARGUMENTS &&...rest_arguments);
+                               REST_ARGUMENTS &&...rest_arguments)
+        requires requires {
+            APPLICATIVE_MAP.invoke(
+                std::forward<FUNCTION>(function),
+                std::forward<FIRST_ARGUMENT>(first_argument),
+                std::forward<REST_ARGUMENTS>(rest_arguments)...);
+        };
 
   private:
     //! \omit
@@ -517,9 +540,10 @@ inline constexpr auto applicative<std::optional<VALUE_TYPE>> =
 
 // \rSec3[transpose.applicative.basis]{Basis operations}
 
-//! \constraints `Impl` provides either an `invoke` accepting `function` and
-//! the arguments, or an `ap` accepting a callable in context and one
-//! argument in context.
+//! \constraints Either `Impl` provides an `invoke` accepting `function` and
+//! the arguments, or `Impl` provides an `ap` and the application described
+//! in the *Effects* element below is well-formed, which requires that
+//! `function` be invocable with the values held by all of the arguments.
 //! \effects Lifts `function` into the context and applies it to the
 //! arguments, left to right. If `Impl` provides `invoke`, the effect is that
 //! of `Impl`'s own `invoke`; otherwise `function` is embedded with `pure` and
@@ -527,13 +551,23 @@ inline constexpr auto applicative<std::optional<VALUE_TYPE>> =
 //! \returns The single value in context holding the result of applying
 //! `function` to the values held by the arguments.
 //! \remarks The arguments are evaluated in the order written. No argument's
-//! context depends on another argument's value.
+//! context depends on another argument's value. When `invoke` is expressed
+//! using `ap`, `function` is invoked only once it has been applied to every
+//! argument; its arity is the number of arguments, never inferred from what
+//! `function` accepts.
 template <class Impl>
 template <class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
 constexpr auto
 derive_applicative<Impl>::invoke(this auto &&self, FUNCTION &&function,
                                  FIRST_ARGUMENT &&first_argument,
-                                 REST_ARGUMENTS &&...rest_arguments) {
+                                 REST_ARGUMENTS &&...rest_arguments)
+    requires requires(const Impl &impl) {
+        impl.invoke(std::forward<FUNCTION>(function),
+                    std::forward<FIRST_ARGUMENT>(first_argument),
+                    std::forward<REST_ARGUMENTS>(rest_arguments)...);
+    } || detail::invocable_through_ap<decltype(self), FUNCTION, FIRST_ARGUMENT,
+                                      REST_ARGUMENTS...>
+{
     if constexpr (requires {
                       impl_of(self).invoke(
                           std::forward<FUNCTION>(function),
@@ -547,13 +581,18 @@ derive_applicative<Impl>::invoke(this auto &&self, FUNCTION &&function,
     } else {
         // Derivation from the ap basis:
         //   invoke(f, x1, ..., xn) = pure(curried f) `ap` x1 `ap` ... xn
-        auto lifted_function = self.pure(
-            detail::make_terminating_partial(std::forward<FUNCTION>(function)));
+        // This static_assert is provably redundant: the declaration's
+        // constraint already established that the ap chain is well-formed,
+        // which needs an ap basis. It is the GHC-MINIMAL-style last-resort
+        // message fold_map also keeps, not load-bearing SFINAE.
         static_assert(
             applicative_impl<Impl, std::remove_cvref_t<FIRST_ARGUMENT>>,
             "Applicative Impl must provide pure and at least one basis: "
             "invoke(f, args_in_context...) or "
             "ap(f_in_context, arg_in_context).");
+        auto lifted_function = self.pure(
+            detail::make_terminating_partial<1 + sizeof...(REST_ARGUMENTS)>(
+                std::forward<FUNCTION>(function)));
         return self.ap_chain(
             self.ap(std::move(lifted_function),
                     std::forward<FIRST_ARGUMENT>(first_argument)),
@@ -805,19 +844,31 @@ constexpr auto derive_applicative<Impl>::subsume(this auto &&, CARRIER &&value)
 
 // \rSec3[transpose.applicative.delegate]{Delegated application}
 
+//! \constraints `applicative_map.invoke(function, first_argument,
+//! rest_arguments...)`, with each argument forwarded in its own value
+//! category, is a valid expression.
 //! \effects-equiv
 template <class Impl>
 template <class APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
           class... REST_ARGUMENTS>
 constexpr auto derive_applicative<Impl>::invoke_with(
     this auto &&, const APPLICATIVE_MAP &applicative_map, FUNCTION &&function,
-    FIRST_ARGUMENT &&first_argument, REST_ARGUMENTS &&...rest_arguments) {
+    FIRST_ARGUMENT &&first_argument, REST_ARGUMENTS &&...rest_arguments)
+    requires requires {
+        applicative_map.invoke(std::forward<FUNCTION>(function),
+                               std::forward<FIRST_ARGUMENT>(first_argument),
+                               std::forward<REST_ARGUMENTS>(rest_arguments)...);
+    }
+{
     return applicative_map.invoke(
         std::forward<FUNCTION>(function),
         std::forward<FIRST_ARGUMENT>(first_argument),
         std::forward<REST_ARGUMENTS>(rest_arguments)...);
 }
 
+//! \constraints `APPLICATIVE_MAP.invoke(function, first_argument,
+//! rest_arguments...)`, with each argument forwarded in its own value
+//! category, is a valid expression.
 //! \effects-equiv
 template <class Impl>
 template <const auto &APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
@@ -825,7 +876,13 @@ template <const auto &APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
 constexpr auto
 derive_applicative<Impl>::invoke_with(this auto &&, FUNCTION &&function,
                                       FIRST_ARGUMENT &&first_argument,
-                                      REST_ARGUMENTS &&...rest_arguments) {
+                                      REST_ARGUMENTS &&...rest_arguments)
+    requires requires {
+        APPLICATIVE_MAP.invoke(std::forward<FUNCTION>(function),
+                               std::forward<FIRST_ARGUMENT>(first_argument),
+                               std::forward<REST_ARGUMENTS>(rest_arguments)...);
+    }
+{
     return APPLICATIVE_MAP.invoke(
         std::forward<FUNCTION>(function),
         std::forward<FIRST_ARGUMENT>(first_argument),

@@ -60,7 +60,12 @@ namespace std {
     template<class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
     constexpr auto invoke(this auto&& self, FUNCTION&& function,
                           FIRST_ARGUMENT&& first_argument,
-                          REST_ARGUMENTS&&... rest_arguments);
+                          REST_ARGUMENTS&&... rest_arguments)
+      requires requires(const Impl& impl) {
+        impl.invoke(forward<FUNCTION>(function), forward<FIRST_ARGUMENT>(first_argument),
+                    forward<REST_ARGUMENTS>(rest_arguments)...);
+      } || $invocable-through-ap$<decltype(self), FUNCTION, FIRST_ARGUMENT,
+                                REST_ARGUMENTS...>;
 
     template<class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
     constexpr auto ap(this auto&& self, FUNCTION_IN_CONTEXT&& function,
@@ -132,13 +137,23 @@ namespace std {
              class... REST_ARGUMENTS>
     constexpr auto invoke_with(this auto&&, const APPLICATIVE_MAP& applicative_map,
                                FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
-                               REST_ARGUMENTS&&... rest_arguments);
+                               REST_ARGUMENTS&&... rest_arguments)
+      requires requires {
+        applicative_map.invoke(forward<FUNCTION>(function),
+                               forward<FIRST_ARGUMENT>(first_argument),
+                               forward<REST_ARGUMENTS>(rest_arguments)...);
+      };
 
     template<const auto& APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
              class... REST_ARGUMENTS>
     constexpr auto invoke_with(this auto&&, FUNCTION&& function,
                                FIRST_ARGUMENT&& first_argument,
-                               REST_ARGUMENTS&&... rest_arguments);
+                               REST_ARGUMENTS&&... rest_arguments)
+      requires requires {
+        APPLICATIVE_MAP.invoke(forward<FUNCTION>(function),
+                               forward<FIRST_ARGUMENT>(first_argument),
+                               forward<REST_ARGUMENTS>(rest_arguments)...);
+      };
   };
 }
 ```

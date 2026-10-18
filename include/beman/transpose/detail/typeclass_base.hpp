@@ -253,11 +253,10 @@ struct consuming_probe_witness {
 /** The two-argument counterpart of `probe_witness`, for probing derived
  * operations templated over an arbitrary binary callable (`zip_with`, and
  * the state-combining function `fold_left`/`fold_right` take). A single
- * callable type cannot serve both roles: the dual-basis `invoke` derivation
- * curries its callable one argument at a time, and a callable invocable
- * with either one argument or two would be accepted after the first and
- * never reach the second, silently truncating the arity the probe means to
- * exercise.
+ * callable type cannot serve both roles: a callable invocable with either
+ * one argument or two satisfies a probe whichever arity the operation
+ * applies it at, so it cannot show that a binary operation passes both
+ * arguments.
  *
  * Its body establishes only the result type, for the reason `probe_witness`
  * records.
