@@ -11,6 +11,7 @@
 #include <concepts>
 #include <functional>
 #include <optional>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -24,6 +25,104 @@ namespace beman::transpose {
 // without strain. It is unproposed only because nothing in the coordinated
 // set currently needs bind; the slot stays open for the paper that does.
 // See D3200R0 "Why not Monad".
+
+namespace detail {
+
+// Stand-ins for the continuations the bind-basis derivations hand to bind.
+// A derivation's continuation is a lambda over an element whose type only
+// bind knows, so its validity cannot be spelled at the derived member's
+// declaration directly. These name it instead: each call operator is
+// constrained on what the matching continuation does with the element, and
+// spells the continuation's result type, so a bind that checks its
+// continuation -- the shipped instances spell their result through
+// invoke_result_t on it -- fails the probe softly for a function the
+// derivation could not have applied. Like probe_witness, each body
+// establishes only the result type.
+
+/** The continuation `fmap` binds with: `pure(std::invoke(function, a))`.
+ * `FUNCTION` is invoked as the lvalue the derivation captures.
+ */
+template <class IMPL, class FUNCTION>
+struct fmap_continuation_probe {
+    template <class ARGUMENT>
+        requires std::invocable<FUNCTION &, ARGUMENT> &&
+                 requires(const IMPL &impl) {
+                     impl.pure(std::invoke(std::declval<FUNCTION &>(),
+                                           std::declval<ARGUMENT>()));
+                 }
+    constexpr auto operator()(ARGUMENT &&) const
+        -> decltype(std::declval<const IMPL &>().pure(std::invoke(
+            std::declval<FUNCTION &>(), std::declval<ARGUMENT>()))) {
+        std::unreachable();
+    }
+};
+
+/** The continuation the derived n-ary `invoke` binds its next argument
+ * with. `BOUND` holds the elements bound so far, as the lvalues the
+ * derivation's lambdas capture them by; `REST` are the arguments still to
+ * bind. With none left, the continuation applies the function to the bound
+ * elements and this one, and embeds the result with `pure`. Otherwise it
+ * binds the next argument with the continuation one step further on.
+ */
+template <class SELF, class FUNCTION, class BOUND, class... REST>
+struct invoke_continuation_probe;
+
+template <class SELF, class FUNCTION, class... BOUND>
+struct invoke_continuation_probe<SELF, FUNCTION, std::tuple<BOUND...>> {
+    template <class HEAD>
+        requires std::invocable<FUNCTION &, BOUND..., HEAD> && requires {
+            std::declval<SELF>().pure(std::invoke(std::declval<FUNCTION &>(),
+                                                  std::declval<BOUND>()...,
+                                                  std::declval<HEAD>()));
+        }
+    constexpr auto operator()(HEAD &&) const
+        -> decltype(std::declval<SELF>().pure(
+            std::invoke(std::declval<FUNCTION &>(), std::declval<BOUND>()...,
+                        std::declval<HEAD>()))) {
+        std::unreachable();
+    }
+};
+
+template <class SELF, class FUNCTION, class... BOUND, class NEXT, class... REST>
+struct invoke_continuation_probe<SELF, FUNCTION, std::tuple<BOUND...>, NEXT,
+                                 REST...> {
+    template <class HEAD>
+        requires requires {
+            std::declval<SELF>().bind(
+                std::declval<NEXT>(),
+                invoke_continuation_probe<
+                    SELF, FUNCTION, std::tuple<BOUND..., HEAD &>, REST...>{});
+        }
+    constexpr auto
+    operator()(HEAD &&) const -> decltype(std::declval<SELF>().bind(
+        std::declval<NEXT>(),
+        invoke_continuation_probe<SELF, FUNCTION, std::tuple<BOUND..., HEAD &>,
+                                  REST...>{})) {
+        std::unreachable();
+    }
+};
+
+/** The function the derived `kleisli` returns: `(f >=> g)(a) = bind(f(a),
+ * g)`. A named type rather than a lambda so that its call operator can be
+ * constrained on that expression; the composition's validity depends on
+ * the argument's type, which is known only at the call.
+ */
+template <class SELF, class F, class G>
+struct kleisli_composition {
+    SELF &self;
+    F f;
+    G g;
+
+    template <class ARGUMENT>
+        requires requires(SELF &monad, const F &first, const G &second) {
+            monad.bind(first(std::declval<ARGUMENT>()), second);
+        }
+    constexpr auto operator()(ARGUMENT &&argument) const {
+        return self.bind(f(std::forward<ARGUMENT>(argument)), g);
+    }
+};
+
+} // namespace detail
 
 /** CRTP base for Monad instances.
  * `Impl` must provide `pure(value)` and `bind(ma, f)`.
@@ -57,7 +156,11 @@ struct derive_monad : protected Impl {
         requires requires(const Impl &impl) {
             impl.fmap(std::forward<FUNCTION>(function), std::forward<MA>(ma));
         } || requires(const Impl &impl) {
-            impl.bind(std::forward<MA>(ma), std::declval<FUNCTION &>());
+            // The continuation the body binds with, pure . function -- not
+            // function itself, which a bind would accept only if it already
+            // returned a monadic value.
+            impl.bind(std::forward<MA>(ma),
+                      detail::fmap_continuation_probe<Impl, FUNCTION>{});
         }
     {
         if constexpr (requires {
@@ -88,18 +191,18 @@ struct derive_monad : protected Impl {
             impl.invoke(std::forward<FUNCTION>(function),
                         std::forward<FIRST>(first),
                         std::forward<REST>(rest)...);
-        } || requires(const Impl &impl) {
-            // The derivation's own requirement on the basis: Impl must have
-            // a bind that accepts FIRST with a single-argument callback
-            // (pure is already guaranteed unconditionally by the class
-            // invariant above, so it is not separately probed). FUNCTION's
-            // own arity does not enter here -- the derivation applies it
-            // only after unwinding through nested bind calls, never
-            // directly to FIRST's element.
-            impl.bind(std::forward<FIRST>(first),
-                      [](auto &&value) -> decltype(auto) {
-                          return std::forward<decltype(value)>(value);
-                      });
+        } || requires {
+            // The derivation's own requirement: binding FIRST, then each of
+            // REST in turn, reaches a continuation that can apply FUNCTION
+            // to every element and embed the result with pure. The
+            // continuation probe spells each step, so a function that
+            // cannot take the elements fails here rather than in the body.
+            // The probe follows the derived path all the way down, as the
+            // body does once it has not found a native Impl::invoke.
+            self.bind(
+                std::forward<FIRST>(first),
+                detail::invoke_continuation_probe<decltype(self), FUNCTION,
+                                                  std::tuple<>, REST...>{});
         }
     {
         if constexpr (requires {
@@ -156,24 +259,24 @@ struct derive_monad : protected Impl {
 
     // kleisli: forward Kleisli composition (>=>).
     // (f >=> g) a = f a >>= g
-    // Prefers a native Impl::kleisli. Unlike the other members in this step,
-    // kleisli's own basis requirement cannot be spelled as a disjunctive
-    // second alternative: the derivation's use of bind is inside the
-    // returned closure, over an argument type ("a") that is not known until
-    // the closure is called, so there is no concrete expression to probe at
-    // kleisli's own instantiation. bind's presence is already guaranteed
-    // unconditionally by this class's invariant (the static_assert above),
-    // so the second alternative is trivially true rather than absent.
+    // Prefers a native Impl::kleisli. Whether the composition is valid
+    // depends on the type of "a", which is not known until the composed
+    // function is called, so nothing about f and g can be checked here. The
+    // derived kleisli therefore requires only what building the composition
+    // needs, and the composition's call operator carries the real
+    // constraint: calling it with an argument f cannot take, or whose
+    // result g cannot continue, fails softly at the call.
     template <class F, class G>
     constexpr auto kleisli(this auto &&self, F f, G g)
-        requires requires(const Impl &impl) { impl.kleisli(f, g); } || true
+        requires requires(const Impl &impl) { impl.kleisli(f, g); } ||
+                 (std::move_constructible<F> && std::move_constructible<G>)
     {
         if constexpr (requires { impl_of(self).kleisli(f, g); }) {
             return impl_of(self).kleisli(f, g);
         } else {
-            return [&self, f = std::move(f), g = std::move(g)](auto &&a) {
-                return self.bind(f(std::forward<decltype(a)>(a)), g);
-            };
+            return detail::kleisli_composition<
+                std::remove_reference_t<decltype(self)>, F, G>{
+                self, std::move(f), std::move(g)};
         }
     }
 
@@ -295,12 +398,13 @@ concept monad_impl = requires(const IMPL &impl, const CONTEXT &context,
  * `applicative_object`'s treatment.
  *
  * `kleisli` is probed for existence -- the class surface names it -- but its
- * presence is never load-bearing evidence here: `derive_monad<Impl>::kleisli`'s
- * own condition is `impl.kleisli(f, g) || true`, genuinely unconstrained,
- * because its `bind` call lives inside a returned closure whose argument
- * type is unknown until the closure is invoked. It is `bind` and `join`
- * (and `fmap`, `invoke`) that carry a real either-basis condition and do the
- * actual discriminating.
+ * presence is never load-bearing evidence here: `derive_monad<Impl>::kleisli`
+ * requires only that `f` and `g` can be moved into the composition, because
+ * its `bind` call lives inside the returned composition, whose argument type
+ * is unknown until it is called. The composition's own call operator is
+ * where that `bind` is checked. It is `bind` and `join` (and `fmap`,
+ * `invoke`) that carry a real either-basis condition and do the actual
+ * discriminating.
  */
 template <class OBJ, class CONTEXT>
 concept monad_object =

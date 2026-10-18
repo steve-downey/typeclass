@@ -331,3 +331,85 @@ TEST_CASE("monad: bind_with is a soft failure when the delegate rejects "
     REQUIRE(m.bind_with(m, std::optional<int>{8}, half) ==
             std::optional<int>{4});
 }
+
+// steve-downey/typeclass#12: the bind-basis derivations of fmap and invoke
+// are constrained on the continuation they bind with, and kleisli's
+// composition on the bind it makes when called.
+namespace {
+
+template <class MAP, class F>
+concept has_optional_fmap =
+    requires(const MAP &m, F f) { m.fmap(f, std::optional<int>{1}); };
+
+template <class MAP, class F, class... ARGS>
+concept has_invoke =
+    requires(const MAP &m, F f, ARGS... args) { m.invoke(f, args...); };
+
+template <class MAP, class F, class G>
+concept has_kleisli = requires(const MAP &m, F f, G g) { m.kleisli(f, g); };
+
+template <class COMPOSITION, class ARGUMENT>
+concept callable_with = requires(const COMPOSITION &c, ARGUMENT a) { c(a); };
+
+auto plus_one = [](int x) { return x + 1; };
+auto plus = [](int x, int y) { return x + y; };
+auto takes_string = [](const std::string &s) { return s.size(); };
+auto half_of = [](int x) {
+    return x % 2 == 0 ? std::optional<int>{x / 2} : std::optional<int>{};
+};
+
+} // namespace
+
+TEST_CASE("monad: fmap derived from bind rejects functions it cannot apply") {
+    using Map = std::remove_cvref_t<decltype(bt::monad<std::optional<int>>)>;
+    STATIC_REQUIRE(has_optional_fmap<Map, decltype(plus_one)>);
+    STATIC_REQUIRE(!has_optional_fmap<Map, NotCallable>);
+    STATIC_REQUIRE(!has_optional_fmap<Map, decltype(takes_string)>);
+    STATIC_REQUIRE(!has_optional_fmap<Map, decltype(plus)>);
+
+    const auto &m = bt::monad<std::optional<int>>;
+    REQUIRE(m.fmap(plus_one, std::optional<int>{41}) == std::optional<int>{42});
+    REQUIRE(m.fmap(plus_one, std::optional<int>{}) == std::optional<int>{});
+}
+
+TEST_CASE("monad: invoke derived from bind rejects functions it cannot "
+          "apply") {
+    using Map = std::remove_cvref_t<decltype(bt::monad<std::optional<int>>)>;
+    using O = std::optional<int>;
+    STATIC_REQUIRE(has_invoke<Map, decltype(plus_one), O>);
+    STATIC_REQUIRE(has_invoke<Map, decltype(plus), O, O>);
+    STATIC_REQUIRE(!has_invoke<Map, NotCallable, O>);
+    STATIC_REQUIRE(!has_invoke<Map, NotCallable, O, O>);
+    // Too few, or too many, arguments for the function.
+    STATIC_REQUIRE(!has_invoke<Map, decltype(plus), O>);
+    STATIC_REQUIRE(!has_invoke<Map, decltype(plus_one), O, O>);
+    STATIC_REQUIRE(!has_invoke<Map, decltype(takes_string), O>);
+
+    const auto &m = bt::monad<std::optional<int>>;
+    REQUIRE(m.invoke(plus, O{40}, O{2}) == O{42});
+    REQUIRE(m.invoke(plus, O{40}, O{}) == O{});
+}
+
+TEST_CASE("monad: kleisli's composition is checked when it is called") {
+    using Map = std::remove_cvref_t<decltype(bt::monad<std::optional<int>>)>;
+    const auto &m = bt::monad<std::optional<int>>;
+
+    // Building a composition cannot check f and g -- the argument type is
+    // not known yet -- so it needs only that they can be moved in.
+    STATIC_REQUIRE(has_kleisli<Map, decltype(half_of), decltype(half_of)>);
+    STATIC_REQUIRE(has_kleisli<Map, NotCallable, NotCallable>);
+
+    using Good = decltype(m.kleisli(half_of, half_of));
+    STATIC_REQUIRE(callable_with<Good, int>);
+    STATIC_REQUIRE(!callable_with<Good, std::string>);
+    STATIC_REQUIRE(
+        !callable_with<decltype(m.kleisli(NotCallable{}, NotCallable{})), int>);
+    // f is fine, but g cannot continue its result.
+    STATIC_REQUIRE(
+        !callable_with<decltype(m.kleisli(half_of, NotCallable{})), int>);
+    // f's result is not monadic, so there is nothing for g to continue.
+    STATIC_REQUIRE(!callable_with<decltype(m.kleisli(plus_one, half_of)), int>);
+
+    REQUIRE(m.kleisli(half_of, half_of)(8) == std::optional<int>{2});
+    REQUIRE(m.kleisli(half_of, half_of)(6) == std::optional<int>{});
+}

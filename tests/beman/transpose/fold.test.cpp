@@ -8,9 +8,12 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <concepts>
 #include <functional>
+#include <optional>
 #include <string>
 #include <tuple>
+#include <type_traits>
 #include <vector>
 
 namespace bt = beman::transpose;
@@ -287,4 +290,152 @@ TEST_CASE("fold: fold_left and fold_right forward to a native Impl in a "
                                [](int x, int acc) { return acc * 10 + x; }) ==
                   321);
     SUCCEED();
+}
+
+// steve-downey/typeclass#12: each derived member that applies the caller's
+// callable is constrained on that callable, so a probe of it answers false,
+// softly, for a callable the derivation could not have applied.
+namespace {
+
+struct NotCallable {};
+struct NotBool {};
+
+template <class MAP, class STATE, class F>
+concept has_fold_left = requires(const MAP &m, STATE s, F f) {
+    m.fold_left(std::vector<int>{1}, s, f);
+};
+
+template <class MAP, class STATE, class F>
+concept has_fold_right = requires(const MAP &m, STATE s, F f) {
+    m.fold_right(std::vector<int>{1}, s, f);
+};
+
+template <class MAP, class P>
+concept has_any_of =
+    requires(const MAP &m, P p) { m.any_of(std::vector<int>{1}, p); };
+
+template <class MAP, class P>
+concept has_all_of =
+    requires(const MAP &m, P p) { m.all_of(std::vector<int>{1}, p); };
+
+template <class MAP, class P>
+concept has_find_first =
+    requires(const MAP &m, P p) { m.find_first(std::vector<int>{1}, p); };
+
+template <class MAP, class F>
+concept has_fold_map_sum = requires(const MAP &m, F f) {
+    m.fold_map(f, std::vector<int>{1}, bt::sum_monoid<int>{});
+};
+
+template <class STATE, class F>
+concept has_fold_left_object =
+    requires(STATE s, F f) { bt::fold_left(std::vector<int>{1}, s, f); };
+
+template <class STATE, class F>
+concept has_fold_right_object =
+    requires(STATE s, F f) { bt::fold_right(std::vector<int>{1}, s, f); };
+
+template <class P>
+concept has_any_of_object =
+    requires(P p) { bt::any_of(std::vector<int>{1}, p); };
+
+template <class P>
+concept has_all_of_object =
+    requires(P p) { bt::all_of(std::vector<int>{1}, p); };
+
+template <class P>
+concept has_find_first_object =
+    requires(P p) { bt::find_first(std::vector<int>{1}, p); };
+
+auto left_step = [](int acc, int x) { return acc + x; };
+auto right_step = [](int x, int acc) { return acc + x; };
+auto to_not_bool = [](int) { return NotBool{}; };
+auto is_even = [](int x) { return x % 2 == 0; };
+// A step whose result cannot become the next state.
+auto stateless_step = [](int, int) { return NotBool{}; };
+// A step that takes its operands in fold_right's order, which fold_left
+// cannot call; and the reverse.
+auto string_left_step = [](std::string acc, int) { return acc; };
+auto string_right_step = [](int, std::string acc) { return acc; };
+
+} // namespace
+
+TEST_CASE("fold: derived members over a fold_map basis reject callables the "
+          "derivation cannot apply") {
+    using Map = std::remove_cvref_t<decltype(bt::foldable<std::vector<int>>)>;
+
+    STATIC_REQUIRE(has_fold_left<Map, int, decltype(left_step)>);
+    STATIC_REQUIRE(!has_fold_left<Map, int, NotCallable>);
+    STATIC_REQUIRE(!has_fold_left<Map, int, decltype(stateless_step)>);
+    STATIC_REQUIRE(has_fold_left<Map, std::string, decltype(string_left_step)>);
+    STATIC_REQUIRE(
+        !has_fold_left<Map, std::string, decltype(string_right_step)>);
+
+    STATIC_REQUIRE(has_fold_right<Map, int, decltype(right_step)>);
+    STATIC_REQUIRE(!has_fold_right<Map, int, NotCallable>);
+    STATIC_REQUIRE(!has_fold_right<Map, int, decltype(stateless_step)>);
+    STATIC_REQUIRE(
+        has_fold_right<Map, std::string, decltype(string_right_step)>);
+    STATIC_REQUIRE(
+        !has_fold_right<Map, std::string, decltype(string_left_step)>);
+
+    STATIC_REQUIRE(has_any_of<Map, decltype(is_even)>);
+    STATIC_REQUIRE(!has_any_of<Map, NotCallable>);
+    STATIC_REQUIRE(!has_any_of<Map, decltype(to_not_bool)>);
+
+    STATIC_REQUIRE(has_all_of<Map, decltype(is_even)>);
+    STATIC_REQUIRE(!has_all_of<Map, NotCallable>);
+    STATIC_REQUIRE(!has_all_of<Map, decltype(to_not_bool)>);
+
+    STATIC_REQUIRE(has_find_first<Map, decltype(is_even)>);
+    STATIC_REQUIRE(!has_find_first<Map, NotCallable>);
+    STATIC_REQUIRE(!has_find_first<Map, decltype(to_not_bool)>);
+
+    // empty derives through any_of with a predicate of its own, so it is
+    // unaffected.
+    const auto &m = bt::foldable<std::vector<int>>;
+    REQUIRE(m.fold_left(std::vector<int>{1, 2, 3}, 0, left_step) == 6);
+    REQUIRE(m.any_of(std::vector<int>{1, 2, 3}, is_even));
+    REQUIRE(!m.all_of(std::vector<int>{1, 2, 3}, is_even));
+    REQUIRE(m.find_first(std::vector<int>{1, 2, 3}, is_even) ==
+            std::optional<int>{2});
+    REQUIRE(!m.empty(std::vector<int>{1}));
+}
+
+TEST_CASE("fold: the operation objects inherit the derived members' answers") {
+    STATIC_REQUIRE(has_fold_left_object<int, decltype(left_step)>);
+    STATIC_REQUIRE(!has_fold_left_object<int, NotCallable>);
+    STATIC_REQUIRE(has_fold_right_object<int, decltype(right_step)>);
+    STATIC_REQUIRE(!has_fold_right_object<int, NotCallable>);
+    STATIC_REQUIRE(has_any_of_object<decltype(is_even)>);
+    STATIC_REQUIRE(!has_any_of_object<NotCallable>);
+    STATIC_REQUIRE(!has_any_of_object<decltype(to_not_bool)>);
+    STATIC_REQUIRE(has_all_of_object<decltype(is_even)>);
+    STATIC_REQUIRE(!has_all_of_object<NotCallable>);
+    STATIC_REQUIRE(has_find_first_object<decltype(is_even)>);
+    STATIC_REQUIRE(!has_find_first_object<NotCallable>);
+}
+
+TEST_CASE("fold: derived members over a fold_right basis reject callables "
+          "the derivation cannot apply") {
+    // fold_map derives from fold_right here, and every other member derives
+    // through that fold_map, so the callable has to be checked in fold_map's
+    // own fold_right alternative.
+    STATIC_REQUIRE(
+        has_fold_map_sum<FoldRightOnlyMap, decltype([](int x) { return x; })>);
+    STATIC_REQUIRE(!has_fold_map_sum<FoldRightOnlyMap, NotCallable>);
+    STATIC_REQUIRE(!has_fold_map_sum<FoldRightOnlyMap, decltype(to_not_bool)>);
+
+    STATIC_REQUIRE(has_fold_left<FoldRightOnlyMap, int, decltype(left_step)>);
+    STATIC_REQUIRE(!has_fold_left<FoldRightOnlyMap, int, NotCallable>);
+    STATIC_REQUIRE(has_any_of<FoldRightOnlyMap, decltype(is_even)>);
+    STATIC_REQUIRE(!has_any_of<FoldRightOnlyMap, NotCallable>);
+    STATIC_REQUIRE(!has_all_of<FoldRightOnlyMap, decltype(to_not_bool)>);
+    STATIC_REQUIRE(has_find_first<FoldRightOnlyMap, decltype(is_even)>);
+    STATIC_REQUIRE(!has_find_first<FoldRightOnlyMap, NotCallable>);
+
+    FoldRightOnlyMap m{};
+    REQUIRE(m.fold_left(std::vector<int>{1, 2, 3}, 0, left_step) == 6);
+    REQUIRE(m.find_first(std::vector<int>{1, 2, 3}, is_even) ==
+            std::optional<int>{2});
 }

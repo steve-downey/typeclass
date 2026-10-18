@@ -87,18 +87,19 @@ using fold_result_t = std::remove_cvref_t<
 // is both the workaround and consistent with the concepts, which already
 // probe with named witnesses.
 //
-// Each of the three is constrained on `copy_constructible`. Unlike
-// probe_witness, whose body establishes a result type and nothing else,
-// these three stand in for derivations that really do copy the element --
-// `combine_all` folds with the identity function, `to_vector` collects each
-// element into a vector, `find_first` carries a matching element out in an
-// optional. That requirement has to be stated rather than discovered in a
-// body: probing an operation with a deduced return type instantiates enough
-// of it to instantiate the witness call, so an unstated copy would reach
-// the compiler as a diagnostic from inside the probe, and a concept that
-// diagnoses cannot be used to detect anything. Stated, the probe answers
-// `false` for an element type that cannot be copied -- which is the true
-// answer, since the derivation could not have run.
+// Both are constrained on `copy_constructible`. Unlike probe_witness,
+// whose body establishes a result type and nothing else, these two stand in
+// for derivations that really do copy the element -- `combine_all` folds
+// with the identity function, `to_vector` collects each element into a
+// vector. (`find_first`, which carries a matching element out in an
+// optional, probes with find_first_probe_witness below.) That requirement
+// has to be stated rather than discovered in a body: probing an operation
+// with a deduced return type instantiates enough of it to instantiate the
+// witness call, so an unstated copy would reach the compiler as a
+// diagnostic from inside the probe, and a concept that diagnoses cannot be
+// used to detect anything. Stated, the probe answers `false` for an element
+// type that cannot be copied -- which is the true answer, since the
+// derivation could not have run.
 
 /** Identity-shaped probe: returns its argument by value, so the probed
  * `fold_map` sees a callable whose result type is the element type itself
@@ -124,15 +125,103 @@ struct vector_probe_witness {
     }
 };
 
-/** Optional-shaped probe: returns an empty optional of its argument's type
- * -- the shape `find_first` folds with.
+// Witnesses that carry the caller's callable. The witnesses above stand in
+// for callables the derivation writes itself, so any callable of the right
+// shape will do. A derivation that applies the CALLER's callable to each
+// element has to ask whether that callable can take the element, and only
+// the fold knows the element's type: the probed fold_map deduces it when it
+// calls the witness. So each of these is constrained on exactly what its
+// derivation's lambda does with the caller's callable, and a fold_map that
+// cannot call it -- the shipped instances spell their result through
+// invoke_result_t on the callable -- fails the probe softly instead of
+// accepting a callable that the body then cannot use. Like probe_witness,
+// each body establishes only the result type.
+
+/** Stands in for the lambda that derives `fold_map` from `fold_right`:
+ * `monoid.combine(std::invoke(function, element), std::move(acc))`. `F` and
+ * `MONOID` are the categories the lambda captures them in.
  */
-struct optional_probe_witness {
+template <class F, class MONOID>
+struct fold_map_step_probe_witness {
+    template <class ELEMENT, class RESULT>
+        requires std::invocable<F &, const ELEMENT &> &&
+                 requires(MONOID &monoid, RESULT acc) {
+                     {
+                         monoid.combine(
+                             std::invoke(std::declval<F &>(),
+                                         std::declval<const ELEMENT &>()),
+                             std::move(acc))
+                     } -> std::convertible_to<RESULT>;
+                 }
+    constexpr auto operator()(const ELEMENT &, const RESULT &) const -> RESULT {
+        std::unreachable();
+    }
+};
+
+/** Stands in for the step `fold_left` folds with: a copy of the element,
+ * later applied as `std::invoke(step, std::move(state), element)`, its
+ * result taken as the next state. `F` is the step's own (decayed) type.
+ */
+template <class F, class STATE>
+struct fold_left_probe_witness {
     template <class ARGUMENT>
-        requires std::copy_constructible<ARGUMENT>
+        requires std::copy_constructible<ARGUMENT> &&
+                 std::invocable<F &, STATE, const ARGUMENT &> &&
+                 std::convertible_to<
+                     std::invoke_result_t<F &, STATE, const ARGUMENT &>, STATE>
     constexpr auto operator()(const ARGUMENT &) const
-        -> std::optional<ARGUMENT> {
-        return std::optional<ARGUMENT>{};
+        -> std::function<STATE(STATE)> {
+        std::unreachable();
+    }
+};
+
+/** The `fold_right` counterpart of `fold_left_probe_witness`: the step is
+ * applied as `std::invoke(step, element, std::move(state))`.
+ */
+template <class F, class STATE>
+struct fold_right_probe_witness {
+    template <class ARGUMENT>
+        requires std::copy_constructible<ARGUMENT> &&
+                 std::invocable<F &, const ARGUMENT &, STATE> &&
+                 std::convertible_to<
+                     std::invoke_result_t<F &, const ARGUMENT &, STATE>, STATE>
+    constexpr auto operator()(const ARGUMENT &) const
+        -> std::function<STATE(STATE)> {
+        std::unreachable();
+    }
+};
+
+/** Stands in for the lambda `any_of` and `all_of` fold with:
+ * `static_cast<bool>(std::invoke(predicate, element))`. `PREDICATE` is the
+ * caller's argument type; the lambda captures it by reference, so it is
+ * invoked as `PREDICATE&`.
+ */
+template <class PREDICATE>
+struct predicate_probe_witness {
+    template <class ARGUMENT>
+        requires std::invocable<PREDICATE &, const ARGUMENT &> &&
+                 std::constructible_from<
+                     bool, std::invoke_result_t<PREDICATE &, const ARGUMENT &>>
+    constexpr auto operator()(const ARGUMENT &) const -> bool {
+        std::unreachable();
+    }
+};
+
+/** Stands in for the lambda `find_first` folds with: test the element with
+ * the predicate, and carry a match out as `std::optional<ELEMENT>{element}`.
+ */
+template <class PREDICATE, class ELEMENT>
+struct find_first_probe_witness {
+    template <class ARGUMENT>
+        requires std::invocable<PREDICATE &, const ARGUMENT &> &&
+                 std::constructible_from<
+                     bool,
+                     std::invoke_result_t<PREDICATE &, const ARGUMENT &>> &&
+                 std::constructible_from<std::optional<ELEMENT>,
+                                         const ARGUMENT &>
+    constexpr auto operator()(const ARGUMENT &) const
+        -> std::optional<ELEMENT> {
+        std::unreachable();
     }
 };
 
@@ -213,9 +302,23 @@ struct derive_foldable : protected Impl {
             impl.fold_map(std::forward<F>(function), std::forward<T>(value),
                           monoid);
         } || requires(const Impl &impl) {
+            // The derivation applies function to each element and combines
+            // the result into the accumulator. That is checked here against
+            // element_type, which this alternative requires anyway, so the
+            // answer does not depend on whether Impl's fold_right checks the
+            // callable it is given; the witness asks the same of each
+            // element as fold_right will actually pass it.
             typename Impl::element_type;
+            requires std::invocable<F &, const typename Impl::element_type &>;
+            {
+                monoid.combine(
+                    std::invoke(
+                        function,
+                        std::declval<const typename Impl::element_type &>()),
+                    monoid.identity())
+            } -> std::convertible_to<monoid_value_t<MONOID>>;
             impl.fold_right(std::forward<T>(value), monoid.identity(),
-                            detail::probe_witness2<monoid_value_t<MONOID>>{});
+                            detail::fold_map_step_probe_witness<F, MONOID>{});
         }
     {
         if constexpr (requires {
@@ -313,23 +416,24 @@ struct derive_foldable : protected Impl {
     constexpr auto fold_left(this auto &&self, T &&value, STATE initial_state,
                              F &&function)
         requires requires(const Impl &impl) {
-            impl.fold_left(std::forward<T>(value), initial_state,
+            impl.fold_left(std::forward<T>(value), std::move(initial_state),
                            std::forward<F>(function));
         } || requires {
             // self, not impl -- see length's second alternative. A named
-            // witness, not a lambda: fold_map is generic in its callable,
-            // so only the return-type shape (the erased fold program)
-            // matters for the probe.
+            // witness, not a lambda: it carries the step's type, so the
+            // probed fold_map asks whether the step can take each element
+            // as the derivation will pass it.
+            requires std::constructible_from<std::remove_cvref_t<F>, F>;
             self.fold_map(
-                detail::probe_witness<std::function<std::remove_cvref_t<STATE>(
-                    std::remove_cvref_t<STATE>)>>{},
+                detail::fold_left_probe_witness<std::remove_cvref_t<F>,
+                                                std::remove_cvref_t<STATE>>{},
                 std::forward<T>(value),
                 detail::left_compose_monoid<std::remove_cvref_t<STATE>>{});
         }
     {
         if constexpr (requires {
                           impl_of(self).fold_left(std::forward<T>(value),
-                                                  initial_state,
+                                                  std::move(initial_state),
                                                   std::forward<F>(function));
                       }) {
             return impl_of(self).fold_left(std::forward<T>(value),
@@ -361,19 +465,21 @@ struct derive_foldable : protected Impl {
     constexpr auto fold_right(this auto &&self, T &&value, STATE initial_state,
                               F &&function)
         requires requires(const Impl &impl) {
-            impl.fold_right(std::forward<T>(value), initial_state,
+            impl.fold_right(std::forward<T>(value), std::move(initial_state),
                             std::forward<F>(function));
         } || requires(const Impl &impl) {
+            // See fold_left's second alternative.
+            requires std::constructible_from<std::remove_cvref_t<F>, F>;
             impl.fold_map(
-                detail::probe_witness<std::function<std::remove_cvref_t<STATE>(
-                    std::remove_cvref_t<STATE>)>>{},
+                detail::fold_right_probe_witness<std::remove_cvref_t<F>,
+                                                 std::remove_cvref_t<STATE>>{},
                 std::forward<T>(value),
                 detail::right_compose_monoid<std::remove_cvref_t<STATE>>{});
         }
     {
         if constexpr (requires {
                           impl_of(self).fold_right(std::forward<T>(value),
-                                                   initial_state,
+                                                   std::move(initial_state),
                                                    std::forward<F>(function));
                       }) {
             return impl_of(self).fold_right(std::forward<T>(value),
@@ -498,10 +604,11 @@ struct derive_foldable : protected Impl {
                         std::forward<PREDICATE>(predicate));
         } || requires {
             // self, not impl -- see length's second alternative. A named
-            // witness, not a lambda: only the bool-shaped return matters
-            // for the probe; the instance says which bool monoid.
-            self.fold_map(detail::probe_witness<bool>{}, std::forward<T>(value),
-                          any_monoid{});
+            // witness, not a lambda: it carries the predicate's type, so the
+            // probed fold_map asks whether the predicate can test each
+            // element.
+            self.fold_map(detail::predicate_probe_witness<PREDICATE>{},
+                          std::forward<T>(value), any_monoid{});
         }
     {
         if constexpr (requires {
@@ -529,8 +636,8 @@ struct derive_foldable : protected Impl {
                         std::forward<PREDICATE>(predicate));
         } || requires {
             // self, not impl; see any_of's second alternative.
-            self.fold_map(detail::probe_witness<bool>{}, std::forward<T>(value),
-                          all_monoid{});
+            self.fold_map(detail::predicate_probe_witness<PREDICATE>{},
+                          std::forward<T>(value), all_monoid{});
         }
     {
         if constexpr (requires {
@@ -613,9 +720,11 @@ struct derive_foldable : protected Impl {
         } || requires {
             // self, not impl; see any_of's second alternative.
             typename Impl::element_type;
-            self.fold_map(detail::optional_probe_witness{},
-                          std::forward<T>(value),
-                          first_monoid<typename Impl::element_type>{});
+            self.fold_map(
+                detail::find_first_probe_witness<PREDICATE,
+                                                 typename Impl::element_type>{},
+                std::forward<T>(value),
+                first_monoid<typename Impl::element_type>{});
         }
     {
         if constexpr (requires {
