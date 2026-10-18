@@ -118,23 +118,26 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3c36310cdf2c1114320db1ad77cc8d7f"><td class="memTemplParams" colspan="2">template&lt;class T , class F &gt; </td></tr>
-<tr class="memitem:a3c36310cdf2c1114320db1ad77cc8d7f"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#a3c36310cdf2c1114320db1ad77cc8d7f">for_each</a> (this auto &amp;&amp;self, T &amp;&amp;value, F &amp;&amp;function)</td></tr>
-<tr class="separator:a3c36310cdf2c1114320db1ad77cc8d7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a252c62389bb08e5a274acd43d67b0a5e"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
-requires applicative_context&lt;typename Impl::element_type&gt;</td></tr>
-<tr class="memitem:a252c62389bb08e5a274acd43d67b0a5e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#a252c62389bb08e5a274acd43d67b0a5e">transpose</a> (this auto &amp;&amp;self, T &amp;&amp;value)</td></tr>
-<tr class="separator:a252c62389bb08e5a274acd43d67b0a5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76b6ba74bcd848a430644840c1e07503"><td class="memTemplParams" colspan="2">template&lt;class TRAVERSABLE_MAP , class T , class F &gt; </td></tr>
-<tr class="memitem:a76b6ba74bcd848a430644840c1e07503"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#a76b6ba74bcd848a430644840c1e07503">traverse_with</a> (this auto &amp;&amp;, const TRAVERSABLE_MAP &amp;traversable_map, F &amp;&amp;function, T &amp;&amp;value)</td></tr>
-<tr class="separator:a76b6ba74bcd848a430644840c1e07503"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af975414702fd8ba0f91feca773c00550"><td class="memTemplParams" colspan="2">template&lt;class TRAVERSABLE_MAP , class APPLICATIVE_MAP , class T , class F &gt; </td></tr>
-<tr class="memitem:af975414702fd8ba0f91feca773c00550"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#af975414702fd8ba0f91feca773c00550">traverse_with</a> (this auto &amp;&amp;, const TRAVERSABLE_MAP &amp;traversable_map, const APPLICATIVE_MAP &amp;applicative_map, F &amp;&amp;function, T &amp;&amp;value)</td></tr>
-<tr class="separator:af975414702fd8ba0f91feca773c00550"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a67d753f75589d0a84a50baee1ff28d5e"><td class="memTemplParams" colspan="2">template&lt;class TRAVERSABLE_MAP , class T &gt; <br />
-requires applicative_context&lt; typename std::remove_cvref_t&lt;TRAVERSABLE_MAP&gt;<a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#ac9b1eee566188cf21653ad0df4c1164d">::element_type</a>&gt;</td></tr>
-<tr class="memitem:a67d753f75589d0a84a50baee1ff28d5e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#a67d753f75589d0a84a50baee1ff28d5e">transpose_with</a> (this auto &amp;&amp;self, const TRAVERSABLE_MAP &amp;traversable_map, T &amp;&amp;value)</td></tr>
-<tr class="separator:a67d753f75589d0a84a50baee1ff28d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0052ce30fad8303ce1dcf8010a03f05"><td class="memTemplParams" colspan="2">template&lt;class T , class F &gt; <br />
+requires requires { self.traverse( <a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt; F &amp;, detail::traversal_argument_t&lt;decltype(self), T&gt;&gt;&gt;&gt;, std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); }</td></tr>
+<tr class="memitem:af0052ce30fad8303ce1dcf8010a03f05"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#af0052ce30fad8303ce1dcf8010a03f05">for_each</a> (this auto &amp;&amp;self, T &amp;&amp;value, F &amp;&amp;function)</td></tr>
+<tr class="separator:af0052ce30fad8303ce1dcf8010a03f05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a010f03bd8d01e2b2622e8fd4b14b4ddc"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
+requires applicative_context&lt;typename Impl::element_type&gt; requires { self.traverse(<a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;typename Impl::element_type&gt;, std::identity{}, std::forward&lt;T&gt;(value)); }</td></tr>
+<tr class="memitem:a010f03bd8d01e2b2622e8fd4b14b4ddc"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#a010f03bd8d01e2b2622e8fd4b14b4ddc">transpose</a> (this auto &amp;&amp;self, T &amp;&amp;value)</td></tr>
+<tr class="separator:a010f03bd8d01e2b2622e8fd4b14b4ddc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad090a43339d6a309b1994f1d656af1da"><td class="memTemplParams" colspan="2">template&lt;class TRAVERSABLE_MAP , class T , class F &gt; <br />
+requires requires { traversable_map.traverse( <a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt; F &amp;, detail::traversal_argument_t&lt;TRAVERSABLE_MAP, T&gt;&gt;&gt;&gt;, std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); }</td></tr>
+<tr class="memitem:ad090a43339d6a309b1994f1d656af1da"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#ad090a43339d6a309b1994f1d656af1da">traverse_with</a> (this auto &amp;&amp;, const TRAVERSABLE_MAP &amp;traversable_map, F &amp;&amp;function, T &amp;&amp;value)</td></tr>
+<tr class="separator:ad090a43339d6a309b1994f1d656af1da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a657f7a0ebdbd1bdbf6d5ec7d9daad850"><td class="memTemplParams" colspan="2">template&lt;class TRAVERSABLE_MAP , class APPLICATIVE_MAP , class T , class F &gt; <br />
+requires requires { traversable_map.traverse(applicative_map, std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); }</td></tr>
+<tr class="memitem:a657f7a0ebdbd1bdbf6d5ec7d9daad850"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#a657f7a0ebdbd1bdbf6d5ec7d9daad850">traverse_with</a> (this auto &amp;&amp;, const TRAVERSABLE_MAP &amp;traversable_map, const APPLICATIVE_MAP &amp;applicative_map, F &amp;&amp;function, T &amp;&amp;value)</td></tr>
+<tr class="separator:a657f7a0ebdbd1bdbf6d5ec7d9daad850"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa84eed54215c6dc634f4e5b8d468afd5"><td class="memTemplParams" colspan="2">template&lt;class TRAVERSABLE_MAP , class T &gt; <br />
+requires applicative_context&lt; typename std::remove_cvref_t&lt;TRAVERSABLE_MAP&gt;<a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#ac9b1eee566188cf21653ad0df4c1164d">::element_type</a>&gt; requires { self.traverse_with(traversable_map, std::identity{}, std::forward&lt;T&gt;(value)); }</td></tr>
+<tr class="memitem:aa84eed54215c6dc634f4e5b8d468afd5"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#aa84eed54215c6dc634f4e5b8d468afd5">transpose_with</a> (this auto &amp;&amp;self, const TRAVERSABLE_MAP &amp;traversable_map, T &amp;&amp;value)</td></tr>
+<tr class="separator:aa84eed54215c6dc634f4e5b8d468afd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -170,15 +173,17 @@ template&lt;class Impl &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a3c36310cdf2c1114320db1ad77cc8d7f" name="a3c36310cdf2c1114320db1ad77cc8d7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c36310cdf2c1114320db1ad77cc8d7f">&#9670;&#160;</a></span>for_each()</h2>
+<a id="af0052ce30fad8303ce1dcf8010a03f05" name="af0052ce30fad8303ce1dcf8010a03f05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0052ce30fad8303ce1dcf8010a03f05">&#9670;&#160;</a></span>for_each()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Impl &gt; </div>
+template&lt;class Impl &gt; <br />
+requires requires { self.traverse( <a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt; F &amp;, detail::traversal_argument_t&lt;decltype(self), T&gt;&gt;&gt;&gt;, std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); }</div>
 <div class="memtemplate">
-template&lt;class T , class F &gt; </div>
+template&lt;class T , class F &gt; <br />
+requires requires { self.traverse( <a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt; F &amp;, detail::traversal_argument_t&lt;decltype(self), T&gt;&gt;&gt;&gt;, std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -216,17 +221,17 @@ template&lt;class T , class F &gt; </div>
 
 </div>
 </div>
-<a id="a252c62389bb08e5a274acd43d67b0a5e" name="a252c62389bb08e5a274acd43d67b0a5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a252c62389bb08e5a274acd43d67b0a5e">&#9670;&#160;</a></span>transpose()</h2>
+<a id="a010f03bd8d01e2b2622e8fd4b14b4ddc" name="a010f03bd8d01e2b2622e8fd4b14b4ddc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a010f03bd8d01e2b2622e8fd4b14b4ddc">&#9670;&#160;</a></span>transpose()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Impl &gt; <br />
-requires applicative_context&lt;typename Impl::element_type&gt;</div>
+requires applicative_context&lt;typename Impl::element_type&gt; requires { self.traverse(<a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;typename Impl::element_type&gt;, std::identity{}, std::forward&lt;T&gt;(value)); }</div>
 <div class="memtemplate">
 template&lt;class T &gt; <br />
-requires applicative_context&lt;typename Impl::element_type&gt;</div>
+requires applicative_context&lt;typename Impl::element_type&gt; requires { self.traverse(<a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;typename Impl::element_type&gt;, std::identity{}, std::forward&lt;T&gt;(value)); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -258,15 +263,17 @@ requires applicative_context&lt;typename Impl::element_type&gt;</div>
 
 </div>
 </div>
-<a id="a76b6ba74bcd848a430644840c1e07503" name="a76b6ba74bcd848a430644840c1e07503"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a76b6ba74bcd848a430644840c1e07503">&#9670;&#160;</a></span>traverse_with() <span class="overload">[1/2]</span></h2>
+<a id="ad090a43339d6a309b1994f1d656af1da" name="ad090a43339d6a309b1994f1d656af1da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad090a43339d6a309b1994f1d656af1da">&#9670;&#160;</a></span>traverse_with() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Impl &gt; </div>
+template&lt;class Impl &gt; <br />
+requires requires { traversable_map.traverse( <a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt; F &amp;, detail::traversal_argument_t&lt;TRAVERSABLE_MAP, T&gt;&gt;&gt;&gt;, std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); }</div>
 <div class="memtemplate">
-template&lt;class TRAVERSABLE_MAP , class T , class F &gt; </div>
+template&lt;class TRAVERSABLE_MAP , class T , class F &gt; <br />
+requires requires { traversable_map.traverse( <a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt; F &amp;, detail::traversal_argument_t&lt;TRAVERSABLE_MAP, T&gt;&gt;&gt;&gt;, std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -310,15 +317,17 @@ template&lt;class TRAVERSABLE_MAP , class T , class F &gt; </div>
 
 </div>
 </div>
-<a id="af975414702fd8ba0f91feca773c00550" name="af975414702fd8ba0f91feca773c00550"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af975414702fd8ba0f91feca773c00550">&#9670;&#160;</a></span>traverse_with() <span class="overload">[2/2]</span></h2>
+<a id="a657f7a0ebdbd1bdbf6d5ec7d9daad850" name="a657f7a0ebdbd1bdbf6d5ec7d9daad850"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a657f7a0ebdbd1bdbf6d5ec7d9daad850">&#9670;&#160;</a></span>traverse_with() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Impl &gt; </div>
+template&lt;class Impl &gt; <br />
+requires requires { traversable_map.traverse(applicative_map, std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); }</div>
 <div class="memtemplate">
-template&lt;class TRAVERSABLE_MAP , class APPLICATIVE_MAP , class T , class F &gt; </div>
+template&lt;class TRAVERSABLE_MAP , class APPLICATIVE_MAP , class T , class F &gt; <br />
+requires requires { traversable_map.traverse(applicative_map, std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -368,17 +377,17 @@ template&lt;class TRAVERSABLE_MAP , class APPLICATIVE_MAP , class T , class F &g
 
 </div>
 </div>
-<a id="a67d753f75589d0a84a50baee1ff28d5e" name="a67d753f75589d0a84a50baee1ff28d5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a67d753f75589d0a84a50baee1ff28d5e">&#9670;&#160;</a></span>transpose_with()</h2>
+<a id="aa84eed54215c6dc634f4e5b8d468afd5" name="aa84eed54215c6dc634f4e5b8d468afd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa84eed54215c6dc634f4e5b8d468afd5">&#9670;&#160;</a></span>transpose_with()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Impl &gt; <br />
-requires applicative_context&lt; typename std::remove_cvref_t&lt;TRAVERSABLE_MAP&gt;<a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#ac9b1eee566188cf21653ad0df4c1164d">::element_type</a>&gt;</div>
+requires applicative_context&lt; typename std::remove_cvref_t&lt;TRAVERSABLE_MAP&gt;<a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#ac9b1eee566188cf21653ad0df4c1164d">::element_type</a>&gt; requires { self.traverse_with(traversable_map, std::identity{}, std::forward&lt;T&gt;(value)); }</div>
 <div class="memtemplate">
 template&lt;class TRAVERSABLE_MAP , class T &gt; <br />
-requires applicative_context&lt; typename std::remove_cvref_t&lt;TRAVERSABLE_MAP&gt;<a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#ac9b1eee566188cf21653ad0df4c1164d">::element_type</a>&gt;</div>
+requires applicative_context&lt; typename std::remove_cvref_t&lt;TRAVERSABLE_MAP&gt;<a class="el" href="structbeman_1_1transpose_1_1derive__traversable.html#ac9b1eee566188cf21653ad0df4c1164d">::element_type</a>&gt; requires { self.traverse_with(traversable_map, std::identity{}, std::forward&lt;T&gt;(value)); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -440,7 +449,7 @@ template&lt;class Impl &gt; </div>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">        <a class="code hl_concept" href="conceptbeman_1_1transpose_1_1consuming__traversable__object.html">consuming_traversable_object&lt;Impl&gt;</a></div>
-<div class="ttc" id="aconceptbeman_1_1transpose_1_1consuming__traversable__object_html"><div class="ttname"><a href="conceptbeman_1_1transpose_1_1consuming__traversable__object.html">beman::transpose::consuming_traversable_object</a></div><div class="ttdoc">This concept is satisfied when OBJ declares consumes_rvalue_structure to be true: a traversable objec...</div><div class="ttdef"><b>Definition:</b> traverse.hpp:55</div></div>
+<div class="ttc" id="aconceptbeman_1_1transpose_1_1consuming__traversable__object_html"><div class="ttname"><a href="conceptbeman_1_1transpose_1_1consuming__traversable__object.html">beman::transpose::consuming_traversable_object</a></div><div class="ttdoc">This concept is satisfied when OBJ declares consumes_rvalue_structure to be true: a traversable objec...</div><div class="ttdef"><b>Definition:</b> traverse.hpp:56</div></div>
 </div><!-- fragment -->
 <p>Re-exported the way element_type is, and for the same reason: Impl is a protected base, so a declaration made on Impl is not visible on the object through it. </p>
 <p>An Impl that says nothing does not consume, which is what an Impl written without the question in mind does. </p>

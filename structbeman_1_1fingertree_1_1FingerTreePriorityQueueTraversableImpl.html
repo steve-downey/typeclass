@@ -108,9 +108,10 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4bef32e82b63aef7752b86bdae0ca97e"><td class="memTemplParams" colspan="2">template&lt;class APPLICATIVE , class F &gt; </td></tr>
-<tr class="memitem:a4bef32e82b63aef7752b86bdae0ca97e"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreePriorityQueueTraversableImpl.html#a4bef32e82b63aef7752b86bdae0ca97e">traverse</a> (this auto &amp;&amp;, const APPLICATIVE &amp;applicative, F &amp;&amp;function, const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">beman::fingertree::tree::FingerTreePriorityQueue</a>&lt; T, Tree &gt; &amp;queue)</td></tr>
-<tr class="separator:a4bef32e82b63aef7752b86bdae0ca97e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac29d544e38edddd21b6d98c252892bf4"><td class="memTemplParams" colspan="2">template&lt;class APPLICATIVE , class F &gt; <br />
+requires std::invocable&lt;F&amp;, const T&amp;&gt; &amp;&amp; <a class="el" href="conceptbeman_1_1transpose_1_1applicative__object__for.html">beman::transpose::applicative_object_for</a>&lt;APPLICATIVE, std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const T&amp;&gt;&gt;&gt;</td></tr>
+<tr class="memitem:ac29d544e38edddd21b6d98c252892bf4"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreePriorityQueueTraversableImpl.html#ac29d544e38edddd21b6d98c252892bf4">traverse</a> (this auto &amp;&amp;, const APPLICATIVE &amp;applicative, F &amp;&amp;function, const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">beman::fingertree::tree::FingerTreePriorityQueue</a>&lt; T, Tree &gt; &amp;queue)</td></tr>
+<tr class="separator:ac29d544e38edddd21b6d98c252892bf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="acb84669b2f5dbff2d749639c8bad16b9" name="acb84669b2f5dbff2d749639c8bad16b9"></a>
@@ -130,15 +131,16 @@ template&lt;class T , class Tree &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4bef32e82b63aef7752b86bdae0ca97e" name="a4bef32e82b63aef7752b86bdae0ca97e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4bef32e82b63aef7752b86bdae0ca97e">&#9670;&#160;</a></span>traverse()</h2>
+<a id="ac29d544e38edddd21b6d98c252892bf4" name="ac29d544e38edddd21b6d98c252892bf4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac29d544e38edddd21b6d98c252892bf4">&#9670;&#160;</a></span>traverse()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class T , class Tree &gt; </div>
 <div class="memtemplate">
-template&lt;class APPLICATIVE , class F &gt; </div>
+template&lt;class APPLICATIVE , class F &gt; <br />
+requires std::invocable&lt;F&amp;, const T&amp;&gt; &amp;&amp; <a class="el" href="conceptbeman_1_1transpose_1_1applicative__object__for.html">beman::transpose::applicative_object_for</a>&lt;APPLICATIVE, std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const T&amp;&gt;&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

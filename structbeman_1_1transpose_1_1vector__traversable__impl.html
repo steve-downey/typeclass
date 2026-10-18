@@ -122,18 +122,16 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a240e9819aa4263ee09f6d0e0492ba9ee"><td class="memTemplParams" colspan="2">template&lt;class APPLICATIVE , class FUNCTION &gt; </td></tr>
-<tr class="memitem:a240e9819aa4263ee09f6d0e0492ba9ee"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html#a240e9819aa4263ee09f6d0e0492ba9ee">traverse</a> (this auto &amp;&amp;, const APPLICATIVE &amp;<a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>, FUNCTION &amp;&amp;function, const std::vector&lt; VALUE_TYPE &gt; &amp;values)</td></tr>
-<tr class="memdesc:a240e9819aa4263ee09f6d0e0492ba9ee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversal preserves shape: the result holds one element per element of <code>values</code>, in the same order.  <br /></td></tr>
-<tr class="separator:a240e9819aa4263ee09f6d0e0492ba9ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0ab2a7f06bc93069c64199c2ea52cbb"><td class="memTemplParams" colspan="2">template&lt;class APPLICATIVE , class FUNCTION &gt; </td></tr>
-<tr class="memitem:aa0ab2a7f06bc93069c64199c2ea52cbb"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html#aa0ab2a7f06bc93069c64199c2ea52cbb">traverse</a> (this auto &amp;&amp;, const APPLICATIVE &amp;<a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>, FUNCTION &amp;&amp;function, std::vector&lt; VALUE_TYPE &gt; &amp;&amp;values)</td></tr>
-<tr class="separator:aa0ab2a7f06bc93069c64199c2ea52cbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1996cba379763829a80f576de5777cf"><td class="memTemplParams" colspan="2">template&lt;class APPLICATIVE , class FUNCTION , class VALUES &gt; <br />
+requires std::same_as&lt;std::remove_cvref_t&lt;VALUES&gt;, std::vector&lt;VALUE_TYPE&gt;&gt; &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::traversal_argument_t&lt; <a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html">vector_traversable_impl</a>, VALUES&gt;&gt; &amp;&amp; applicative_object_for&lt; APPLICATIVE, std::remove_cvref_t&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::traversal_argument_t&lt; <a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html">vector_traversable_impl</a>, VALUES&gt;&gt;&gt;&gt;</td></tr>
+<tr class="memitem:af1996cba379763829a80f576de5777cf"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html#af1996cba379763829a80f576de5777cf">traverse</a> (this auto &amp;&amp;, const APPLICATIVE &amp;<a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>, FUNCTION &amp;&amp;function, VALUES &amp;&amp;values)</td></tr>
+<tr class="memdesc:af1996cba379763829a80f576de5777cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversal preserves shape: the result holds one element per element of <code>values</code>, in the same order.  <br /></td></tr>
+<tr class="separator:af1996cba379763829a80f576de5777cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:afb58276d6dc2acfb2c5d20f91b8040d9"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html#afb58276d6dc2acfb2c5d20f91b8040d9">consumes_rvalue_structure</a> = true</td></tr>
-<tr class="memdesc:afb58276d6dc2acfb2c5d20f91b8040d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <code>vector</code> handed over as an rvalue owns its elements outright, so this instance really does hand them on: the second <code>traverse</code> overload below presents each element to <code>function</code> as an rvalue, one move per element where the first overload costs a copy.  <br /></td></tr>
+<tr class="memdesc:afb58276d6dc2acfb2c5d20f91b8040d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">A <code>vector</code> handed over as an rvalue owns its elements outright, so this instance really does hand them on: <code>traverse</code> below presents each element of an rvalue <code>vector</code> to <code>function</code> as an rvalue, one move per element where an lvalue <code>vector</code> costs a copy.  <br /></td></tr>
 <tr class="separator:afb58276d6dc2acfb2c5d20f91b8040d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -158,15 +156,17 @@ template&lt;class VALUE_TYPE &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a240e9819aa4263ee09f6d0e0492ba9ee" name="a240e9819aa4263ee09f6d0e0492ba9ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a240e9819aa4263ee09f6d0e0492ba9ee">&#9670;&#160;</a></span>traverse() <span class="overload">[1/2]</span></h2>
+<a id="af1996cba379763829a80f576de5777cf" name="af1996cba379763829a80f576de5777cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1996cba379763829a80f576de5777cf">&#9670;&#160;</a></span>traverse()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class VALUE_TYPE &gt; </div>
+template&lt;class VALUE_TYPE &gt; <br />
+requires std::same_as&lt;std::remove_cvref_t&lt;VALUES&gt;, std::vector&lt;VALUE_TYPE&gt;&gt; &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::traversal_argument_t&lt; <a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html">vector_traversable_impl</a>, VALUES&gt;&gt; &amp;&amp; applicative_object_for&lt; APPLICATIVE, std::remove_cvref_t&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::traversal_argument_t&lt; <a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html">vector_traversable_impl</a>, VALUES&gt;&gt;&gt;&gt;</div>
 <div class="memtemplate">
-template&lt;class APPLICATIVE , class FUNCTION &gt; </div>
+template&lt;class APPLICATIVE , class FUNCTION , class VALUES &gt; <br />
+requires std::same_as&lt;std::remove_cvref_t&lt;VALUES&gt;, std::vector&lt;VALUE_TYPE&gt;&gt; &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::traversal_argument_t&lt; <a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html">vector_traversable_impl</a>, VALUES&gt;&gt; &amp;&amp; applicative_object_for&lt; APPLICATIVE, std::remove_cvref_t&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::traversal_argument_t&lt; <a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html">vector_traversable_impl</a>, VALUES&gt;&gt;&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -192,7 +192,7 @@ template&lt;class APPLICATIVE , class FUNCTION &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::vector&lt; VALUE_TYPE &gt; &amp;&#160;</td>
+          <td class="paramtype">VALUES &amp;&amp;&#160;</td>
           <td class="paramname"><em>values</em>&#160;</td>
         </tr>
         <tr>
@@ -210,58 +210,6 @@ template&lt;class APPLICATIVE , class FUNCTION &gt; </div>
 
 <p>Traversal preserves shape: the result holds one element per element of <code>values</code>, in the same order. </p>
 <p>Elements are visited in the vector's iteration order, and their contexts are composed in that same order. Preferring <code>collect</code> is the Traversable-side instance of the rule every derived operation in this library follows: an object that supplies a native operation is asked for it, and one that does not is derived against unchanged. It is what admits an <code>applicative</code> whose composition is not type-stable &ndash; a pairwise fold must assign each partial result back into a variable of one type, which a context whose combination names a new type at every step cannot do &ndash; and the requirement is stated as the expression rather than as a property of the context so that this operation stays generic over what supplies it. On the pairwise path the accumulated result is handed to each composition as an rvalue: composing it as an lvalue would oblige <code>applicative</code> to copy the whole prefix built so far, once per element, making a successful traversal quadratic rather than linear in the elements it collects. </p>
-
-</div>
-</div>
-<a id="aa0ab2a7f06bc93069c64199c2ea52cbb" name="aa0ab2a7f06bc93069c64199c2ea52cbb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa0ab2a7f06bc93069c64199c2ea52cbb">&#9670;&#160;</a></span>traverse() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class VALUE_TYPE &gt; </div>
-<div class="memtemplate">
-template&lt;class APPLICATIVE , class FUNCTION &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constexpr auto <a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html">beman::transpose::vector_traversable_impl</a>&lt; VALUE_TYPE &gt;::traverse </td>
-          <td>(</td>
-          <td class="paramtype">this auto &amp;&amp;&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const APPLICATIVE &amp;&#160;</td>
-          <td class="paramname"><em>applicative</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">FUNCTION &amp;&amp;&#160;</td>
-          <td class="paramname"><em>function</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; VALUE_TYPE &gt; &amp;&amp;&#160;</td>
-          <td class="paramname"><em>values</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
 
 </div>
 </div>
@@ -288,7 +236,7 @@ template&lt;class VALUE_TYPE &gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>A <code>vector</code> handed over as an rvalue owns its elements outright, so this instance really does hand them on: the second <code>traverse</code> overload below presents each element to <code>function</code> as an rvalue, one move per element where the first overload costs a copy. </p>
+<p>A <code>vector</code> handed over as an rvalue owns its elements outright, so this instance really does hand them on: <code>traverse</code> below presents each element of an rvalue <code>vector</code> to <code>function</code> as an rvalue, one move per element where an lvalue <code>vector</code> costs a copy. </p>
 <p>Declaring it is what lets <code>traverse</code> infer its context from the consuming call before this object has been selected. </p>
 
 </div>

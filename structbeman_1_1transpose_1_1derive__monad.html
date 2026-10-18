@@ -138,9 +138,10 @@ requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e67
 <tr class="memitem:a2cb9f88de361551bea38b637afdc1cbd"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a2cb9f88de361551bea38b637afdc1cbd">subsume</a> (this auto &amp;&amp;, CARRIER &amp;&amp;value)</td></tr>
 <tr class="memdesc:a2cb9f88de361551bea38b637afdc1cbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses a value at a wider grade, defaulted from the grade algebra.  <br /></td></tr>
 <tr class="separator:a2cb9f88de361551bea38b637afdc1cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6d7946ac20f2605480129e62339bb4c0"><td class="memTemplParams" colspan="2">template&lt;class MONAD_MAP , class MA , class F &gt; </td></tr>
-<tr class="memitem:a6d7946ac20f2605480129e62339bb4c0"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a6d7946ac20f2605480129e62339bb4c0">bind_with</a> (this auto &amp;&amp;, const MONAD_MAP &amp;monad_map, MA &amp;&amp;ma, F &amp;&amp;f)</td></tr>
-<tr class="separator:a6d7946ac20f2605480129e62339bb4c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ddb2e636dc41e2d521e14a3e9741937"><td class="memTemplParams" colspan="2">template&lt;class MONAD_MAP , class MA , class F &gt; <br />
+requires requires { monad_map.bind(std::forward&lt;MA&gt;(ma), std::forward&lt;F&gt;(f)); }</td></tr>
+<tr class="memitem:a7ddb2e636dc41e2d521e14a3e9741937"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a7ddb2e636dc41e2d521e14a3e9741937">bind_with</a> (this auto &amp;&amp;, const MONAD_MAP &amp;monad_map, MA &amp;&amp;ma, F &amp;&amp;f)</td></tr>
+<tr class="separator:a7ddb2e636dc41e2d521e14a3e9741937"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02c00c1163bfb779ffe440f7cebad631"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a02c00c1163bfb779ffe440f7cebad631">as_functor</a> (this auto &amp;&amp;self)</td></tr>
 <tr class="memdesc:a02c00c1163bfb779ffe440f7cebad631"><td class="mdescLeft">&#160;</td><td class="mdescRight">The full Functor instance over this monad object.  <br /></td></tr>
 <tr class="separator:a02c00c1163bfb779ffe440f7cebad631"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -437,15 +438,16 @@ requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e67
 
 </div>
 </div>
-<a id="a6d7946ac20f2605480129e62339bb4c0" name="a6d7946ac20f2605480129e62339bb4c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d7946ac20f2605480129e62339bb4c0">&#9670;&#160;</a></span>bind_with()</h2>
+<a id="a7ddb2e636dc41e2d521e14a3e9741937" name="a7ddb2e636dc41e2d521e14a3e9741937"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ddb2e636dc41e2d521e14a3e9741937">&#9670;&#160;</a></span>bind_with()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
-template&lt;class MONAD_MAP , class MA , class F &gt; </div>
+template&lt;class MONAD_MAP , class MA , class F &gt; <br />
+requires requires { monad_map.bind(std::forward&lt;MA&gt;(ma), std::forward&lt;F&gt;(f)); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
