@@ -111,10 +111,10 @@ Inheritance diagram for beman::transpose::derive_foldable&lt; Impl &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6c0de44715773b4669a14fbe1852b286"><td class="memTemplParams" colspan="2">template&lt;class F , class T , class MONOID &gt; <br />
-requires requires(const Impl &amp;impl) { impl.fold_map(std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); } || requires(const Impl &amp;impl) { typename Impl::element_type; impl.fold_right(std::forward&lt;T&gt;(value), monoid.identity(), detail::probe_witness2&lt;<a class="el" href="namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2">monoid_value_t</a>&lt;MONOID&gt;&gt;{}); }</td></tr>
-<tr class="memitem:a6c0de44715773b4669a14fbe1852b286"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a6c0de44715773b4669a14fbe1852b286">fold_map</a> (this auto &amp;&amp;self, F &amp;&amp;function, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>)</td></tr>
-<tr class="separator:a6c0de44715773b4669a14fbe1852b286"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f27b6583da48ba922211e310fa28298"><td class="memTemplParams" colspan="2">template&lt;class F , class T , class MONOID &gt; <br />
+requires requires(const Impl &amp;impl) { impl.fold_map(std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); } || requires(const Impl &amp;impl) { typename Impl::element_type; requires std::invocable&lt;F &amp;, const typename Impl::element_type &amp;&gt;; { monoid.combine( std::invoke( function, std::declval&lt;const typename Impl::element_type &amp;&gt;()), monoid.identity()) } -&gt; std::convertible_to&lt;<a class="el" href="namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2">monoid_value_t</a>&lt;MONOID&gt;&gt;; impl.fold_right(std::forward&lt;T&gt;(value), monoid.identity(), detail::fold_map_step_probe_witness&lt;F, MONOID&gt;{}); }</td></tr>
+<tr class="memitem:a2f27b6583da48ba922211e310fa28298"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a2f27b6583da48ba922211e310fa28298">fold_map</a> (this auto &amp;&amp;self, F &amp;&amp;function, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>)</td></tr>
+<tr class="separator:a2f27b6583da48ba922211e310fa28298"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb8b923e8791496b8bda9fb8e1f22655"><td class="memTemplParams" colspan="2">template&lt;class F , class T &gt; <br />
 requires requires(const Impl &amp;impl) { impl.fold_map(std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); } || requires { typename Impl::element_type; requires detail::has_registered_monoid&lt; detail::fold_result_t&lt;Impl, F&gt;&gt;; self.fold_map(std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1Monoid.html">Monoid</a>&lt;detail::fold_result_t&lt;Impl, F&gt;&gt;{}); }</td></tr>
 <tr class="memitem:acb8b923e8791496b8bda9fb8e1f22655"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#acb8b923e8791496b8bda9fb8e1f22655">fold_map</a> (this auto &amp;&amp;self, F &amp;&amp;function, T &amp;&amp;value)</td></tr>
@@ -124,16 +124,16 @@ requires requires(const Impl &amp;impl) { impl.length(std::forward&lt;T&gt;(valu
 <tr class="memitem:a93bc933f1f2bfec8dc5f4a5872e26522"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a93bc933f1f2bfec8dc5f4a5872e26522">length</a> (this auto &amp;&amp;self, T &amp;&amp;value) -&gt; std::size_t</td></tr>
 <tr class="memdesc:a93bc933f1f2bfec8dc5f4a5872e26522"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements in the foldable container.  <br /></td></tr>
 <tr class="separator:a93bc933f1f2bfec8dc5f4a5872e26522"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d52be74e0a1f2c9b4cd21e35ce36f58"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F &gt; <br />
-requires requires(const Impl &amp;impl) { impl.fold_left(std::forward&lt;T&gt;(value), initial_state, std::forward&lt;F&gt;(function)); } || requires { self.fold_map( detail::probe_witness&lt;std::function&lt;std::remove_cvref_t&lt;STATE&gt;( std::remove_cvref_t&lt;STATE&gt;)&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::left_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</td></tr>
-<tr class="memitem:a4d52be74e0a1f2c9b4cd21e35ce36f58"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a4d52be74e0a1f2c9b4cd21e35ce36f58">fold_left</a> (this auto &amp;&amp;self, T &amp;&amp;value, STATE initial_state, F &amp;&amp;function)</td></tr>
-<tr class="memdesc:a4d52be74e0a1f2c9b4cd21e35ce36f58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Left-associative fold: applies <code>function(state, element)</code> for each element in traversal order, starting from <code>initial_state</code>.  <br /></td></tr>
-<tr class="separator:a4d52be74e0a1f2c9b4cd21e35ce36f58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a236e1c0b6d36602f3b5575178ac7b24a"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F &gt; <br />
-requires requires(const Impl &amp;impl) { impl.fold_right(std::forward&lt;T&gt;(value), initial_state, std::forward&lt;F&gt;(function)); } || requires(const Impl &amp;impl) { impl.fold_map( detail::probe_witness&lt;std::function&lt;std::remove_cvref_t&lt;STATE&gt;( std::remove_cvref_t&lt;STATE&gt;)&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::right_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</td></tr>
-<tr class="memitem:a236e1c0b6d36602f3b5575178ac7b24a"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a236e1c0b6d36602f3b5575178ac7b24a">fold_right</a> (this auto &amp;&amp;self, T &amp;&amp;value, STATE initial_state, F &amp;&amp;function)</td></tr>
-<tr class="memdesc:a236e1c0b6d36602f3b5575178ac7b24a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Right-associative fold: applies <code>function(element, state)</code> for each element in reverse traversal order, starting from <code>initial_state</code>.  <br /></td></tr>
-<tr class="separator:a236e1c0b6d36602f3b5575178ac7b24a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af28df991eeadd56e2fd339c9015b2f51"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F &gt; <br />
+requires requires(const Impl &amp;impl) { impl.fold_left(std::forward&lt;T&gt;(value), std::move(initial_state), std::forward&lt;F&gt;(function)); } || requires { requires std::constructible_from&lt;std::remove_cvref_t&lt;F&gt;, F&gt;; self.fold_map( detail::fold_left_probe_witness&lt;std::remove_cvref_t&lt;F&gt;, std::remove_cvref_t&lt;STATE&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::left_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</td></tr>
+<tr class="memitem:af28df991eeadd56e2fd339c9015b2f51"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#af28df991eeadd56e2fd339c9015b2f51">fold_left</a> (this auto &amp;&amp;self, T &amp;&amp;value, STATE initial_state, F &amp;&amp;function)</td></tr>
+<tr class="memdesc:af28df991eeadd56e2fd339c9015b2f51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Left-associative fold: applies <code>function(state, element)</code> for each element in traversal order, starting from <code>initial_state</code>.  <br /></td></tr>
+<tr class="separator:af28df991eeadd56e2fd339c9015b2f51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3881209710115e2c66dea816902de090"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F &gt; <br />
+requires requires(const Impl &amp;impl) { impl.fold_right(std::forward&lt;T&gt;(value), std::move(initial_state), std::forward&lt;F&gt;(function)); } || requires(const Impl &amp;impl) { requires std::constructible_from&lt;std::remove_cvref_t&lt;F&gt;, F&gt;; impl.fold_map( detail::fold_right_probe_witness&lt;std::remove_cvref_t&lt;F&gt;, std::remove_cvref_t&lt;STATE&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::right_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</td></tr>
+<tr class="memitem:a3881209710115e2c66dea816902de090"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a3881209710115e2c66dea816902de090">fold_right</a> (this auto &amp;&amp;self, T &amp;&amp;value, STATE initial_state, F &amp;&amp;function)</td></tr>
+<tr class="memdesc:a3881209710115e2c66dea816902de090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Right-associative fold: applies <code>function(element, state)</code> for each element in reverse traversal order, starting from <code>initial_state</code>.  <br /></td></tr>
+<tr class="separator:a3881209710115e2c66dea816902de090"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cab9be126b52b254bfc454c3cb005bd"><td class="memTemplParams" colspan="2">template&lt;class T , class MONOID &gt; <br />
 requires requires(const Impl &amp;impl) { impl.combine_all(std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); } || requires { self.fold_map(detail::identity_probe_witness{}, std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); }</td></tr>
 <tr class="memitem:a1cab9be126b52b254bfc454c3cb005bd"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a1cab9be126b52b254bfc454c3cb005bd">combine_all</a> (this auto &amp;&amp;self, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>)</td></tr>
@@ -153,16 +153,16 @@ requires requires(const Impl &amp;impl) { impl.fold(std::forward&lt;T&gt;(value)
 requires requires(const Impl &amp;impl) { impl.fold(std::forward&lt;T&gt;(value)); } || requires { self.combine_all(std::forward&lt;T&gt;(value)); }</td></tr>
 <tr class="memitem:a931bdd44c79aafd930539bef495c0c46"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a931bdd44c79aafd930539bef495c0c46">fold</a> (this auto &amp;&amp;self, T &amp;&amp;value)</td></tr>
 <tr class="separator:a931bdd44c79aafd930539bef495c0c46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa08db480382f69dd09e2b867ef6b216b"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
-requires requires(const Impl &amp;impl) { impl.any_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::probe_witness&lt;bool&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1any__monoid.html">any_monoid</a>{}); }</td></tr>
-<tr class="memitem:aa08db480382f69dd09e2b867ef6b216b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#aa08db480382f69dd09e2b867ef6b216b">any_of</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate) -&gt; bool</td></tr>
-<tr class="memdesc:aa08db480382f69dd09e2b867ef6b216b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if any element satisfies <code>predicate</code>.  <br /></td></tr>
-<tr class="separator:aa08db480382f69dd09e2b867ef6b216b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa55a88af93cc961cde8c184ad5e7f84b"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
-requires requires(const Impl &amp;impl) { impl.all_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::probe_witness&lt;bool&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1all__monoid.html">all_monoid</a>{}); }</td></tr>
-<tr class="memitem:aa55a88af93cc961cde8c184ad5e7f84b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#aa55a88af93cc961cde8c184ad5e7f84b">all_of</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate) -&gt; bool</td></tr>
-<tr class="memdesc:aa55a88af93cc961cde8c184ad5e7f84b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if all elements satisfy <code>predicate</code>.  <br /></td></tr>
-<tr class="separator:aa55a88af93cc961cde8c184ad5e7f84b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae1514b8e421f5f803fe7c99bd351114"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
+requires requires(const Impl &amp;impl) { impl.any_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::predicate_probe_witness&lt;PREDICATE&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1any__monoid.html">any_monoid</a>{}); }</td></tr>
+<tr class="memitem:aae1514b8e421f5f803fe7c99bd351114"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#aae1514b8e421f5f803fe7c99bd351114">any_of</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate) -&gt; bool</td></tr>
+<tr class="memdesc:aae1514b8e421f5f803fe7c99bd351114"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if any element satisfies <code>predicate</code>.  <br /></td></tr>
+<tr class="separator:aae1514b8e421f5f803fe7c99bd351114"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0edb61bc4bf88b247ef6ef88ea8e000f"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
+requires requires(const Impl &amp;impl) { impl.all_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::predicate_probe_witness&lt;PREDICATE&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1all__monoid.html">all_monoid</a>{}); }</td></tr>
+<tr class="memitem:a0edb61bc4bf88b247ef6ef88ea8e000f"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a0edb61bc4bf88b247ef6ef88ea8e000f">all_of</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate) -&gt; bool</td></tr>
+<tr class="memdesc:a0edb61bc4bf88b247ef6ef88ea8e000f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if all elements satisfy <code>predicate</code>.  <br /></td></tr>
+<tr class="separator:a0edb61bc4bf88b247ef6ef88ea8e000f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74ebd77555369e29bf9ff52d38d79b16"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
 requires requires(const Impl &amp;impl) { impl.empty(std::forward&lt;T&gt;(value)); } || requires { self.any_of(std::forward&lt;T&gt;(value), detail::probe_witness&lt;bool&gt;{}); }</td></tr>
 <tr class="memitem:a74ebd77555369e29bf9ff52d38d79b16"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a74ebd77555369e29bf9ff52d38d79b16">empty</a> (this auto &amp;&amp;self, T &amp;&amp;value) -&gt; bool</td></tr>
@@ -173,19 +173,19 @@ requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(v
 <tr class="memitem:aa665c2e564ea0b1e9fb5f63234183206"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#aa665c2e564ea0b1e9fb5f63234183206">to_vector</a> (this auto &amp;&amp;self, T &amp;&amp;value)</td></tr>
 <tr class="memdesc:aa665c2e564ea0b1e9fb5f63234183206"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collects all elements into a <code>std::vector</code> in traversal order.  <br /></td></tr>
 <tr class="separator:aa665c2e564ea0b1e9fb5f63234183206"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a826b10313d15b1a9b16551573e2c75fd"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
-requires requires(const Impl &amp;impl) { impl.find_first(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { typename Impl::element_type; self.fold_map(detail::optional_probe_witness{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1first__monoid.html">first_monoid</a>&lt;typename Impl::element_type&gt;{}); }</td></tr>
-<tr class="memitem:a826b10313d15b1a9b16551573e2c75fd"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a826b10313d15b1a9b16551573e2c75fd">find_first</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate)</td></tr>
-<tr class="memdesc:a826b10313d15b1a9b16551573e2c75fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first element satisfying <code>predicate</code>, or an empty optional.  <br /></td></tr>
-<tr class="separator:a826b10313d15b1a9b16551573e2c75fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
+requires requires(const Impl &amp;impl) { impl.find_first(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { typename Impl::element_type; self.fold_map( detail::find_first_probe_witness&lt;PREDICATE, typename Impl::element_type&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1first__monoid.html">first_monoid</a>&lt;typename Impl::element_type&gt;{}); }</td></tr>
+<tr class="memitem:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#ab6b3a9a87cf9894e75ffd0d3e063c0b0">find_first</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate)</td></tr>
+<tr class="memdesc:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first element satisfying <code>predicate</code>, or an empty optional.  <br /></td></tr>
+<tr class="separator:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class Impl&gt;<br />
 struct beman::transpose::derive_foldable&lt; Impl &gt;</div><p>CRTP base for Foldable instances. </p>
 <p><code>Impl</code> must provide either <code><a class="el" href="namespacebeman_1_1transpose.html#a5e1d10d9e16af348c9d167dd06d8ad24" title="The semantic centre of Foldable: fold_map(f, container[, monoid]).">fold_map(f, container, monoid)</a></code> or <code>fold_right</code> + <code>element_type</code>; all other operations are derived from whichever is the primitive. Declaring <code>element_type</code> additionally unlocks the derived operations that must name the element type: the two-argument <code>fold_map</code>, <code>combine_all</code> and <code>fold</code> without an instance, <code>to_vector</code> and <code>find_first</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6c0de44715773b4669a14fbe1852b286" name="a6c0de44715773b4669a14fbe1852b286"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c0de44715773b4669a14fbe1852b286">&#9670;&#160;</a></span>fold_map() <span class="overload">[1/2]</span></h2>
+<a id="a2f27b6583da48ba922211e310fa28298" name="a2f27b6583da48ba922211e310fa28298"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f27b6583da48ba922211e310fa28298">&#9670;&#160;</a></span>fold_map() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -193,7 +193,7 @@ struct beman::transpose::derive_foldable&lt; Impl &gt;</div><p>CRTP base for Fol
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
 template&lt;class F , class T , class MONOID &gt; <br />
-requires requires(const Impl &amp;impl) { impl.fold_map(std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); } || requires(const Impl &amp;impl) { typename Impl::element_type; impl.fold_right(std::forward&lt;T&gt;(value), monoid.identity(), detail::probe_witness2&lt;<a class="el" href="namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2">monoid_value_t</a>&lt;MONOID&gt;&gt;{}); }</div>
+requires requires(const Impl &amp;impl) { impl.fold_map(std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); } || requires(const Impl &amp;impl) { typename Impl::element_type; requires std::invocable&lt;F &amp;, const typename Impl::element_type &amp;&gt;; { monoid.combine( std::invoke( function, std::declval&lt;const typename Impl::element_type &amp;&gt;()), monoid.identity()) } -&gt; std::convertible_to&lt;<a class="el" href="namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2">monoid_value_t</a>&lt;MONOID&gt;&gt;; impl.fold_right(std::forward&lt;T&gt;(value), monoid.identity(), detail::fold_map_step_probe_witness&lt;F, MONOID&gt;{}); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -328,8 +328,8 @@ requires requires(const Impl &amp;impl) { impl.length(std::forward&lt;T&gt;(valu
 
 </div>
 </div>
-<a id="a4d52be74e0a1f2c9b4cd21e35ce36f58" name="a4d52be74e0a1f2c9b4cd21e35ce36f58"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d52be74e0a1f2c9b4cd21e35ce36f58">&#9670;&#160;</a></span>fold_left()</h2>
+<a id="af28df991eeadd56e2fd339c9015b2f51" name="af28df991eeadd56e2fd339c9015b2f51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af28df991eeadd56e2fd339c9015b2f51">&#9670;&#160;</a></span>fold_left()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -337,7 +337,7 @@ requires requires(const Impl &amp;impl) { impl.length(std::forward&lt;T&gt;(valu
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
 template&lt;class T , class STATE , class F &gt; <br />
-requires requires(const Impl &amp;impl) { impl.fold_left(std::forward&lt;T&gt;(value), initial_state, std::forward&lt;F&gt;(function)); } || requires { self.fold_map( detail::probe_witness&lt;std::function&lt;std::remove_cvref_t&lt;STATE&gt;( std::remove_cvref_t&lt;STATE&gt;)&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::left_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</div>
+requires requires(const Impl &amp;impl) { impl.fold_left(std::forward&lt;T&gt;(value), std::move(initial_state), std::forward&lt;F&gt;(function)); } || requires { requires std::constructible_from&lt;std::remove_cvref_t&lt;F&gt;, F&gt;; self.fold_map( detail::fold_left_probe_witness&lt;std::remove_cvref_t&lt;F&gt;, std::remove_cvref_t&lt;STATE&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::left_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -383,8 +383,8 @@ requires requires(const Impl &amp;impl) { impl.fold_left(std::forward&lt;T&gt;(v
 
 </div>
 </div>
-<a id="a236e1c0b6d36602f3b5575178ac7b24a" name="a236e1c0b6d36602f3b5575178ac7b24a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a236e1c0b6d36602f3b5575178ac7b24a">&#9670;&#160;</a></span>fold_right()</h2>
+<a id="a3881209710115e2c66dea816902de090" name="a3881209710115e2c66dea816902de090"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3881209710115e2c66dea816902de090">&#9670;&#160;</a></span>fold_right()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -392,7 +392,7 @@ requires requires(const Impl &amp;impl) { impl.fold_left(std::forward&lt;T&gt;(v
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
 template&lt;class T , class STATE , class F &gt; <br />
-requires requires(const Impl &amp;impl) { impl.fold_right(std::forward&lt;T&gt;(value), initial_state, std::forward&lt;F&gt;(function)); } || requires(const Impl &amp;impl) { impl.fold_map( detail::probe_witness&lt;std::function&lt;std::remove_cvref_t&lt;STATE&gt;( std::remove_cvref_t&lt;STATE&gt;)&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::right_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</div>
+requires requires(const Impl &amp;impl) { impl.fold_right(std::forward&lt;T&gt;(value), std::move(initial_state), std::forward&lt;F&gt;(function)); } || requires(const Impl &amp;impl) { requires std::constructible_from&lt;std::remove_cvref_t&lt;F&gt;, F&gt;; impl.fold_map( detail::fold_right_probe_witness&lt;std::remove_cvref_t&lt;F&gt;, std::remove_cvref_t&lt;STATE&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::right_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -622,8 +622,8 @@ requires requires(const Impl &amp;impl) { impl.fold(std::forward&lt;T&gt;(value)
 
 </div>
 </div>
-<a id="aa08db480382f69dd09e2b867ef6b216b" name="aa08db480382f69dd09e2b867ef6b216b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa08db480382f69dd09e2b867ef6b216b">&#9670;&#160;</a></span>any_of()</h2>
+<a id="aae1514b8e421f5f803fe7c99bd351114" name="aae1514b8e421f5f803fe7c99bd351114"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae1514b8e421f5f803fe7c99bd351114">&#9670;&#160;</a></span>any_of()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -631,7 +631,7 @@ requires requires(const Impl &amp;impl) { impl.fold(std::forward&lt;T&gt;(value)
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
 template&lt;class T , class PREDICATE &gt; <br />
-requires requires(const Impl &amp;impl) { impl.any_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::probe_witness&lt;bool&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1any__monoid.html">any_monoid</a>{}); }</div>
+requires requires(const Impl &amp;impl) { impl.any_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::predicate_probe_witness&lt;PREDICATE&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1any__monoid.html">any_monoid</a>{}); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -672,8 +672,8 @@ requires requires(const Impl &amp;impl) { impl.any_of(std::forward&lt;T&gt;(valu
 
 </div>
 </div>
-<a id="aa55a88af93cc961cde8c184ad5e7f84b" name="aa55a88af93cc961cde8c184ad5e7f84b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa55a88af93cc961cde8c184ad5e7f84b">&#9670;&#160;</a></span>all_of()</h2>
+<a id="a0edb61bc4bf88b247ef6ef88ea8e000f" name="a0edb61bc4bf88b247ef6ef88ea8e000f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0edb61bc4bf88b247ef6ef88ea8e000f">&#9670;&#160;</a></span>all_of()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -681,7 +681,7 @@ requires requires(const Impl &amp;impl) { impl.any_of(std::forward&lt;T&gt;(valu
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
 template&lt;class T , class PREDICATE &gt; <br />
-requires requires(const Impl &amp;impl) { impl.all_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::probe_witness&lt;bool&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1all__monoid.html">all_monoid</a>{}); }</div>
+requires requires(const Impl &amp;impl) { impl.all_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::predicate_probe_witness&lt;PREDICATE&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1all__monoid.html">all_monoid</a>{}); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -811,8 +811,8 @@ requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(v
 
 </div>
 </div>
-<a id="a826b10313d15b1a9b16551573e2c75fd" name="a826b10313d15b1a9b16551573e2c75fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a826b10313d15b1a9b16551573e2c75fd">&#9670;&#160;</a></span>find_first()</h2>
+<a id="ab6b3a9a87cf9894e75ffd0d3e063c0b0" name="ab6b3a9a87cf9894e75ffd0d3e063c0b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6b3a9a87cf9894e75ffd0d3e063c0b0">&#9670;&#160;</a></span>find_first()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -820,7 +820,7 @@ requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(v
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
 template&lt;class T , class PREDICATE &gt; <br />
-requires requires(const Impl &amp;impl) { impl.find_first(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { typename Impl::element_type; self.fold_map(detail::optional_probe_witness{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1first__monoid.html">first_monoid</a>&lt;typename Impl::element_type&gt;{}); }</div>
+requires requires(const Impl &amp;impl) { impl.find_first(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { typename Impl::element_type; self.fold_map( detail::find_first_probe_witness&lt;PREDICATE, typename Impl::element_type&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1first__monoid.html">first_monoid</a>&lt;typename Impl::element_type&gt;{}); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
