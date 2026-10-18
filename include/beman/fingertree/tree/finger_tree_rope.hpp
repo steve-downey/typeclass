@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstddef>
+#include <concepts>
 #include <functional>
 #include <string>
 #include <string_view>
@@ -176,8 +177,13 @@ struct FingerTreeRopeTraversableImpl {
     auto traverse(this auto&&,
                   const APPLICATIVE&                                   applicative,
                   F&&                                                  function,
-                  const beman::fingertree::tree::FingerTreeRope<Tree>& rope) {
-        using Context = std::remove_cvref_t<std::invoke_result_t<F, const std::string&>>;
+                  const beman::fingertree::tree::FingerTreeRope<Tree>& rope)
+        requires std::invocable<F&, const std::string&> &&
+                 beman::transpose::applicative_object_for<
+                     APPLICATIVE,
+                     std::remove_cvref_t<std::invoke_result_t<F&, const std::string&>>>
+    {
+        using Context = std::remove_cvref_t<std::invoke_result_t<F&, const std::string&>>;
         using U       = beman::transpose::applicative_value_t<Context>;
 
         auto accumulated = applicative.pure(std::vector<U>{});

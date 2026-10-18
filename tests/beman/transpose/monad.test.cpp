@@ -10,6 +10,7 @@
 #include <optional>
 #include <string>
 #include <type_traits>
+#include <utility>
 
 namespace bt = beman::transpose;
 
@@ -295,4 +296,38 @@ TEST_CASE("monad: the derived operations are constexpr") {
     static_assert(m.bind_with(m, std::optional<int>{8}, half) ==
                   std::optional<int>{4});
     SUCCEED();
+}
+
+// steve-downey/typeclass#8: bind_with forwards to the delegate's bind, and
+// is constrained on that call, so a probe agrees with a probe of bind.
+namespace {
+
+struct NotCallable {};
+
+template <class MAP, class F>
+concept has_bind =
+    requires(const MAP &m, F f) { m.bind(std::optional<int>{1}, f); };
+
+template <class MAP, class F>
+concept has_bind_with =
+    requires(const MAP &m, F f) { m.bind_with(m, std::optional<int>{1}, f); };
+
+} // namespace
+
+TEST_CASE("monad: bind_with is a soft failure when the delegate rejects "
+          "the call") {
+    using Map = std::remove_cvref_t<decltype(bt::monad<std::optional<int>>)>;
+    auto half = [](int x) {
+        return x % 2 == 0 ? std::optional<int>{x / 2} : std::optional<int>{};
+    };
+    auto not_monadic = [](int x) { return x; };
+    STATIC_REQUIRE(has_bind_with<Map, decltype(half)>);
+    STATIC_REQUIRE(!has_bind_with<Map, NotCallable>);
+    STATIC_REQUIRE(has_bind_with<Map, NotCallable> ==
+                   has_bind<Map, NotCallable>);
+    STATIC_REQUIRE(has_bind_with<Map, decltype(not_monadic)> ==
+                   has_bind<Map, decltype(not_monadic)>);
+    const auto &m = bt::monad<std::optional<int>>;
+    REQUIRE(m.bind_with(m, std::optional<int>{8}, half) ==
+            std::optional<int>{4});
 }

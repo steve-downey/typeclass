@@ -23,6 +23,7 @@
 #include <beman/transpose/monoid.hpp>
 #include <beman/transpose/traverse.hpp>
 
+#include <concepts>
 #include <functional>
 #include <type_traits>
 #include <utility>
@@ -95,23 +96,27 @@ struct vector_traversable_impl {
     using element_type = VALUE_TYPE;
 
     /// A `vector` handed over as an rvalue owns its elements outright, so
-    /// this instance really does hand them on: the second `traverse` overload
-    /// below presents each element to `function` as an rvalue, one move per
-    /// element where the first overload costs a copy. Declaring it is what
+    /// this instance really does hand them on: `traverse` below presents each
+    /// element of an rvalue `vector` to `function` as an rvalue, one move per
+    /// element where an lvalue `vector` costs a copy. Declaring it is what
     /// lets `traverse` infer its context from the consuming call before this
     /// object has been selected.
     static constexpr bool consumes_rvalue_structure = true;
 
     // \ref{transpose.range.traverse}, traversable instance for vector
-    template <class APPLICATIVE, class FUNCTION>
+    template <class APPLICATIVE, class FUNCTION, class VALUES>
     constexpr auto traverse(this auto &&, const APPLICATIVE &applicative,
-                            FUNCTION &&function,
-                            const std::vector<VALUE_TYPE> &values);
-
-    template <class APPLICATIVE, class FUNCTION>
-    constexpr auto traverse(this auto &&, const APPLICATIVE &applicative,
-                            FUNCTION &&function,
-                            std::vector<VALUE_TYPE> &&values);
+                            FUNCTION &&function, VALUES &&values)
+        requires std::same_as<std::remove_cvref_t<VALUES>,
+                              std::vector<VALUE_TYPE>> &&
+                 std::invocable<FUNCTION &,
+                                detail::traversal_argument_t<
+                                    vector_traversable_impl, VALUES>> &&
+                 applicative_object_for<
+                     APPLICATIVE,
+                     std::remove_cvref_t<std::invoke_result_t<
+                         FUNCTION &, detail::traversal_argument_t<
+                                         vector_traversable_impl, VALUES>>>>;
 };
 
 //! \expos
@@ -174,8 +179,15 @@ inline constexpr vector_append_t<ELEMENT> vector_append{};
 /// it as an lvalue would oblige `applicative` to copy the whole prefix built
 /// so far, once per element, making a successful traversal quadratic rather
 /// than linear in the elements it collects.
-//! \effects Let `E` be the type `function` returns for an element of
-//! `values`. Applies `function` to each element of `values` in order. If
+//! \constraints `remove_cvref_t<VALUES>` is `vector<VALUE_TYPE>`. Let `A` be
+//! `$traversal-argument-t$<vector_traversable_impl, VALUES>`: `VALUE_TYPE&&`
+//! if `VALUES` is a non-`const`, non-`volatile` rvalue, `const VALUE_TYPE&`
+//! otherwise. `function` is invocable with an argument of type `A`, and
+//! `APPLICATIVE` satisfies `applicative_object_for` for the context it
+//! returns.
+//! \effects Let `E` be the type `function` returns for an argument of type
+//! `A`. Applies `function` to each element of `values` in order, passing it
+//! as `A`. If
 //! `applicative.collect(v)` is a valid expression for an rvalue `vector<E>`
 //! `v`, composes the resulting contextual values by passing all of them to
 //! that one call; otherwise composes them pairwise with `applicative`,
@@ -199,59 +211,40 @@ inline constexpr vector_append_t<ELEMENT> vector_append{};
 //! the accumulated result is handed to each composition as an rvalue:
 //! composing it as an lvalue would oblige `applicative` to copy the whole
 //! prefix built so far, once per element, making a successful traversal
-//! quadratic rather than linear in the elements it collects.
+//! quadratic rather than linear in the elements it collects. Passing the
+//! elements of an rvalue `vector` as rvalues is what makes a traversal that
+//! consumes its argument -- `transpose(std::move(v))` -- express that intent
+//! through to `function`, and what admits an element type that can be moved
+//! but not copied; such a `values` is left in a valid but unspecified state.
 template <class VALUE_TYPE>
-template <class APPLICATIVE, class FUNCTION>
+template <class APPLICATIVE, class FUNCTION, class VALUES>
 constexpr auto vector_traversable_impl<VALUE_TYPE>::traverse(
     this auto &&, const APPLICATIVE &applicative, FUNCTION &&function,
-    const std::vector<VALUE_TYPE> &values) {
-    using Effect = std::remove_cvref_t<
-        std::invoke_result_t<FUNCTION &, const VALUE_TYPE &>>;
-
-    if constexpr (detail::collecting_applicative<APPLICATIVE, Effect>) {
-        std::vector<Effect> effects;
-        effects.reserve(values.size());
-        for (const auto &value : values) {
-            effects.push_back(std::invoke(function, value));
-        }
-        return applicative.collect(std::move(effects));
-    } else {
-        using Element = applicative_value_t<Effect>;
-
-        std::vector<Element> collected;
-        collected.reserve(values.size());
-
-        auto accumulated = applicative.pure(std::move(collected));
-        for (const auto &value : values) {
-            accumulated = applicative.invoke(detail::vector_append<Element>,
-                                             std::move(accumulated),
-                                             std::invoke(function, value));
-        }
-        return accumulated;
-    }
-}
-
-//! \effects Equivalent to the preceding overload, except that each element of
-//! `values` is passed to `function` as an rvalue.
-//! \returns As the preceding overload.
-//! \complexity As the preceding overload.
-//! \remarks This overload is what makes a traversal that consumes its
-//! argument -- `transpose(std::move(v))` -- express that intent through to
-//! `function`, and what admits an element type that can be moved but not
-//! copied. `values` is left in a valid but unspecified state.
-template <class VALUE_TYPE>
-template <class APPLICATIVE, class FUNCTION>
-constexpr auto vector_traversable_impl<VALUE_TYPE>::traverse(
-    this auto &&, const APPLICATIVE &applicative, FUNCTION &&function,
-    std::vector<VALUE_TYPE> &&values) {
+    VALUES &&values)
+    requires std::same_as<std::remove_cvref_t<VALUES>,
+                          std::vector<VALUE_TYPE>> &&
+             std::invocable<FUNCTION &, detail::traversal_argument_t<
+                                            vector_traversable_impl, VALUES>> &&
+             applicative_object_for<
+                 APPLICATIVE,
+                 std::remove_cvref_t<std::invoke_result_t<
+                     FUNCTION &, detail::traversal_argument_t<
+                                     vector_traversable_impl, VALUES>>>>
+{
+    // const VALUE_TYPE& for an lvalue or const vector, VALUE_TYPE&& for a
+    // non-const rvalue one: the category traverse's callers inferred the
+    // context from, so the constraint above asks about the only call made.
+    using Argument =
+        detail::traversal_argument_t<vector_traversable_impl, VALUES>;
     using Effect =
-        std::remove_cvref_t<std::invoke_result_t<FUNCTION &, VALUE_TYPE &&>>;
+        std::remove_cvref_t<std::invoke_result_t<FUNCTION &, Argument>>;
 
     if constexpr (detail::collecting_applicative<APPLICATIVE, Effect>) {
         std::vector<Effect> effects;
         effects.reserve(values.size());
         for (auto &value : values) {
-            effects.push_back(std::invoke(function, std::move(value)));
+            effects.push_back(
+                std::invoke(function, static_cast<Argument>(value)));
         }
         return applicative.collect(std::move(effects));
     } else {
@@ -264,7 +257,7 @@ constexpr auto vector_traversable_impl<VALUE_TYPE>::traverse(
         for (auto &value : values) {
             accumulated = applicative.invoke(
                 detail::vector_append<Element>, std::move(accumulated),
-                std::invoke(function, std::move(value)));
+                std::invoke(function, static_cast<Argument>(value)));
         }
         return accumulated;
     }

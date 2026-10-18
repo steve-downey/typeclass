@@ -9,6 +9,7 @@
 #include <beman/transpose/traverse.hpp>
 
 #include <cstddef>
+#include <concepts>
 #include <functional>
 #include <type_traits>
 #include <utility>
@@ -140,8 +141,13 @@ struct FingerTreeIntervalIndexTraversableImpl {
     auto traverse(this auto&&,
                   const APPLICATIVE&                                                          applicative,
                   F&&                                                                         function,
-                  const beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>& index) {
-        using Context = std::remove_cvref_t<std::invoke_result_t<F, const PAYLOAD_TYPE&>>;
+                  const beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>& index)
+        requires std::invocable<F&, const PAYLOAD_TYPE&> &&
+                 beman::transpose::applicative_object_for<
+                     APPLICATIVE,
+                     std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>>
+    {
+        using Context = std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>;
         using U       = beman::transpose::applicative_value_t<Context>;
 
         auto accumulated = applicative.pure(std::vector<beman::fingertree::tree::Interval<U>>{});

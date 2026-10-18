@@ -10,6 +10,9 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <optional>
+#include <string>
+#include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace bt = beman::transpose;
@@ -90,4 +93,103 @@ TEST_CASE("traverse: the derived operations are constexpr") {
     static_assert(ti.for_each(std::vector<int>{1, 2}, some) ==
                   std::optional<std::vector<int>>{std::vector<int>{10, 20}});
     SUCCEED();
+}
+
+// steve-downey/typeclass#8: every Traversable entry point must answer a
+// probe with a constraint that does not match, never with a diagnostic from
+// inside a body whose return type is deduced.
+namespace {
+
+struct NotCallable {};
+
+template <class MAP, class APPLICATIVE, class F, class T>
+concept has_traverse = requires(const MAP &m, const APPLICATIVE &a, F f) {
+    m.traverse(a, f, std::declval<T>());
+};
+
+template <class MAP, class F, class T>
+concept has_for_each =
+    requires(const MAP &m, F f) { m.for_each(std::declval<T>(), f); };
+
+template <class MAP, class F, class T>
+concept has_traverse_with =
+    requires(const MAP &m, F f) { m.traverse_with(m, f, std::declval<T>()); };
+
+template <class MAP, class APPLICATIVE, class F, class T>
+concept has_traverse_with_applicative =
+    requires(const MAP &m, const APPLICATIVE &a, F f) {
+        m.traverse_with(m, a, f, std::declval<T>());
+    };
+
+template <class MAP, class T>
+concept has_transpose =
+    requires(const MAP &m) { m.transpose(std::declval<T>()); };
+
+template <class MAP, class T>
+concept has_transpose_with =
+    requires(const MAP &m) { m.transpose_with(m, std::declval<T>()); };
+
+} // namespace
+
+TEST_CASE("traverse: the vector object's traverse is a soft failure for a "
+          "call it cannot make") {
+    using VI = std::vector<int>;
+    using Map = std::remove_cvref_t<decltype(bt::traversable<VI>)>;
+    using App =
+        std::remove_cvref_t<decltype(bt::applicative<std::optional<int>>)>;
+    auto wrap = [](int x) { return std::optional<int>{x}; };
+    auto not_a_context = [](int x) { return x; };
+    auto consuming = [](int &&x) { return std::optional<int>{x}; };
+
+    STATIC_REQUIRE(has_traverse<Map, App, decltype(wrap), const VI &>);
+    STATIC_REQUIRE(has_traverse<Map, App, decltype(wrap), VI>);
+    STATIC_REQUIRE(!has_traverse<Map, App, NotCallable, const VI &>);
+    STATIC_REQUIRE(!has_traverse<Map, App, NotCallable, VI>);
+    STATIC_REQUIRE(!has_traverse<Map, App, decltype(not_a_context), VI>);
+    STATIC_REQUIRE(!has_traverse<Map, std::false_type, decltype(wrap), VI>);
+    STATIC_REQUIRE(
+        !has_traverse<Map, App, decltype(wrap), std::vector<std::string>>);
+
+    // An rvalue vector presents rvalue elements and an lvalue one presents
+    // const lvalues, and the constraint asks about exactly that call.
+    STATIC_REQUIRE(has_traverse<Map, App, decltype(consuming), VI>);
+    STATIC_REQUIRE(!has_traverse<Map, App, decltype(consuming), const VI &>);
+    STATIC_REQUIRE(!has_traverse<Map, App, decltype(consuming), VI &>);
+
+    const auto &traversable = bt::traversable<VI>;
+    REQUIRE(traversable.traverse(bt::applicative<std::optional<int>>, consuming,
+                                 VI{1, 2}) == std::optional<VI>{VI{1, 2}});
+}
+
+TEST_CASE("traverse: the derived Traversable operations are soft failures "
+          "for a call they cannot make") {
+    using VI = std::vector<int>;
+    using VO = std::vector<std::optional<int>>;
+    using Map = std::remove_cvref_t<decltype(bt::traversable<VI>)>;
+    using OptionalsMap = std::remove_cvref_t<decltype(bt::traversable<VO>)>;
+    using App =
+        std::remove_cvref_t<decltype(bt::applicative<std::optional<int>>)>;
+    auto wrap = [](int x) { return std::optional<int>{x}; };
+    using Wrap = decltype(wrap);
+
+    STATIC_REQUIRE(has_for_each<Map, Wrap, VI>);
+    STATIC_REQUIRE(!has_for_each<Map, NotCallable, VI>);
+    STATIC_REQUIRE(!has_for_each<Map, NotCallable, const VI &>);
+
+    STATIC_REQUIRE(has_traverse_with<Map, Wrap, VI>);
+    STATIC_REQUIRE(!has_traverse_with<Map, NotCallable, VI>);
+    STATIC_REQUIRE(has_traverse_with_applicative<Map, App, Wrap, VI>);
+    STATIC_REQUIRE(!has_traverse_with_applicative<Map, App, NotCallable, VI>);
+
+    STATIC_REQUIRE(has_transpose<OptionalsMap, VO>);
+    STATIC_REQUIRE(has_transpose<OptionalsMap, const VO &>);
+    STATIC_REQUIRE(!has_transpose<OptionalsMap, std::vector<std::string>>);
+    STATIC_REQUIRE(!has_transpose<OptionalsMap, VI>);
+    STATIC_REQUIRE(has_transpose_with<OptionalsMap, VO>);
+    STATIC_REQUIRE(!has_transpose_with<OptionalsMap, std::vector<std::string>>);
+
+    REQUIRE(bt::traversable<VI>.for_each(VI{1, 2}, wrap) ==
+            std::optional<VI>{VI{1, 2}});
+    REQUIRE(bt::traversable<VO>.transpose(VO{1, 2}) ==
+            std::optional<VI>{VI{1, 2}});
 }

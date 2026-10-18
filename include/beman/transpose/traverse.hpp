@@ -8,6 +8,7 @@
 #include <beman/transpose/functor.hpp>
 
 #include <concepts>
+#include <functional>
 #include <optional>
 #include <type_traits>
 #include <utility>
@@ -68,6 +69,31 @@ template <class OBJ>
 concept consuming_traversable_object =
     requires { requires bool(OBJ::consumes_rvalue_structure); };
 
+namespace detail {
+
+/// This alias names the category in which the traversable object
+/// `OBJ` presents an element when handed a structure of category `T`. Only an
+/// unqualified rvalue structure can be consumed; a `const` or `volatile`
+/// rvalue cannot bind a consuming primitive and therefore presents `const`
+/// lvalues, just as an lvalue or a non-consuming object does.
+//! \remarks `$traversal-argument-t$<OBJ, T>` is the type through which the
+//! Traversable object `OBJ` presents an element when handed a structure of
+//! type and value category `T`. It is an rvalue reference only for a
+//! non-`const`, non-`volatile` rvalue structure and an object satisfying
+//! `$consuming-traversable-object$`; otherwise it is a `const` lvalue
+//! reference.
+//! \expos
+template <class OBJ, class T>
+using traversal_argument_t = std::conditional_t<
+    !std::is_lvalue_reference_v<T> &&
+        !std::is_const_v<std::remove_reference_t<T>> &&
+        !std::is_volatile_v<std::remove_reference_t<T>> &&
+        consuming_traversable_object<std::remove_cvref_t<OBJ>>,
+    typename std::remove_cvref_t<OBJ>::element_type &&,
+    const typename std::remove_cvref_t<OBJ>::element_type &>;
+
+} // namespace detail
+
 /// Traversable pattern invariants:
 /// - Instances are single lookup objects that provide traverse(F, T).
 /// - transpose is a derived object operation implemented from
@@ -118,30 +144,54 @@ struct derive_traversable : protected Impl {
 
     // \ref{transpose.traversable.ops}, traversal operations
     template <class T, class F>
-    constexpr auto for_each(this auto &&self, T &&value, F &&function);
+    constexpr auto for_each(this auto &&self, T &&value, F &&function)
+        requires requires {
+            self.traverse(
+                applicative<std::remove_cvref_t<std::invoke_result_t<
+                    F &, detail::traversal_argument_t<decltype(self), T>>>>,
+                std::forward<F>(function), std::forward<T>(value));
+        };
 
     template <class T>
         requires applicative_context<typename Impl::element_type>
-    constexpr auto transpose(this auto &&self, T &&value);
+    constexpr auto transpose(this auto &&self, T &&value)
+        requires requires {
+            self.traverse(applicative<typename Impl::element_type>,
+                          std::identity{}, std::forward<T>(value));
+        };
 
     // \ref{transpose.traversable.delegate}, delegated traversal
     template <class TRAVERSABLE_MAP, class T, class F>
     constexpr auto traverse_with(this auto &&,
                                  const TRAVERSABLE_MAP &traversable_map,
-                                 F &&function, T &&value);
+                                 F &&function, T &&value)
+        requires requires {
+            traversable_map.traverse(
+                applicative<std::remove_cvref_t<std::invoke_result_t<
+                    F &, detail::traversal_argument_t<TRAVERSABLE_MAP, T>>>>,
+                std::forward<F>(function), std::forward<T>(value));
+        };
 
     template <class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
     constexpr auto traverse_with(this auto &&,
                                  const TRAVERSABLE_MAP &traversable_map,
                                  const APPLICATIVE_MAP &applicative_map,
-                                 F &&function, T &&value);
+                                 F &&function, T &&value)
+        requires requires {
+            traversable_map.traverse(applicative_map, std::forward<F>(function),
+                                     std::forward<T>(value));
+        };
 
     template <class TRAVERSABLE_MAP, class T>
         requires applicative_context<
             typename std::remove_cvref_t<TRAVERSABLE_MAP>::element_type>
     constexpr auto transpose_with(this auto &&self,
                                   const TRAVERSABLE_MAP &traversable_map,
-                                  T &&value);
+                                  T &&value)
+        requires requires {
+            self.traverse_with(traversable_map, std::identity{},
+                               std::forward<T>(value));
+        };
 
   private:
     //! \omit
@@ -175,31 +225,6 @@ using traversable_object_t =
 //! \expos
 template <class T>
 using structure_element_t = typename traversable_object_t<T>::element_type;
-
-namespace detail {
-
-/// This alias names the category in which the traversable object
-/// `OBJ` presents an element when handed a structure of category `T`. Only an
-/// unqualified rvalue structure can be consumed; a `const` or `volatile`
-/// rvalue cannot bind a consuming primitive and therefore presents `const`
-/// lvalues, just as an lvalue or a non-consuming object does.
-//! \remarks `$traversal-argument-t$<OBJ, T>` is the type through which the
-//! Traversable object `OBJ` presents an element when handed a structure of
-//! type and value category `T`. It is an rvalue reference only for a
-//! non-`const`, non-`volatile` rvalue structure and an object satisfying
-//! `$consuming-traversable-object$`; otherwise it is a `const` lvalue
-//! reference.
-//! \expos
-template <class OBJ, class T>
-using traversal_argument_t = std::conditional_t<
-    !std::is_lvalue_reference_v<T> &&
-        !std::is_const_v<std::remove_reference_t<T>> &&
-        !std::is_volatile_v<std::remove_reference_t<T>> &&
-        consuming_traversable_object<std::remove_cvref_t<OBJ>>,
-    typename std::remove_cvref_t<OBJ>::element_type &&,
-    const typename std::remove_cvref_t<OBJ>::element_type &>;
-
-} // namespace detail
 
 /// A `const` or `volatile` rvalue cannot bind a consuming primitive. This
 /// alias is the registered-object specialization of `traversal_argument_t`;
@@ -429,6 +454,9 @@ concept traversable_object =
 
 // \rSec3[transpose.traversable.ops]{Traversal operations}
 
+//! \constraints Let `C` be the context `function` returns for an argument of
+//! type `$traversal-argument-t$<decltype(self), T>`. `self.traverse` accepts
+//! the object `applicative<C>` names, `function`, and `value`.
 //! \effects Applies `function` to each element of `value` and transposes the
 //! resulting contextual values, preserving the shape of `value`. The element
 //! is presented through `$traversal-argument-t$<decltype(self), T>`. The
@@ -443,7 +471,14 @@ concept traversable_object =
 template <class Impl>
 template <class T, class F>
 constexpr auto derive_traversable<Impl>::for_each(this auto &&self, T &&value,
-                                                  F &&function) {
+                                                  F &&function)
+    requires requires {
+        self.traverse(
+            applicative<std::remove_cvref_t<std::invoke_result_t<
+                F &, detail::traversal_argument_t<decltype(self), T>>>>,
+            std::forward<F>(function), std::forward<T>(value));
+    }
+{
     using Context = std::remove_cvref_t<std::invoke_result_t<
         F &, detail::traversal_argument_t<decltype(self), T>>>;
     const auto &applicative_map = applicative<Context>;
@@ -452,7 +487,8 @@ constexpr auto derive_traversable<Impl>::for_each(this auto &&self, T &&value,
 }
 
 //! \constraints `element_type` is a context for which
-//! `applicative` names an applicative object.
+//! `applicative` names an applicative object, and `self.traverse` accepts that
+//! object, an identity function, and `value`.
 //! \effects Equivalent to traversing `value` with the identity function: a
 //! structure of contextual values becomes a single contextual value of the
 //! structure, preserving shape.
@@ -465,17 +501,22 @@ constexpr auto derive_traversable<Impl>::for_each(this auto &&self, T &&value,
 template <class Impl>
 template <class T>
     requires applicative_context<typename Impl::element_type>
-constexpr auto derive_traversable<Impl>::transpose(this auto &&self,
-                                                   T &&value) {
-    using Context = element_type;
-    const auto &applicative_map = applicative<Context>;
-    return self.traverse(
-        applicative_map, [](auto &&x) { return std::forward<decltype(x)>(x); },
-        std::forward<T>(value));
+constexpr auto derive_traversable<Impl>::transpose(this auto &&self, T &&value)
+    requires requires {
+        self.traverse(applicative<typename Impl::element_type>, std::identity{},
+                      std::forward<T>(value));
+    }
+{
+    return self.traverse(applicative<typename Impl::element_type>,
+                         std::identity{}, std::forward<T>(value));
 }
 
 // \rSec3[transpose.traversable.delegate]{Delegated traversal}
 
+//! \constraints Let `C` be the context `function` returns for an argument of
+//! type `$traversal-argument-t$<TRAVERSABLE_MAP, T>`.
+//! `traversable_map.traverse` accepts the object `applicative<C>` names,
+//! `function`, and `value`.
 //! \effects Traverses `value` using the traversable object `traversable_map`
 //! rather than `*this`. The element is presented through
 //! `$traversal-argument-t$<TRAVERSABLE_MAP, T>`. The applicative object is the
@@ -487,7 +528,14 @@ template <class TRAVERSABLE_MAP, class T, class F>
 constexpr auto
 derive_traversable<Impl>::traverse_with(this auto &&,
                                         const TRAVERSABLE_MAP &traversable_map,
-                                        F &&function, T &&value) {
+                                        F &&function, T &&value)
+    requires requires {
+        traversable_map.traverse(
+            applicative<std::remove_cvref_t<std::invoke_result_t<
+                F &, detail::traversal_argument_t<TRAVERSABLE_MAP, T>>>>,
+            std::forward<F>(function), std::forward<T>(value));
+    }
+{
     using Context = std::remove_cvref_t<std::invoke_result_t<
         F &, detail::traversal_argument_t<TRAVERSABLE_MAP, T>>>;
     const auto &applicative_map = applicative<Context>;
@@ -495,26 +543,41 @@ derive_traversable<Impl>::traverse_with(this auto &&,
                                     std::forward<T>(value));
 }
 
+//! \constraints `traversable_map.traverse(applicative_map, function, value)`,
+//! with `function` and `value` forwarded, is a valid expression.
 //! \effects-equiv
 template <class Impl>
 template <class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
 constexpr auto derive_traversable<Impl>::traverse_with(
     this auto &&, const TRAVERSABLE_MAP &traversable_map,
-    const APPLICATIVE_MAP &applicative_map, F &&function, T &&value) {
+    const APPLICATIVE_MAP &applicative_map, F &&function, T &&value)
+    requires requires {
+        traversable_map.traverse(applicative_map, std::forward<F>(function),
+                                 std::forward<T>(value));
+    }
+{
     return traversable_map.traverse(applicative_map, std::forward<F>(function),
                                     std::forward<T>(value));
 }
 
+//! \constraints The element type of `TRAVERSABLE_MAP` is a context for which
+//! `applicative` names an applicative object, and
+//! `self.traverse_with(traversable_map, identity{}, value)`, with `value`
+//! forwarded, is a valid expression.
 //! \effects-equiv
 template <class Impl>
 template <class TRAVERSABLE_MAP, class T>
     requires applicative_context<
         typename std::remove_cvref_t<TRAVERSABLE_MAP>::element_type>
 constexpr auto derive_traversable<Impl>::transpose_with(
-    this auto &&self, const TRAVERSABLE_MAP &traversable_map, T &&value) {
-    return self.traverse_with(
-        traversable_map, [](auto &&x) { return std::forward<decltype(x)>(x); },
-        std::forward<T>(value));
+    this auto &&self, const TRAVERSABLE_MAP &traversable_map, T &&value)
+    requires requires {
+        self.traverse_with(traversable_map, std::identity{},
+                           std::forward<T>(value));
+    }
+{
+    return self.traverse_with(traversable_map, std::identity{},
+                              std::forward<T>(value));
 }
 
 // -- Operation objects --
