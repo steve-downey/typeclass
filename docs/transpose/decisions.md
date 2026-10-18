@@ -1397,19 +1397,17 @@ explicit delegation to an object the caller passed — neither has an `Impl`
 operation to prefer.
 
 **Not every member has an expressible second alternative.** `kleisli`
-returns a closure whose body calls `bind` on an argument type ("a") that is
-not known until the closure is invoked, so there is no concrete expression
-to probe at `kleisli`'s own instantiation. `bind`'s existence is already
-guaranteed unconditionally by `Monad<Impl>`'s class invariant (the
-`static_assert` plus `using Impl::bind;` at the top of the class fail the
-whole class before `kleisli`'s clause is ever reached if `Impl` lacks
-`bind`), so `kleisli`'s second alternative is spelled `true` rather than a
-tautological re-check. `invoke`'s second alternative could not name
-`FUNCTION` directly either — its arity does not match `bind`'s
-single-argument callback shape, since the derivation applies it only after
-unwinding nested `bind` calls — so it probes `impl.bind(first, <a
-single-argument passthrough lambda>)` instead, checking that `FIRST` is
-bind-compatible without asserting anything about `FUNCTION`.
+returns a function whose body calls `bind` on an argument type ("a") that is
+not known until that function is called, so nothing about `f` and `g` can be
+checked at `kleisli`'s own instantiation. Its second alternative requires
+only what building the composition needs, that `f` and `g` can be moved in,
+and the composition's call operator carries the real constraint, on the
+`bind` it makes. Where a derivation's continuation is a lambda over an
+element only `bind` or `fold_map` knows the type of, the alternative names
+the call with a witness that stands in for the lambda, constrained on what
+the lambda does with the caller's callable. (Revised 2026-10-18; until then
+`kleisli`'s alternative was `true`, and `invoke`'s checked only that `bind`
+accepts `FIRST`. See the Log.)
 
 **Why:** The constraint keeps the deep object concept a later step
 introduces from being satisfied vacuously by substitution alone, and
@@ -1666,6 +1664,52 @@ add one.
   against `bind` in `monad.test.cpp`, and a template test over the five
   finger-tree structures in `finger_tree_traversable.test.cpp`. All fail
   against the previous headers.
+- 2026-10-18 — steve-downey/typeclass#12: the remaining derived members
+  whose second alternative was weaker than their body. Each checked that
+  *some* derivation could run, with a witness that accepts anything, and
+  never the caller's callable, so the body then failed inside a lambda.
+  - Foldable: `fold_left`, `fold_right`, `any_of`, `all_of` and
+    `find_first` probe `fold_map` with witnesses that carry the caller's
+    callable (`detail::fold_left_probe_witness` and its siblings), each
+    constrained on what its derivation's lambda does with it. Only the fold
+    knows the element type, and it deduces it when it calls the witness, so
+    the check uses the element as the fold will pass it, for an Impl with or
+    without `element_type`. `any_of` and `all_of` declare `-> bool`, so a
+    probe never instantiated their bodies: they answered *true* rather than
+    failing hard.
+  - `fold_map`'s `fold_right` alternative now requires the function to be
+    invocable with `const element_type&` and its result to combine into the
+    accumulator. That alternative already requires `element_type`, so the
+    answer does not depend on whether `Impl::fold_right` checks the callable
+    it is given.
+  - `fold_left` and `fold_right` now name `std::move(initial_state)` in
+    their native alternative, as the body passes it.
+  - Monad: `invoke`'s alternative binds `FIRST` with
+    `detail::invoke_continuation_probe`, which binds each further argument
+    in turn and at the last requires the function to take every element and
+    `pure` to take its result. It follows the derived path all the way down,
+    as `ap_chain_valid` does for Applicative. `fmap`'s alternative checked
+    `bind(ma, function)`, treating the function as a continuation; it now
+    binds with a witness for the `pure . function` continuation the body
+    uses. It had passed for `optional` only because `optional`'s `bind`
+    accepts a continuation that does not return an `optional`
+    (steve-downey/typeclass#13).
+  - `kleisli`, decided with the issue: the composition is checked when it
+    is called, not when it is built. Its alternative was `|| true`; it now
+    requires only that `f` and `g` can be moved in, and the returned
+    function is `detail::kleisli_composition`, whose call operator is
+    constrained on `self.bind(f(a), g)`. So `kleisli(not_callable{},
+    not_callable{})` still builds, and calling the result is a soft failure,
+    as with `std::bind_front`. The rejected alternative was a form that
+    names the argument type (`kleisli<A>(f, g)`), which could be checked
+    when built but is new surface.
+  The rows for `invoke_with`, `for_each`, `traverse_with` and `bind_with`
+  were fixed by steve-downey/typeclass#6 and #8. Neither header is in the
+  wording, so nothing was regenerated. Tests: probes of each member in
+  `fold.test.cpp`, over a `fold_map` basis (the `vector` instance) and a
+  `fold_right` basis, including the operation objects, and of `fmap`,
+  `invoke` and `kleisli`'s composition in `monad.test.cpp`. All fail against
+  the previous headers.
 
 ## typeclass-conformance-depth
 
