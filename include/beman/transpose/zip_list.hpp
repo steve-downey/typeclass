@@ -12,6 +12,7 @@
 #include <beman/transpose/apply.hpp>
 
 #include <algorithm>
+#include <concepts>
 #include <cstddef>
 #include <functional>
 #include <optional>
@@ -171,10 +172,27 @@ struct ZipListApplicativeImpl {
      * @param first     first zip_list
      * @param rest      remaining zip_lists
      * @return zip_list of results
+     *
+     * The callable is decay-copied (moved, for an rvalue) and the copy is
+     * what runs, so a caller whose callable carries state it needs to see
+     * afterward passes `std::ref(f)`. That is the Standard's rule for its own
+     * algorithms ([algorithms.requirements]), and the constraint states the
+     * copy, so a callable that cannot be copied from the argument given fails
+     * softly. So do a callable that cannot take one element of each operand,
+     * and one whose result a zip_list cannot hold.
      */
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_zip_list_v<FIRST> &&
-                 (detail::is_zip_list_v<REST> && ...)
+                 (detail::is_zip_list_v<REST> && ...) &&
+                 std::constructible_from<std::remove_cvref_t<FUNCTION>,
+                                         FUNCTION> &&
+                 std::invocable<std::remove_cvref_t<FUNCTION> &,
+                                detail::zip_list_value_ref_t<FIRST>,
+                                detail::zip_list_value_ref_t<REST>...> &&
+                 detail::holdable_value<std::invoke_result_t<
+                     std::remove_cvref_t<FUNCTION> &,
+                     detail::zip_list_value_ref_t<FIRST>,
+                     detail::zip_list_value_ref_t<REST>...>>
     auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
                 REST &&...rest) {
         // The callable is moved into a local `callable` and then invoked as

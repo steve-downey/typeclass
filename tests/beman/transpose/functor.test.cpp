@@ -124,3 +124,14 @@ TEST_CASE("functor: optional and vector fmap reject functions that cannot "
     REQUIRE(bt::fmap([](int x) { return x + 1; }, V{1, 2}) == V{2, 3});
     REQUIRE(bt::functor<V>.replace(V{1, 2}, 7) == V{7, 7});
 }
+
+// steve-downey/typeclass#18: fmap rejects a callable whose result the
+// context cannot hold, such as one returning void.
+TEST_CASE("functor: optional and vector fmap reject a callable returning "
+          "void") {
+    using ReturnsVoid = decltype([](int) {});
+    STATIC_REQUIRE(!has_fmap_object<ReturnsVoid, std::optional<int>>);
+    STATIC_REQUIRE(!has_fmap_object<ReturnsVoid, std::vector<int>>);
+    STATIC_REQUIRE(!has_fmap_object<decltype([](int) { return std::nullopt; }),
+                                    std::optional<int>>);
+}

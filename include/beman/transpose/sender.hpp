@@ -122,12 +122,24 @@ struct SenderApplicativeImpl {
      * through forwarding references is also what states the operand shape
      * this object composes, which the other registered objects state with
      * an explicit constraint.
+     *
+     * The callable is decay-copied into the deferred work -- it has to be,
+     * since the work outlives the call -- and the constraint says so, so a
+     * callable that cannot be copied from the argument given fails softly
+     * rather than at the copy. A caller who needs the work to use their own
+     * object passes `std::ref` or `std::cref`. The result must be a value a
+     * sender can hold, which a function returning void is not.
      */
     template <class FUNCTION, class FIRST, class... REST>
     auto invoke(this auto &&, FUNCTION &&function, sender<FIRST> first,
                 sender<REST>... rest)
         -> sender<std::remove_cvref_t<std::invoke_result_t<
-            const std::remove_cvref_t<FUNCTION> &, FIRST, REST...>>> {
+            const std::remove_cvref_t<FUNCTION> &, FIRST, REST...>>>
+        requires std::constructible_from<std::remove_cvref_t<FUNCTION>,
+                                         FUNCTION> &&
+                 detail::holdable_value<std::invoke_result_t<
+                     const std::remove_cvref_t<FUNCTION> &, FIRST, REST...>>
+    {
         using U = std::remove_cvref_t<std::invoke_result_t<
             const std::remove_cvref_t<FUNCTION> &, FIRST, REST...>>;
         return sender<U>{[function = std::remove_cvref_t<FUNCTION>(
