@@ -24,7 +24,7 @@
 
 #include <beman/execution/execution.hpp>
 
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 
 #include <atomic>
 #include <chrono>

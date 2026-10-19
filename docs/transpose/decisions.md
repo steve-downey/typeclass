@@ -2321,7 +2321,7 @@ instead of to nothing.
 **Why the drafted answer was not taken:** it was drafted without the deciding
 entry in view, and was weaker on the axis that matters. Default-ON-when-found
 means that on any machine where `beman.execution` happens to be installed,
-`#include <beman/transpose/transpose.hpp>` acquires an execution dependency
+`#include <beman/transpose.hpp>` acquires an execution dependency
 the installer never asked for. That is the outcome
 [p2300-front-door-shape](#p2300-front-door-shape) names and forbids, and the
 two entries' Whys never disagreed about it — both want the front door light.
@@ -3722,7 +3722,7 @@ translation unit that uses it, with no diagnostic required?
    header per standard type stands in for the standard header: `array.hpp`,
    `expected.hpp`, `optional.hpp`, `sequence.hpp` (for `<vector>`),
    `simd.hpp` and `string.hpp`. Including one is the program's obligation.
-   The umbrella `transpose.hpp` includes them all.
+   The umbrella `beman/transpose.hpp` includes them all.
 
 **Why:** A partial specialization must be declared before the first use
 that would cause an implicit instantiation, in every translation unit in
@@ -3770,3 +3770,27 @@ wording introduction, by hand until the wording generator can place it.
   Tests and examples that used these instances through a typeclass header
   alone stopped compiling and now include the instance header, which is
   the obligation working as intended.
+
+---
+
+## umbrella-header-location
+
+**Question:** Where does a package's umbrella (convenience) header live?
+**Status:** DECIDED 2026-10-19
+**Decided by:** Beman project guidance from a catch-up on 2026-10-19,
+relayed by Steve Downey on
+[steve-downey/typeclass#29](https://github.com/steve-downey/typeclass/issues/29).
+**Decision:** One level up from the package directory, named for the
+package: `beman/transpose.hpp`, `beman/tree_algorithms.hpp`,
+`beman/fingertree.hpp`. The old paths are gone, with no forwarding headers,
+because nothing has been released.
+**Why:** A Beman package owns every extension of its name under `beman/`,
+not just the bare name and the directory, so `beman/transpose.hpp` cannot
+collide with another package. It is also the spelling a user reaches for.
+**Consequences:** An umbrella header only includes. `transpose.hpp` used
+to define the `transpose` operation object as well, and was the wording
+source for [transpose.alg.transpose]; both moved to `traverse.hpp`, after
+`traverse`, which is the operation it is defined in terms of. The wording
+is unchanged.
+**Log:**
+- 2026-10-19 — Applied to all three packages.

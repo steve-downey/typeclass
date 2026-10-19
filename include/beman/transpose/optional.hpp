@@ -9,8 +9,8 @@
 // applicative instance itself (docs/transpose/decisions.md#instance-placement).
 // Include it, not only <optional>, before the first use of a typeclass on a
 // std::optional, in every translation unit that makes one: a use that precedes
-// the instance is ill-formed, no diagnostic required. transpose.hpp includes
-// it, and so does traverse.hpp, whose traversable_impl probes with the
+// the instance is ill-formed, no diagnostic required. beman/transpose.hpp
+// includes it, and so does traverse.hpp, whose traversable_impl probes with the
 // optional applicative.
 
 #include <beman/transpose/apply.hpp>

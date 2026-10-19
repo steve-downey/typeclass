@@ -3,8 +3,8 @@
 
 #include <beman/transpose/grade.hpp>
 
+#include <beman/transpose.hpp>
 #include <beman/transpose/error_set.hpp>
-#include <beman/transpose/transpose.hpp>
 
 #include "test_support.hpp"
 

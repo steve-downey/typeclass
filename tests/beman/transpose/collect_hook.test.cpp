@@ -14,8 +14,8 @@
 
 #include <beman/transpose/sequence.hpp>
 
+#include <beman/transpose.hpp>
 #include <beman/transpose/apply.hpp>
-#include <beman/transpose/transpose.hpp>
 #include <beman/transpose/traverse.hpp>
 
 #include <catch2/catch_test_macros.hpp>

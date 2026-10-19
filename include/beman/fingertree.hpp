@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#ifndef BEMAN_FINGERTREE_FINGERTREE_HPP
-#define BEMAN_FINGERTREE_FINGERTREE_HPP
+#ifndef BEMAN_FINGERTREE_HPP
+#define BEMAN_FINGERTREE_HPP
 
 #include <beman/fingertree/config.hpp>
 
@@ -27,4 +27,4 @@ import beman.fingertree;
 #endif // BEMAN_FINGERTREE_USE_MODULES() &&
        // !defined(BEMAN_FINGERTREE_INCLUDED_FROM_INTERFACE_UNIT)
 
-#endif // BEMAN_FINGERTREE_FINGERTREE_HPP
+#endif // BEMAN_FINGERTREE_HPP

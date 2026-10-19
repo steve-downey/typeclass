@@ -1,7 +1,7 @@
 // installtest/transpose/test.cpp                                     -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 
 #include <iostream>
 #include <optional>

@@ -6,7 +6,7 @@
 // for three independent contexts (fallible value, deferred result, lanewise),
 // all over the same std::vector structure and the same API.
 
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 

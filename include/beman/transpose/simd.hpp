@@ -21,7 +21,7 @@
 // wording for it. Include it, not only <simd>, before the first use of the
 // applicative on a std::simd::basic_vec, in every translation unit that makes
 // one: a use that precedes the instance is ill-formed, no diagnostic
-// required. transpose.hpp includes it.
+// required. beman/transpose.hpp includes it.
 
 #include <version>
 

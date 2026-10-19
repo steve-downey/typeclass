@@ -82,7 +82,7 @@ Once you have the name, you see it everywhere.
 The fallible case is the loop above, gone:
 
 #+begin_src cpp
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 namespace bt = beman::transpose;
 
 std::vector<std::optional<int>> in{ {1}, {2}, {3} };

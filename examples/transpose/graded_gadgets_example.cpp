@@ -10,7 +10,7 @@
 // The `// <uuid>` ... `// <uuid> end` comment pairs are org-transclusion
 // anchors used by papers/blog/*.org; do not delete or nest them.
 
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 
 #include <expected>
 #include <iostream>

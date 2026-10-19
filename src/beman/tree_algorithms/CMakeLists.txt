@@ -50,7 +50,7 @@ target_sources(
     ${PROJECT_SOURCE_DIR}/include/beman/tree_algorithms/recursion_schemes.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/tree_algorithms/recursion_schemes_lookup.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/tree_algorithms/rose_tree.hpp
-    ${PROJECT_SOURCE_DIR}/include/beman/tree_algorithms/tree_algorithms.hpp
+    ${PROJECT_SOURCE_DIR}/include/beman/tree_algorithms.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/tree_algorithms/todo.hpp
     "${PROJECT_BINARY_DIR}/include/beman/tree_algorithms/config_generated.hpp"
 )

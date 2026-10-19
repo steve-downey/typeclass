@@ -9,8 +9,8 @@
 // (docs/transpose/decisions.md#instance-placement); the paper proposes no
 // wording for it. Include it, not only <string>, before the first use of
 // Monoid<std::string>, in every translation unit that makes one: a use that
-// precedes the instance is ill-formed, no diagnostic required. transpose.hpp
-// includes it.
+// precedes the instance is ill-formed, no diagnostic required.
+// beman/transpose.hpp includes it.
 
 #include <beman/transpose/monoid.hpp>
 

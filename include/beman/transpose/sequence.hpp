@@ -21,8 +21,8 @@
 // the instances itself (docs/transpose/decisions.md#instance-placement).
 // Include it, not only <vector>, before the first use of a typeclass on a
 // std::vector, in every translation unit that makes one: a use that precedes
-// the instance is ill-formed, no diagnostic required. transpose.hpp includes
-// it.
+// the instance is ill-formed, no diagnostic required. beman/transpose.hpp
+// includes it.
 
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>

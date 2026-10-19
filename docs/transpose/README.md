@@ -38,7 +38,7 @@ that works across three independent contexts over the same structure:
 All three flow through the same verbs:
 
 ```cpp
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 namespace bt = beman::transpose;
 
 bt::transpose(std::vector<std::optional<int>>{...}); // -> optional<vector<int>>
@@ -56,10 +56,12 @@ surface is checked against genuine `std::execution` senders separately, in
 
 ## Public surface
 
-Headers live under `include/beman/transpose/`:
+The umbrella header is `include/beman/transpose.hpp`, beside the package
+directory: it includes every header below. The rest live under
+`include/beman/transpose/`:
 
-- `transpose.hpp` — umbrella header and the front-door `transpose` verb
-- `traverse.hpp` — the `Traversable` customization base and free `traverse`
+- `traverse.hpp` — the `Traversable` customization base and the `traverse`
+  and `transpose` operation objects
 - `apply.hpp`, `functor.hpp`, `fold.hpp`, `monoid.hpp`, `dual_monoid.hpp`,
   `monad.hpp` — the bundled customization core (applicative / functor /
   foldable / monoid / monad typeclass objects)
