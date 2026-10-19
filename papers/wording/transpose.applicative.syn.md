@@ -219,35 +219,4 @@ concept applicative_object =
 
 :::
 
-```cpp
-namespace std {
-  template<class VALUE_TYPE>
-  struct $optional-applicative-impl$ {
-    // @[transpose.applicative.optional]{- .sref}@, applicative instance for optional
-    template<class VALUE>
-    constexpr auto pure(this auto&&, VALUE&& value) -> optional<remove_cvref_t<VALUE>>;
-
-    template<class FUNCTION, class FIRST, class... REST>
-      requires $is-optional-v$<FIRST> && ($is-optional-v$<REST> && ...) &&
-               invocable<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...> &&
-               $optional-holdable-value$<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>,
-                                                       $contained-ref-t$<REST>...>>
-    constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest)
-        -> optional<remove_cvref_t<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>,
-                                                   $contained-ref-t$<REST>...>>>;
-  }; // exposition only
-}
-```
-
-```cpp
-namespace std {
-  template<class VALUE_TYPE>
-  struct $optional-applicative-map$
-      : derive_applicative<$optional-applicative-impl$<VALUE_TYPE>> {
-    using $optional-applicative-impl$<VALUE_TYPE>::invoke;
-    using $optional-applicative-impl$<VALUE_TYPE>::pure;
-  }; // exposition only
-}
-```
-
 :::

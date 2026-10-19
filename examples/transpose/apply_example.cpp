@@ -5,6 +5,7 @@
 // arguments, short-circuiting when any argument is absent.
 
 #include <beman/transpose/apply.hpp>
+#include <beman/transpose/optional.hpp>
 
 #include <iostream>
 #include <optional>

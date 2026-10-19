@@ -3,10 +3,8 @@
 #ifndef BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP
 #define BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP
 
-#include <array>
 #include <concepts>
 #include <cstddef>
-#include <optional>
 #include <type_traits>
 #include <utility>
 
@@ -103,11 +101,6 @@ struct applicative_value<
     using type = typename std::remove_cvref_t<T>::value_type;
 };
 
-template <class T>
-struct applicative_value<std::optional<T>, void> {
-    using type = T;
-};
-
 /** Convenience alias for `applicative_value<T>::type`. */
 //! \expos
 template <class T>
@@ -115,22 +108,6 @@ using applicative_value_t =
     typename applicative_value<std::remove_cvref_t<T>>::type;
 
 namespace detail {
-
-/** Whether `T`, ignoring cv-qualification and reference, is a
- * `std::optional` specialization. Lets an `invoke` deduce its operands
- * through forwarding references -- which is what carries the caller's value
- * category into the operation -- while still declining operands that are not
- * of the context it composes. */
-template <class T>
-struct is_optional : std::false_type {};
-
-template <class U>
-struct is_optional<std::optional<U>> : std::true_type {};
-
-//! \expos
-template <class T>
-inline constexpr bool is_optional_v =
-    is_optional<std::remove_cvref_t<T>>::value;
 
 /** Whether `RESULT`, ignoring cv-qualification and reference -- as the
  * instances decay a callable's result before holding it -- is a type a
@@ -145,15 +122,6 @@ template <class RESULT>
 concept holdable_value = std::is_object_v<std::remove_cvref_t<RESULT>> &&
                          !std::is_array_v<std::remove_cvref_t<RESULT>> &&
                          std::destructible<std::remove_cvref_t<RESULT>>;
-
-/** `holdable_value`, narrowed to what `std::optional` can hold, which
- * excludes its own tag types ([optional.optional.general]). */
-//! \expos
-template <class RESULT>
-concept optional_holdable_value =
-    holdable_value<RESULT> &&
-    !std::same_as<std::remove_cvref_t<RESULT>, std::nullopt_t> &&
-    !std::same_as<std::remove_cvref_t<RESULT>, std::in_place_t>;
 
 /** The type `forward_contained` yields for an operand of type `OPERAND`,
  * for naming in a trailing return type. Spelled before the function so that
@@ -220,24 +188,6 @@ constexpr auto forward_at(CONTAINER &&container, std::size_t index)
 template <class CONTAINER>
 using element_ref_t =
     decltype(forward_at(std::declval<CONTAINER>(), std::size_t{}));
-
-/** Builds a `std::array<U, N>` by calling `generator` with each index in turn.
- *
- * Default-constructing the array and then assigning its elements is the
- * obvious way to fill a fixed-extent result, and it silently requires the
- * element type to be default-constructible AND assignable -- neither of which
- * the operations that build such results actually need. Constructing the
- * array directly from the generated elements requires only what the operation
- * documents: that each element is constructible from its own result.
- *
- * The initializer-clauses of a braced-init-list are sequenced left to right
- * ([dcl.init.list]/4), so lane 0's element is produced before lane 1's.
- */
-template <class U, std::size_t N, class GENERATOR, std::size_t... INDICES>
-constexpr auto make_array(GENERATOR &&generator,
-                          std::index_sequence<INDICES...>) -> std::array<U, N> {
-    return std::array<U, N>{generator(INDICES)...};
-}
 
 /** Representative witness callable for probing a one-argument derived
  * operation that is templated over an arbitrary callable -- `fmap`, `map`,

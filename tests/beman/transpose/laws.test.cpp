@@ -8,6 +8,7 @@
 #include <beman/transpose/functor.hpp>
 #include <beman/transpose/grade.hpp>
 #include <beman/transpose/monad.hpp>
+#include <beman/transpose/optional.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 

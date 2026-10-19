@@ -4,7 +4,8 @@
 ./transpose.applicative.grade.md
 ./transpose.applicative.delegate.md
 ./transpose.applicative.objects.md
-./transpose.applicative.optional.md
+./transpose.optional.syn.md
+./transpose.optional.applicative.md
 ./transpose.traversable.syn.md
 ./transpose.traversable.ops.md
 ./transpose.traversable.delegate.md

@@ -4,6 +4,7 @@
 #include <beman/fingertree/tree/finger_tree_foldable.hpp> // Re-inclusion check
 
 #include <beman/transpose/fold.hpp>
+#include <beman/transpose/string.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 

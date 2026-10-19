@@ -147,8 +147,11 @@ Where it goes depends on who writes it
   proposal `<array>` provides the `array` instance, as it provides
   `tuple_size`, and the typeclass header does not pull in the containers it
   has instances for. This implementation cannot add to `<array>`, so
-  `array.hpp`, `expected.hpp`, `sequence.hpp` and `simd.hpp` stand in for
-  the standard headers, and the obligation above applies to them. The
+  `array.hpp`, `expected.hpp`, `optional.hpp`, `sequence.hpp` (for
+  `<vector>`), `simd.hpp` and `string.hpp` stand in for the standard
+  headers, and the obligation above applies to them. The typeclass headers
+  (`functor.hpp`, `apply.hpp`, `monad.hpp`, `monoid.hpp`, `fold.hpp`)
+  declare no instance for a standard type. The
   umbrella `transpose.hpp` includes all of them, so a program that includes
   it everywhere is safe by construction.
 

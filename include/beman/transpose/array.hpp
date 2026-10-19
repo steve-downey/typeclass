@@ -23,6 +23,7 @@
 // instance is ill-formed, no diagnostic required. transpose.hpp includes it.
 
 #include <beman/transpose/apply.hpp>
+#include <beman/transpose/detail/make_array.hpp>
 
 #include <array>
 #include <concepts>

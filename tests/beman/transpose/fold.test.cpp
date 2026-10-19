@@ -3,6 +3,7 @@
 
 #include <beman/transpose/fold.hpp>
 #include <beman/transpose/sequence.hpp>
+#include <beman/transpose/string.hpp>
 
 #include "test_support.hpp"
 

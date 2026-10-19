@@ -6,6 +6,7 @@
 // argument, and NTTP pinning.
 
 #include <beman/transpose/functor.hpp>
+#include <beman/transpose/optional.hpp>
 
 #include <iostream>
 #include <optional>

@@ -68,6 +68,25 @@ struct right_compose_monoid {
     }
 };
 
+/** Concatenation monoid on `std::vector<ELEMENT>`, what `to_vector` folds
+ * under. The same monoid as the registered `Monoid<std::vector<T>>`, kept
+ * here so that this header neither declares nor depends on an instance for a
+ * standard type (docs/transpose/decisions.md#instance-placement).
+ */
+template <class ELEMENT>
+struct vector_concat_monoid {
+    using value_type = std::vector<ELEMENT>;
+
+    constexpr auto identity() const -> std::vector<ELEMENT> { return {}; }
+
+    constexpr auto combine(std::vector<ELEMENT> lhs,
+                           const std::vector<ELEMENT> &rhs) const
+        -> std::vector<ELEMENT> {
+        lhs.insert(lhs.end(), rhs.begin(), rhs.end());
+        return lhs;
+    }
+};
+
 /** The result type of applying `F` to one element of an Impl that declares
  * `element_type`: the value type a two-argument `fold_map(f, value)` folds
  * under, and therefore the type whose registered Monoid it defaults to.
@@ -680,8 +699,11 @@ struct derive_foldable : protected Impl {
     }
 
     /** Collects all elements into a `std::vector` in traversal order. The
-     * derivation folds under the registered vector monoid, so it needs the
-     * element type: it is available where Impl declares `element_type`.
+     * derivation folds under a concatenation monoid over `std::vector` of the
+     * element type, so it needs that type: it is available where Impl
+     * declares `element_type`. The monoid is this header's own, not the
+     * registered `Monoid<std::vector<T>>`, which is declared with the vector
+     * instances (docs/transpose/decisions.md#instance-placement).
      */
     template <class T>
     constexpr auto to_vector(this auto &&self, T &&value)
@@ -690,9 +712,9 @@ struct derive_foldable : protected Impl {
         } || requires {
             // self, not impl -- see length's second alternative.
             typename Impl::element_type;
-            self.fold_map(detail::vector_probe_witness{},
-                          std::forward<T>(value),
-                          Monoid<std::vector<typename Impl::element_type>>{});
+            self.fold_map(
+                detail::vector_probe_witness{}, std::forward<T>(value),
+                detail::vector_concat_monoid<typename Impl::element_type>{});
         }
     {
         if constexpr (requires {
@@ -703,7 +725,8 @@ struct derive_foldable : protected Impl {
             using Element = typename Impl::element_type;
             return self.fold_map(
                 [](const auto &x) { return std::vector<Element>{x}; },
-                std::forward<T>(value), Monoid<std::vector<Element>>{});
+                std::forward<T>(value),
+                detail::vector_concat_monoid<Element>{});
         }
     }
 
