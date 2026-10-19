@@ -1710,6 +1710,22 @@ add one.
   `fold_right` basis, including the operation objects, and of `fmap`,
   `invoke` and `kleisli`'s composition in `monad.test.cpp`. All fail against
   the previous headers.
+- 2026-10-19 — steve-downey/typeclass#10 and #11: two shipped instances
+  whose own members were constrained on shape only, with deduced return
+  types, so a probe instantiated the body and failed hard on a function
+  that cannot take the element. `OptionalFunctorImpl::fmap` and
+  `VectorFunctorImpl::fmap` now require the function to be invocable with
+  `const VALUE_TYPE&` (as `F` and `F&` respectively, as each body invokes
+  it). The Maps re-expose those members, which hides
+  `derive_functor::fmap`, and dropping the using-declarations instead would
+  not have helped: the derived member's constraint calls the same
+  unconstrained impl. `array_applicative_impl::invoke` now also requires
+  `invocable<FUNCTION&, $element-ref-t$<FIRST>, $element-ref-t$<REST>...>`,
+  the call its body makes, so an rvalue operand admits a function that
+  takes its elements by rvalue and an lvalue operand does not.
+  `transpose.array.*` were regenerated. Tests: probes in
+  `functor.test.cpp` and `apply.test.cpp`, which fail against the previous
+  headers.
 
 ## typeclass-conformance-depth
 

@@ -19,6 +19,7 @@
 #include <beman/transpose/apply.hpp>
 
 #include <array>
+#include <concepts>
 #include <cstddef>
 #include <functional>
 #include <tuple>
@@ -62,7 +63,9 @@ struct array_applicative_impl {
 
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_std_array_of_extent_v<FIRST, N> &&
-                 (detail::is_std_array_of_extent_v<REST, N> && ...)
+                 (detail::is_std_array_of_extent_v<REST, N> && ...) &&
+                 std::invocable<FUNCTION &, detail::element_ref_t<FIRST>,
+                                detail::element_ref_t<REST>...>
     auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
                 REST &&...rest);
 };
@@ -114,14 +117,18 @@ auto array_applicative_impl<T, N>::pure(this auto &&, VALUE &&value) {
 //! result of invoking `function` with the element at position `i` of each
 //! operand.
 //! \complexity Exactly `N` applications of `function`.
-//! \remarks Application is positional: operands are combined lane by lane,
-//! and every operand is constrained to have the same fixed extent `N`. Each
+//! \remarks Application is positional: operands are combined lane by lane.
+//! Every operand is constrained to have the same fixed extent `N`, and
+//! `function` to be invocable with one element of each, in the value
+//! category the operand was passed in. Each
 //! position of each operand is read exactly once, so an operand passed as an
 //! rvalue has its elements handed to `function` rather than copied.
 template <class T, std::size_t N>
 template <class FUNCTION, class FIRST, class... REST>
     requires detail::is_std_array_of_extent_v<FIRST, N> &&
-             (detail::is_std_array_of_extent_v<REST, N> && ...)
+             (detail::is_std_array_of_extent_v<REST, N> && ...) &&
+             std::invocable<FUNCTION &, detail::element_ref_t<FIRST>,
+                            detail::element_ref_t<REST>...>
 auto array_applicative_impl<T, N>::invoke(this auto &&, FUNCTION &&function,
                                           FIRST &&first, REST &&...rest) {
     using Result =

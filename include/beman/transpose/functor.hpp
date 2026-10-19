@@ -265,7 +265,12 @@ concept functor_object = requires(const OBJ &obj, const CONTEXT &context,
 
 template <class VALUE_TYPE>
 struct OptionalFunctorImpl {
+    // Constrained, not left to the body: the return type is deduced, so a
+    // probe would instantiate the body and fail hard on a function that
+    // cannot take the element. The Map re-exposes this member, which hides
+    // derive_functor::fmap, so its constraint is the one callers see.
     template <class F>
+        requires std::invocable<F, const VALUE_TYPE &>
     constexpr auto fmap(this auto &&, F &&function,
                         const std::optional<VALUE_TYPE> &value) {
         using Result = std::invoke_result_t<F, const VALUE_TYPE &>;
@@ -279,7 +284,9 @@ struct OptionalFunctorImpl {
 
 template <class VALUE_TYPE>
 struct VectorFunctorImpl {
+    // Constrained for the reason the optional instance's is.
     template <class F>
+        requires std::invocable<F &, const VALUE_TYPE &>
     constexpr auto fmap(this auto &&, F &&function,
                         const std::vector<VALUE_TYPE> &values) {
         // `F &`, unlike the optional instance above: that one forwards the

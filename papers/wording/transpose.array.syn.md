@@ -31,7 +31,8 @@ namespace std {
 
     template<class FUNCTION, class FIRST, class... REST>
       requires $is-std-array-of-extent-v$<FIRST, N> &&
-               ($is-std-array-of-extent-v$<REST, N> && ...)
+               ($is-std-array-of-extent-v$<REST, N> && ...) &&
+               invocable<FUNCTION&, $element-ref-t$<FIRST>, $element-ref-t$<REST>...>
     auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest);
   }; // exposition only
 }
