@@ -18,9 +18,7 @@
 //   2. Where short-circuit keeps only the FIRST failure's witness, it unions
 //      witnesses of DISTINCT types from every failing operand, examined in
 //      the normative left-to-right order.
-//   3. It has no bind: see the comment on the negative-control section at the
-//      bottom, which documents how that was verified (a permanently
-//      non-compiling test cannot live in this suite).
+//   3. It has no bind, and asking whether it has one is a plain no.
 
 #include <beman/transpose/traverse.hpp>
 
@@ -33,6 +31,7 @@
 
 #include <expected>
 #include <optional>
+#include <string_view>
 #include <type_traits>
 #include <vector>
 
@@ -238,33 +237,56 @@ TEST_CASE("accumulating-object: a non-applicative third argument is "
 }
 
 // =========================================================================
-// 5. Bind is refused for the accumulating object -- a compile error, not a
-//    silent absence. This CANNOT be a normal test case: a call that fails to
-//    compile cannot sit in a translation unit this suite builds, and
-//    `requires { policy.bind(...); }` does not detect it either, because the
-//    static_assert inside the member body only fires on instantiation, which
-//    an unevaluated requires-expression does not force -- the call is
-//    syntactically well-formed there even though invoking it is not.
-//
-// Verified by hand instead, per the stage instructions: a scratch line
-//
-//   bt::accumulating_applicative<exp_mixed>.bind(
-//       ok(1), [](int) { return ok(2); });
-//
-// was added temporarily to this file, built, and confirmed to fail with the
-// static_assert message on accumulating_expected_applicative_map::bind
-// (expected.hpp) naming the value-flow reason -- "sequencing needs a value
-// from the first computation ... there is none when that computation
-// failed" -- then removed. See docs/transpose/decisions.md#applicative-objects.
+// 5. Bind is refused for the accumulating object, and the refusal is a
+//    constraint: asking is a clean no, never a compile error. An algorithm
+//    generic over applicative and monad objects dispatches with
+//    `if constexpr (monad_object<P, C>)`, and this object is the policy it
+//    is handed. A call is rejected as a call to a deleted function, with the
+//    value-flow message where the compiler supports P2573.
 // =========================================================================
+
+namespace {
+using accumulating_t =
+    std::remove_cvref_t<decltype(bt::accumulating_applicative<exp_mixed>)>;
+
+template <class OBJ, class CONTEXT>
+concept has_bind = requires(const OBJ &obj, const CONTEXT &context) {
+    obj.bind(context, [](int x) { return ok(x); });
+};
+
+template <class POLICY>
+constexpr auto route_name() -> const char * {
+    if constexpr (bt::monad_object<POLICY, exp_mixed>) {
+        return "sequential";
+    } else {
+        return "applicative";
+    }
+}
+} // namespace
+
+static_assert(bt::applicative_object<accumulating_t, exp_mixed>);
+static_assert(!has_bind<accumulating_t, exp_mixed>);
+static_assert(!bt::monad_object<accumulating_t, exp_mixed>);
+static_assert(
+    has_bind<std::remove_cvref_t<decltype(bt::monad<exp_mixed>)>, exp_mixed>);
+
+TEST_CASE("accumulating-object: bind is refused as a constraint, so asking "
+          "for a monad object answers false") {
+    STATIC_REQUIRE(std::string_view{route_name<accumulating_t>()} ==
+                   "applicative");
+    STATIC_REQUIRE(
+        std::string_view{route_name<
+            std::remove_cvref_t<decltype(bt::monad<exp_mixed>)>>()} ==
+        "sequential");
+}
 
 TEST_CASE("accumulating-object: no Monad instance is registered for it") {
     // There is no monad entry keyed by the accumulating object --
     // only by carrier type, and the carrier's monad is still the
     // short-circuit bind (docs/transpose/decisions.md#applicative-objects: bind
     // belongs to the short-circuit object only). This does not, by itself,
-    // prove `.bind` is refused on the accumulating object -- that half is
-    // the hand-verified static_assert documented above -- but it does pin
+    // prove `.bind` is refused on the accumulating object -- section 5
+    // does that -- but it does pin
     // that grading never grew a second bind path.
     static_assert(std::is_same_v<decltype(bt::monad<exp_mixed>.bind(
                                      ok(1), [](int x) { return ok(x); })),
