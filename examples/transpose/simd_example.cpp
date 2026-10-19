@@ -16,7 +16,7 @@
 // supports expansion statements (P1306), so check its readiness macro too.
 #if __has_include(<simd>) && __cplusplus > 202302L && defined(__glibcxx_simd)
 
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 
 #include <simd>
 

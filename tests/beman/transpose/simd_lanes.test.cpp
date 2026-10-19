@@ -1,8 +1,8 @@
 // tests/beman/transpose/simd_lanes.test.cpp                          -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+#include <beman/transpose.hpp>
 #include <beman/transpose/simd_lanes.hpp>
-#include <beman/transpose/transpose.hpp>
 
 #include "test_support.hpp"
 

@@ -1,7 +1,7 @@
 // installtest/fingertree/test.cpp                                    -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <beman/fingertree/fingertree.hpp>
+#include <beman/fingertree.hpp>
 
 #include <cstddef>
 #include <iostream>

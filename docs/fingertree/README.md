@@ -163,5 +163,5 @@ To use `beman.fingertree` in your C++ project,
 include an appropriate `beman.fingertree` header from your source code.
 
 ```c++
-#include <beman/fingertree/fingertree.hpp>
+#include <beman/fingertree.hpp>
 ```

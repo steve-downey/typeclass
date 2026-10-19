@@ -55,7 +55,7 @@ Once you have the name, you see it everywhere.
 [`beman.transpose`](https://github.com/bemanproject/transpose) provides exactly one verb for this: `transpose`. The fallible case is the loop above, gone:
 
 ```cpp
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 namespace bt = beman::transpose;
 
 std::vector<std::optional<int>> in{ {1}, {2}, {3} };

@@ -10,7 +10,7 @@
 // heterogeneous traversal that std::tuple requires (since it cannot use the
 // homogeneous Traversable loop).
 
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 
 #include <array>
 #include <iostream>

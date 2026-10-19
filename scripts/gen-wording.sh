@@ -6,7 +6,7 @@
 #
 # Two phases. Each header is PARSED on its own -- beman.specgen reads only the
 # main file's declaration/comment interleave -- and emits its document as IR;
-# then one `render` takes all nine IR documents together. `--root` names each
+# then one `render` takes all eight IR documents together. `--root` names each
 # document's synopsis subclause, which is what keeps the root fragments
 # distinct in the shared output directory.
 #
@@ -46,7 +46,6 @@ readonly HEADERS=(
     "apply.hpp:transpose.applicative"
     "optional.hpp:transpose.optional"
     "traverse.hpp:transpose.traversable"
-    "transpose.hpp:transpose.alg"
     "sequence.hpp:transpose.range"
     "array.hpp:transpose.array"
     "grade.hpp:transpose.grade"

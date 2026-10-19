@@ -3,8 +3,8 @@
 
 #include <beman/transpose/sequence.hpp>
 
+#include <beman/transpose.hpp>
 #include <beman/transpose/expected.hpp>
-#include <beman/transpose/transpose.hpp>
 
 #include "test_support.hpp"
 

@@ -56,7 +56,7 @@ target_sources(
     "${PROJECT_BINARY_DIR}/include"
     FILES
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/config.hpp
-    ${PROJECT_SOURCE_DIR}/include/beman/fingertree/fingertree.hpp
+    ${PROJECT_SOURCE_DIR}/include/beman/fingertree.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree_iterator.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree_pmr.hpp

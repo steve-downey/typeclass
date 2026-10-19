@@ -25,7 +25,7 @@
 // Everything here lives in unevaluated context, so the file is a
 // compile-time artifact: if it compiles, the assertions hold.
 
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 
 #include "test_support.hpp"
 

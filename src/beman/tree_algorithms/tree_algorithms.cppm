@@ -23,6 +23,6 @@ import std;
 export {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"
-#include <beman/tree_algorithms/tree_algorithms.hpp>
+#include <beman/tree_algorithms.hpp>
 #pragma clang diagnostic pop
 }

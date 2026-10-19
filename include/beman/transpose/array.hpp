@@ -20,7 +20,8 @@
 // the instance itself (docs/transpose/decisions.md#instance-placement). Include
 // it, not only <array>, before the first use of the applicative on a
 // std::array, in every translation unit that makes one: a use that precedes the
-// instance is ill-formed, no diagnostic required. transpose.hpp includes it.
+// instance is ill-formed, no diagnostic required. beman/transpose.hpp includes
+// it.
 
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/detail/make_array.hpp>

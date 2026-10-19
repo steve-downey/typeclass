@@ -39,9 +39,9 @@ intermediate, written to a temporary directory and not checked in.
 
 | header | `--root` | subclauses |
 | ------ | -------- | ---------- |
-| `apply.hpp` | `transpose.applicative.syn` | `.basis` `.derived` `.grade` `.delegate` `.optional` |
-| `traverse.hpp` | `transpose.traversable.syn` | `.ops` `.delegate`, plus `transpose.alg.traverse` |
-| `transpose.hpp` | `transpose.alg.syn` | `transpose.alg.transpose` |
+| `apply.hpp` | `transpose.applicative.syn` | `.basis` `.derived` `.grade` `.delegate` `.objects` |
+| `optional.hpp` | `transpose.optional.syn` | `.applicative` |
+| `traverse.hpp` | `transpose.traversable.syn` | `.ops` `.delegate`, plus `transpose.alg.traverse` `transpose.alg.transpose` |
 | `sequence.hpp` | `transpose.range.syn` | `.traverse` |
 | `array.hpp` | `transpose.array.syn` | `.applicative` `.tuple` |
 | `grade.hpp` | `transpose.grade.syn` | `.subsume` |

@@ -5,7 +5,7 @@
 //   structure<context<T>>  ->  context<structure<T>>
 // for three independent contexts, all over the same std::vector structure.
 
-#include <beman/transpose/transpose.hpp>
+#include <beman/transpose.hpp>
 
 #include <iostream>
 #include <optional>

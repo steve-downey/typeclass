@@ -14,11 +14,11 @@
 // satisfy exactly what is documented and nothing beyond it, so an
 // undocumented requirement is a compile error rather than a footnote.
 
+#include <beman/transpose.hpp>
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/array.hpp>
 #include <beman/transpose/expected.hpp>
 #include <beman/transpose/simd_lanes.hpp>
-#include <beman/transpose/transpose.hpp>
 #include <beman/transpose/traverse.hpp>
 #include <beman/transpose/zip_list.hpp>
 

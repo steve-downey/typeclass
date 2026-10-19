@@ -37,7 +37,7 @@ target_sources(
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/sender.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/sequence.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/string.hpp
-                ${PROJECT_SOURCE_DIR}/include/beman/transpose/transpose.hpp
+                ${PROJECT_SOURCE_DIR}/include/beman/transpose.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/traverse.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/zip_list.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/simd.hpp

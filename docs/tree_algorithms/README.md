@@ -180,5 +180,5 @@ To use `beman.tree_algorithms` in your C++ project,
 include an appropriate `beman.tree_algorithms` header from your source code.
 
 ```c++
-#include <beman/tree_algorithms/tree_algorithms.hpp>
+#include <beman/tree_algorithms.hpp>
 ```
