@@ -119,11 +119,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6d254941c0bb7d01695045ca924db333"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1ZipListApplicativeImpl.html#a6d254941c0bb7d01695045ca924db333">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value)</td></tr>
 <tr class="memdesc:a6d254941c0bb7d01695045ca924db333"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lift a value into an infinite <a class="el" href="structbeman_1_1transpose_1_1zip__list.html" title="List with positional (zip) applicative semantics that can represent an infinite repetition of a singl...">zip_list</a> repeating that value.  <br /></td></tr>
 <tr class="separator:a6d254941c0bb7d01695045ca924db333"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6cda8fe77ddc7ad4f7a43d0e07e94d6"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
-requires detail::is_zip_list_v&lt;FIRST&gt; &amp;&amp; (detail::is_zip_list_v&lt;REST&gt; &amp;&amp; ...)</td></tr>
-<tr class="memitem:ac6cda8fe77ddc7ad4f7a43d0e07e94d6"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1ZipListApplicativeImpl.html#ac6cda8fe77ddc7ad4f7a43d0e07e94d6">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest)</td></tr>
-<tr class="memdesc:ac6cda8fe77ddc7ad4f7a43d0e07e94d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">N-ary positional application: apply <code>function</code> over all zip_lists element-wise, truncating to the shortest finite operand.  <br /></td></tr>
-<tr class="separator:ac6cda8fe77ddc7ad4f7a43d0e07e94d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af165e12a0ac0e987e3045de627fa2a8a"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
+requires detail::is_zip_list_v&lt;FIRST&gt; &amp;&amp; (detail::is_zip_list_v&lt;REST&gt; &amp;&amp; ...) &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;FUNCTION&gt;, FUNCTION&gt; &amp;&amp; std::invocable&lt;std::remove_cvref_t&lt;FUNCTION&gt; &amp;, detail::zip_list_value_ref_t&lt;FIRST&gt;, detail::zip_list_value_ref_t&lt;REST&gt;...&gt; &amp;&amp; detail::holdable_value&lt;std::invoke_result_t&lt; std::remove_cvref_t&lt;FUNCTION&gt; &amp;, detail::zip_list_value_ref_t&lt;FIRST&gt;, detail::zip_list_value_ref_t&lt;REST&gt;...&gt;&gt;</td></tr>
+<tr class="memitem:af165e12a0ac0e987e3045de627fa2a8a"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1ZipListApplicativeImpl.html#af165e12a0ac0e987e3045de627fa2a8a">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest)</td></tr>
+<tr class="memdesc:af165e12a0ac0e987e3045de627fa2a8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">N-ary positional application: apply <code>function</code> over all zip_lists element-wise, truncating to the shortest finite operand.  <br /></td></tr>
+<tr class="separator:af165e12a0ac0e987e3045de627fa2a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class T&gt;<br />
@@ -177,8 +177,8 @@ template&lt;class VALUE &gt; </div>
 
 </div>
 </div>
-<a id="ac6cda8fe77ddc7ad4f7a43d0e07e94d6" name="ac6cda8fe77ddc7ad4f7a43d0e07e94d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6cda8fe77ddc7ad4f7a43d0e07e94d6">&#9670;&#160;</a></span>invoke()</h2>
+<a id="af165e12a0ac0e987e3045de627fa2a8a" name="af165e12a0ac0e987e3045de627fa2a8a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af165e12a0ac0e987e3045de627fa2a8a">&#9670;&#160;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,7 +186,7 @@ template&lt;class VALUE &gt; </div>
 template&lt;class T &gt; </div>
 <div class="memtemplate">
 template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
-requires detail::is_zip_list_v&lt;FIRST&gt; &amp;&amp; (detail::is_zip_list_v&lt;REST&gt; &amp;&amp; ...)</div>
+requires detail::is_zip_list_v&lt;FIRST&gt; &amp;&amp; (detail::is_zip_list_v&lt;REST&gt; &amp;&amp; ...) &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;FUNCTION&gt;, FUNCTION&gt; &amp;&amp; std::invocable&lt;std::remove_cvref_t&lt;FUNCTION&gt; &amp;, detail::zip_list_value_ref_t&lt;FIRST&gt;, detail::zip_list_value_ref_t&lt;REST&gt;...&gt; &amp;&amp; detail::holdable_value&lt;std::invoke_result_t&lt; std::remove_cvref_t&lt;FUNCTION&gt; &amp;, detail::zip_list_value_ref_t&lt;FIRST&gt;, detail::zip_list_value_ref_t&lt;REST&gt;...&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -237,7 +237,8 @@ requires detail::is_zip_list_v&lt;FIRST&gt; &amp;&amp; (detail::is_zip_list_v&lt
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structbeman_1_1transpose_1_1zip__list.html" title="List with positional (zip) applicative semantics that can represent an infinite repetition of a singl...">zip_list</a> of results </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="structbeman_1_1transpose_1_1zip__list.html" title="List with positional (zip) applicative semantics that can represent an infinite repetition of a singl...">zip_list</a> of results</dd></dl>
+<p>The callable is decay-copied (moved, for an rvalue) and the copy is what runs, so a caller whose callable carries state it needs to see afterward passes <code>std::ref(f)</code>. That is the Standard's rule for its own algorithms ([algorithms.requirements]), and the constraint states the copy, so a callable that cannot be copied from the argument given fails softly. So do a callable that cannot take one element of each operand, and one whose result a <a class="el" href="structbeman_1_1transpose_1_1zip__list.html" title="List with positional (zip) applicative semantics that can represent an infinite repetition of a singl...">zip_list</a> cannot hold. </p>
 
 </div>
 </div>

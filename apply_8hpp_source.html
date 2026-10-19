@@ -399,12 +399,12 @@ $(document).ready(function(){initNavTree('apply_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>              <span class="keyword">const</span> <span class="keyword">auto</span> &amp;TC = applicative&lt;std::remove_cvref_t&lt;FIRST_ARGUMENT&gt;&gt;&gt;</div>
 <div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>        <span class="keyword">requires</span> <span class="keyword">requires</span> {</div>
 <div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>            TC.discard_second(std::declval&lt;FIRST_ARGUMENT&gt;(),</div>
-<div class="line"><a id="l00446" name="l00446"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1optional__applicative__map.html">  446</a></span>                              std::declval&lt;SECOND_ARGUMENT&gt;());</div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>                              std::declval&lt;SECOND_ARGUMENT&gt;());</div>
 <div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>        }</div>
 <div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> operator()(FIRST_ARGUMENT &amp;&amp;first_argument,</div>
 <div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span>                              SECOND_ARGUMENT &amp;&amp;second_argument)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>        <span class="keywordflow">return</span> TC.discard_second(</div>
-<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1optional__applicative__map.html">  451</a></span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
 <div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>            std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
 <div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>    }</div>
 <div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>};</div>
@@ -433,8 +433,8 @@ $(document).ready(function(){initNavTree('apply_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>     <span class="keyword">requires</span>(<span class="keyword">const</span> OBJ &amp;obj, <span class="keyword">const</span> CONTEXT &amp;context) {</div>
 <div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>         obj.template subsume&lt;grade_of_t&lt;CONTEXT&gt;&gt;(context);</div>
 <div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>     });</div>
-<div class="line"><a id="l00506" name="l00506"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#adaebf7f879238a65d41f806e59d100be">  506</a></span> </div>
-<div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span> </div>
+<div class="line"><a id="l00511" name="l00511"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#adaebf7f879238a65d41f806e59d100be">  511</a></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
 <div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span><span class="keyword">struct </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1optional__applicative__impl.html">optional_applicative_impl</a> {</div>
 <div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>    <span class="comment">// \ref{transpose.applicative.optional}, applicative instance for optional</span></div>
 <div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE&gt;</div>
@@ -443,361 +443,372 @@ $(document).ready(function(){initNavTree('apply_8hpp_source.html',''); initResiz
 <div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span> </div>
 <div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>    <span class="keyword">template</span> &lt;<span class="keyword">class </span>FUNCTION, <span class="keyword">class </span>FIRST, <span class="keyword">class</span>... REST&gt;</div>
 <div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span>        <span class="keyword">requires</span> detail::is_optional_v&lt;FIRST&gt; &amp;&amp;</div>
-<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>                 (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...)</div>
-<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">invoke</a>(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first,</div>
-<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>                          REST &amp;&amp;...rest)</div>
-<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>        -&gt; std::optional&lt;std::remove_cvref_t&lt;</div>
-<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>            std::invoke_result_t&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
-<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>                                 detail::contained_ref_t&lt;REST&gt;...&gt;&gt;&gt;;</div>
-<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>};</div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span> </div>
-<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
-<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span><span class="keyword">struct </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1optional__applicative__map.html">optional_applicative_map</a></div>
-<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>    : <a class="code hl_struct" href="structbeman_1_1transpose_1_1derive__applicative.html">derive_applicative</a>&lt;optional_applicative_impl&lt;VALUE_TYPE&gt;&gt; {</div>
-<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>    <span class="keyword">using </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1optional__applicative__impl.html">optional_applicative_impl</a>&lt;VALUE_TYPE&gt;::invoke;</div>
-<div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>    <span class="keyword">using </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1optional__applicative__impl.html">optional_applicative_impl</a>&lt;VALUE_TYPE&gt;::pure;</div>
-<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>};</div>
-<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span> </div>
-<div class="line"><a id="l00537" name="l00537"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#a20d1c575dd7a6c281a92cb033ccd0cac">  537</a></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
-<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> applicative&lt;std::optional&lt;VALUE_TYPE&gt;&gt; =</div>
-<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>    <a class="code hl_struct" href="structbeman_1_1transpose_1_1optional__applicative__map.html">optional_applicative_map&lt;VALUE_TYPE&gt;</a>{};</div>
+<div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>                 (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...) &amp;&amp;</div>
+<div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>                 std::invocable&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
+<div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>                                detail::contained_ref_t&lt;REST&gt;...&gt; &amp;&amp;</div>
+<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>                 detail::optional_holdable_value&lt;std::invoke_result_t&lt;</div>
+<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>                     FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
+<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>                     detail::contained_ref_t&lt;REST&gt;...&gt;&gt;</div>
+<div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">invoke</a>(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first,</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>                          REST &amp;&amp;...rest)</div>
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>        -&gt; std::optional&lt;std::remove_cvref_t&lt;</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>            std::invoke_result_t&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
+<div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>                                 detail::contained_ref_t&lt;REST&gt;...&gt;&gt;&gt;;</div>
+<div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>};</div>
+<div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span> </div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
+<div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span><span class="keyword">struct </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1optional__applicative__map.html">optional_applicative_map</a></div>
+<div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>    : <a class="code hl_struct" href="structbeman_1_1transpose_1_1derive__applicative.html">derive_applicative</a>&lt;optional_applicative_impl&lt;VALUE_TYPE&gt;&gt; {</div>
+<div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>    <span class="keyword">using </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1optional__applicative__impl.html">optional_applicative_impl</a>&lt;VALUE_TYPE&gt;::invoke;</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>    <span class="keyword">using </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1optional__applicative__impl.html">optional_applicative_impl</a>&lt;VALUE_TYPE&gt;::pure;</div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>};</div>
 <div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span> </div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span><span class="comment">// \rSec3[transpose.applicative.basis]{Basis operations}</span></div>
-<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span> </div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FUNCTION, <span class="keyword">class </span>FIRST_ARGUMENT, <span class="keyword">class</span>... REST_ARGUMENTS&gt;</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span><a class="code hl_struct" href="structbeman_1_1transpose_1_1derive__applicative.html">derive_applicative&lt;Impl&gt;::invoke</a>(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self, FUNCTION &amp;&amp;function,</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#aa7e5b98a2c33b3a11a836df5a663685b">  562</a></span>                                 FIRST_ARGUMENT &amp;&amp;first_argument,</div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>                                 REST_ARGUMENTS &amp;&amp;...rest_arguments)</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>        impl.<a class="code hl_function" href="structbeman_1_1transpose_1_1derive__applicative.html#abe8613dc169e6fecf50f97e10283ee52">invoke</a>(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>                    std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>    } || detail::invocable_through_ap&lt;<span class="keyword">decltype</span>(self), FUNCTION, FIRST_ARGUMENT,</div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>                                      REST_ARGUMENTS...&gt;</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>{</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>    <span class="keywordflow">if</span> constexpr (<span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>                      impl_of(self).invoke(</div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>                          std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>                          std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>                          std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>                  }) {</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>        <span class="keywordflow">return</span> impl_of(self).invoke(</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>            std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#a2b8f607d76f3912e968d4ab9eb0278a5">  579</a></span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>            std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>        <span class="comment">// Derivation from the ap basis:</span></div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>        <span class="comment">//   invoke(f, x1, ..., xn) = pure(curried f) `ap` x1 `ap` ... xn</span></div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>        <span class="comment">// This static_assert is provably redundant: the declaration&#39;s</span></div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>        <span class="comment">// constraint already established that the ap chain is well-formed,</span></div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>        <span class="comment">// which needs an ap basis. It is the GHC-MINIMAL-style last-resort</span></div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>        <span class="comment">// message fold_map also keeps, not load-bearing SFINAE.</span></div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>        <span class="keyword">static_assert</span>(</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>            <a class="code hl_concept" href="conceptbeman_1_1transpose_1_1applicative__impl.html">applicative_impl&lt;Impl, std::remove_cvref_t&lt;FIRST_ARGUMENT&gt;</a>&gt;,</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>            <span class="stringliteral">&quot;Applicative Impl must provide pure and at least one basis: &quot;</span></div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>            <span class="stringliteral">&quot;invoke(f, args_in_context...) or &quot;</span></div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>            <span class="stringliteral">&quot;ap(f_in_context, arg_in_context).&quot;</span>);</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>        <span class="keyword">auto</span> lifted_function = self.pure(</div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>            detail::make_terminating_partial&lt;1 + <span class="keyword">sizeof</span>...(REST_ARGUMENTS)&gt;(</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>                std::forward&lt;FUNCTION&gt;(function)));</div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>        <span class="keywordflow">return</span> self.ap_chain(</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>            self.ap(std::move(lifted_function),</div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument)),</div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>            std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>    }</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>}</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span> </div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FUNCTION_IN_CONTEXT, <span class="keyword">class</span> ARGUMENT_IN_CONTEXT&gt;</div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> derive_applicative&lt;Impl&gt;::ap(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self,</div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>                                            FUNCTION_IN_CONTEXT &amp;&amp;function,</div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>                                            ARGUMENT_IN_CONTEXT &amp;&amp;argument)</div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>        impl.ap(std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>                std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>    } || <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>        impl.invoke(applicative_eval,</div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>                    std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
-<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>                    std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>    }</div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>{</div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>                      impl_of(self).ap(</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>                          std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>                          std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>                  }) {</div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>        <span class="keywordflow">return</span> impl_of(self).ap(std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>                                std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>        <span class="keywordflow">return</span> impl_of(self).invoke(</div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>            detail::applicative_eval,</div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>            std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>            std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#ad37c934ddc57195ed84be50d88a1bd37">  642</a></span>    }</div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>}</div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span> </div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span><span class="comment">// \rSec3[transpose.applicative.derived]{Derived operations}</span></div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span> </div>
-<div class="line"><a id="l00655" name="l00655"></a><span class="lineno">  655</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00656" name="l00656"></a><span class="lineno">  656</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FUNCTION, <span class="keyword">class</span> ARGUMENT&gt;</div>
-<div class="line"><a id="l00657" name="l00657"></a><span class="lineno">  657</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> derive_applicative&lt;Impl&gt;::map(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self,</div>
-<div class="line"><a id="l00658" name="l00658"></a><span class="lineno">  658</span>                                             FUNCTION &amp;&amp;function,</div>
-<div class="line"><a id="l00659" name="l00659"></a><span class="lineno">  659</span>                                             ARGUMENT &amp;&amp;argument)</div>
-<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
-<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span>        impl.map(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span>                 std::forward&lt;ARGUMENT&gt;(argument));</div>
-<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>    } || <span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>        self.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>                    std::forward&lt;ARGUMENT&gt;(argument));</div>
-<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>    }</div>
-<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>{</div>
-<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>                      impl_of(self).map(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>                                        std::forward&lt;ARGUMENT&gt;(argument));</div>
-<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>                  }) {</div>
-<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>        <span class="keywordflow">return</span> impl_of(self).map(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00673" name="l00673"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#a29fc51a0123c34ba2a5df5ffe998833c">  673</a></span>                                 std::forward&lt;ARGUMENT&gt;(argument));</div>
-<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>        <span class="keywordflow">return</span> self.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>                           std::forward&lt;ARGUMENT&gt;(argument));</div>
-<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>    }</div>
-<div class="line"><a id="l00678" name="l00678"></a><span class="lineno">  678</span>}</div>
-<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span> </div>
-<div class="line"><a id="l00686" name="l00686"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#ae3f70129ffae5efef09a5a8819bec7d7">  686</a></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00687" name="l00687"></a><span class="lineno">  687</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE&gt;</div>
-<div class="line"><a id="l00688" name="l00688"></a><span class="lineno">  688</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_struct" href="structbeman_1_1transpose_1_1derive__applicative.html">derive_applicative&lt;Impl&gt;::lift</a>(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self, VALUE &amp;&amp;value)</div>
-<div class="line"><a id="l00689" name="l00689"></a><span class="lineno">  689</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
-<div class="line"><a id="l00690" name="l00690"></a><span class="lineno">  690</span>        impl.<a class="code hl_function" href="structbeman_1_1transpose_1_1derive__applicative.html#aa7e5b98a2c33b3a11a836df5a663685b">lift</a>(std::forward&lt;VALUE&gt;(value));</div>
-<div class="line"><a id="l00691" name="l00691"></a><span class="lineno">  691</span>    } || <span class="keyword">requires</span> { self.pure(std::forward&lt;VALUE&gt;(value)); }</div>
-<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span>{</div>
-<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>                      impl_of(self).lift(std::forward&lt;VALUE&gt;(value));</div>
-<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>                  }) {</div>
-<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>        <span class="keywordflow">return</span> impl_of(self).lift(std::forward&lt;VALUE&gt;(value));</div>
-<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>        <span class="keywordflow">return</span> self.pure(std::forward&lt;VALUE&gt;(value));</div>
-<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>    }</div>
-<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>}</div>
-<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span> </div>
-<div class="line"><a id="l00710" name="l00710"></a><span class="lineno">  710</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00711" name="l00711"></a><span class="lineno">  711</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FUNCTION, <span class="keyword">class</span> FIRST_ARGUMENT, <span class="keyword">class</span> SECOND_ARGUMENT&gt;</div>
-<div class="line"><a id="l00712" name="l00712"></a><span class="lineno">  712</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="line"><a id="l00713" name="l00713"></a><span class="lineno">  713</span>derive_applicative&lt;Impl&gt;::zip_with(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self, FUNCTION &amp;&amp;function,</div>
-<div class="line"><a id="l00714" name="l00714"></a><span class="lineno">  714</span>                                   FIRST_ARGUMENT &amp;&amp;first_argument,</div>
-<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span>                                   SECOND_ARGUMENT &amp;&amp;second_argument)</div>
-<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
-<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span>        impl.zip_with(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>                      std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>                      std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>    } || <span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>        self.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00722" name="l00722"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">  722</a></span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>                    std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00724" name="l00724"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a01fe90066997f5d64ec063d4f6fff430">  724</a></span>    }</div>
-<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>{</div>
-<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00727" name="l00727"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">  727</a></span>                      impl_of(self).zip_with(</div>
-<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>                          std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00729" name="l00729"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a6300716ab71ef10e3d8196bb4bba0583">  729</a></span>                          std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>                          std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00731" name="l00731"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a4222f534c37462e36d6fdb5f392ffe58">  731</a></span>                  }) {</div>
-<div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>        <span class="keywordflow">return</span> impl_of(self).zip_with(</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a320c19116e618cacf370becbf460dd1d">  733</a></span>            std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>            std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>        <span class="keywordflow">return</span> self.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00738" name="l00738"></a><span class="lineno">  738</span>                           std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00739" name="l00739"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#ae530ecba893dcb3c19565e0e4c183814">  739</a></span>                           std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>    }</div>
-<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>}</div>
-<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span> </div>
-<div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FIRST_ARGUMENT, <span class="keyword">class</span> SECOND_ARGUMENT&gt;</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>derive_applicative&lt;Impl&gt;::discard_first(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self,</div>
-<div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>                                        FIRST_ARGUMENT &amp;&amp;first_argument,</div>
-<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>                                        SECOND_ARGUMENT &amp;&amp;second_argument)</div>
-<div class="line"><a id="l00761" name="l00761"></a><span class="lineno">  761</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
-<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span>        impl.discard_first(std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span>                           std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>    } || <span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>        self.invoke(discard_first_eval,</div>
-<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>                    std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>    }</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>{</div>
-<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>                      impl_of(self).discard_first(</div>
-<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>                          std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>                          std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>                  }) {</div>
-<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>        <span class="keywordflow">return</span> impl_of(self).discard_first(</div>
-<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>            std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>        <span class="keywordflow">return</span> self.invoke(discard_first_eval,</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>                           std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>                           std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>    }</div>
-<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>}</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span> </div>
-<div class="line"><a id="l00797" name="l00797"></a><span class="lineno">  797</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00798" name="l00798"></a><span class="lineno">  798</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FIRST_ARGUMENT, <span class="keyword">class</span> SECOND_ARGUMENT&gt;</div>
-<div class="line"><a id="l00799" name="l00799"></a><span class="lineno">  799</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="line"><a id="l00800" name="l00800"></a><span class="lineno">  800</span>derive_applicative&lt;Impl&gt;::discard_second(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self,</div>
-<div class="line"><a id="l00801" name="l00801"></a><span class="lineno">  801</span>                                         FIRST_ARGUMENT &amp;&amp;first_argument,</div>
-<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span>                                         SECOND_ARGUMENT &amp;&amp;second_argument)</div>
-<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
-<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span>        impl.discard_second(std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>                            std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>    } || <span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>        self.invoke(discard_second_eval,</div>
-<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>                    std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>    }</div>
-<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>{</div>
-<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>                      impl_of(self).discard_second(</div>
-<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>                          std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>                          std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>                  }) {</div>
-<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>        <span class="keywordflow">return</span> impl_of(self).discard_second(</div>
-<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>            std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>        <span class="keywordflow">return</span> self.invoke(discard_second_eval,</div>
-<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>                           std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>                           std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
-<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>    }</div>
-<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>}</div>
-<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span> </div>
-<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span><span class="comment">// \rSec3[transpose.applicative.grade]{Grade re-indexing}</span></div>
-<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span> </div>
-<div class="line"><a id="l00835" name="l00835"></a><span class="lineno">  835</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00836" name="l00836"></a><span class="lineno">  836</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> TARGET_GRADE, <span class="keyword">class</span> CARRIER&gt;</div>
-<div class="line"><a id="l00837" name="l00837"></a><span class="lineno">  837</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> derive_applicative&lt;Impl&gt;::subsume(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;, CARRIER &amp;&amp;value)</div>
-<div class="line"><a id="l00838" name="l00838"></a><span class="lineno">  838</span>    <span class="keyword">requires</span> <span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00839" name="l00839"></a><span class="lineno">  839</span>        grade_subsume&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value));</div>
-<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span>    }</div>
-<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span>{</div>
-<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span>    <span class="keywordflow">return</span> grade_subsume&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value));</div>
-<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>}</div>
-<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span> </div>
-<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span><span class="comment">// \rSec3[transpose.applicative.delegate]{Delegated application}</span></div>
-<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span> </div>
-<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00852" name="l00852"></a><span class="lineno">  852</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>APPLICATIVE_MAP, <span class="keyword">class </span>FUNCTION, <span class="keyword">class </span>FIRST_ARGUMENT,</div>
-<div class="line"><a id="l00853" name="l00853"></a><span class="lineno">  853</span>          <span class="keyword">class</span>... REST_ARGUMENTS&gt;</div>
-<div class="line"><a id="l00854" name="l00854"></a><span class="lineno">  854</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> derive_applicative&lt;Impl&gt;::invoke_with(</div>
-<div class="line"><a id="l00855" name="l00855"></a><span class="lineno">  855</span>    <span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;, <span class="keyword">const</span> APPLICATIVE_MAP &amp;applicative_map, FUNCTION &amp;&amp;function,</div>
-<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span>    FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments)</div>
-<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span>    <span class="keyword">requires</span> <span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>        applicative_map.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>                               std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>                               std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
-<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>    }</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>{</div>
-<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>    <span class="keywordflow">return</span> applicative_map.invoke(</div>
-<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>        std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>        std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>        std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
-<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>}</div>
-<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span> </div>
-<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
-<div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span><span class="keyword">template</span> &lt;<span class="keyword">const</span> <span class="keyword">auto</span> &amp;APPLICATIVE_MAP, <span class="keyword">class </span>FUNCTION, <span class="keyword">class </span>FIRST_ARGUMENT,</div>
-<div class="line"><a id="l00875" name="l00875"></a><span class="lineno">  875</span>          <span class="keyword">class</span>... REST_ARGUMENTS&gt;</div>
-<div class="line"><a id="l00876" name="l00876"></a><span class="lineno">  876</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
-<div class="line"><a id="l00877" name="l00877"></a><span class="lineno">  877</span>derive_applicative&lt;Impl&gt;::invoke_with(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;, FUNCTION &amp;&amp;function,</div>
-<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span>                                      FIRST_ARGUMENT &amp;&amp;first_argument,</div>
-<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span>                                      REST_ARGUMENTS &amp;&amp;...rest_arguments)</div>
-<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>    <span class="keyword">requires</span> <span class="keyword">requires</span> {</div>
-<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span>        APPLICATIVE_MAP.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>                               std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>                               std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
-<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>    }</div>
-<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>{</div>
-<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>    <span class="keywordflow">return</span> APPLICATIVE_MAP.invoke(</div>
-<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>        std::forward&lt;FUNCTION&gt;(function),</div>
-<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>        std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
-<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>        std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
-<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>}</div>
-<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span> </div>
-<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span><span class="comment">// \rSec3[transpose.applicative.objects]{Operation objects}</span></div>
-<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span> </div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> invoke_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">invoke</a>{};</div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span> </div>
-<div class="line"><a id="l00919" name="l00919"></a><span class="lineno">  919</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> ap_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a01fe90066997f5d64ec063d4f6fff430">ap</a>{};</div>
-<div class="line"><a id="l00920" name="l00920"></a><span class="lineno">  920</span> </div>
-<div class="line"><a id="l00932" name="l00932"></a><span class="lineno">  932</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> CONTEXT&gt;</div>
-<div class="line"><a id="l00933" name="l00933"></a><span class="lineno">  933</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> pure_fn&lt;CONTEXT&gt; <a class="code hl_variable" href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">pure</a>{};</div>
-<div class="line"><a id="l00934" name="l00934"></a><span class="lineno">  934</span> </div>
-<div class="line"><a id="l00945" name="l00945"></a><span class="lineno">  945</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> zip_with_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a6300716ab71ef10e3d8196bb4bba0583">zip_with</a>{};</div>
-<div class="line"><a id="l00946" name="l00946"></a><span class="lineno">  946</span> </div>
-<div class="line"><a id="l00957" name="l00957"></a><span class="lineno">  957</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> discard_first_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a4222f534c37462e36d6fdb5f392ffe58">discard_first</a>{};</div>
-<div class="line"><a id="l00958" name="l00958"></a><span class="lineno">  958</span> </div>
-<div class="line"><a id="l00969" name="l00969"></a><span class="lineno">  969</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> discard_second_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a320c19116e618cacf370becbf460dd1d">discard_second</a>{};</div>
-<div class="line"><a id="l00970" name="l00970"></a><span class="lineno">  970</span> </div>
-<div class="line"><a id="l00971" name="l00971"></a><span class="lineno">  971</span><span class="comment">// \rSec3[transpose.applicative.optional]{Applicative instance for optional}</span></div>
-<div class="line"><a id="l00972" name="l00972"></a><span class="lineno">  972</span> </div>
-<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
-<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE&gt;</div>
-<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> optional_applicative_impl&lt;VALUE_TYPE&gt;::pure(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;,</div>
-<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span>                                                           VALUE &amp;&amp;value)</div>
-<div class="line"><a id="l00978" name="l00978"></a><span class="lineno">  978</span>    -&gt; std::optional&lt;std::remove_cvref_t&lt;VALUE&gt;&gt; {</div>
-<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span>    <span class="keywordflow">return</span> std::optional&lt;std::remove_cvref_t&lt;VALUE&gt;&gt;{</div>
-<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span>        std::forward&lt;VALUE&gt;(value)};</div>
-<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span>}</div>
-<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span> </div>
-<div class="line"><a id="l00991" name="l00991"></a><span class="lineno">  991</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
-<div class="line"><a id="l00992" name="l00992"></a><span class="lineno">  992</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FUNCTION, <span class="keyword">class </span>FIRST, <span class="keyword">class</span>... REST&gt;</div>
-<div class="line"><a id="l00993" name="l00993"></a><span class="lineno">  993</span>    <span class="keyword">requires</span> detail::is_optional_v&lt;FIRST&gt; &amp;&amp;</div>
-<div class="line"><a id="l00994" name="l00994"></a><span class="lineno">  994</span>             (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...)</div>
-<div class="line"><a id="l00995" name="l00995"></a><span class="lineno">  995</span>constexpr auto</div>
-<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span>optional_applicative_impl&lt;VALUE_TYPE&gt;::invoke(this auto &amp;&amp;, FUNCTION &amp;&amp;function,</div>
-<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span>                                              FIRST &amp;&amp;first, REST &amp;&amp;...rest)</div>
-<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>    -&gt; std::optional&lt;std::remove_cvref_t&lt;</div>
-<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>        std::invoke_result_t&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
-<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>                             detail::contained_ref_t&lt;REST&gt;...&gt;&gt;&gt; {</div>
-<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>    <span class="keyword">using </span>Result = std::remove_cvref_t&lt;</div>
-<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>        std::invoke_result_t&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
-<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>                             detail::contained_ref_t&lt;REST&gt;...&gt;&gt;;</div>
-<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>    <span class="keywordflow">if</span> (first.has_value() &amp;&amp; (... &amp;&amp; rest.has_value())) {</div>
-<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span>        <span class="keywordflow">return</span> std::optional&lt;Result&gt;{std::invoke(</div>
-<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span>            function, detail::forward_contained(std::forward&lt;FIRST&gt;(first)),</div>
-<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>            detail::forward_contained(std::forward&lt;REST&gt;(rest))...)};</div>
-<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>    }</div>
-<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>    <span class="keywordflow">return</span> std::optional&lt;Result&gt;{};</div>
-<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>}</div>
-<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span> </div>
-<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>} <span class="comment">// namespace beman::transpose</span></div>
-<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span> </div>
-<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span><span class="preprocessor">#endif </span><span class="comment">// BEMAN_TRANSPOSE_APPLY_HPP</span></div>
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#a20d1c575dd7a6c281a92cb033ccd0cac">  542</a></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keyword">auto</span> applicative&lt;std::optional&lt;VALUE_TYPE&gt;&gt; =</div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>    <a class="code hl_struct" href="structbeman_1_1transpose_1_1optional__applicative__map.html">optional_applicative_map&lt;VALUE_TYPE&gt;</a>{};</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span> </div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span><span class="comment">// \rSec3[transpose.applicative.basis]{Basis operations}</span></div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span> </div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FUNCTION, <span class="keyword">class </span>FIRST_ARGUMENT, <span class="keyword">class</span>... REST_ARGUMENTS&gt;</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span><a class="code hl_struct" href="structbeman_1_1transpose_1_1derive__applicative.html">derive_applicative&lt;Impl&gt;::invoke</a>(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self, FUNCTION &amp;&amp;function,</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#aa7e5b98a2c33b3a11a836df5a663685b">  567</a></span>                                 FIRST_ARGUMENT &amp;&amp;first_argument,</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>                                 REST_ARGUMENTS &amp;&amp;...rest_arguments)</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>        impl.<a class="code hl_function" href="structbeman_1_1transpose_1_1derive__applicative.html#abe8613dc169e6fecf50f97e10283ee52">invoke</a>(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>                    std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>    } || detail::invocable_through_ap&lt;<span class="keyword">decltype</span>(self), FUNCTION, FIRST_ARGUMENT,</div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>                                      REST_ARGUMENTS...&gt;</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>{</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>    <span class="keywordflow">if</span> constexpr (<span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>                      impl_of(self).invoke(</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>                          std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>                          std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>                          std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>                  }) {</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>        <span class="keywordflow">return</span> impl_of(self).invoke(</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>            std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#a2b8f607d76f3912e968d4ab9eb0278a5">  584</a></span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>            std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>        <span class="comment">// Derivation from the ap basis:</span></div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>        <span class="comment">//   invoke(f, x1, ..., xn) = pure(curried f) `ap` x1 `ap` ... xn</span></div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>        <span class="comment">// This static_assert is provably redundant: the declaration&#39;s</span></div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>        <span class="comment">// constraint already established that the ap chain is well-formed,</span></div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>        <span class="comment">// which needs an ap basis. It is the GHC-MINIMAL-style last-resort</span></div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>        <span class="comment">// message fold_map also keeps, not load-bearing SFINAE.</span></div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>        <span class="keyword">static_assert</span>(</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>            <a class="code hl_concept" href="conceptbeman_1_1transpose_1_1applicative__impl.html">applicative_impl&lt;Impl, std::remove_cvref_t&lt;FIRST_ARGUMENT&gt;</a>&gt;,</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>            <span class="stringliteral">&quot;Applicative Impl must provide pure and at least one basis: &quot;</span></div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>            <span class="stringliteral">&quot;invoke(f, args_in_context...) or &quot;</span></div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>            <span class="stringliteral">&quot;ap(f_in_context, arg_in_context).&quot;</span>);</div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>        <span class="keyword">auto</span> lifted_function = self.pure(</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>            detail::make_terminating_partial&lt;1 + <span class="keyword">sizeof</span>...(REST_ARGUMENTS)&gt;(</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>                std::forward&lt;FUNCTION&gt;(function)));</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>        <span class="keywordflow">return</span> self.ap_chain(</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>            self.ap(std::move(lifted_function),</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument)),</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>            std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>    }</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>}</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span> </div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FUNCTION_IN_CONTEXT, <span class="keyword">class</span> ARGUMENT_IN_CONTEXT&gt;</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> derive_applicative&lt;Impl&gt;::ap(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self,</div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>                                            FUNCTION_IN_CONTEXT &amp;&amp;function,</div>
+<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>                                            ARGUMENT_IN_CONTEXT &amp;&amp;argument)</div>
+<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
+<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>        impl.ap(std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
+<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>                std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
+<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>    } || <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
+<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>        impl.invoke(applicative_eval,</div>
+<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>                    std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
+<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span>                    std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
+<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>    }</div>
+<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>{</div>
+<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>                      impl_of(self).ap(</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>                          std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
+<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>                          std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
+<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>                  }) {</div>
+<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>        <span class="keywordflow">return</span> impl_of(self).ap(std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
+<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>                                std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
+<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>        <span class="keywordflow">return</span> impl_of(self).invoke(</div>
+<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>            detail::applicative_eval,</div>
+<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>            std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function),</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>            std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument));</div>
+<div class="line"><a id="l00647" name="l00647"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#ad37c934ddc57195ed84be50d88a1bd37">  647</a></span>    }</div>
+<div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>}</div>
+<div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span> </div>
+<div class="line"><a id="l00650" name="l00650"></a><span class="lineno">  650</span><span class="comment">// \rSec3[transpose.applicative.derived]{Derived operations}</span></div>
+<div class="line"><a id="l00651" name="l00651"></a><span class="lineno">  651</span> </div>
+<div class="line"><a id="l00660" name="l00660"></a><span class="lineno">  660</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00661" name="l00661"></a><span class="lineno">  661</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FUNCTION, <span class="keyword">class</span> ARGUMENT&gt;</div>
+<div class="line"><a id="l00662" name="l00662"></a><span class="lineno">  662</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> derive_applicative&lt;Impl&gt;::map(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self,</div>
+<div class="line"><a id="l00663" name="l00663"></a><span class="lineno">  663</span>                                             FUNCTION &amp;&amp;function,</div>
+<div class="line"><a id="l00664" name="l00664"></a><span class="lineno">  664</span>                                             ARGUMENT &amp;&amp;argument)</div>
+<div class="line"><a id="l00665" name="l00665"></a><span class="lineno">  665</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
+<div class="line"><a id="l00666" name="l00666"></a><span class="lineno">  666</span>        impl.map(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00667" name="l00667"></a><span class="lineno">  667</span>                 std::forward&lt;ARGUMENT&gt;(argument));</div>
+<div class="line"><a id="l00668" name="l00668"></a><span class="lineno">  668</span>    } || <span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00669" name="l00669"></a><span class="lineno">  669</span>        self.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00670" name="l00670"></a><span class="lineno">  670</span>                    std::forward&lt;ARGUMENT&gt;(argument));</div>
+<div class="line"><a id="l00671" name="l00671"></a><span class="lineno">  671</span>    }</div>
+<div class="line"><a id="l00672" name="l00672"></a><span class="lineno">  672</span>{</div>
+<div class="line"><a id="l00673" name="l00673"></a><span class="lineno">  673</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00674" name="l00674"></a><span class="lineno">  674</span>                      impl_of(self).map(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00675" name="l00675"></a><span class="lineno">  675</span>                                        std::forward&lt;ARGUMENT&gt;(argument));</div>
+<div class="line"><a id="l00676" name="l00676"></a><span class="lineno">  676</span>                  }) {</div>
+<div class="line"><a id="l00677" name="l00677"></a><span class="lineno">  677</span>        <span class="keywordflow">return</span> impl_of(self).map(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00678" name="l00678"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#a29fc51a0123c34ba2a5df5ffe998833c">  678</a></span>                                 std::forward&lt;ARGUMENT&gt;(argument));</div>
+<div class="line"><a id="l00679" name="l00679"></a><span class="lineno">  679</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00680" name="l00680"></a><span class="lineno">  680</span>        <span class="keywordflow">return</span> self.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00681" name="l00681"></a><span class="lineno">  681</span>                           std::forward&lt;ARGUMENT&gt;(argument));</div>
+<div class="line"><a id="l00682" name="l00682"></a><span class="lineno">  682</span>    }</div>
+<div class="line"><a id="l00683" name="l00683"></a><span class="lineno">  683</span>}</div>
+<div class="line"><a id="l00684" name="l00684"></a><span class="lineno">  684</span> </div>
+<div class="line"><a id="l00691" name="l00691"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1derive__applicative.html#ae3f70129ffae5efef09a5a8819bec7d7">  691</a></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00692" name="l00692"></a><span class="lineno">  692</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE&gt;</div>
+<div class="line"><a id="l00693" name="l00693"></a><span class="lineno">  693</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_struct" href="structbeman_1_1transpose_1_1derive__applicative.html">derive_applicative&lt;Impl&gt;::lift</a>(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self, VALUE &amp;&amp;value)</div>
+<div class="line"><a id="l00694" name="l00694"></a><span class="lineno">  694</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
+<div class="line"><a id="l00695" name="l00695"></a><span class="lineno">  695</span>        impl.<a class="code hl_function" href="structbeman_1_1transpose_1_1derive__applicative.html#aa7e5b98a2c33b3a11a836df5a663685b">lift</a>(std::forward&lt;VALUE&gt;(value));</div>
+<div class="line"><a id="l00696" name="l00696"></a><span class="lineno">  696</span>    } || <span class="keyword">requires</span> { self.pure(std::forward&lt;VALUE&gt;(value)); }</div>
+<div class="line"><a id="l00697" name="l00697"></a><span class="lineno">  697</span>{</div>
+<div class="line"><a id="l00698" name="l00698"></a><span class="lineno">  698</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00699" name="l00699"></a><span class="lineno">  699</span>                      impl_of(self).lift(std::forward&lt;VALUE&gt;(value));</div>
+<div class="line"><a id="l00700" name="l00700"></a><span class="lineno">  700</span>                  }) {</div>
+<div class="line"><a id="l00701" name="l00701"></a><span class="lineno">  701</span>        <span class="keywordflow">return</span> impl_of(self).lift(std::forward&lt;VALUE&gt;(value));</div>
+<div class="line"><a id="l00702" name="l00702"></a><span class="lineno">  702</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00703" name="l00703"></a><span class="lineno">  703</span>        <span class="keywordflow">return</span> self.pure(std::forward&lt;VALUE&gt;(value));</div>
+<div class="line"><a id="l00704" name="l00704"></a><span class="lineno">  704</span>    }</div>
+<div class="line"><a id="l00705" name="l00705"></a><span class="lineno">  705</span>}</div>
+<div class="line"><a id="l00706" name="l00706"></a><span class="lineno">  706</span> </div>
+<div class="line"><a id="l00715" name="l00715"></a><span class="lineno">  715</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00716" name="l00716"></a><span class="lineno">  716</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FUNCTION, <span class="keyword">class</span> FIRST_ARGUMENT, <span class="keyword">class</span> SECOND_ARGUMENT&gt;</div>
+<div class="line"><a id="l00717" name="l00717"></a><span class="lineno">  717</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00718" name="l00718"></a><span class="lineno">  718</span>derive_applicative&lt;Impl&gt;::zip_with(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self, FUNCTION &amp;&amp;function,</div>
+<div class="line"><a id="l00719" name="l00719"></a><span class="lineno">  719</span>                                   FIRST_ARGUMENT &amp;&amp;first_argument,</div>
+<div class="line"><a id="l00720" name="l00720"></a><span class="lineno">  720</span>                                   SECOND_ARGUMENT &amp;&amp;second_argument)</div>
+<div class="line"><a id="l00721" name="l00721"></a><span class="lineno">  721</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
+<div class="line"><a id="l00722" name="l00722"></a><span class="lineno">  722</span>        impl.zip_with(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00723" name="l00723"></a><span class="lineno">  723</span>                      std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00724" name="l00724"></a><span class="lineno">  724</span>                      std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00725" name="l00725"></a><span class="lineno">  725</span>    } || <span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00726" name="l00726"></a><span class="lineno">  726</span>        self.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00727" name="l00727"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">  727</a></span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00728" name="l00728"></a><span class="lineno">  728</span>                    std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00729" name="l00729"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a01fe90066997f5d64ec063d4f6fff430">  729</a></span>    }</div>
+<div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>{</div>
+<div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00732" name="l00732"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">  732</a></span>                      impl_of(self).zip_with(</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>                          std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00734" name="l00734"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a6300716ab71ef10e3d8196bb4bba0583">  734</a></span>                          std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>                          std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00736" name="l00736"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a4222f534c37462e36d6fdb5f392ffe58">  736</a></span>                  }) {</div>
+<div class="line"><a id="l00737" name="l00737"></a><span class="lineno">  737</span>        <span class="keywordflow">return</span> impl_of(self).zip_with(</div>
+<div class="line"><a id="l00738" name="l00738"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a320c19116e618cacf370becbf460dd1d">  738</a></span>            std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00739" name="l00739"></a><span class="lineno">  739</span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00740" name="l00740"></a><span class="lineno">  740</span>            std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>        <span class="keywordflow">return</span> self.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>                           std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#ae530ecba893dcb3c19565e0e4c183814">  744</a></span>                           std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>    }</div>
+<div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>}</div>
+<div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span> </div>
+<div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00761" name="l00761"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#add85cb52ce6d9c0c7dce162ec435eed0">  761</a></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FIRST_ARGUMENT, <span class="keyword">class</span> SECOND_ARGUMENT&gt;</div>
+<div class="line"><a id="l00762" name="l00762"></a><span class="lineno">  762</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00763" name="l00763"></a><span class="lineno">  763</span><a class="code hl_struct" href="structbeman_1_1transpose_1_1derive__applicative.html">derive_applicative&lt;Impl&gt;::discard_first</a>(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self,</div>
+<div class="line"><a id="l00764" name="l00764"></a><span class="lineno">  764</span>                                        FIRST_ARGUMENT &amp;&amp;first_argument,</div>
+<div class="line"><a id="l00765" name="l00765"></a><span class="lineno">  765</span>                                        SECOND_ARGUMENT &amp;&amp;second_argument)</div>
+<div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
+<div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>        impl.<a class="code hl_function" href="structbeman_1_1transpose_1_1derive__applicative.html#a5506a11062973c605f38a28e1a1b166a">discard_first</a>(std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>                           std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>    } || <span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>        self.invoke(discard_first_eval,</div>
+<div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>                    std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00773" name="l00773"></a><span class="lineno">  773</span>    }</div>
+<div class="line"><a id="l00774" name="l00774"></a><span class="lineno">  774</span>{</div>
+<div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>                      impl_of(self).discard_first(</div>
+<div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>                          std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>                          std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>                  }) {</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>        <span class="keywordflow">return</span> impl_of(self).discard_first(</div>
+<div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>            std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>        <span class="keywordflow">return</span> self.invoke(discard_first_eval,</div>
+<div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>                           std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>                           std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>    }</div>
+<div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>}</div>
+<div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span> </div>
+<div class="line"><a id="l00802" name="l00802"></a><span class="lineno">  802</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00803" name="l00803"></a><span class="lineno">  803</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> FIRST_ARGUMENT, <span class="keyword">class</span> SECOND_ARGUMENT&gt;</div>
+<div class="line"><a id="l00804" name="l00804"></a><span class="lineno">  804</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00805" name="l00805"></a><span class="lineno">  805</span>derive_applicative&lt;Impl&gt;::discard_second(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;self,</div>
+<div class="line"><a id="l00806" name="l00806"></a><span class="lineno">  806</span>                                         FIRST_ARGUMENT &amp;&amp;first_argument,</div>
+<div class="line"><a id="l00807" name="l00807"></a><span class="lineno">  807</span>                                         SECOND_ARGUMENT &amp;&amp;second_argument)</div>
+<div class="line"><a id="l00808" name="l00808"></a><span class="lineno">  808</span>    <span class="keyword">requires</span> <span class="keyword">requires</span>(<span class="keyword">const</span> Impl &amp;impl) {</div>
+<div class="line"><a id="l00809" name="l00809"></a><span class="lineno">  809</span>        impl.discard_second(std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00810" name="l00810"></a><span class="lineno">  810</span>                            std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00811" name="l00811"></a><span class="lineno">  811</span>    } || <span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00812" name="l00812"></a><span class="lineno">  812</span>        self.invoke(discard_second_eval,</div>
+<div class="line"><a id="l00813" name="l00813"></a><span class="lineno">  813</span>                    std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00814" name="l00814"></a><span class="lineno">  814</span>                    std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00815" name="l00815"></a><span class="lineno">  815</span>    }</div>
+<div class="line"><a id="l00816" name="l00816"></a><span class="lineno">  816</span>{</div>
+<div class="line"><a id="l00817" name="l00817"></a><span class="lineno">  817</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00818" name="l00818"></a><span class="lineno">  818</span>                      impl_of(self).discard_second(</div>
+<div class="line"><a id="l00819" name="l00819"></a><span class="lineno">  819</span>                          std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00820" name="l00820"></a><span class="lineno">  820</span>                          std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00821" name="l00821"></a><span class="lineno">  821</span>                  }) {</div>
+<div class="line"><a id="l00822" name="l00822"></a><span class="lineno">  822</span>        <span class="keywordflow">return</span> impl_of(self).discard_second(</div>
+<div class="line"><a id="l00823" name="l00823"></a><span class="lineno">  823</span>            std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00824" name="l00824"></a><span class="lineno">  824</span>            std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00825" name="l00825"></a><span class="lineno">  825</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00826" name="l00826"></a><span class="lineno">  826</span>        <span class="keywordflow">return</span> self.invoke(discard_second_eval,</div>
+<div class="line"><a id="l00827" name="l00827"></a><span class="lineno">  827</span>                           std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00828" name="l00828"></a><span class="lineno">  828</span>                           std::forward&lt;SECOND_ARGUMENT&gt;(second_argument));</div>
+<div class="line"><a id="l00829" name="l00829"></a><span class="lineno">  829</span>    }</div>
+<div class="line"><a id="l00830" name="l00830"></a><span class="lineno">  830</span>}</div>
+<div class="line"><a id="l00831" name="l00831"></a><span class="lineno">  831</span> </div>
+<div class="line"><a id="l00832" name="l00832"></a><span class="lineno">  832</span><span class="comment">// \rSec3[transpose.applicative.grade]{Grade re-indexing}</span></div>
+<div class="line"><a id="l00833" name="l00833"></a><span class="lineno">  833</span> </div>
+<div class="line"><a id="l00840" name="l00840"></a><span class="lineno">  840</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00841" name="l00841"></a><span class="lineno">  841</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> TARGET_GRADE, <span class="keyword">class</span> CARRIER&gt;</div>
+<div class="line"><a id="l00842" name="l00842"></a><span class="lineno">  842</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> derive_applicative&lt;Impl&gt;::subsume(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;, CARRIER &amp;&amp;value)</div>
+<div class="line"><a id="l00843" name="l00843"></a><span class="lineno">  843</span>    <span class="keyword">requires</span> <span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00844" name="l00844"></a><span class="lineno">  844</span>        grade_subsume&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value));</div>
+<div class="line"><a id="l00845" name="l00845"></a><span class="lineno">  845</span>    }</div>
+<div class="line"><a id="l00846" name="l00846"></a><span class="lineno">  846</span>{</div>
+<div class="line"><a id="l00847" name="l00847"></a><span class="lineno">  847</span>    <span class="keywordflow">return</span> grade_subsume&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value));</div>
+<div class="line"><a id="l00848" name="l00848"></a><span class="lineno">  848</span>}</div>
+<div class="line"><a id="l00849" name="l00849"></a><span class="lineno">  849</span> </div>
+<div class="line"><a id="l00850" name="l00850"></a><span class="lineno">  850</span><span class="comment">// \rSec3[transpose.applicative.delegate]{Delegated application}</span></div>
+<div class="line"><a id="l00851" name="l00851"></a><span class="lineno">  851</span> </div>
+<div class="line"><a id="l00856" name="l00856"></a><span class="lineno">  856</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00857" name="l00857"></a><span class="lineno">  857</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>APPLICATIVE_MAP, <span class="keyword">class </span>FUNCTION, <span class="keyword">class </span>FIRST_ARGUMENT,</div>
+<div class="line"><a id="l00858" name="l00858"></a><span class="lineno">  858</span>          <span class="keyword">class</span>... REST_ARGUMENTS&gt;</div>
+<div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> derive_applicative&lt;Impl&gt;::invoke_with(</div>
+<div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>    <span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;, <span class="keyword">const</span> APPLICATIVE_MAP &amp;applicative_map, FUNCTION &amp;&amp;function,</div>
+<div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>    FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments)</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>    <span class="keyword">requires</span> <span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>        applicative_map.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>                               std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>                               std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
+<div class="line"><a id="l00866" name="l00866"></a><span class="lineno">  866</span>    }</div>
+<div class="line"><a id="l00867" name="l00867"></a><span class="lineno">  867</span>{</div>
+<div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span>    <span class="keywordflow">return</span> applicative_map.invoke(</div>
+<div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>        std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>        std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>        std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
+<div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>}</div>
+<div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span> </div>
+<div class="line"><a id="l00878" name="l00878"></a><span class="lineno">  878</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Impl&gt;</div>
+<div class="line"><a id="l00879" name="l00879"></a><span class="lineno">  879</span><span class="keyword">template</span> &lt;<span class="keyword">const</span> <span class="keyword">auto</span> &amp;APPLICATIVE_MAP, <span class="keyword">class </span>FUNCTION, <span class="keyword">class </span>FIRST_ARGUMENT,</div>
+<div class="line"><a id="l00880" name="l00880"></a><span class="lineno">  880</span>          <span class="keyword">class</span>... REST_ARGUMENTS&gt;</div>
+<div class="line"><a id="l00881" name="l00881"></a><span class="lineno">  881</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l00882" name="l00882"></a><span class="lineno">  882</span>derive_applicative&lt;Impl&gt;::invoke_with(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;, FUNCTION &amp;&amp;function,</div>
+<div class="line"><a id="l00883" name="l00883"></a><span class="lineno">  883</span>                                      FIRST_ARGUMENT &amp;&amp;first_argument,</div>
+<div class="line"><a id="l00884" name="l00884"></a><span class="lineno">  884</span>                                      REST_ARGUMENTS &amp;&amp;...rest_arguments)</div>
+<div class="line"><a id="l00885" name="l00885"></a><span class="lineno">  885</span>    <span class="keyword">requires</span> <span class="keyword">requires</span> {</div>
+<div class="line"><a id="l00886" name="l00886"></a><span class="lineno">  886</span>        APPLICATIVE_MAP.invoke(std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00887" name="l00887"></a><span class="lineno">  887</span>                               std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00888" name="l00888"></a><span class="lineno">  888</span>                               std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
+<div class="line"><a id="l00889" name="l00889"></a><span class="lineno">  889</span>    }</div>
+<div class="line"><a id="l00890" name="l00890"></a><span class="lineno">  890</span>{</div>
+<div class="line"><a id="l00891" name="l00891"></a><span class="lineno">  891</span>    <span class="keywordflow">return</span> APPLICATIVE_MAP.invoke(</div>
+<div class="line"><a id="l00892" name="l00892"></a><span class="lineno">  892</span>        std::forward&lt;FUNCTION&gt;(function),</div>
+<div class="line"><a id="l00893" name="l00893"></a><span class="lineno">  893</span>        std::forward&lt;FIRST_ARGUMENT&gt;(first_argument),</div>
+<div class="line"><a id="l00894" name="l00894"></a><span class="lineno">  894</span>        std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...);</div>
+<div class="line"><a id="l00895" name="l00895"></a><span class="lineno">  895</span>}</div>
+<div class="line"><a id="l00896" name="l00896"></a><span class="lineno">  896</span> </div>
+<div class="line"><a id="l00897" name="l00897"></a><span class="lineno">  897</span><span class="comment">// \rSec3[transpose.applicative.objects]{Operation objects}</span></div>
+<div class="line"><a id="l00898" name="l00898"></a><span class="lineno">  898</span> </div>
+<div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> invoke_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">invoke</a>{};</div>
+<div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span> </div>
+<div class="line"><a id="l00924" name="l00924"></a><span class="lineno">  924</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> ap_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a01fe90066997f5d64ec063d4f6fff430">ap</a>{};</div>
+<div class="line"><a id="l00925" name="l00925"></a><span class="lineno">  925</span> </div>
+<div class="line"><a id="l00937" name="l00937"></a><span class="lineno">  937</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> CONTEXT&gt;</div>
+<div class="line"><a id="l00938" name="l00938"></a><span class="lineno">  938</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> pure_fn&lt;CONTEXT&gt; <a class="code hl_variable" href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">pure</a>{};</div>
+<div class="line"><a id="l00939" name="l00939"></a><span class="lineno">  939</span> </div>
+<div class="line"><a id="l00950" name="l00950"></a><span class="lineno">  950</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> zip_with_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a6300716ab71ef10e3d8196bb4bba0583">zip_with</a>{};</div>
+<div class="line"><a id="l00951" name="l00951"></a><span class="lineno">  951</span> </div>
+<div class="line"><a id="l00962" name="l00962"></a><span class="lineno">  962</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> discard_first_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a4222f534c37462e36d6fdb5f392ffe58">discard_first</a>{};</div>
+<div class="line"><a id="l00963" name="l00963"></a><span class="lineno">  963</span> </div>
+<div class="line"><a id="l00974" name="l00974"></a><span class="lineno">  974</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> discard_second_fn <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a320c19116e618cacf370becbf460dd1d">discard_second</a>{};</div>
+<div class="line"><a id="l00975" name="l00975"></a><span class="lineno">  975</span> </div>
+<div class="line"><a id="l00976" name="l00976"></a><span class="lineno">  976</span><span class="comment">// \rSec3[transpose.applicative.optional]{Applicative instance for optional}</span></div>
+<div class="line"><a id="l00977" name="l00977"></a><span class="lineno">  977</span> </div>
+<div class="line"><a id="l00979" name="l00979"></a><span class="lineno">  979</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
+<div class="line"><a id="l00980" name="l00980"></a><span class="lineno">  980</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE&gt;</div>
+<div class="line"><a id="l00981" name="l00981"></a><span class="lineno">  981</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> optional_applicative_impl&lt;VALUE_TYPE&gt;::pure(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;,</div>
+<div class="line"><a id="l00982" name="l00982"></a><span class="lineno">  982</span>                                                           VALUE &amp;&amp;value)</div>
+<div class="line"><a id="l00983" name="l00983"></a><span class="lineno">  983</span>    -&gt; std::optional&lt;std::remove_cvref_t&lt;VALUE&gt;&gt; {</div>
+<div class="line"><a id="l00984" name="l00984"></a><span class="lineno">  984</span>    <span class="keywordflow">return</span> std::optional&lt;std::remove_cvref_t&lt;VALUE&gt;&gt;{</div>
+<div class="line"><a id="l00985" name="l00985"></a><span class="lineno">  985</span>        std::forward&lt;VALUE&gt;(value)};</div>
+<div class="line"><a id="l00986" name="l00986"></a><span class="lineno">  986</span>}</div>
+<div class="line"><a id="l00987" name="l00987"></a><span class="lineno">  987</span> </div>
+<div class="line"><a id="l00996" name="l00996"></a><span class="lineno">  996</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> VALUE_TYPE&gt;</div>
+<div class="line"><a id="l00997" name="l00997"></a><span class="lineno">  997</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>FUNCTION, <span class="keyword">class </span>FIRST, <span class="keyword">class</span>... REST&gt;</div>
+<div class="line"><a id="l00998" name="l00998"></a><span class="lineno">  998</span>    <span class="keyword">requires</span> detail::is_optional_v&lt;FIRST&gt; &amp;&amp;</div>
+<div class="line"><a id="l00999" name="l00999"></a><span class="lineno">  999</span>             (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...) &amp;&amp;</div>
+<div class="line"><a id="l01000" name="l01000"></a><span class="lineno"> 1000</span>             std::invocable&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
+<div class="line"><a id="l01001" name="l01001"></a><span class="lineno"> 1001</span>                            detail::contained_ref_t&lt;REST&gt;...&gt; &amp;&amp;</div>
+<div class="line"><a id="l01002" name="l01002"></a><span class="lineno"> 1002</span>             detail::optional_holdable_value&lt;std::invoke_result_t&lt;</div>
+<div class="line"><a id="l01003" name="l01003"></a><span class="lineno"> 1003</span>                 FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
+<div class="line"><a id="l01004" name="l01004"></a><span class="lineno"> 1004</span>                 detail::contained_ref_t&lt;REST&gt;...&gt;&gt;</div>
+<div class="line"><a id="l01005" name="l01005"></a><span class="lineno"> 1005</span><span class="keyword">constexpr</span> <span class="keyword">auto</span></div>
+<div class="line"><a id="l01006" name="l01006"></a><span class="lineno"> 1006</span>optional_applicative_impl&lt;VALUE_TYPE&gt;::invoke(<span class="keyword">this</span> <span class="keyword">auto</span> &amp;&amp;, FUNCTION &amp;&amp;function,</div>
+<div class="line"><a id="l01007" name="l01007"></a><span class="lineno"> 1007</span>                                              FIRST &amp;&amp;first, REST &amp;&amp;...rest)</div>
+<div class="line"><a id="l01008" name="l01008"></a><span class="lineno"> 1008</span>    -&gt; std::optional&lt;std::remove_cvref_t&lt;</div>
+<div class="line"><a id="l01009" name="l01009"></a><span class="lineno"> 1009</span>        std::invoke_result_t&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
+<div class="line"><a id="l01010" name="l01010"></a><span class="lineno"> 1010</span>                             detail::contained_ref_t&lt;REST&gt;...&gt;&gt;&gt; {</div>
+<div class="line"><a id="l01011" name="l01011"></a><span class="lineno"> 1011</span>    <span class="keyword">using </span>Result = std::remove_cvref_t&lt;</div>
+<div class="line"><a id="l01012" name="l01012"></a><span class="lineno"> 1012</span>        std::invoke_result_t&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;,</div>
+<div class="line"><a id="l01013" name="l01013"></a><span class="lineno"> 1013</span>                             detail::contained_ref_t&lt;REST&gt;...&gt;&gt;;</div>
+<div class="line"><a id="l01014" name="l01014"></a><span class="lineno"> 1014</span>    <span class="keywordflow">if</span> (first.has_value() &amp;&amp; (... &amp;&amp; rest.has_value())) {</div>
+<div class="line"><a id="l01015" name="l01015"></a><span class="lineno"> 1015</span>        <span class="keywordflow">return</span> std::optional&lt;Result&gt;{std::invoke(</div>
+<div class="line"><a id="l01016" name="l01016"></a><span class="lineno"> 1016</span>            function, detail::forward_contained(std::forward&lt;FIRST&gt;(first)),</div>
+<div class="line"><a id="l01017" name="l01017"></a><span class="lineno"> 1017</span>            detail::forward_contained(std::forward&lt;REST&gt;(rest))...)};</div>
+<div class="line"><a id="l01018" name="l01018"></a><span class="lineno"> 1018</span>    }</div>
+<div class="line"><a id="l01019" name="l01019"></a><span class="lineno"> 1019</span>    <span class="keywordflow">return</span> std::optional&lt;Result&gt;{};</div>
+<div class="line"><a id="l01020" name="l01020"></a><span class="lineno"> 1020</span>}</div>
+<div class="line"><a id="l01021" name="l01021"></a><span class="lineno"> 1021</span> </div>
+<div class="line"><a id="l01022" name="l01022"></a><span class="lineno"> 1022</span>} <span class="comment">// namespace beman::transpose</span></div>
+<div class="line"><a id="l01023" name="l01023"></a><span class="lineno"> 1023</span> </div>
+<div class="line"><a id="l01024" name="l01024"></a><span class="lineno"> 1024</span><span class="preprocessor">#endif </span><span class="comment">// BEMAN_TRANSPOSE_APPLY_HPP</span></div>
 <div class="ttc" id="aapplicative__derivation_8hpp_html"><div class="ttname"><a href="applicative__derivation_8hpp.html">applicative_derivation.hpp</a></div></div>
 <div class="ttc" id="aconceptbeman_1_1transpose_1_1applicative__impl_html"><div class="ttname"><a href="conceptbeman_1_1transpose_1_1applicative__impl.html">beman::transpose::applicative_impl</a></div><div class="ttdoc">Applicative pattern invariants:</div><div class="ttdef"><b>Definition:</b> apply.hpp:91</div></div>
 <div class="ttc" id="agrade_8hpp_html"><div class="ttname"><a href="grade_8hpp.html">grade.hpp</a></div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html"><div class="ttname"><a href="namespacebeman_1_1transpose.html">beman::transpose</a></div><div class="ttdoc">The grade algebra: framework vocabulary only.</div><div class="ttdef"><b>Definition:</b> finger_tree_foldable.hpp:45</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a01fe90066997f5d64ec063d4f6fff430"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a01fe90066997f5d64ec063d4f6fff430">beman::transpose::ap</a></div><div class="ttdeci">constexpr ap_fn ap</div><div class="ttdef"><b>Definition:</b> apply.hpp:724</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a320c19116e618cacf370becbf460dd1d"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a320c19116e618cacf370becbf460dd1d">beman::transpose::discard_second</a></div><div class="ttdeci">constexpr discard_second_fn discard_second</div><div class="ttdef"><b>Definition:</b> apply.hpp:733</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a01fe90066997f5d64ec063d4f6fff430"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a01fe90066997f5d64ec063d4f6fff430">beman::transpose::ap</a></div><div class="ttdeci">constexpr ap_fn ap</div><div class="ttdef"><b>Definition:</b> apply.hpp:729</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a320c19116e618cacf370becbf460dd1d"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a320c19116e618cacf370becbf460dd1d">beman::transpose::discard_second</a></div><div class="ttdeci">constexpr discard_second_fn discard_second</div><div class="ttdef"><b>Definition:</b> apply.hpp:738</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_a32e15c3cb9b99eeac61286bc962b6187"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a32e15c3cb9b99eeac61286bc962b6187">beman::transpose::accumulating_applicative</a></div><div class="ttdeci">constexpr auto accumulating_applicative</div><div class="ttdef"><b>Definition:</b> apply.hpp:267</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a4222f534c37462e36d6fdb5f392ffe58"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a4222f534c37462e36d6fdb5f392ffe58">beman::transpose::discard_first</a></div><div class="ttdeci">constexpr discard_first_fn discard_first</div><div class="ttdef"><b>Definition:</b> apply.hpp:731</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a46e5acce5433886d8105e0e6de949760"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">beman::transpose::applicative_value_t</a></div><div class="ttdeci">typename applicative_value&lt; std::remove_cvref_t&lt; T &gt; &gt;::type applicative_value_t</div><div class="ttdoc">Convenience alias for applicative_value&lt;T&gt;::type.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:99</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a6300716ab71ef10e3d8196bb4bba0583"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a6300716ab71ef10e3d8196bb4bba0583">beman::transpose::zip_with</a></div><div class="ttdeci">constexpr zip_with_fn zip_with</div><div class="ttdef"><b>Definition:</b> apply.hpp:729</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a4222f534c37462e36d6fdb5f392ffe58"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a4222f534c37462e36d6fdb5f392ffe58">beman::transpose::discard_first</a></div><div class="ttdeci">constexpr discard_first_fn discard_first</div><div class="ttdef"><b>Definition:</b> apply.hpp:736</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a46e5acce5433886d8105e0e6de949760"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">beman::transpose::applicative_value_t</a></div><div class="ttdeci">typename applicative_value&lt; std::remove_cvref_t&lt; T &gt; &gt;::type applicative_value_t</div><div class="ttdoc">Convenience alias for applicative_value&lt;T&gt;::type.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:100</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a6300716ab71ef10e3d8196bb4bba0583"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a6300716ab71ef10e3d8196bb4bba0583">beman::transpose::zip_with</a></div><div class="ttdeci">constexpr zip_with_fn zip_with</div><div class="ttdef"><b>Definition:</b> apply.hpp:734</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_a669ddd20f385c1612a3332b96674c2db"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a669ddd20f385c1612a3332b96674c2db">beman::transpose::discard_first_eval</a></div><div class="ttdeci">constexpr detail::discard_first_eval_t discard_first_eval</div><div class="ttdoc">Namespace-scope spelling of the evaluator named by discard_first's constraint, for the same reason ap...</div><div class="ttdef"><b>Definition:</b> apply.hpp:59</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a66c285a86cc3624bc83fefd648e57df4"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">beman::transpose::invoke</a></div><div class="ttdeci">constexpr invoke_fn invoke</div><div class="ttdef"><b>Definition:</b> apply.hpp:722</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a87f80674c8200e2169a16600d1f0ee38"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a87f80674c8200e2169a16600d1f0ee38">beman::transpose::impl_ref_t</a></div><div class="ttdeci">std::conditional_t&lt; std::is_const_v&lt; std::remove_reference_t&lt; SELF &gt; &gt;, const IMPL, IMPL &gt; &amp; impl_ref_t</div><div class="ttdoc">The Impl sub-object reference a typeclass base's member should address, given the deduced type of its...</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:61</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a66c285a86cc3624bc83fefd648e57df4"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">beman::transpose::invoke</a></div><div class="ttdeci">constexpr invoke_fn invoke</div><div class="ttdef"><b>Definition:</b> apply.hpp:727</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a87f80674c8200e2169a16600d1f0ee38"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a87f80674c8200e2169a16600d1f0ee38">beman::transpose::impl_ref_t</a></div><div class="ttdeci">std::conditional_t&lt; std::is_const_v&lt; std::remove_reference_t&lt; SELF &gt; &gt;, const IMPL, IMPL &gt; &amp; impl_ref_t</div><div class="ttdoc">The Impl sub-object reference a typeclass base's member should address, given the deduced type of its...</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:62</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_ab45a1fba92026eb4438ae55c3538089b"><div class="ttname"><a href="namespacebeman_1_1transpose.html#ab45a1fba92026eb4438ae55c3538089b">beman::transpose::applicative_eval</a></div><div class="ttdeci">constexpr detail::applicative_eval_t applicative_eval</div><div class="ttdoc">Namespace-scope spelling of the evaluator named by ap's constraint.</div><div class="ttdef"><b>Definition:</b> apply.hpp:26</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_acb8e20e3d78eab757dc41d5041d40b64"><div class="ttname"><a href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">beman::transpose::applicative</a></div><div class="ttdeci">constexpr auto applicative</div><div class="ttdoc">Applicative instance for std::optional&lt;VALUE_TYPE&gt;.</div><div class="ttdef"><b>Definition:</b> apply.hpp:264</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_ad69281e3689121b8f7f023021d7423d2"><div class="ttname"><a href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">beman::transpose::pure</a></div><div class="ttdeci">constexpr pure_fn&lt; CONTEXT &gt; pure</div><div class="ttdef"><b>Definition:</b> apply.hpp:727</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_ad69281e3689121b8f7f023021d7423d2"><div class="ttname"><a href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">beman::transpose::pure</a></div><div class="ttdeci">constexpr pure_fn&lt; CONTEXT &gt; pure</div><div class="ttdef"><b>Definition:</b> apply.hpp:732</div></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html_adb96a4f83cb84456fb344a32b0aa1b7a"><div class="ttname"><a href="namespacebeman_1_1transpose.html#adb96a4f83cb84456fb344a32b0aa1b7a">beman::transpose::discard_second_eval</a></div><div class="ttdeci">constexpr detail::discard_second_eval_t discard_second_eval</div><div class="ttdoc">Namespace-scope spelling of the evaluator named by discard_second's constraint; see discard_first_eva...</div><div class="ttdef"><b>Definition:</b> apply.hpp:63</div></div>
 <div class="ttc" id="astructbeman_1_1transpose_1_1derive__applicative_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1derive__applicative.html">beman::transpose::derive_applicative</a></div><div class="ttdoc">CRTP base for Applicative instances.</div><div class="ttdef"><b>Definition:</b> apply.hpp:114</div></div>
-<div class="ttc" id="astructbeman_1_1transpose_1_1derive__applicative_html_aa7e5b98a2c33b3a11a836df5a663685b"><div class="ttname"><a href="structbeman_1_1transpose_1_1derive__applicative.html#aa7e5b98a2c33b3a11a836df5a663685b">beman::transpose::derive_applicative::lift</a></div><div class="ttdeci">constexpr auto lift(this auto &amp;&amp;self, VALUE &amp;&amp;value)</div><div class="ttdef"><b>Definition:</b> apply.hpp:562</div></div>
-<div class="ttc" id="astructbeman_1_1transpose_1_1derive__applicative_html_abe8613dc169e6fecf50f97e10283ee52"><div class="ttname"><a href="structbeman_1_1transpose_1_1derive__applicative.html#abe8613dc169e6fecf50f97e10283ee52">beman::transpose::derive_applicative::invoke</a></div><div class="ttdeci">constexpr auto invoke(this auto &amp;&amp;self, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments)</div><div class="ttdef"><b>Definition:</b> apply.hpp:462</div></div>
+<div class="ttc" id="astructbeman_1_1transpose_1_1derive__applicative_html_a5506a11062973c605f38a28e1a1b166a"><div class="ttname"><a href="structbeman_1_1transpose_1_1derive__applicative.html#a5506a11062973c605f38a28e1a1b166a">beman::transpose::derive_applicative::discard_first</a></div><div class="ttdeci">constexpr auto discard_first(this auto &amp;&amp;self, FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument)</div><div class="ttdef"><b>Definition:</b> apply.hpp:617</div></div>
+<div class="ttc" id="astructbeman_1_1transpose_1_1derive__applicative_html_aa7e5b98a2c33b3a11a836df5a663685b"><div class="ttname"><a href="structbeman_1_1transpose_1_1derive__applicative.html#aa7e5b98a2c33b3a11a836df5a663685b">beman::transpose::derive_applicative::lift</a></div><div class="ttdeci">constexpr auto lift(this auto &amp;&amp;self, VALUE &amp;&amp;value)</div><div class="ttdef"><b>Definition:</b> apply.hpp:567</div></div>
+<div class="ttc" id="astructbeman_1_1transpose_1_1derive__applicative_html_abe8613dc169e6fecf50f97e10283ee52"><div class="ttname"><a href="structbeman_1_1transpose_1_1derive__applicative.html#abe8613dc169e6fecf50f97e10283ee52">beman::transpose::derive_applicative::invoke</a></div><div class="ttdeci">constexpr auto invoke(this auto &amp;&amp;self, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments)</div><div class="ttdef"><b>Definition:</b> apply.hpp:467</div></div>
 <div class="ttc" id="astructbeman_1_1transpose_1_1invoke__fn_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1invoke__fn.html">beman::transpose::invoke_fn</a></div><div class="ttdoc">Operation object for Applicative's invoke, the user-facing application verb.</div><div class="ttdef"><b>Definition:</b> apply.hpp:284</div></div>
 <div class="ttc" id="astructbeman_1_1transpose_1_1optional__applicative__impl_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1optional__applicative__impl.html">beman::transpose::optional_applicative_impl</a></div><div class="ttdoc">Applicative instance for std::optional: the flagship of the invoke core.</div><div class="ttdef"><b>Definition:</b> apply.hpp:429</div></div>
-<div class="ttc" id="astructbeman_1_1transpose_1_1optional__applicative__map_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1optional__applicative__map.html">beman::transpose::optional_applicative_map</a></div><div class="ttdef"><b>Definition:</b> apply.hpp:447</div></div>
+<div class="ttc" id="astructbeman_1_1transpose_1_1optional__applicative__map_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1optional__applicative__map.html">beman::transpose::optional_applicative_map</a></div><div class="ttdef"><b>Definition:</b> apply.hpp:452</div></div>
 <div class="ttc" id="astructbeman_1_1transpose_1_1pure__fn_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1pure__fn.html">beman::transpose::pure_fn</a></div><div class="ttdoc">Operation object for Applicative's pure, parameterized on the context because no argument can name it...</div><div class="ttdef"><b>Definition:</b> apply.hpp:339</div></div>
 <div class="ttc" id="astructbeman_1_1transpose_1_1zip__with__fn_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1zip__with__fn.html">beman::transpose::zip_with_fn</a></div><div class="ttdoc">Operation object for the derived zip_with.</div><div class="ttdef"><b>Definition:</b> apply.hpp:349</div></div>
 <div class="ttc" id="atypeclass__base_8hpp_html"><div class="ttname"><a href="typeclass__base_8hpp.html">typeclass_base.hpp</a></div></div>

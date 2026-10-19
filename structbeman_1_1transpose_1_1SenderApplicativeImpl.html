@@ -118,10 +118,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0446aced98da8f985427962f8dabe593"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
 <tr class="memitem:a0446aced98da8f985427962f8dabe593"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1SenderApplicativeImpl.html#a0446aced98da8f985427962f8dabe593">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value)</td></tr>
 <tr class="separator:a0446aced98da8f985427962f8dabe593"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d223f92c37b9a58c29c36d918610d08"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; </td></tr>
-<tr class="memitem:a7d223f92c37b9a58c29c36d918610d08"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1SenderApplicativeImpl.html#a7d223f92c37b9a58c29c36d918610d08">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, <a class="el" href="structbeman_1_1transpose_1_1sender.html">sender</a>&lt; FIRST &gt; first, <a class="el" href="structbeman_1_1transpose_1_1sender.html">sender</a>&lt; REST &gt;... rest) -&gt; <a class="el" href="structbeman_1_1transpose_1_1sender.html">sender</a>&lt; std::remove_cvref_t&lt; std::invoke_result_t&lt; const std::remove_cvref_t&lt; FUNCTION &gt; &amp;, FIRST, REST... &gt; &gt; &gt;</td></tr>
-<tr class="memdesc:a7d223f92c37b9a58c29c36d918610d08"><td class="mdescLeft">&#160;</td><td class="mdescRight">N-ary deferred core; SFINAE-friendly via the trailing return type.  <br /></td></tr>
-<tr class="separator:a7d223f92c37b9a58c29c36d918610d08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9809b0b9b227c53ee28990ac6c5d4b65"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
+requires std::constructible_from&lt;std::remove_cvref_t&lt;FUNCTION&gt;, FUNCTION&gt; &amp;&amp; detail::holdable_value&lt;std::invoke_result_t&lt; const std::remove_cvref_t&lt;FUNCTION&gt; &amp;, FIRST, REST...&gt;&gt;</td></tr>
+<tr class="memitem:a9809b0b9b227c53ee28990ac6c5d4b65"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1SenderApplicativeImpl.html#a9809b0b9b227c53ee28990ac6c5d4b65">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, <a class="el" href="structbeman_1_1transpose_1_1sender.html">sender</a>&lt; FIRST &gt; first, <a class="el" href="structbeman_1_1transpose_1_1sender.html">sender</a>&lt; REST &gt;... rest) -&gt; <a class="el" href="structbeman_1_1transpose_1_1sender.html">sender</a>&lt; std::remove_cvref_t&lt; std::invoke_result_t&lt; const std::remove_cvref_t&lt; FUNCTION &gt; &amp;, FIRST, REST... &gt; &gt; &gt;</td></tr>
+<tr class="memdesc:a9809b0b9b227c53ee28990ac6c5d4b65"><td class="mdescLeft">&#160;</td><td class="mdescRight">N-ary deferred core; SFINAE-friendly via the trailing return type.  <br /></td></tr>
+<tr class="separator:a9809b0b9b227c53ee28990ac6c5d4b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class T&gt;<br />
@@ -168,15 +169,16 @@ template&lt;class VALUE &gt; </div>
 
 </div>
 </div>
-<a id="a7d223f92c37b9a58c29c36d918610d08" name="a7d223f92c37b9a58c29c36d918610d08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d223f92c37b9a58c29c36d918610d08">&#9670;&#160;</a></span>invoke()</h2>
+<a id="a9809b0b9b227c53ee28990ac6c5d4b65" name="a9809b0b9b227c53ee28990ac6c5d4b65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9809b0b9b227c53ee28990ac6c5d4b65">&#9670;&#160;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class T &gt; </div>
 <div class="memtemplate">
-template&lt;class FUNCTION , class FIRST , class... REST&gt; </div>
+template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
+requires std::constructible_from&lt;std::remove_cvref_t&lt;FUNCTION&gt;, FUNCTION&gt; &amp;&amp; detail::holdable_value&lt;std::invoke_result_t&lt; const std::remove_cvref_t&lt;FUNCTION&gt; &amp;, FIRST, REST...&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -209,7 +211,8 @@ template&lt;class FUNCTION , class FIRST , class... REST&gt; </div>
           <td></td>
           <td>)</td>
           <td></td><td> -&gt; <a class="el" href="structbeman_1_1transpose_1_1sender.html">sender</a>&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;
-            const std::remove_cvref_t&lt;FUNCTION&gt; &amp;, FIRST, REST...&gt;&gt;&gt; </td>
+            const std::remove_cvref_t&lt;FUNCTION&gt; &amp;, FIRST, REST...&gt;&gt;&gt;
+        </td>
         </tr>
       </table>
   </td>
@@ -221,7 +224,8 @@ template&lt;class FUNCTION , class FIRST , class... REST&gt; </div>
 
 <p>N-ary deferred core; SFINAE-friendly via the trailing return type. </p>
 <p>The operands must be captured, since the point is to defer running them, but a caller who is finished with an operand can hand it over: they are taken by value and moved into the capture, so an rvalue operand is moved into the parameter and moved again into the capture rather than copied. A traversal's accumulator is an rvalue at every step, so this is one copy per element saved rather than a micro-optimization.</p>
-<p>Spelling the parameters as <code>sender&lt;FIRST&gt;</code> rather than deducing them through forwarding references is also what states the operand shape this object composes, which the other registered objects state with an explicit constraint. </p>
+<p>Spelling the parameters as <code>sender&lt;FIRST&gt;</code> rather than deducing them through forwarding references is also what states the operand shape this object composes, which the other registered objects state with an explicit constraint.</p>
+<p>The callable is decay-copied into the deferred work &ndash; it has to be, since the work outlives the call &ndash; and the constraint says so, so a callable that cannot be copied from the argument given fails softly rather than at the copy. A caller who needs the work to use their own object passes <code>std::ref</code> or <code>std::cref</code>. The result must be a value a sender can hold, which a function returning void is not. </p>
 
 </div>
 </div>

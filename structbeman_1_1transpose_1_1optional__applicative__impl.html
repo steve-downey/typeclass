@@ -118,10 +118,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ae530ecba893dcb3c19565e0e4c183814"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
 <tr class="memitem:ae530ecba893dcb3c19565e0e4c183814"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#ae530ecba893dcb3c19565e0e4c183814">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value) -&gt; std::optional&lt; std::remove_cvref_t&lt; VALUE &gt; &gt;</td></tr>
 <tr class="separator:ae530ecba893dcb3c19565e0e4c183814"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab35a12dc2c633fd6378163807b467012"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
-requires detail::is_optional_v&lt;FIRST&gt; &amp;&amp; (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...)</td></tr>
-<tr class="memitem:ab35a12dc2c633fd6378163807b467012"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#ab35a12dc2c633fd6378163807b467012">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest) -&gt; std::optional&lt; std::remove_cvref_t&lt; std::invoke_result_t&lt; FUNCTION &amp;, detail::contained_ref_t&lt; FIRST &gt;, detail::contained_ref_t&lt; REST &gt;... &gt; &gt; &gt;</td></tr>
-<tr class="separator:ab35a12dc2c633fd6378163807b467012"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add85cb52ce6d9c0c7dce162ec435eed0"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
+requires detail::is_optional_v&lt;FIRST&gt; &amp;&amp; (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...) &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;, detail::contained_ref_t&lt;REST&gt;...&gt; &amp;&amp; detail::optional_holdable_value&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;, detail::contained_ref_t&lt;REST&gt;...&gt;&gt;</td></tr>
+<tr class="memitem:add85cb52ce6d9c0c7dce162ec435eed0"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#add85cb52ce6d9c0c7dce162ec435eed0">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest) -&gt; std::optional&lt; std::remove_cvref_t&lt; std::invoke_result_t&lt; FUNCTION &amp;, detail::contained_ref_t&lt; FIRST &gt;, detail::contained_ref_t&lt; REST &gt;... &gt; &gt; &gt;</td></tr>
+<tr class="separator:add85cb52ce6d9c0c7dce162ec435eed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class VALUE_TYPE&gt;<br />
@@ -168,17 +168,17 @@ template&lt;class VALUE &gt; </div>
 
 </div>
 </div>
-<a id="ab35a12dc2c633fd6378163807b467012" name="ab35a12dc2c633fd6378163807b467012"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab35a12dc2c633fd6378163807b467012">&#9670;&#160;</a></span>invoke()</h2>
+<a id="add85cb52ce6d9c0c7dce162ec435eed0" name="add85cb52ce6d9c0c7dce162ec435eed0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add85cb52ce6d9c0c7dce162ec435eed0">&#9670;&#160;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class VALUE_TYPE &gt; <br />
-requires detail::is_optional_v&lt;FIRST&gt; &amp;&amp; (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...)</div>
+requires detail::is_optional_v&lt;FIRST&gt; &amp;&amp; (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...) &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;, detail::contained_ref_t&lt;REST&gt;...&gt; &amp;&amp; detail::optional_holdable_value&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;, detail::contained_ref_t&lt;REST&gt;...&gt;&gt;</div>
 <div class="memtemplate">
 template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
-requires detail::is_optional_v&lt;FIRST&gt; &amp;&amp; (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...)</div>
+requires detail::is_optional_v&lt;FIRST&gt; &amp;&amp; (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...) &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;, detail::contained_ref_t&lt;REST&gt;...&gt; &amp;&amp; detail::optional_holdable_value&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;, detail::contained_ref_t&lt;REST&gt;...&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

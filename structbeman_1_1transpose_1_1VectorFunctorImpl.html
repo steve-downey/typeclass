@@ -112,14 +112,14 @@ Inheritance diagram for beman::transpose::VectorFunctorImpl&lt; VALUE_TYPE &gt;:
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:afe58df0a6a6e17b6076116a7a4d40f86"><td class="memTemplParams" colspan="2">template&lt;class F &gt; <br />
-requires std::invocable&lt;F &amp;, const VALUE_TYPE &amp;&gt;</td></tr>
-<tr class="memitem:afe58df0a6a6e17b6076116a7a4d40f86"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFunctorImpl.html#afe58df0a6a6e17b6076116a7a4d40f86">fmap</a> (this auto &amp;&amp;, F &amp;&amp;function, const std::vector&lt; VALUE_TYPE &gt; &amp;values)</td></tr>
-<tr class="separator:afe58df0a6a6e17b6076116a7a4d40f86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2d9959546ea1adb129aa175ca1db49f"><td class="memTemplParams" colspan="2">template&lt;class F &gt; <br />
+requires std::invocable&lt;F &amp;, const VALUE_TYPE &amp;&gt; &amp;&amp; detail::holdable_value&lt; std::invoke_result_t&lt;F &amp;, const VALUE_TYPE &amp;&gt;&gt;</td></tr>
+<tr class="memitem:ae2d9959546ea1adb129aa175ca1db49f"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFunctorImpl.html#ae2d9959546ea1adb129aa175ca1db49f">fmap</a> (this auto &amp;&amp;, F &amp;&amp;function, const std::vector&lt; VALUE_TYPE &gt; &amp;values)</td></tr>
+<tr class="separator:ae2d9959546ea1adb129aa175ca1db49f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="afe58df0a6a6e17b6076116a7a4d40f86" name="afe58df0a6a6e17b6076116a7a4d40f86"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afe58df0a6a6e17b6076116a7a4d40f86">&#9670;&#160;</a></span>fmap()</h2>
+<a id="ae2d9959546ea1adb129aa175ca1db49f" name="ae2d9959546ea1adb129aa175ca1db49f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2d9959546ea1adb129aa175ca1db49f">&#9670;&#160;</a></span>fmap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -127,7 +127,7 @@ requires std::invocable&lt;F &amp;, const VALUE_TYPE &amp;&gt;</td></tr>
 template&lt;class VALUE_TYPE &gt; </div>
 <div class="memtemplate">
 template&lt;class F &gt; <br />
-requires std::invocable&lt;F &amp;, const VALUE_TYPE &amp;&gt;</div>
+requires std::invocable&lt;F &amp;, const VALUE_TYPE &amp;&gt; &amp;&amp; detail::holdable_value&lt; std::invoke_result_t&lt;F &amp;, const VALUE_TYPE &amp;&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
