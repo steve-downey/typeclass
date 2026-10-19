@@ -15,6 +15,12 @@
 // The tuple transpose is a heterogeneous traversal: std::tuple cannot use the
 // homogeneous Traversable loop, so transpose_tuple uses a fold over indices
 // to combine the per-field arrays through the array applicative's invoke.
+//
+// This header stands in for <array>, which in the proposal declares
+// the instance itself (docs/transpose/decisions.md#instance-placement). Include
+// it, not only <array>, before the first use of the applicative on a
+// std::array, in every translation unit that makes one: a use that precedes the
+// instance is ill-formed, no diagnostic required. transpose.hpp includes it.
 
 #include <beman/transpose/apply.hpp>
 

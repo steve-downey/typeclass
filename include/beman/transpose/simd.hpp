@@ -15,6 +15,13 @@
 // in-tree example of an Applicative that is not Traversable, the reason the
 // two typeclasses are distinct. The traversal-capable lanewise context
 // remains simd_lanes<T, N>.
+//
+// This header stands in for <simd>, which would declare the instance itself
+// (docs/transpose/decisions.md#instance-placement); the paper proposes no
+// wording for it. Include it, not only <simd>, before the first use of the
+// applicative on a std::simd::basic_vec, in every translation unit that makes
+// one: a use that precedes the instance is ill-formed, no diagnostic
+// required. transpose.hpp includes it.
 
 #include <version>
 
