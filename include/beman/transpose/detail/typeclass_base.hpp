@@ -20,6 +20,20 @@
 #error "beman.transpose requires C++23 deducing this (P0847): GCC 14 or later."
 #endif
 
+// `= delete("reason")` (P2573) where the language mode has it, plain
+// `= delete` otherwise. An operation an instance refuses is refused as a
+// deleted function, so asking whether it exists answers false rather than
+// failing, and a call gets the reason where the compiler can give it. The
+// test is the language mode as well as the feature macro: Clang defines
+// `__cpp_deleted_function` in C++23 mode, where the message is an extension
+// that warns.
+#if __cplusplus > 202302L && defined(__cpp_deleted_function) &&                \
+    __cpp_deleted_function >= 202403L
+#define BEMAN_TRANSPOSE_DELETE_WITH_REASON(REASON) delete (REASON)
+#else
+#define BEMAN_TRANSPOSE_DELETE_WITH_REASON(REASON) delete
+#endif
+
 namespace beman::transpose {
 
 // Design invariants for the typeclass object pattern:

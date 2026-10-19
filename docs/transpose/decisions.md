@@ -233,6 +233,20 @@ short-circuit *values* are order-sensitive (which error is observed first
 depends on child order) — the types cannot pin what the wording must.
 **Log:**
 - 2026-08-28 — Adopted.
+- 2026-10-19 — steve-downey/typeclass#19: the accumulating object refused
+  `bind` with a `static_assert` in a deduced body. A call got the message,
+  but asking was a hard error: `monad_object` of the accumulating object
+  instantiated the body while the concept was checked, so an algorithm
+  dispatching with `if constexpr (monad_object<P, C>)` failed to compile
+  on exactly the policy it is handed. `bind` is now a deleted function,
+  `BEMAN_TRANSPOSE_DELETE_WITH_REASON` in `detail/typeclass_base.hpp`
+  carrying the message where the language mode has P2573 and dropping it
+  otherwise (Clang defines `__cpp_deleted_function` in C++23 mode too, so
+  the macro tests `__cplusplus` as well). An operation an object refuses is
+  refused as a constraint, so asking is never an error. The member is
+  `\omit`ted, and the wording is unchanged. Tests in
+  `accumulating_object.test.cpp` replace the hand-verified note there and
+  fail against the previous headers.
 
 ---
 

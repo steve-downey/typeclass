@@ -359,23 +359,28 @@ struct accumulating_expected_applicative_map
     /// the first computation to feed the continuation, and when that
     /// computation failed there is none -- a value-flow obstruction, not
     /// something grade bookkeeping can fix. The framework never derives bind
-    /// for this object. `always_false_v` defers the static_assert to the
-    /// point of an actual call, so merely naming this type (as
-    /// `accumulating_applicative<T>` does) stays well-formed; only
-    /// calling `.bind(...)` on it fails, with this message.
+    /// for this object.
+    ///
+    /// The refusal is a deleted function, not a `static_assert` in a body.
+    /// A call to a deleted function is an invalid expression in the
+    /// immediate context, so asking whether `bind` exists -- as
+    /// `monad_object` does, and as an algorithm dispatching between a
+    /// sequential and an applicative route does -- answers false. A
+    /// `static_assert` in a deduced body fires when the probe instantiates
+    /// the body, which makes the question a hard error. The message on the
+    /// deletion is C++26 (P2573); `BEMAN_TRANSPOSE_DELETE_WITH_REASON`
+    /// drops it where it is unavailable, and a call is still rejected, as a
+    /// call to a deleted function.
     //! \omit
     template <class... ARGS>
-    constexpr auto bind(ARGS &&...) const {
-        static_assert(
-            always_false_v<ARGS...>,
-            "The accumulating applicative object has no bind: sequencing "
-            "needs a value from the first computation to feed the "
-            "continuation, and there is none when that computation failed "
-            "-- a value-flow obstruction, not something grade bookkeeping "
-            "can fix. Use the short-circuit (monad-derived) applicative "
-            "object (applicative) for sequential composition. "
-            "See docs/transpose/decisions.md#applicative-objects.");
-    }
+    void bind(ARGS &&...) const = BEMAN_TRANSPOSE_DELETE_WITH_REASON(
+        "The accumulating applicative object has no bind: sequencing "
+        "needs a value from the first computation to feed the "
+        "continuation, and there is none when that computation failed "
+        "-- a value-flow obstruction, not something grade bookkeeping "
+        "can fix. Use the short-circuit (monad-derived) applicative "
+        "object (applicative) for sequential composition. "
+        "See docs/transpose/decisions.md#applicative-objects.");
 };
 
 /** Accumulating applicative instance for `std::expected<VALUE_TYPE,
