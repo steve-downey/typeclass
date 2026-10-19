@@ -3694,3 +3694,62 @@ own copy met that, so moving onto transpose's base must not lose it.
   constant-evaluated. They are `constexpr` and forward to a native
   `fold_left`/`fold_right` in a constant expression; the derived path is not.
   Replacing `std::function` there is open.
+
+---
+
+## instance-placement
+
+**Question:** Where must an instance be declared, given that a
+specialization of a lookup variable has to precede its first use in every
+translation unit that uses it, with no diagnostic required?
+**Status:** DECIDED 2026-10-19
+**Decided by:** Steve Downey, 2026-10-19, on
+[steve-downey/typeclass#14](https://github.com/steve-downey/typeclass/issues/14).
+**Decision:** Three parts.
+
+1. A program owner who wrote neither the type nor the typeclass must be
+   able to opt the type in. That is supported, and its hazard is
+   documented rather than designed away. Declaring the instance in the
+   program's own namespace does not change the hazard: it is a
+   specialization of the library's lookup variable wherever it is written.
+2. An instance for a standard library type is declared with the type. The
+   `array` instance is available whenever `<array>` is included, the way
+   `tuple_size` is ([array.syn]), and the lookup variable it specializes
+   comes with it. The typeclass's header does not include the standard
+   containers and vocabulary types it has instances for. Only `import std;`
+   brings in everything.
+3. In the reference implementation, which cannot add to `<array>`,
+   `array.hpp`, `expected.hpp`, `sequence.hpp` and `simd.hpp` stand in for
+   the standard headers, and including one is the program's obligation.
+   The `optional` instance stays in `apply.hpp`: it is no more ours to put
+   in `<optional>` than the others, and keeping it with the typeclass has
+   no hazard, only the cost of `apply.hpp` including `<optional>`.
+
+**Why:** A partial specialization must be declared before the first use
+that would cause an implicit instantiation, in every translation unit in
+which such a use occurs, and no diagnostic is required
+([temp.spec.partial.general]/1; [temp.expl.spec] for explicit
+specializations). A translation unit that probes `invoke` on a `std::array`
+and only then includes `array.hpp` is ill-formed, as is a program in which
+one translation unit sees the instance and another does not. GCC 16
+diagnoses the first (`partial specialization ... after instantiation`);
+Clang 23 silently keeps the stale answer. A type's author can put the
+instance in the type's header, and then any code that can name the type
+sees it: `zip_list.hpp`, `sender.hpp` and `simd_lanes.hpp` do. A third
+party has no such home. Forbidding third-party instances would remove the
+way a program adapts two libraries to each other without either knowing
+about the other, which is too much to give up. For the standard's own
+types, putting every instance in the typeclass header would make it pull
+in the containers it serves; putting it with the type is what the
+standard already does for `tuple_size`.
+**Consequences:** The guidance for authors is in
+[typeclass-object-pattern.md](typeclass-object-pattern.md#where-an-instance-is-declared).
+The paper states the header placement for each standard instance in its
+wording introduction, by hand until the wording generator can place it.
+**Log:**
+- 2026-10-19 — Raised as steve-downey/typeclass#14, with two options:
+  declare each standard instance in the typeclass's header, or keep the
+  split and document the include obligation. Decided the same day: neither
+  as stated. Third-party instances are supported and documented; standard
+  instances go with the standard type, which the implementation
+  approximates with its per-type headers.

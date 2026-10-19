@@ -16,6 +16,13 @@
 //
 // The traverse primitive sequences each element's effect left-to-right, lifting
 // element results back into a vector while preserving the original shape.
+//
+// This header stands in for <vector>, which in the proposal declares
+// the instances itself (docs/transpose/decisions.md#instance-placement).
+// Include it, not only <vector>, before the first use of a typeclass on a
+// std::vector, in every translation unit that makes one: a use that precedes
+// the instance is ill-formed, no diagnostic required. transpose.hpp includes
+// it.
 
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>

@@ -108,7 +108,8 @@ That call performs compile-time lookup to the right typeclass object specializat
 ## How to add a new instance
 
 1. Decide the concept and the concrete type or type family.
-1. Implement the lookup-variable specialization close to the type adapter header.
+1. Implement the lookup-variable specialization close to the type adapter
+   header; see [Where an instance is declared](#where-an-instance-is-declared).
 1. Keep operation names aligned with existing concept APIs.
 1. Add a `.test.cpp` test file with at least:
 
@@ -117,6 +118,39 @@ That call performs compile-time lookup to the right typeclass object specializat
 - one type-level expectation when meaningful
 
 1. If an example is needed, add a source file in `examples/`.
+
+## Where an instance is declared
+
+An instance is a specialization of a lookup variable, so it must be declared
+before the first use that would instantiate that variable, in every
+translation unit that makes such a use. Breaking this is ill-formed, no
+diagnostic required. A translation unit that asks whether
+`applicative<std::array<int, 3>>` has an `invoke` and only then sees the
+instance is ill-formed. So is a program where one translation unit sees an
+instance and another does not. GCC diagnoses some of these; Clang keeps the
+answer it computed first, silently. The namespace the declaration is
+written in makes no difference: it specializes the library's lookup
+variable wherever it appears.
+
+Where it goes depends on who writes it
+([instance-placement](decisions.md#instance-placement)):
+
+- **The type's author** puts it in the type's own header. Any code that can
+  name the type then sees the instance. `zip_list.hpp`, `sender.hpp` and
+  `simd_lanes.hpp` do this.
+- **A program owner who wrote neither the type nor the typeclass** can opt
+  the type in too, and this is supported. Put the instance in one header
+  that includes both the type's header and the typeclass's, and include
+  that header, not either of the others, everywhere the type is used with
+  the typeclass. Nothing checks this for you.
+- **A standard library type's instance** is declared with the type. In the
+  proposal `<array>` provides the `array` instance, as it provides
+  `tuple_size`, and the typeclass header does not pull in the containers it
+  has instances for. This implementation cannot add to `<array>`, so
+  `array.hpp`, `expected.hpp`, `sequence.hpp` and `simd.hpp` stand in for
+  the standard headers, and the obligation above applies to them. The
+  umbrella `transpose.hpp` includes all of them, so a program that includes
+  it everywhere is safe by construction.
 
 ## How to add a new concept
 

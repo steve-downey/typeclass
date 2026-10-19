@@ -35,6 +35,13 @@
 // left-to-right order of docs/transpose/decisions.md#applicative-objects. Note
 // that the grade is order-blind while the observed error is not: ∪ commutes, so
 // operand order cannot change the deduced type, only which error you get back.
+//
+// This header stands in for <expected>, which in the proposal declares
+// the instances itself (docs/transpose/decisions.md#instance-placement).
+// Include it, not only <expected>, before the first use of a typeclass on a
+// std::expected, in every translation unit that makes one: a use that precedes
+// the instance is ill-formed, no diagnostic required. transpose.hpp includes
+// it.
 
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>
