@@ -267,10 +267,13 @@ template <class VALUE_TYPE>
 struct OptionalFunctorImpl {
     // Constrained, not left to the body: the return type is deduced, so a
     // probe would instantiate the body and fail hard on a function that
-    // cannot take the element. The Map re-exposes this member, which hides
-    // derive_functor::fmap, so its constraint is the one callers see.
+    // cannot take the element, or one whose result an optional cannot hold
+    // (a function returning void, say). The Map re-exposes this member, which
+    // hides derive_functor::fmap, so its constraint is the one callers see.
     template <class F>
-        requires std::invocable<F, const VALUE_TYPE &>
+        requires std::invocable<F, const VALUE_TYPE &> &&
+                 detail::optional_holdable_value<
+                     std::invoke_result_t<F, const VALUE_TYPE &>>
     constexpr auto fmap(this auto &&, F &&function,
                         const std::optional<VALUE_TYPE> &value) {
         using Result = std::invoke_result_t<F, const VALUE_TYPE &>;
@@ -286,7 +289,9 @@ template <class VALUE_TYPE>
 struct VectorFunctorImpl {
     // Constrained for the reason the optional instance's is.
     template <class F>
-        requires std::invocable<F &, const VALUE_TYPE &>
+        requires std::invocable<F &, const VALUE_TYPE &> &&
+                 detail::holdable_value<
+                     std::invoke_result_t<F &, const VALUE_TYPE &>>
     constexpr auto fmap(this auto &&, F &&function,
                         const std::vector<VALUE_TYPE> &values) {
         // `F &`, unlike the optional instance above: that one forwards the

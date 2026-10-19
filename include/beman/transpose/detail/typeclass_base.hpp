@@ -4,6 +4,7 @@
 #define BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP
 
 #include <array>
+#include <concepts>
 #include <cstddef>
 #include <optional>
 #include <type_traits>
@@ -116,6 +117,29 @@ struct is_optional<std::optional<U>> : std::true_type {};
 template <class T>
 inline constexpr bool is_optional_v =
     is_optional<std::remove_cvref_t<T>>::value;
+
+/** Whether `RESULT`, ignoring cv-qualification and reference -- as the
+ * instances decay a callable's result before holding it -- is a type a
+ * context can hold as a value: an object type, not an array, that can be
+ * destroyed. A callable written for its side effect returns `void`, which
+ * no such context can hold, and naming the context over it (`optional<void>`,
+ * `vector<void>`) is ill-formed outside the immediate context. Each instance
+ * that builds its result over a callable's result states this in its
+ * constraint, so that call fails softly. */
+//! \expos
+template <class RESULT>
+concept holdable_value = std::is_object_v<std::remove_cvref_t<RESULT>> &&
+                         !std::is_array_v<std::remove_cvref_t<RESULT>> &&
+                         std::destructible<std::remove_cvref_t<RESULT>>;
+
+/** `holdable_value`, narrowed to what `std::optional` can hold, which
+ * excludes its own tag types ([optional.optional.general]). */
+//! \expos
+template <class RESULT>
+concept optional_holdable_value =
+    holdable_value<RESULT> &&
+    !std::same_as<std::remove_cvref_t<RESULT>, std::nullopt_t> &&
+    !std::same_as<std::remove_cvref_t<RESULT>, std::in_place_t>;
 
 /** The type `forward_contained` yields for an operand of type `OPERAND`,
  * for naming in a trailing return type. Spelled before the function so that

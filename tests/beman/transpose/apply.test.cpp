@@ -16,6 +16,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -704,4 +705,86 @@ TEST_CASE("apply: array invoke rejects functions that cannot take the "
 
     REQUIRE(bt::invoke([](int x, int y) { return x + y; }, Array3{1, 2, 3},
                        Array3{10, 20, 30}) == Array3{11, 22, 33});
+}
+
+// steve-downey/typeclass#18: a callable that returns void -- written for its
+// side effect -- gives a result no context here can hold, so invoke and map
+// reject it softly instead of naming optional<void> and the like outside the
+// immediate context. steve-downey/typeclass#17: zip_list's invoke copies the
+// callable, and its constraint says so.
+namespace {
+
+template <class MAP, class F, class... ARGS>
+concept has_forwarded_invoke = requires(const MAP &m, F &&f, ARGS &&...args) {
+    m.invoke(std::forward<F>(f), std::forward<ARGS>(args)...);
+};
+
+template <class MAP, class F, class ARG>
+concept has_lifted_map = requires(const MAP &m, F f, ARG a) { m.map(f, a); };
+
+using ReturnsVoid = decltype([](int) {});
+using ReturnsNullopt = decltype([](int) { return std::nullopt; });
+
+// A move-only callable: an rvalue can be moved into the copy zip_list's
+// invoke makes, an lvalue cannot be copied into it.
+struct MoveOnlyNegate {
+    std::unique_ptr<int> state = std::make_unique<int>(0);
+    auto operator()(int x) const -> int { return -x; }
+};
+
+struct Counting {
+    int calls = 0;
+    auto operator()(int x) -> int {
+        ++calls;
+        return x;
+    }
+};
+
+} // namespace
+
+TEST_CASE("apply: invoke and map reject a callable returning void") {
+    using OMap =
+        std::remove_cvref_t<decltype(bt::applicative<std::optional<int>>)>;
+    using AMap = std::remove_cvref_t<decltype(bt::applicative<Array3>)>;
+    using ZMap =
+        std::remove_cvref_t<decltype(bt::applicative<bt::zip_list<int>>)>;
+    using O = std::optional<int>;
+    using Z = bt::zip_list<int>;
+
+    STATIC_REQUIRE(has_forwarded_invoke<OMap, Negate, O>);
+    STATIC_REQUIRE(!has_forwarded_invoke<OMap, ReturnsVoid, O>);
+    STATIC_REQUIRE(!has_forwarded_invoke<OMap, ReturnsNullopt, O>);
+    STATIC_REQUIRE(has_lifted_map<OMap, Negate, O>);
+    STATIC_REQUIRE(!has_lifted_map<OMap, ReturnsVoid, O>);
+
+    STATIC_REQUIRE(has_forwarded_invoke<AMap, Negate, Array3>);
+    STATIC_REQUIRE(!has_forwarded_invoke<AMap, ReturnsVoid, Array3>);
+    STATIC_REQUIRE(!has_array_invoke<ReturnsVoid, Array3>);
+
+    STATIC_REQUIRE(has_forwarded_invoke<ZMap, Negate, Z>);
+    STATIC_REQUIRE(!has_forwarded_invoke<ZMap, ReturnsVoid, Z>);
+    STATIC_REQUIRE(!has_forwarded_invoke<ZMap, NotCallable, Z>);
+}
+
+TEST_CASE("apply: zip_list invoke states the copy it makes of the callable") {
+    using ZMap =
+        std::remove_cvref_t<decltype(bt::applicative<bt::zip_list<int>>)>;
+    using Z = bt::zip_list<int>;
+
+    STATIC_REQUIRE(has_forwarded_invoke<ZMap, MoveOnlyNegate, Z>);
+    STATIC_REQUIRE(!has_forwarded_invoke<ZMap, MoveOnlyNegate &, Z>);
+    STATIC_REQUIRE(
+        has_forwarded_invoke<ZMap, std::reference_wrapper<MoveOnlyNegate>, Z>);
+
+    // The copy is what runs; std::ref is how a caller keeps its own object.
+    const auto &app = bt::applicative<Z>;
+    Counting counting;
+    std::ignore = app.invoke(counting, Z{std::vector<int>{1, 2, 3}});
+    REQUIRE(counting.calls == 0);
+    std::ignore = app.invoke(std::ref(counting), Z{std::vector<int>{1, 2, 3}});
+    REQUIRE(counting.calls == 3);
+
+    MoveOnlyNegate negate;
+    REQUIRE(app.invoke(std::ref(negate), Z{std::vector<int>{1, 2}}) ==
+            Z{std::vector<int>{-1, -2}});
 }

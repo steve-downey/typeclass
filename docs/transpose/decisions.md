@@ -1737,6 +1737,29 @@ add one.
   returning `expected<int, int>` gives `expected<int, error_set_of<int,
   string>>`, by design). Tests in `monad.test.cpp` fail against the
   previous headers.
+- 2026-10-19 — steve-downey/typeclass#18 and #17. A callable that returns
+  `void` gives a result that `optional`, `vector`, `array`, `zip_list` and
+  `sender` cannot hold, and each of those instances named its context over
+  the result (`optional<void>`, `sender<void>`) outside the immediate
+  context: a hard error on a probe. Each now requires the result, decayed as
+  it decays it, to model `detail::holdable_value` (an object type, not an
+  array, destructible), or for `optional`, `detail::optional_holdable_value`,
+  which also excludes `nullopt_t` and `in_place_t`. `expected` already
+  handled `void`; `std::expected<void, E>` is a type.
+  `zip_list`'s and the sender's `invoke` decay-copy the callable. Following
+  the Standard's rule for its algorithms ([algorithms.requirements]), a
+  member may copy the callable and a caller who needs identity passes
+  `std::ref`; what the rule asks of the member is that its constraint state
+  the copy, `constructible_from<remove_cvref_t<F>, F>`. Both do now, so a
+  move-only lvalue is a soft failure rather than `zip_list`'s hard error or
+  the sender's probe that says yes to a call that fails. `zip_list`'s
+  `invoke` was not constrained on callability at all; it is now.
+  `transpose.applicative.*` and `transpose.array.*` were regenerated. The
+  optional *Constraints* text renders `invoke_result_t< FUNCTION&` with a
+  stray space, a specgen rendering bug for a line break after `<`
+  ([steve-downey/specgen#168](https://github.com/steve-downey/specgen/issues/168)).
+  Tests in `apply.test.cpp`, `functor.test.cpp` and `sender.test.cpp` fail
+  against the previous headers.
 
 ## typeclass-conformance-depth
 

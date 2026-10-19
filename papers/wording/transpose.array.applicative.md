@@ -15,7 +15,12 @@ template<class FUNCTION, class FIRST, class... REST>
 auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest);
 ```
 
-[x+1]{.pnum} *Constraints*: `$is-std-array-of-extent-v$<FIRST, N>` is `true`, `($is-std-array-of-extent-v$<REST, N> && ...)` is `true`, and `invocable<FUNCTION&, $element-ref-t$<FIRST>, $element-ref-t$<REST>...>` is satisfied.
+[x+1]{.pnum} *Constraints*:
+
+- [x+1.#]{.pnum} `$is-std-array-of-extent-v$<FIRST, N>` is `true`,
+- [x+1.#]{.pnum} `($is-std-array-of-extent-v$<REST, N> && ...)` is `true`,
+- [x+1.#]{.pnum} `invocable<FUNCTION&, $element-ref-t$<FIRST>, $element-ref-t$<REST>...>` is satisfied,
+- [x+1.#]{.pnum} `invoke_result_t<FUNCTION&, $element-ref-t$<FIRST>, $element-ref-t$<REST>...>` models `$holdable-value$`.
 
 [x+2]{.pnum} *Returns*: An `array` of `N` elements whose element at position `i` is the result of invoking `function` with the element at position `i` of each operand.
 

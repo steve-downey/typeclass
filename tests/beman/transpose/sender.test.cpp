@@ -7,6 +7,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -144,4 +145,37 @@ TEST_CASE("sender: invoke composes senders whose work owns move-only state") {
     auto combined = applicative_map.invoke([](int a, int b) { return a + b; },
                                            make(3), make(4));
     REQUIRE(combined.get() == 7);
+}
+
+// steve-downey/typeclass#17 and #18: the sender's invoke copies the callable
+// into the deferred work, and its constraint says so, so a callable that
+// cannot be copied from the argument given is a soft failure rather than a
+// probe that says yes to a call that fails. A callable returning void gives
+// a result no sender here can hold.
+namespace {
+
+template <class F>
+concept has_sender_invoke = requires(F &&f) {
+    bt::applicative<bt::sender<int>>.invoke(std::forward<F>(f),
+                                            bt::sender<int>::ready(1));
+};
+
+struct MoveOnlyNegate {
+    std::unique_ptr<int> state = std::make_unique<int>(0);
+    auto operator()(int x) const -> int { return -x; }
+};
+
+} // namespace
+
+TEST_CASE("sender: invoke states the copy it makes of the callable") {
+    STATIC_REQUIRE(has_sender_invoke<MoveOnlyNegate>);
+    STATIC_REQUIRE(!has_sender_invoke<MoveOnlyNegate &>);
+    STATIC_REQUIRE(
+        has_sender_invoke<std::reference_wrapper<const MoveOnlyNegate>>);
+    STATIC_REQUIRE(!has_sender_invoke<decltype([](int) {})>);
+
+    const MoveOnlyNegate negate;
+    REQUIRE(bt::applicative<bt::sender<int>>
+                .invoke(std::cref(negate), bt::sender<int>::ready(2))
+                .get() == -2);
 }

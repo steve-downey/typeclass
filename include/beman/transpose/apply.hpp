@@ -517,7 +517,12 @@ struct optional_applicative_impl {
 
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_optional_v<FIRST> &&
-                 (detail::is_optional_v<REST> && ...)
+                 (detail::is_optional_v<REST> && ...) &&
+                 std::invocable<FUNCTION &, detail::contained_ref_t<FIRST>,
+                                detail::contained_ref_t<REST>...> &&
+                 detail::optional_holdable_value<std::invoke_result_t<
+                     FUNCTION &, detail::contained_ref_t<FIRST>,
+                     detail::contained_ref_t<REST>...>>
     constexpr auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
                           REST &&...rest)
         -> std::optional<std::remove_cvref_t<
@@ -991,7 +996,12 @@ constexpr auto optional_applicative_impl<VALUE_TYPE>::pure(this auto &&,
 template <class VALUE_TYPE>
 template <class FUNCTION, class FIRST, class... REST>
     requires detail::is_optional_v<FIRST> &&
-             (detail::is_optional_v<REST> && ...)
+             (detail::is_optional_v<REST> && ...) &&
+             std::invocable<FUNCTION &, detail::contained_ref_t<FIRST>,
+                            detail::contained_ref_t<REST>...> &&
+             detail::optional_holdable_value<std::invoke_result_t<
+                 FUNCTION &, detail::contained_ref_t<FIRST>,
+                 detail::contained_ref_t<REST>...>>
 constexpr auto
 optional_applicative_impl<VALUE_TYPE>::invoke(this auto &&, FUNCTION &&function,
                                               FIRST &&first, REST &&...rest)

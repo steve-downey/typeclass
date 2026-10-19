@@ -65,7 +65,10 @@ struct array_applicative_impl {
         requires detail::is_std_array_of_extent_v<FIRST, N> &&
                  (detail::is_std_array_of_extent_v<REST, N> && ...) &&
                  std::invocable<FUNCTION &, detail::element_ref_t<FIRST>,
-                                detail::element_ref_t<REST>...>
+                                detail::element_ref_t<REST>...> &&
+                 detail::holdable_value<std::invoke_result_t<
+                     FUNCTION &, detail::element_ref_t<FIRST>,
+                     detail::element_ref_t<REST>...>>
     auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
                 REST &&...rest);
 };
@@ -128,7 +131,10 @@ template <class FUNCTION, class FIRST, class... REST>
     requires detail::is_std_array_of_extent_v<FIRST, N> &&
              (detail::is_std_array_of_extent_v<REST, N> && ...) &&
              std::invocable<FUNCTION &, detail::element_ref_t<FIRST>,
-                            detail::element_ref_t<REST>...>
+                            detail::element_ref_t<REST>...> &&
+             detail::holdable_value<
+                 std::invoke_result_t<FUNCTION &, detail::element_ref_t<FIRST>,
+                                      detail::element_ref_t<REST>...>>
 auto array_applicative_impl<T, N>::invoke(this auto &&, FUNCTION &&function,
                                           FIRST &&first, REST &&...rest) {
     using Result =
