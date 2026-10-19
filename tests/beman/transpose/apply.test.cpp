@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/transpose/apply.hpp>
+#include <beman/transpose/array.hpp>
 #include <beman/transpose/zip_list.hpp>
 
 #include "test_support.hpp"
@@ -9,8 +10,10 @@
 #include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 
+#include <array>
 #include <concepts>
 #include <functional>
+#include <memory>
 #include <optional>
 #include <string>
 #include <type_traits>
@@ -656,4 +659,49 @@ TEST_CASE("apply: the derived operations are constexpr") {
                                 std::optional<int>{6}) ==
                   std::optional<int>{56});
     SUCCEED();
+}
+
+// steve-downey/typeclass#11: the array instance's invoke is constrained on
+// the function taking one element of each operand, not only on the
+// operands' shape, so a probe of it is a soft failure.
+namespace {
+
+template <class F, class... ARGS>
+concept has_array_invoke = requires(F f, ARGS &&...args) {
+    bt::invoke(f, std::forward<ARGS>(args)...);
+};
+
+using Array3 = std::array<int, 3>;
+using MoveOnlyArray = std::array<std::unique_ptr<int>, 2>;
+using AddTwo = decltype([](int x, int y) { return x + y; });
+using Negate = decltype([](int x) { return -x; });
+using TakesString = decltype([](const std::string &s) { return s.size(); });
+// Accepts its element only as an rvalue, so only an rvalue operand works.
+using Consumes =
+    decltype([](std::unique_ptr<int> &&p) { return std::move(p); });
+
+} // namespace
+
+TEST_CASE("apply: array invoke rejects functions that cannot take the "
+          "elements") {
+    STATIC_REQUIRE(has_array_invoke<Negate, Array3>);
+    STATIC_REQUIRE(has_array_invoke<AddTwo, Array3, Array3>);
+    STATIC_REQUIRE(!has_array_invoke<NotCallable, Array3>);
+    STATIC_REQUIRE(!has_array_invoke<NotCallable, Array3, Array3>);
+    STATIC_REQUIRE(!has_array_invoke<AddTwo, Array3>);
+    STATIC_REQUIRE(!has_array_invoke<Negate, Array3, Array3>);
+    STATIC_REQUIRE(!has_array_invoke<TakesString, Array3>);
+
+    // The element is passed in the operand's value category.
+    STATIC_REQUIRE(has_array_invoke<Consumes, MoveOnlyArray>);
+    STATIC_REQUIRE(!has_array_invoke<Consumes, MoveOnlyArray &>);
+
+    const auto &app = bt::applicative<Array3>;
+    STATIC_REQUIRE(
+        has_invoke<std::remove_cvref_t<decltype(app)>, AddTwo, Array3, Array3>);
+    STATIC_REQUIRE(
+        !has_invoke<std::remove_cvref_t<decltype(app)>, NotCallable, Array3>);
+
+    REQUIRE(bt::invoke([](int x, int y) { return x + y; }, Array3{1, 2, 3},
+                       Array3{10, 20, 30}) == Array3{11, 22, 33});
 }
