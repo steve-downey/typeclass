@@ -112,20 +112,22 @@ Inheritance diagram for beman::transpose::OptionalFunctorImpl&lt; VALUE_TYPE &gt
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af88b15ecea2bcce757b1fb50fff62520"><td class="memTemplParams" colspan="2">template&lt;class F &gt; </td></tr>
-<tr class="memitem:af88b15ecea2bcce757b1fb50fff62520"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalFunctorImpl.html#af88b15ecea2bcce757b1fb50fff62520">fmap</a> (this auto &amp;&amp;, F &amp;&amp;function, const std::optional&lt; VALUE_TYPE &gt; &amp;value)</td></tr>
-<tr class="separator:af88b15ecea2bcce757b1fb50fff62520"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9bb9b40d87789da218f9f5ce36de2f28"><td class="memTemplParams" colspan="2">template&lt;class F &gt; <br />
+requires std::invocable&lt;F, const VALUE_TYPE &amp;&gt;</td></tr>
+<tr class="memitem:a9bb9b40d87789da218f9f5ce36de2f28"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalFunctorImpl.html#a9bb9b40d87789da218f9f5ce36de2f28">fmap</a> (this auto &amp;&amp;, F &amp;&amp;function, const std::optional&lt; VALUE_TYPE &gt; &amp;value)</td></tr>
+<tr class="separator:a9bb9b40d87789da218f9f5ce36de2f28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="af88b15ecea2bcce757b1fb50fff62520" name="af88b15ecea2bcce757b1fb50fff62520"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af88b15ecea2bcce757b1fb50fff62520">&#9670;&#160;</a></span>fmap()</h2>
+<a id="a9bb9b40d87789da218f9f5ce36de2f28" name="a9bb9b40d87789da218f9f5ce36de2f28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9bb9b40d87789da218f9f5ce36de2f28">&#9670;&#160;</a></span>fmap()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class VALUE_TYPE &gt; </div>
 <div class="memtemplate">
-template&lt;class F &gt; </div>
+template&lt;class F &gt; <br />
+requires std::invocable&lt;F, const VALUE_TYPE &amp;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

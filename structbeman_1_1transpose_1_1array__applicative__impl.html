@@ -115,10 +115,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a20ed0db7cae73132d9d2ec32678aee41"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
 <tr class="memitem:a20ed0db7cae73132d9d2ec32678aee41"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html#a20ed0db7cae73132d9d2ec32678aee41">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value)</td></tr>
 <tr class="separator:a20ed0db7cae73132d9d2ec32678aee41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a227299e1064cfe6d1f32ea8850606ffa"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
-requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is_std_array_of_extent_v&lt;REST, N&gt; &amp;&amp; ...)</td></tr>
-<tr class="memitem:a227299e1064cfe6d1f32ea8850606ffa"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html#a227299e1064cfe6d1f32ea8850606ffa">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest)</td></tr>
-<tr class="separator:a227299e1064cfe6d1f32ea8850606ffa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf68e46582d48172ff29ac839884ff33"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
+requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is_std_array_of_extent_v&lt;REST, N&gt; &amp;&amp; ...) &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::element_ref_t&lt;FIRST&gt;, detail::element_ref_t&lt;REST&gt;...&gt;</td></tr>
+<tr class="memitem:aaf68e46582d48172ff29ac839884ff33"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html#aaf68e46582d48172ff29ac839884ff33">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest)</td></tr>
+<tr class="separator:aaf68e46582d48172ff29ac839884ff33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a20ed0db7cae73132d9d2ec32678aee41" name="a20ed0db7cae73132d9d2ec32678aee41"></a>
@@ -153,17 +153,17 @@ template&lt;class VALUE &gt; </div>
 
 </div>
 </div>
-<a id="a227299e1064cfe6d1f32ea8850606ffa" name="a227299e1064cfe6d1f32ea8850606ffa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a227299e1064cfe6d1f32ea8850606ffa">&#9670;&#160;</a></span>invoke()</h2>
+<a id="aaf68e46582d48172ff29ac839884ff33" name="aaf68e46582d48172ff29ac839884ff33"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf68e46582d48172ff29ac839884ff33">&#9670;&#160;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class T , std::size_t N&gt; <br />
-requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is_std_array_of_extent_v&lt;REST, N&gt; &amp;&amp; ...)</div>
+requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is_std_array_of_extent_v&lt;REST, N&gt; &amp;&amp; ...) &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::element_ref_t&lt;FIRST&gt;, detail::element_ref_t&lt;REST&gt;...&gt;</div>
 <div class="memtemplate">
 template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
-requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is_std_array_of_extent_v&lt;REST, N&gt; &amp;&amp; ...)</div>
+requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is_std_array_of_extent_v&lt;REST, N&gt; &amp;&amp; ...) &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::element_ref_t&lt;FIRST&gt;, detail::element_ref_t&lt;REST&gt;...&gt;</div>
       <table class="memname">
         <tr>
           <td class="memname">auto <a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html">beman::transpose::array_applicative_impl</a>&lt; T, N &gt;::invoke </td>
