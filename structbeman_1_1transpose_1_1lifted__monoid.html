@@ -123,8 +123,6 @@ Public Member Functions</h2></td></tr>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ae0774d01b786f7344c5ec24318836dc4"><td class="memItemLeft" align="right" valign="top">ELEMENT_MONOID&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1lifted__monoid.html#ae0774d01b786f7344c5ec24318836dc4">d_element</a> {}</td></tr>
 <tr class="separator:ae0774d01b786f7344c5ec24318836dc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b0714addd098ff142a85e1a5b9efc15"><td class="memItemLeft" align="right" valign="top">APPLICATIVE_OBJECT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1lifted__monoid.html#a3b0714addd098ff142a85e1a5b9efc15">d_applicative</a> {}</td></tr>
-<tr class="separator:a3b0714addd098ff142a85e1a5b9efc15"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class APPLICATIVE_OBJECT, class CONTEXT, class ELEMENT_MONOID = Monoid&lt;applicative_value_t&lt;CONTEXT&gt;&gt;&gt;<br />
@@ -132,7 +130,7 @@ requires monoid_object&lt;ELEMENT_MONOID, <a class="el" href="namespacebeman_1_1
 struct beman::transpose::lifted_monoid&lt; APPLICATIVE_OBJECT, CONTEXT, ELEMENT_MONOID &gt;</div><p><code>CONTEXT</code> (e.g. </p>
 <p><code>std::optional&lt;int&gt;</code>) as a monoid, lifted from an instance <code>ELEMENT_MONOID</code> over its element type through an <code>APPLICATIVE_OBJECT</code> over <code>CONTEXT</code>: identity is <code><a class="el" href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">pure(identity_A)</a></code>, combine is <code>invoke(combine_A, ·, ·)</code>. The element instance defaults to the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of the element type and is held by value, so a lift of <code>std::optional&lt;int&gt;</code> under addition is spelled <code><a class="el" href="structbeman_1_1transpose_1_1lifted__monoid.html" title="CONTEXT (e.g.">lifted_monoid</a>&lt;std::remove_cvref_t&lt;decltype(applicative&lt;std::optional&lt;int&gt;&gt;)&gt;, std::optional&lt;int&gt;, <a class="el" href="structbeman_1_1transpose_1_1sum__monoid.html" title="Additive monoid on T: identity is the zero of T, combine adds.">sum_monoid</a>&lt;int&gt;&gt;</code> &ndash; the context stays <code>std::optional&lt;int&gt;</code>, unwrapped. The instance's own class is an implementation detail; reach it through the lookup.</p>
 <p>Uses <code>invoke</code>, not <code>ap</code>: <code>invoke</code> is the interface that works for every context, including one that cannot hold a callable (<code><a class="el" href="apply_8hpp.html">apply.hpp</a></code>'s "Applicative pattern invariants" block), whereas <code>ap</code> requires the context to be able to hold the (curried) combining function.</p>
-<p>The applicative object is held too, after the element instance so that <code><a class="el" href="structbeman_1_1transpose_1_1lifted__monoid.html" title="CONTEXT (e.g.">lifted_monoid</a>&lt;...&gt;{element}</code> still initializes the element instance, and for the reason <code><a class="el" href="structbeman_1_1transpose_1_1kleisli__monoid.html" title="The Kleisli endomorphism monoid of MONAD_OBJECT at A: an instance over Kleisli arrows A -&gt; M&lt;A&gt;,...">kleisli_monoid</a></code> holds its monad object: a caller's stateful object is the one consulted. </p>
+<p><code>APPLICATIVE_OBJECT</code> is a type parameter for the same reason <code>MONAD_OBJECT</code> is above: every typeclass object is stateless and empty, so default-constructing a fresh one wherever this instance needs one costs nothing. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="af4916259b22f35e8ad961d224224bd6a" name="af4916259b22f35e8ad961d224224bd6a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af4916259b22f35e8ad961d224224bd6a">&#9670;&#160;</a></span>A</h2>
@@ -243,22 +241,6 @@ template&lt;class APPLICATIVE_OBJECT , class CONTEXT , class ELEMENT_MONOID  = M
       <table class="memname">
         <tr>
           <td class="memname">ELEMENT_MONOID <a class="el" href="structbeman_1_1transpose_1_1lifted__monoid.html">beman::transpose::lifted_monoid</a>&lt; APPLICATIVE_OBJECT, CONTEXT, ELEMENT_MONOID &gt;::d_element {}</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3b0714addd098ff142a85e1a5b9efc15" name="a3b0714addd098ff142a85e1a5b9efc15"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b0714addd098ff142a85e1a5b9efc15">&#9670;&#160;</a></span>d_applicative</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class APPLICATIVE_OBJECT , class CONTEXT , class ELEMENT_MONOID  = Monoid&lt;applicative_value_t&lt;CONTEXT&gt;&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">APPLICATIVE_OBJECT <a class="el" href="structbeman_1_1transpose_1_1lifted__monoid.html">beman::transpose::lifted_monoid</a>&lt; APPLICATIVE_OBJECT, CONTEXT, ELEMENT_MONOID &gt;::d_applicative {}</td>
         </tr>
       </table>
 </div><div class="memdoc">

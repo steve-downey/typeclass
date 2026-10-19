@@ -12,6 +12,7 @@ var hierarchy =
     [ "beman::transpose::any_of_fn", "structbeman_1_1transpose_1_1any__of__fn.html", null ],
     [ "beman::transpose::ap_fn", "structbeman_1_1transpose_1_1ap__fn.html", null ],
     [ "beman::transpose::applicative_value< T, class >", "structbeman_1_1transpose_1_1applicative__value.html", null ],
+    [ "beman::transpose::applicative_value< std::optional< T >, void >", "structbeman_1_1transpose_1_1applicative__value_3_01std_1_1optional_3_01T_01_4_00_01void_01_4.html", null ],
     [ "beman::transpose::applicative_value< T, std::void_t< typename std::remove_cvref_t< T >::value_type > >", "structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html", null ],
     [ "beman::transpose::array_applicative_impl< T, N >", "structbeman_1_1transpose_1_1array__applicative__impl.html", [
       [ "beman::transpose::derive_applicative< array_applicative_impl< T, N > >", "structbeman_1_1transpose_1_1derive__applicative.html", [

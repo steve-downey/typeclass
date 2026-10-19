@@ -12,13 +12,11 @@ var dir_dcca3582e3abd91b3ef0fe1a8f79e9b7 =
     [ "induced_monoid.hpp", "induced__monoid_8hpp.html", "induced__monoid_8hpp" ],
     [ "monad.hpp", "monad_8hpp.html", "monad_8hpp" ],
     [ "monoid.hpp", "monoid_8hpp.html", "monoid_8hpp" ],
-    [ "optional.hpp", "optional_8hpp.html", "optional_8hpp" ],
     [ "overloaded.hpp", "overloaded_8hpp.html", "overloaded_8hpp" ],
     [ "sender.hpp", "sender_8hpp.html", "sender_8hpp" ],
     [ "sequence.hpp", "sequence_8hpp.html", "sequence_8hpp" ],
     [ "simd.hpp", "simd_8hpp.html", null ],
     [ "simd_lanes.hpp", "simd__lanes_8hpp.html", "simd__lanes_8hpp" ],
-    [ "string.hpp", "string_8hpp.html", "string_8hpp" ],
     [ "transpose.hpp", "transpose_8hpp.html", "transpose_8hpp" ],
     [ "traverse.hpp", "traverse_8hpp.html", "traverse_8hpp" ],
     [ "zip_list.hpp", "zip__list_8hpp.html", "zip__list_8hpp" ]

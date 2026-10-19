@@ -94,7 +94,6 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1kleisli__m
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structbeman_1_1transpose_1_1kleisli__monoid-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">beman::transpose::kleisli_monoid&lt; MONAD_OBJECT, A &gt; Struct Template Reference</div></div>
 </div><!--header-->
@@ -119,19 +118,14 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab95d380adea3e2aafae201abc47419de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8001d1f54721e453088c9ed0dc8557a0"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1kleisli__monoid.html#a8001d1f54721e453088c9ed0dc8557a0">combine</a> (const <a class="el" href="structbeman_1_1transpose_1_1kleisli__monoid.html#ab91a56b975a92f5fa21b2aa5a2ad70dc">value_type</a> &amp;lhs, const <a class="el" href="structbeman_1_1transpose_1_1kleisli__monoid.html#ab91a56b975a92f5fa21b2aa5a2ad70dc">value_type</a> &amp;rhs) const -&gt; <a class="el" href="structbeman_1_1transpose_1_1kleisli__monoid.html#ab91a56b975a92f5fa21b2aa5a2ad70dc">value_type</a></td></tr>
 <tr class="separator:a8001d1f54721e453088c9ed0dc8557a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:acef12d10e84278ae435d7ceb5cdd4b7f"><td class="memItemLeft" align="right" valign="top">MONAD_OBJECT&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1kleisli__monoid.html#acef12d10e84278ae435d7ceb5cdd4b7f">d_monad</a> {}</td></tr>
-<tr class="separator:acef12d10e84278ae435d7ceb5cdd4b7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class MONAD_OBJECT, class A&gt;<br />
 struct beman::transpose::kleisli_monoid&lt; MONAD_OBJECT, A &gt;</div><p>The Kleisli endomorphism monoid of <code>MONAD_OBJECT</code> at <code>A</code>: an instance over Kleisli arrows <code>A -&gt; M&lt;A&gt;</code>, type-erased through <code>std::function</code> so that <code>combine</code> can return the same type it takes &ndash; the same erasure <code>detail::left_compose_monoid</code> (<code><a class="el" href="fold_8hpp.html">fold.hpp</a></code>) uses for the same reason: a monoid's value type must close under <code>combine</code>, and a bare lambda type does not. </p>
 <p>Identity is <code>pure</code>, combine is Kleisli composition (<code>&gt;=&gt;</code>). The Kleisli-form monad laws &ndash; <code>pure</code> is the two-sided unit of <code>&gt;=&gt;</code>, and <code>&gt;=&gt;</code> is associative &ndash; are exactly this monoid's laws, which is the whole reason to name the instance: it is the value-level statement of "a monad
 is a monoid in the category of endofunctors", the only form of that statement this library can make.</p>
-<p>The monad object is held, not constructed: <code>d_monad</code> is the object every <code>pure</code> and <code>kleisli</code> goes through, so a caller's object that carries state &ndash; an allocator, a scheduler, a log &ndash; is the one consulted, as it is when passed to <code>traverse</code>. <code>[[no_unique_address]]</code> keeps an empty object free.</p>
-<p>The arrows <code>identity</code> and <code>combine</code> return capture a copy of <code>d_monad</code>, not <code>this</code>: an arrow outlives the monoid that built it. <code>combine</code> invokes <code>kleisli</code> on that copy when the arrow is called, rather than storing the result of <code><a class="el" href="namespacebeman_1_1transpose.html#a0d930cf716a5eab758420040d814ce26" title="Kleisli composition in a named context: kleisli&lt;C&gt;(f, g).">kleisli(...)</a></code>. <code><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html" title="CRTP base for Monad instances.">derive_monad</a>&lt;Impl&gt;::kleisli</code>'s derived branch returns a composition that holds a reference to the object it was called on, and calling it on a copy captured in the arrow keeps that object alive for exactly as long as the arrow is. </p>
+<p><code>MONAD_OBJECT</code> is a type parameter, not a stored member: every typeclass object in this library is stateless and empty, so default-constructing a fresh <code>MONAD_OBJECT{}</code> wherever one is needed is free, not a workaround.</p>
+<p><code>combine</code> builds its own <code>MONAD_OBJECT{}</code> inside the stored lambda, at the moment the lambda is called, rather than storing the result of <code>MONAD_OBJECT{}.<a class="el" href="namespacebeman_1_1transpose.html#a0d930cf716a5eab758420040d814ce26" title="Kleisli composition in a named context: kleisli&lt;C&gt;(f, g).">kleisli(...)</a></code> directly. <code><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html" title="CRTP base for Monad instances.">derive_monad</a>&lt;Impl&gt;::kleisli</code>'s derived branch returns a closure that captures <code>self</code> by reference; storing that closure here would capture a reference to a <code>MONAD_OBJECT{}</code> temporary that no longer exists once <code>combine</code> has returned. Constructing the temporary and invoking <code>kleisli</code> on it in the same full expression that calls the result keeps the temporary alive for exactly as long as it is used. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a901d3fabf7c36a11ce09eedf757d7431" name="a901d3fabf7c36a11ce09eedf757d7431"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a901d3fabf7c36a11ce09eedf757d7431">&#9670;&#160;</a></span>result_type</h2>
@@ -229,23 +223,6 @@ template&lt;class MONAD_OBJECT , class A &gt; </div>
 <span class="mlabels"><span class="mlabel">inline</span></span>  </td>
   </tr>
 </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="acef12d10e84278ae435d7ceb5cdd4b7f" name="acef12d10e84278ae435d7ceb5cdd4b7f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acef12d10e84278ae435d7ceb5cdd4b7f">&#9670;&#160;</a></span>d_monad</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class MONAD_OBJECT , class A &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">MONAD_OBJECT <a class="el" href="structbeman_1_1transpose_1_1kleisli__monoid.html">beman::transpose::kleisli_monoid</a>&lt; MONAD_OBJECT, A &gt;::d_monad {}</td>
-        </tr>
-      </table>
 </div><div class="memdoc">
 
 </div>

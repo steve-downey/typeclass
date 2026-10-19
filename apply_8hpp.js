@@ -7,6 +7,8 @@ var apply_8hpp =
     [ "beman::transpose::zip_with_fn", "structbeman_1_1transpose_1_1zip__with__fn.html", "structbeman_1_1transpose_1_1zip__with__fn" ],
     [ "beman::transpose::discard_first_fn", "structbeman_1_1transpose_1_1discard__first__fn.html", "structbeman_1_1transpose_1_1discard__first__fn" ],
     [ "beman::transpose::discard_second_fn", "structbeman_1_1transpose_1_1discard__second__fn.html", "structbeman_1_1transpose_1_1discard__second__fn" ],
+    [ "beman::transpose::optional_applicative_impl< VALUE_TYPE >", "structbeman_1_1transpose_1_1optional__applicative__impl.html", "structbeman_1_1transpose_1_1optional__applicative__impl" ],
+    [ "beman::transpose::optional_applicative_map< VALUE_TYPE >", "structbeman_1_1transpose_1_1optional__applicative__map.html", null ],
     [ "beman::transpose::applicative_impl", "conceptbeman_1_1transpose_1_1applicative__impl.html", null ],
     [ "beman::transpose::applicative_object", "conceptbeman_1_1transpose_1_1applicative__object.html", null ],
     [ "applicative_eval", "apply_8hpp.html#ab45a1fba92026eb4438ae55c3538089b", null ],

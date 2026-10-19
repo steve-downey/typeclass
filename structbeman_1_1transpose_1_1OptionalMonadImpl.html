@@ -99,10 +99,7 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1OptionalMo
 </div><!--header-->
 <div class="contents">
 
-<p>Monad instance for std::optional.  
- <a href="structbeman_1_1transpose_1_1OptionalMonadImpl.html#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="optional_8hpp_source.html">beman/transpose/optional.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="monad_8hpp_source.html">beman/transpose/monad.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for beman::transpose::OptionalMonadImpl&lt; VALUE_TYPE &gt;:</div>
 <div class="dyncontent">
@@ -129,11 +126,7 @@ requires detail::is_optional_v&lt;std::invoke_result_t&lt;F, const A &amp;&gt;&g
 <tr class="memitem:a353e60e65dc72a8426f73b38887aeffe"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalMonadImpl.html#a353e60e65dc72a8426f73b38887aeffe">bind</a> (this auto &amp;&amp;, const std::optional&lt; A &gt; &amp;ma, F &amp;&amp;f) -&gt; std::remove_cvref_t&lt; std::invoke_result_t&lt; F, const A &amp; &gt; &gt;</td></tr>
 <tr class="separator:a353e60e65dc72a8426f73b38887aeffe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;class VALUE_TYPE&gt;<br />
-struct beman::transpose::OptionalMonadImpl&lt; VALUE_TYPE &gt;</div><p>Monad instance for std::optional. </p>
-<p>Monad is not proposed by this paper, so this instance carries no wording. <code>pure</code> delegates to the applicative instance above. </p>
-</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a52d56ca149c5664a39bb7139fedcde89" name="a52d56ca149c5664a39bb7139fedcde89"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a52d56ca149c5664a39bb7139fedcde89">&#9670;&#160;</a></span>element_type</h2>
 
@@ -240,7 +233,7 @@ requires detail::is_optional_v&lt;std::invoke_result_t&lt;F, const A &amp;&gt;&g
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>beman/transpose/<a class="el" href="optional_8hpp_source.html">optional.hpp</a></li>
+<li>beman/transpose/<a class="el" href="monad_8hpp_source.html">monad.hpp</a></li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
