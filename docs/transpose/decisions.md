@@ -3379,6 +3379,21 @@ through it.
   [lookup-variable-naming](#lookup-variable-naming). `Monoid<T>` is
   unchanged; whether it should be is
   [monoid-registry-spelling](#monoid-registry-spelling).
+- 2026-10-19 — steve-downey/typeclass#20: `kleisli_monoid` and
+  `lifted_monoid` took their typeclass object as a type and constructed a
+  fresh one wherever they needed it, on the stated ground that every
+  typeclass object is stateless and empty. Nothing checked that, and a
+  caller's object carrying state was silently not consulted, though
+  `traverse` consults the policy object it is handed. Both now hold the
+  object, `[[no_unique_address]]`, as `lifted_monoid` already held its
+  element instance, rather than requiring it to be empty, which would
+  have bounded typeclass objects more tightly than
+  [registered-instance-state](#registered-instance-state) bounds monoid
+  instances. `lifted_monoid` holds it after the element instance, so
+  `lifted_monoid<...>{element}` keeps its meaning. `kleisli_monoid`'s
+  arrows capture a copy of the object, not `this`, because an arrow
+  outlives the monoid that built it. Tests in `induced_monoid.test.cpp`
+  pass a logging object to each and fail against the previous header.
 
 ---
 

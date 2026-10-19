@@ -41,19 +41,18 @@ namespace beman::transpose {
  * is a monoid in the category of endofunctors", the only form of that
  * statement this library can make.
  *
- * `MONAD_OBJECT` is a type parameter, not a stored member: every typeclass
- * object in this library is stateless and empty, so default-constructing a
- * fresh `MONAD_OBJECT{}` wherever one is needed is free, not a workaround.
+ * The monad object is held, not constructed: `d_monad` is the object every
+ * `pure` and `kleisli` goes through, so a caller's object that carries state
+ * -- an allocator, a scheduler, a log -- is the one consulted, as it is when
+ * passed to `traverse`. `[[no_unique_address]]` keeps an empty object free.
  *
- * `combine` builds its own `MONAD_OBJECT{}` inside the stored lambda, at the
- * moment the lambda is called, rather than storing the result of
- * `MONAD_OBJECT{}.kleisli(...)` directly. `derive_monad<Impl>::kleisli`'s
- * derived branch returns a closure that captures `self` by reference; storing
- * that closure here would capture a reference to a `MONAD_OBJECT{}` temporary
- * that no longer exists once `combine` has returned. Constructing the
- * temporary and invoking `kleisli` on it in the same full expression that
- * calls the result keeps the temporary alive for exactly as long as it is
- * used.
+ * The arrows `identity` and `combine` return capture a copy of `d_monad`,
+ * not `this`: an arrow outlives the monoid that built it. `combine` invokes
+ * `kleisli` on that copy when the arrow is called, rather than storing the
+ * result of `kleisli(...)`. `derive_monad<Impl>::kleisli`'s derived branch
+ * returns a composition that holds a reference to the object it was called
+ * on, and calling it on a copy captured in the arrow keeps that object alive
+ * for exactly as long as the arrow is.
  */
 template <class MONAD_OBJECT, class A>
 struct kleisli_monoid {
@@ -65,14 +64,18 @@ struct kleisli_monoid {
 
     using value_type = std::function<result_type(const A &)>;
 
+    [[no_unique_address]] MONAD_OBJECT d_monad{};
+
     auto identity() const -> value_type {
-        return [](const A &a) -> result_type { return MONAD_OBJECT{}.pure(a); };
+        return [monad = d_monad](const A &a) -> result_type {
+            return monad.pure(a);
+        };
     }
 
     auto combine(const value_type &lhs, const value_type &rhs) const
         -> value_type {
-        return [lhs, rhs](const A &a) -> result_type {
-            return MONAD_OBJECT{}.kleisli(lhs, rhs)(a);
+        return [monad = d_monad, lhs, rhs](const A &a) -> result_type {
+            return monad.kleisli(lhs, rhs)(a);
         };
     }
 };
@@ -93,10 +96,10 @@ struct kleisli_monoid {
  * "Applicative pattern invariants" block), whereas `ap` requires the context
  * to be able to hold the (curried) combining function.
  *
- * `APPLICATIVE_OBJECT` is a type parameter for the same reason
- * `MONAD_OBJECT` is above: every typeclass object is stateless and empty, so
- * default-constructing a fresh one wherever this instance needs one costs
- * nothing.
+ * The applicative object is held too, after the element instance so that
+ * `lifted_monoid<...>{element}` still initializes the element instance, and
+ * for the reason `kleisli_monoid` holds its monad object: a caller's
+ * stateful object is the one consulted.
  */
 template <class APPLICATIVE_OBJECT, class CONTEXT,
           class ELEMENT_MONOID = Monoid<applicative_value_t<CONTEXT>>>
@@ -106,13 +109,14 @@ struct lifted_monoid {
     using value_type = CONTEXT;
 
     ELEMENT_MONOID d_element{};
+    [[no_unique_address]] APPLICATIVE_OBJECT d_applicative{};
 
     auto identity() const -> CONTEXT {
-        return APPLICATIVE_OBJECT{}.pure(d_element.identity());
+        return d_applicative.pure(d_element.identity());
     }
 
     auto combine(const CONTEXT &lhs, const CONTEXT &rhs) const -> CONTEXT {
-        return APPLICATIVE_OBJECT{}.invoke(
+        return d_applicative.invoke(
             [this](const A &a, const A &b) { return d_element.combine(a, b); },
             lhs, rhs);
     }
