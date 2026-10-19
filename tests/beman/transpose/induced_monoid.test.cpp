@@ -11,6 +11,10 @@
 
 #include <array>
 #include <optional>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace bt = beman::transpose;
 
@@ -208,4 +212,83 @@ TEST_CASE("induced_monoid: lifted_monoid holds its element instance by "
         m;
     REQUIRE(m.combine(std::optional<int>{3}, std::optional<int>{4}) ==
             std::optional<int>{4});
+}
+
+// ============================================================================
+// A stateful typeclass object is the one consulted. Both induced monoids hold
+// their typeclass object rather than constructing a fresh one, so an object
+// that carries state -- here a pointer to a log -- is the object every
+// operation goes through, as it is when passed to traverse.
+// ============================================================================
+
+namespace {
+
+using Log = std::vector<std::string>;
+
+// An applicative object over std::optional<int> that records each call.
+struct logging_applicative {
+    Log *log = nullptr;
+
+    auto pure(const int &value) const -> std::optional<int> {
+        log->push_back("pure");
+        return ApplicativeObj{}.pure(value);
+    }
+
+    template <class FUNCTION>
+    auto invoke(FUNCTION &&function, const std::optional<int> &lhs,
+                const std::optional<int> &rhs) const -> std::optional<int> {
+        log->push_back("invoke");
+        return ApplicativeObj{}.invoke(std::forward<FUNCTION>(function), lhs,
+                                       rhs);
+    }
+};
+
+// A monad object over std::optional<int> that records each call. Its kleisli
+// composition owns what it needs, so it may outlive the call that built it.
+struct logging_monad {
+    Log *log = nullptr;
+
+    auto pure(const int &value) const -> std::optional<int> {
+        log->push_back("pure");
+        return std::optional<int>{value};
+    }
+
+    template <class F, class G>
+    auto kleisli(F first, G second) const {
+        log->push_back("kleisli");
+        return [first, second](const int &a) -> std::optional<int> {
+            return MonadObj{}.bind(first(a), second);
+        };
+    }
+};
+
+} // namespace
+
+TEST_CASE("induced_monoid: lifted_monoid consults the applicative object it "
+          "holds") {
+    Log log;
+    const bt::lifted_monoid<logging_applicative, std::optional<int>,
+                            bt::sum_monoid<int>>
+        m{{}, logging_applicative{&log}};
+    REQUIRE(m.combine(std::optional<int>{1}, std::optional<int>{2}) ==
+            std::optional<int>{3});
+    REQUIRE(m.identity() == std::optional<int>{0});
+    REQUIRE(log == Log{"invoke", "pure"});
+}
+
+TEST_CASE("induced_monoid: kleisli_monoid consults the monad object it "
+          "holds, through arrows that outlive the monoid") {
+    Log log;
+    Arrow composed;
+    Arrow unit;
+    {
+        const bt::kleisli_monoid<logging_monad, int> m{logging_monad{&log}};
+        composed = m.combine(Arrow{increment_below_100}, Arrow{doubled});
+        unit = m.identity();
+    }
+    REQUIRE(log.empty());
+    REQUIRE(composed(4) == std::optional<int>{10});
+    REQUIRE(composed(100) == std::nullopt);
+    REQUIRE(unit(7) == std::optional<int>{7});
+    REQUIRE(log == Log{"kleisli", "kleisli", "pure"});
 }
