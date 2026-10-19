@@ -106,7 +106,7 @@ $(document).ready(function(){initNavTree('conceptbeman_1_1transpose_1_1functor__
 <div class="line">    obj.fmap(detail::probe_witness&lt;applicative_value_t&lt;CONTEXT&gt;&gt;{}, context);</div>
 <div class="line">    obj.replace(context, element);</div>
 <div class="line">}</div>
-<div class="ttc" id="aconceptbeman_1_1transpose_1_1functor__object_html"><div class="ttname"><a href="conceptbeman_1_1transpose_1_1functor__object.html">beman::transpose::functor_object</a></div><div class="ttdoc">Deep object concept for a Functor object over CONTEXT: satisfied when OBJ provides the full object su...</div><div class="ttdef"><b>Definition:</b> functor.hpp:258</div></div>
+<div class="ttc" id="aconceptbeman_1_1transpose_1_1functor__object_html"><div class="ttname"><a href="conceptbeman_1_1transpose_1_1functor__object.html">beman::transpose::functor_object</a></div><div class="ttdoc">Deep object concept for a Functor object over CONTEXT: satisfied when OBJ provides the full object su...</div><div class="ttdef"><b>Definition:</b> functor.hpp:254</div></div>
 </div><!-- fragment --><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Deep object concept for a Functor object over <code>CONTEXT</code>: satisfied when <code>OBJ</code> provides the full object surface &ndash; <code>fmap</code> (probed with a representative witness callable, not a proof for every callable) and the derived <code>replace</code>. </p>
 <p>Conformance here is structural, so a hand-implemented object that never uses the <code>Functor</code> CRTP base can satisfy this concept too; nothing here requires deriving from <code>derive_functor&lt;Impl&gt;</code>.</p>

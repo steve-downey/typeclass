@@ -1,8 +1,6 @@
 var monad_8hpp =
 [
     [ "beman::transpose::derive_monad< Impl >", "structbeman_1_1transpose_1_1derive__monad.html", "structbeman_1_1transpose_1_1derive__monad" ],
-    [ "beman::transpose::OptionalMonadImpl< VALUE_TYPE >", "structbeman_1_1transpose_1_1OptionalMonadImpl.html", "structbeman_1_1transpose_1_1OptionalMonadImpl" ],
-    [ "beman::transpose::OptionalMonadMap< VALUE_TYPE >", "structbeman_1_1transpose_1_1OptionalMonadMap.html", null ],
     [ "beman::transpose::bind_fn", "structbeman_1_1transpose_1_1bind__fn.html", "structbeman_1_1transpose_1_1bind__fn" ],
     [ "beman::transpose::join_fn", "structbeman_1_1transpose_1_1join__fn.html", "structbeman_1_1transpose_1_1join__fn" ],
     [ "beman::transpose::kleisli_fn< CONTEXT, TC >", "structbeman_1_1transpose_1_1kleisli__fn.html", "structbeman_1_1transpose_1_1kleisli__fn" ],

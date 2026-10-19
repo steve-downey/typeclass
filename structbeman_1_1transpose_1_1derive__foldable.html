@@ -168,11 +168,11 @@ requires requires(const Impl &amp;impl) { impl.empty(std::forward&lt;T&gt;(value
 <tr class="memitem:a74ebd77555369e29bf9ff52d38d79b16"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a74ebd77555369e29bf9ff52d38d79b16">empty</a> (this auto &amp;&amp;self, T &amp;&amp;value) -&gt; bool</td></tr>
 <tr class="memdesc:a74ebd77555369e29bf9ff52d38d79b16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if the container holds no elements.  <br /></td></tr>
 <tr class="separator:a74ebd77555369e29bf9ff52d38d79b16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa665c2e564ea0b1e9fb5f63234183206"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
-requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(value)); } || requires { typename Impl::element_type; self.fold_map(detail::vector_probe_witness{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1Monoid.html">Monoid</a>&lt;std::vector&lt;typename Impl::element_type&gt;&gt;{}); }</td></tr>
-<tr class="memitem:aa665c2e564ea0b1e9fb5f63234183206"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#aa665c2e564ea0b1e9fb5f63234183206">to_vector</a> (this auto &amp;&amp;self, T &amp;&amp;value)</td></tr>
-<tr class="memdesc:aa665c2e564ea0b1e9fb5f63234183206"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collects all elements into a <code>std::vector</code> in traversal order.  <br /></td></tr>
-<tr class="separator:aa665c2e564ea0b1e9fb5f63234183206"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5d58fb428567c0c83013fbfc3af3824"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
+requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(value)); } || requires { typename Impl::element_type; self.fold_map( detail::vector_probe_witness{}, std::forward&lt;T&gt;(value), detail::vector_concat_monoid&lt;typename Impl::element_type&gt;{}); }</td></tr>
+<tr class="memitem:aa5d58fb428567c0c83013fbfc3af3824"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#aa5d58fb428567c0c83013fbfc3af3824">to_vector</a> (this auto &amp;&amp;self, T &amp;&amp;value)</td></tr>
+<tr class="memdesc:aa5d58fb428567c0c83013fbfc3af3824"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collects all elements into a <code>std::vector</code> in traversal order.  <br /></td></tr>
+<tr class="separator:aa5d58fb428567c0c83013fbfc3af3824"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
 requires requires(const Impl &amp;impl) { impl.find_first(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { typename Impl::element_type; self.fold_map( detail::find_first_probe_witness&lt;PREDICATE, typename Impl::element_type&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1first__monoid.html">first_monoid</a>&lt;typename Impl::element_type&gt;{}); }</td></tr>
 <tr class="memitem:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#ab6b3a9a87cf9894e75ffd0d3e063c0b0">find_first</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate)</td></tr>
@@ -767,8 +767,8 @@ requires requires(const Impl &amp;impl) { impl.empty(std::forward&lt;T&gt;(value
 
 </div>
 </div>
-<a id="aa665c2e564ea0b1e9fb5f63234183206" name="aa665c2e564ea0b1e9fb5f63234183206"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa665c2e564ea0b1e9fb5f63234183206">&#9670;&#160;</a></span>to_vector()</h2>
+<a id="aa5d58fb428567c0c83013fbfc3af3824" name="aa5d58fb428567c0c83013fbfc3af3824"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5d58fb428567c0c83013fbfc3af3824">&#9670;&#160;</a></span>to_vector()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -776,7 +776,7 @@ requires requires(const Impl &amp;impl) { impl.empty(std::forward&lt;T&gt;(value
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
 template&lt;class T &gt; <br />
-requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(value)); } || requires { typename Impl::element_type; self.fold_map(detail::vector_probe_witness{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1Monoid.html">Monoid</a>&lt;std::vector&lt;typename Impl::element_type&gt;&gt;{}); }</div>
+requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(value)); } || requires { typename Impl::element_type; self.fold_map( detail::vector_probe_witness{}, std::forward&lt;T&gt;(value), detail::vector_concat_monoid&lt;typename Impl::element_type&gt;{}); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -807,7 +807,7 @@ requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(v
 </div><div class="memdoc">
 
 <p>Collects all elements into a <code>std::vector</code> in traversal order. </p>
-<p>The derivation folds under the registered vector monoid, so it needs the element type: it is available where Impl declares <code>element_type</code>. </p>
+<p>The derivation folds under a concatenation monoid over <code>std::vector</code> of the element type, so it needs that type: it is available where Impl declares <code>element_type</code>. The monoid is this header's own, not the registered <code><a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a>&lt;std::vector&lt;T&gt;&gt;</code>, which is declared with the vector instances (docs/transpose/decisions.md#instance-placement). </p>
 
 </div>
 </div>
