@@ -1,12 +1,14 @@
 // tests/beman/transpose/monad.test.cpp                               -*-C++-*-
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
+#include <beman/transpose/expected.hpp>
 #include <beman/transpose/monad.hpp>
 
 #include <beman/transpose/functor.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <expected>
 #include <optional>
 #include <string>
 #include <type_traits>
@@ -412,4 +414,60 @@ TEST_CASE("monad: kleisli's composition is checked when it is called") {
 
     REQUIRE(m.kleisli(half_of, half_of)(8) == std::optional<int>{2});
     REQUIRE(m.kleisli(half_of, half_of)(6) == std::optional<int>{});
+}
+
+// steve-downey/typeclass#13: optional's bind requires the continuation to
+// return an optional, so a -> b is rejected where a -> m b is meant, and
+// join rejects a value that is not nested. expected's bind already required
+// an expected (with the same error type, or through the graded bind, one
+// whose error grade joins with it); it is probed here alongside.
+namespace {
+
+template <class MA, class F>
+concept has_bind_object = requires(MA ma, F f) { bt::bind(ma, f); };
+
+template <class MMA>
+concept has_join_object = requires(MMA mma) { bt::join(mma); };
+
+using NotMonadic = decltype([](int x) { return x + 1; });
+using ToOptional = decltype([](int x) { return std::optional<int>{x}; });
+using ToExpected =
+    decltype([](int x) { return std::expected<int, std::string>{x}; });
+using ToOtherError = decltype([](int x) { return std::expected<int, int>{x}; });
+
+} // namespace
+
+TEST_CASE("monad: optional bind rejects a continuation that does not return "
+          "an optional") {
+    using O = std::optional<int>;
+    STATIC_REQUIRE(has_bind_object<O, ToOptional>);
+    STATIC_REQUIRE(!has_bind_object<O, NotMonadic>);
+    STATIC_REQUIRE(!has_bind_object<O, ToExpected>);
+    STATIC_REQUIRE(!has_bind_object<O, NotCallable>);
+
+    using Map = std::remove_cvref_t<decltype(bt::monad<O>)>;
+    STATIC_REQUIRE(has_bind<Map, ToOptional>);
+    STATIC_REQUIRE(!has_bind<Map, NotMonadic>);
+    STATIC_REQUIRE(!has_bind_with<Map, NotMonadic>);
+
+    STATIC_REQUIRE(has_join_object<std::optional<O>>);
+    STATIC_REQUIRE(!has_join_object<O>);
+
+    REQUIRE(bt::bind(O{}, ToOptional{}) == O{});
+    REQUIRE(bt::bind(O{1}, ToOptional{}) == O{1});
+    REQUIRE(bt::join(std::optional<O>{O{2}}) == O{2});
+    REQUIRE(bt::join(std::optional<O>{}) == O{});
+}
+
+TEST_CASE("monad: expected bind rejects a continuation that does not return "
+          "an expected with the same error") {
+    using E = std::expected<int, std::string>;
+    STATIC_REQUIRE(has_bind_object<E, ToExpected>);
+    STATIC_REQUIRE(!has_bind_object<E, NotMonadic>);
+    STATIC_REQUIRE(!has_bind_object<E, ToOptional>);
+    // A different error type is not a different context: the graded bind
+    // joins the two into an error set.
+    STATIC_REQUIRE(has_bind_object<E, ToOtherError>);
+    STATIC_REQUIRE(has_join_object<std::expected<E, std::string>>);
+    STATIC_REQUIRE(!has_join_object<E>);
 }

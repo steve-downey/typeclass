@@ -1726,6 +1726,17 @@ add one.
   `transpose.array.*` were regenerated. Tests: probes in
   `functor.test.cpp` and `apply.test.cpp`, which fail against the previous
   headers.
+- 2026-10-19 — steve-downey/typeclass#13: `OptionalMonadImpl::bind`
+  accepted a continuation `a -> b` where `a -> m b` is meant, returned its
+  plain result, and value-initialized one for the empty case, breaking the
+  monad laws. `join` inherited it through the same `bind`. It now requires
+  the continuation's result to be a `std::optional`, so both fail softly.
+  `ExpectedMonadImpl::bind` already required an `expected`: the ungraded
+  `bind` one with the same error type, the graded `bind` one whose error
+  grade joins with it (`expected<int, string>` bound with a continuation
+  returning `expected<int, int>` gives `expected<int, error_set_of<int,
+  string>>`, by design). Tests in `monad.test.cpp` fail against the
+  previous headers.
 
 ## typeclass-conformance-depth
 

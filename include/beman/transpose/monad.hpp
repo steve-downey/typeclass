@@ -443,9 +443,14 @@ struct OptionalMonadImpl {
             std::forward<VALUE>(value));
     }
 
+    // The continuation must return an optional: a -> m b, not a -> b. A
+    // plain result would be returned as-is, with a value-initialized one
+    // standing in for the empty case, which breaks the monad laws.
     template <class A, class F>
     constexpr auto bind(this auto &&, const std::optional<A> &ma, F &&f)
-        -> std::remove_cvref_t<std::invoke_result_t<F, const A &>> {
+        -> std::remove_cvref_t<std::invoke_result_t<F, const A &>>
+        requires detail::is_optional_v<std::invoke_result_t<F, const A &>>
+    {
         using Result = std::remove_cvref_t<std::invoke_result_t<F, const A &>>;
         if (!ma)
             return Result{};
