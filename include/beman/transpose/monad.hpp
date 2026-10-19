@@ -10,7 +10,6 @@
 
 #include <concepts>
 #include <functional>
-#include <optional>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -428,46 +427,6 @@ concept monad_object =
      requires(const OBJ &obj, const CONTEXT &context) {
          obj.template subsume<grade_of_t<CONTEXT>>(context);
      });
-
-// -- std::optional monad instance --
-// Delegates pure to the existing applicative.
-
-template <class VALUE_TYPE>
-struct OptionalMonadImpl {
-    using element_type = VALUE_TYPE;
-
-    template <class VALUE>
-    constexpr auto pure(this auto &&, VALUE &&value)
-        -> std::optional<std::remove_cvref_t<VALUE>> {
-        return applicative<std::optional<VALUE_TYPE>>.pure(
-            std::forward<VALUE>(value));
-    }
-
-    // The continuation must return an optional: a -> m b, not a -> b. A
-    // plain result would be returned as-is, with a value-initialized one
-    // standing in for the empty case, which breaks the monad laws.
-    template <class A, class F>
-    constexpr auto bind(this auto &&, const std::optional<A> &ma, F &&f)
-        -> std::remove_cvref_t<std::invoke_result_t<F, const A &>>
-        requires detail::is_optional_v<std::invoke_result_t<F, const A &>>
-    {
-        using Result = std::remove_cvref_t<std::invoke_result_t<F, const A &>>;
-        if (!ma)
-            return Result{};
-        return Result{std::invoke(std::forward<F>(f), *ma)};
-    }
-};
-
-template <class VALUE_TYPE>
-struct OptionalMonadMap : derive_monad<OptionalMonadImpl<VALUE_TYPE>> {
-    using OptionalMonadImpl<VALUE_TYPE>::bind;
-    using OptionalMonadImpl<VALUE_TYPE>::pure;
-};
-
-/** Monad instance for `std::optional<VALUE_TYPE>`. */
-template <class VALUE_TYPE>
-inline constexpr auto monad<std::optional<VALUE_TYPE>> =
-    OptionalMonadMap<VALUE_TYPE>{};
 
 // -- Operation objects --
 //

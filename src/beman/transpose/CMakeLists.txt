@@ -32,15 +32,18 @@ target_sources(
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/induced_monoid.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/monad.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/monoid.hpp
+                ${PROJECT_SOURCE_DIR}/include/beman/transpose/optional.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/overloaded.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/sender.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/sequence.hpp
+                ${PROJECT_SOURCE_DIR}/include/beman/transpose/string.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/transpose.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/traverse.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/zip_list.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/simd.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/simd_lanes.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/detail/applicative_derivation.hpp
+                ${PROJECT_SOURCE_DIR}/include/beman/transpose/detail/make_array.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/detail/typeclass_base.hpp
                 "${PROJECT_BINARY_DIR}/include/beman/transpose/config_generated.hpp"
 )

@@ -9,7 +9,6 @@
 
 #include <concepts>
 #include <functional>
-#include <optional>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -504,45 +503,6 @@ concept applicative_object =
          obj.template subsume<grade_of_t<CONTEXT>>(context);
      });
 
-/// Applicative instance for std::optional: the flagship of the invoke core.
-/// The trailing return type keeps invoke SFINAE-friendly so availability
-/// probes fail cleanly.
-//! \expos
-template <class VALUE_TYPE>
-struct optional_applicative_impl {
-    // \ref{transpose.applicative.optional}, applicative instance for optional
-    template <class VALUE>
-    constexpr auto pure(this auto &&, VALUE &&value)
-        -> std::optional<std::remove_cvref_t<VALUE>>;
-
-    template <class FUNCTION, class FIRST, class... REST>
-        requires detail::is_optional_v<FIRST> &&
-                 (detail::is_optional_v<REST> && ...) &&
-                 std::invocable<FUNCTION &, detail::contained_ref_t<FIRST>,
-                                detail::contained_ref_t<REST>...> &&
-                 detail::optional_holdable_value<std::invoke_result_t<
-                     FUNCTION &, detail::contained_ref_t<FIRST>,
-                     detail::contained_ref_t<REST>...>>
-    constexpr auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
-                          REST &&...rest)
-        -> std::optional<std::remove_cvref_t<
-            std::invoke_result_t<FUNCTION &, detail::contained_ref_t<FIRST>,
-                                 detail::contained_ref_t<REST>...>>>;
-};
-
-//! \expos
-template <class VALUE_TYPE>
-struct optional_applicative_map
-    : derive_applicative<optional_applicative_impl<VALUE_TYPE>> {
-    using optional_applicative_impl<VALUE_TYPE>::invoke;
-    using optional_applicative_impl<VALUE_TYPE>::pure;
-};
-
-/// Applicative instance for `std::optional<VALUE_TYPE>`.
-template <class VALUE_TYPE>
-inline constexpr auto applicative<std::optional<VALUE_TYPE>> =
-    optional_applicative_map<VALUE_TYPE>{};
-
 // \rSec3[transpose.applicative.basis]{Basis operations}
 
 //! \constraints Either `Impl` provides an `invoke` accepting `function` and
@@ -972,52 +932,6 @@ inline constexpr discard_first_fn discard_first{};
 //! found by argument-dependent lookup, and no explicit template argument list
 //! may be given in a call to it.
 inline constexpr discard_second_fn discard_second{};
-
-// \rSec3[transpose.applicative.optional]{Applicative instance for optional}
-
-//! \returns An engaged `optional` holding `value`.
-template <class VALUE_TYPE>
-template <class VALUE>
-constexpr auto optional_applicative_impl<VALUE_TYPE>::pure(this auto &&,
-                                                           VALUE &&value)
-    -> std::optional<std::remove_cvref_t<VALUE>> {
-    return std::optional<std::remove_cvref_t<VALUE>>{
-        std::forward<VALUE>(value)};
-}
-
-//! \returns If every operand is engaged, an engaged `optional` holding the
-//! result of invoking `function` with the contained values, in the order
-//! written; otherwise a disengaged `optional`.
-//! \remarks `function` is invoked at most once. Each operand's held value is
-//! passed on with that operand's own value category, so a caller that hands
-//! over an rvalue operand has its value moved from rather than copied. This
-//! is what lets a traversal carry its accumulated result forward without
-//! duplicating it at every step.
-template <class VALUE_TYPE>
-template <class FUNCTION, class FIRST, class... REST>
-    requires detail::is_optional_v<FIRST> &&
-             (detail::is_optional_v<REST> && ...) &&
-             std::invocable<FUNCTION &, detail::contained_ref_t<FIRST>,
-                            detail::contained_ref_t<REST>...> &&
-             detail::optional_holdable_value<std::invoke_result_t<
-                 FUNCTION &, detail::contained_ref_t<FIRST>,
-                 detail::contained_ref_t<REST>...>>
-constexpr auto
-optional_applicative_impl<VALUE_TYPE>::invoke(this auto &&, FUNCTION &&function,
-                                              FIRST &&first, REST &&...rest)
-    -> std::optional<std::remove_cvref_t<
-        std::invoke_result_t<FUNCTION &, detail::contained_ref_t<FIRST>,
-                             detail::contained_ref_t<REST>...>>> {
-    using Result = std::remove_cvref_t<
-        std::invoke_result_t<FUNCTION &, detail::contained_ref_t<FIRST>,
-                             detail::contained_ref_t<REST>...>>;
-    if (first.has_value() && (... && rest.has_value())) {
-        return std::optional<Result>{std::invoke(
-            function, detail::forward_contained(std::forward<FIRST>(first)),
-            detail::forward_contained(std::forward<REST>(rest))...)};
-    }
-    return std::optional<Result>{};
-}
 
 } // namespace beman::transpose
 

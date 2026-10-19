@@ -3,7 +3,7 @@
 #ifndef BEMAN_TRANSPOSE_SEQUENCE_HPP
 #define BEMAN_TRANSPOSE_SEQUENCE_HPP
 
-// Foldable and Traversable instances for std::vector.
+// Functor, Foldable, Traversable and Monoid instances for std::vector.
 //
 // std::vector is the shared traversable *structure* for all three of Paper A's
 // motivating domains. Pairing this one Traversable instance with three
@@ -27,16 +27,75 @@
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>
 #include <beman/transpose/fold.hpp>
+#include <beman/transpose/functor.hpp>
 #include <beman/transpose/monoid.hpp>
 #include <beman/transpose/traverse.hpp>
 
+#include <algorithm>
 #include <concepts>
 #include <functional>
+#include <iterator>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
 namespace beman::transpose {
+
+/// Functor instance for std::vector. Functor is not proposed by this paper,
+/// so this instance carries no wording.
+//! \omit
+template <class VALUE_TYPE>
+struct VectorFunctorImpl {
+    // Constrained for the reason the optional instance's is.
+    template <class F>
+        requires std::invocable<F &, const VALUE_TYPE &> &&
+                 detail::holdable_value<
+                     std::invoke_result_t<F &, const VALUE_TYPE &>>
+    constexpr auto fmap(this auto &&, F &&function,
+                        const std::vector<VALUE_TYPE> &values) {
+        // `F &`, unlike the optional instance above: that one forwards the
+        // callable into a single std::invoke, this one invokes a captured
+        // lvalue once per element.
+        using Result = std::invoke_result_t<F &, const VALUE_TYPE &>;
+        std::vector<std::remove_cvref_t<Result>> output;
+        output.reserve(values.size());
+
+        std::ranges::transform(values, std::back_inserter(output),
+                               [&function](const VALUE_TYPE &v) {
+                                   return std::invoke(function, v);
+                               });
+
+        return output;
+    }
+};
+
+//! \omit
+template <class VALUE_TYPE>
+struct VectorFunctorMap : derive_functor<VectorFunctorImpl<VALUE_TYPE>> {
+    using VectorFunctorImpl<VALUE_TYPE>::fmap;
+};
+
+/** Functor instance for `std::vector<VALUE_TYPE>`. */
+template <class VALUE_TYPE>
+inline constexpr auto functor<std::vector<VALUE_TYPE>> =
+    VectorFunctorMap<VALUE_TYPE>{};
+
+/// Registered Monoid for std::vector: concatenation, identity the empty
+/// vector. Monoid is not proposed by this paper.
+//! \omit
+template <class VALUE_TYPE>
+struct Monoid<std::vector<VALUE_TYPE>> {
+    using value_type = std::vector<VALUE_TYPE>;
+
+    constexpr auto identity() const -> std::vector<VALUE_TYPE> { return {}; }
+
+    constexpr auto combine(std::vector<VALUE_TYPE> lhs,
+                           const std::vector<VALUE_TYPE> &rhs) const
+        -> std::vector<VALUE_TYPE> {
+        lhs.insert(lhs.end(), rhs.begin(), rhs.end());
+        return lhs;
+    }
+};
 
 /// Foldable instance for std::vector: fold_map accumulates left-to-right.
 /// Foldable is not proposed by this paper -- the fold family is the

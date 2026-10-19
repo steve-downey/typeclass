@@ -5,14 +5,10 @@
 
 #include <beman/transpose/detail/typeclass_base.hpp>
 
-#include <algorithm>
 #include <concepts>
 #include <functional>
-#include <iterator>
-#include <optional>
 #include <type_traits>
 #include <utility>
-#include <vector>
 
 namespace beman::transpose {
 
@@ -262,73 +258,6 @@ concept functor_object = requires(const OBJ &obj, const CONTEXT &context,
     obj.fmap(detail::probe_witness<applicative_value_t<CONTEXT>>{}, context);
     obj.replace(context, element);
 };
-
-template <class VALUE_TYPE>
-struct OptionalFunctorImpl {
-    // Constrained, not left to the body: the return type is deduced, so a
-    // probe would instantiate the body and fail hard on a function that
-    // cannot take the element, or one whose result an optional cannot hold
-    // (a function returning void, say). The Map re-exposes this member, which
-    // hides derive_functor::fmap, so its constraint is the one callers see.
-    template <class F>
-        requires std::invocable<F, const VALUE_TYPE &> &&
-                 detail::optional_holdable_value<
-                     std::invoke_result_t<F, const VALUE_TYPE &>>
-    constexpr auto fmap(this auto &&, F &&function,
-                        const std::optional<VALUE_TYPE> &value) {
-        using Result = std::invoke_result_t<F, const VALUE_TYPE &>;
-        if (!value) {
-            return std::optional<std::remove_cvref_t<Result>>{};
-        }
-        return std::optional<std::remove_cvref_t<Result>>{
-            std::invoke(std::forward<F>(function), *value)};
-    }
-};
-
-template <class VALUE_TYPE>
-struct VectorFunctorImpl {
-    // Constrained for the reason the optional instance's is.
-    template <class F>
-        requires std::invocable<F &, const VALUE_TYPE &> &&
-                 detail::holdable_value<
-                     std::invoke_result_t<F &, const VALUE_TYPE &>>
-    constexpr auto fmap(this auto &&, F &&function,
-                        const std::vector<VALUE_TYPE> &values) {
-        // `F &`, unlike the optional instance above: that one forwards the
-        // callable into a single std::invoke, this one invokes a captured
-        // lvalue once per element.
-        using Result = std::invoke_result_t<F &, const VALUE_TYPE &>;
-        std::vector<std::remove_cvref_t<Result>> output;
-        output.reserve(values.size());
-
-        std::ranges::transform(values, std::back_inserter(output),
-                               [&function](const VALUE_TYPE &v) {
-                                   return std::invoke(function, v);
-                               });
-
-        return output;
-    }
-};
-
-template <class VALUE_TYPE>
-struct OptionalFunctorMap : derive_functor<OptionalFunctorImpl<VALUE_TYPE>> {
-    using OptionalFunctorImpl<VALUE_TYPE>::fmap;
-};
-
-template <class VALUE_TYPE>
-struct VectorFunctorMap : derive_functor<VectorFunctorImpl<VALUE_TYPE>> {
-    using VectorFunctorImpl<VALUE_TYPE>::fmap;
-};
-
-/** Functor instance for `std::optional<VALUE_TYPE>`. */
-template <class VALUE_TYPE>
-inline constexpr auto functor<std::optional<VALUE_TYPE>> =
-    OptionalFunctorMap<VALUE_TYPE>{};
-
-/** Functor instance for `std::vector<VALUE_TYPE>`. */
-template <class VALUE_TYPE>
-inline constexpr auto functor<std::vector<VALUE_TYPE>> =
-    VectorFunctorMap<VALUE_TYPE>{};
 
 } // namespace beman::transpose
 

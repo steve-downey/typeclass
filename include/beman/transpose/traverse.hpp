@@ -6,6 +6,7 @@
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>
 #include <beman/transpose/functor.hpp>
+#include <beman/transpose/optional.hpp>
 
 #include <concepts>
 #include <functional>

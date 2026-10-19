@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <beman/transpose/monoid.hpp>
+#include <beman/transpose/sequence.hpp>
+#include <beman/transpose/string.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 

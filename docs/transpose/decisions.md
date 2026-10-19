@@ -3718,12 +3718,11 @@ translation unit that uses it, with no diagnostic required?
    comes with it. The typeclass's header does not include the standard
    containers and vocabulary types it has instances for. Only `import std;`
    brings in everything.
-3. In the reference implementation, which cannot add to `<array>`,
-   `array.hpp`, `expected.hpp`, `sequence.hpp` and `simd.hpp` stand in for
-   the standard headers, and including one is the program's obligation.
-   The `optional` instance stays in `apply.hpp`: it is no more ours to put
-   in `<optional>` than the others, and keeping it with the typeclass has
-   no hazard, only the cost of `apply.hpp` including `<optional>`.
+3. In the reference implementation, which cannot add to `<array>`, one
+   header per standard type stands in for the standard header: `array.hpp`,
+   `expected.hpp`, `optional.hpp`, `sequence.hpp` (for `<vector>`),
+   `simd.hpp` and `string.hpp`. Including one is the program's obligation.
+   The umbrella `transpose.hpp` includes them all.
 
 **Why:** A partial specialization must be declared before the first use
 that would cause an implicit instantiation, in every translation unit in
@@ -3753,3 +3752,21 @@ wording introduction, by hand until the wording generator can place it.
   as stated. Third-party instances are supported and documented; standard
   instances go with the standard type, which the implementation
   approximates with its per-type headers.
+- 2026-10-19 — Applied to the implementation, on
+  [steve-downey/typeclass#28](https://github.com/steve-downey/typeclass/issues/28).
+  The first version of this entry kept the `optional` instance in
+  `apply.hpp`, as harmless. It was not the only one: `functor.hpp` declared
+  the `optional` and `vector` functors, `monad.hpp` the `optional` monad,
+  `monoid.hpp` `Monoid<std::string>` and `Monoid<std::vector<T>>`, and
+  `detail/typeclass_base.hpp` included `<array>` and `<optional>` for
+  helpers only those instances use. All of them now live in the per-type
+  headers above, `optional.hpp` and `string.hpp` being new. `make_array`
+  moved to `detail/make_array.hpp`. `to_vector` folds under a monoid of
+  `fold.hpp`'s own rather than the registered vector one.
+  `traverse.hpp` includes `optional.hpp`, because `traversable_impl`
+  probes with the `optional` applicative. The wording for the `optional`
+  instance moved from [transpose.applicative.optional] to its own
+  [transpose.optional], beside [transpose.array] and [transpose.expected].
+  Tests and examples that used these instances through a typeclass header
+  alone stopped compiling and now include the instance header, which is
+  the obligation working as intended.

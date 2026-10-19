@@ -24,8 +24,10 @@
 #include <beman/transpose/grade.hpp>
 #include <beman/transpose/monad.hpp>
 #include <beman/transpose/monoid.hpp>
+#include <beman/transpose/optional.hpp>
 #include <beman/transpose/sender.hpp>
 #include <beman/transpose/sequence.hpp>
+#include <beman/transpose/string.hpp>
 #include <beman/transpose/traverse.hpp>
 #include <beman/transpose/zip_list.hpp>
 

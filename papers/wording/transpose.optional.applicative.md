@@ -2,7 +2,7 @@
 
 ::: wording
 
-## Applicative instance for optional [transpose.applicative.optional]{- .sref} {-}
+## Applicative instance for optional [transpose.optional.applicative]{- .sref} {-}
 
 ```cpp
 template<class VALUE>

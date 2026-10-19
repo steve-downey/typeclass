@@ -5,6 +5,8 @@
 #include <beman/transpose/monad.hpp>
 
 #include <beman/transpose/functor.hpp>
+#include <beman/transpose/optional.hpp>
+#include <beman/transpose/string.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 

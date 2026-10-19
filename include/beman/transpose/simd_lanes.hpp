@@ -16,6 +16,7 @@
 // std::simd::vec for the arithmetic case.
 
 #include <beman/transpose/apply.hpp>
+#include <beman/transpose/detail/make_array.hpp>
 
 #include <array>
 #include <cstddef>

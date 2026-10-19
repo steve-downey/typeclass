@@ -10,7 +10,6 @@
 #include <functional>
 #include <limits>
 #include <optional>
-#include <string>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -243,37 +242,10 @@ struct tuple_monoid {
     }
 };
 
-// ---------------------------------------------------------------------------
-// Registered instances: the one canonical monoid of a type.
-// ---------------------------------------------------------------------------
-
-/** Monoid<std::string>: concatenation monoid with identity "". */
-template <>
-struct Monoid<std::string> {
-    using value_type = std::string;
-
-    constexpr auto identity() const -> std::string { return {}; }
-
-    constexpr auto combine(const std::string &lhs, const std::string &rhs) const
-        -> std::string {
-        return lhs + rhs;
-    }
-};
-
-/** Monoid<std::vector<T>>: concatenation monoid with identity empty vector. */
-template <class VALUE_TYPE>
-struct Monoid<std::vector<VALUE_TYPE>> {
-    using value_type = std::vector<VALUE_TYPE>;
-
-    constexpr auto identity() const -> std::vector<VALUE_TYPE> { return {}; }
-
-    constexpr auto combine(std::vector<VALUE_TYPE> lhs,
-                           const std::vector<VALUE_TYPE> &rhs) const
-        -> std::vector<VALUE_TYPE> {
-        lhs.insert(lhs.end(), rhs.begin(), rhs.end());
-        return lhs;
-    }
-};
+// Registered instances for standard types are declared with the type, in the
+// headers that stand in for the standard ones
+// (docs/transpose/decisions.md#instance-placement): Monoid<std::string> in
+// string.hpp, Monoid<std::vector<T>> in sequence.hpp.
 
 /** Returns the identity element of the registered Monoid of VALUE_TYPE. */
 template <class VALUE_TYPE>
