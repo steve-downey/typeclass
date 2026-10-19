@@ -121,9 +121,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a17ea4d578f5b16009b2ab5a4252f2fb3"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
 <tr class="memitem:a17ea4d578f5b16009b2ab5a4252f2fb3"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalMonadImpl.html#a17ea4d578f5b16009b2ab5a4252f2fb3">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value) -&gt; std::optional&lt; std::remove_cvref_t&lt; VALUE &gt; &gt;</td></tr>
 <tr class="separator:a17ea4d578f5b16009b2ab5a4252f2fb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5bb9fd8d3ffc32e6d105cbc2eb786f60"><td class="memTemplParams" colspan="2">template&lt;class A , class F &gt; </td></tr>
-<tr class="memitem:a5bb9fd8d3ffc32e6d105cbc2eb786f60"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalMonadImpl.html#a5bb9fd8d3ffc32e6d105cbc2eb786f60">bind</a> (this auto &amp;&amp;, const std::optional&lt; A &gt; &amp;ma, F &amp;&amp;f) -&gt; std::remove_cvref_t&lt; std::invoke_result_t&lt; F, const A &amp; &gt; &gt;</td></tr>
-<tr class="separator:a5bb9fd8d3ffc32e6d105cbc2eb786f60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a353e60e65dc72a8426f73b38887aeffe"><td class="memTemplParams" colspan="2">template&lt;class A , class F &gt; <br />
+requires detail::is_optional_v&lt;std::invoke_result_t&lt;F, const A &amp;&gt;&gt;</td></tr>
+<tr class="memitem:a353e60e65dc72a8426f73b38887aeffe"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalMonadImpl.html#a353e60e65dc72a8426f73b38887aeffe">bind</a> (this auto &amp;&amp;, const std::optional&lt; A &gt; &amp;ma, F &amp;&amp;f) -&gt; std::remove_cvref_t&lt; std::invoke_result_t&lt; F, const A &amp; &gt; &gt;</td></tr>
+<tr class="separator:a353e60e65dc72a8426f73b38887aeffe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a52d56ca149c5664a39bb7139fedcde89" name="a52d56ca149c5664a39bb7139fedcde89"></a>
@@ -183,15 +184,16 @@ template&lt;class VALUE &gt; </div>
 
 </div>
 </div>
-<a id="a5bb9fd8d3ffc32e6d105cbc2eb786f60" name="a5bb9fd8d3ffc32e6d105cbc2eb786f60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5bb9fd8d3ffc32e6d105cbc2eb786f60">&#9670;&#160;</a></span>bind()</h2>
+<a id="a353e60e65dc72a8426f73b38887aeffe" name="a353e60e65dc72a8426f73b38887aeffe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a353e60e65dc72a8426f73b38887aeffe">&#9670;&#160;</a></span>bind()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class VALUE_TYPE &gt; </div>
 <div class="memtemplate">
-template&lt;class A , class F &gt; </div>
+template&lt;class A , class F &gt; <br />
+requires detail::is_optional_v&lt;std::invoke_result_t&lt;F, const A &amp;&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -217,7 +219,8 @@ template&lt;class A , class F &gt; </div>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt; std::remove_cvref_t&lt;std::invoke_result_t&lt;F, const A &amp;&gt;&gt; </td>
+          <td></td><td> -&gt; std::remove_cvref_t&lt;std::invoke_result_t&lt;F, const A &amp;&gt;&gt;
+        </td>
         </tr>
       </table>
   </td>
