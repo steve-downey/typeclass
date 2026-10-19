@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>beman.typeclass: beman/transpose/transpose.hpp Source File</title>
+<title>beman.typeclass: beman/transpose.hpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -94,65 +94,46 @@ $(document).ready(function(){initNavTree('transpose_8hpp_source.html',''); initR
   <div class="headertitle"><div class="title">transpose.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="transpose_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// include/beman/transpose/transpose.hpp                              -*-C++-*-</span></div>
+<a href="transpose_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// include/beman/transpose.hpp                                        -*-C++-*-</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#ifndef BEMAN_TRANSPOSE_TRANSPOSE_HPP</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#define BEMAN_TRANSPOSE_TRANSPOSE_HPP</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#ifndef BEMAN_TRANSPOSE_HPP</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#define BEMAN_TRANSPOSE_HPP</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// Umbrella header for beman.transpose plus the front-door `transpose` verb.</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">//</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">// `transpose` flips a structure of contextual values into a single contextual</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">// value of the structure, preserving shape:</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// Umbrella header for beman.transpose: every typeclass, every instance, and</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="comment">// the operation objects, including `traverse` and `transpose`. A program that</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="comment">// includes this header everywhere it uses the library sees every instance</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="comment">// before any use (docs/transpose/decisions.md#instance-placement).</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">//</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">//   structure&lt;context&lt;T&gt;&gt;  -&gt;  context&lt;structure&lt;T&gt;&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">//</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">// It is `traverse` with the identity function; the context&#39;s applicative is</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">// inferred from the structure&#39;s element type.</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;<a class="code" href="transpose_2config_8hpp.html">beman/transpose/config.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;<a class="code" href="apply_8hpp.html">beman/transpose/apply.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;<a class="code" href="array_8hpp.html">beman/transpose/array.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;<a class="code" href="error__set_8hpp.html">beman/transpose/error_set.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;<a class="code" href="expected_8hpp.html">beman/transpose/expected.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;<a class="code" href="fold_8hpp.html">beman/transpose/fold.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;<a class="code" href="functor_8hpp.html">beman/transpose/functor.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &lt;<a class="code" href="grade_8hpp.html">beman/transpose/grade.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &lt;<a class="code" href="monad_8hpp.html">beman/transpose/monad.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &lt;<a class="code" href="monoid_8hpp.html">beman/transpose/monoid.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">// It sits beside the package directory rather than in it: a Beman package</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">// owns every extension of its name under beman/, so beman/transpose.hpp</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">// cannot collide with another package.</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;<a class="code" href="transpose_2config_8hpp.html">beman/transpose/config.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;<a class="code" href="apply_8hpp.html">beman/transpose/apply.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;<a class="code" href="array_8hpp.html">beman/transpose/array.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;<a class="code" href="error__set_8hpp.html">beman/transpose/error_set.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;<a class="code" href="expected_8hpp.html">beman/transpose/expected.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;<a class="code" href="fold_8hpp.html">beman/transpose/fold.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;<a class="code" href="functor_8hpp.html">beman/transpose/functor.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;<a class="code" href="grade_8hpp.html">beman/transpose/grade.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &lt;<a class="code" href="monad_8hpp.html">beman/transpose/monad.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &lt;<a class="code" href="monoid_8hpp.html">beman/transpose/monoid.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &lt;<a class="code" href="optional_8hpp.html">beman/transpose/optional.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#include &lt;<a class="code" href="sender_8hpp.html">beman/transpose/sender.hpp</a>&gt;</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#include &lt;<a class="code" href="sequence_8hpp.html">beman/transpose/sequence.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &lt;<a class="code" href="traverse_8hpp.html">beman/transpose/traverse.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#include &lt;<a class="code" href="zip__list_8hpp.html">beman/transpose/zip_list.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#if __has_include(&lt;simd&gt;)</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#include &lt;<a class="code" href="simd_8hpp.html">beman/transpose/simd.hpp</a>&gt;</span> <span class="comment">// self-gates further on C++26</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#include &lt;<a class="code" href="simd__lanes_8hpp.html">beman/transpose/simd_lanes.hpp</a>&gt;</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacebeman_1_1transpose.html">beman::transpose</a> {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">struct </span>transpose_fn {</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1transpose__fn.html#ae457452cadab08e7b16a2995cbb249aa">   45</a></span>        <span class="keyword">requires</span> <a class="code hl_concept" href="conceptbeman_1_1transpose_1_1transposable__structure.html">transposable_structure&lt;T&gt;</a></div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> <a class="code hl_function" href="structbeman_1_1transpose_1_1transpose__fn.html#ae457452cadab08e7b16a2995cbb249aa">operator()</a>(T &amp;&amp;value)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keyword">const</span> <span class="keyword">auto</span> &amp;map = traversable&lt;std::remove_cvref_t&lt;T&gt;&gt;;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keywordflow">return</span> map.transpose(std::forward&lt;T&gt;(value));</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    }</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>};</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="comment">// \rSec3[transpose.alg.transpose]{transpose}</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d">   53</a></span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <a class="code hl_struct" href="structbeman_1_1transpose_1_1transpose__fn.html">transpose_fn</a> <a class="code hl_variable" href="namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d">transpose</a>{};</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>} <span class="comment">// namespace beman::transpose</span></div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="preprocessor">#endif </span><span class="comment">// BEMAN_TRANSPOSE_TRANSPOSE_HPP</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &lt;<a class="code" href="string_8hpp.html">beman/transpose/string.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#include &lt;<a class="code" href="traverse_8hpp.html">beman/transpose/traverse.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#include &lt;<a class="code" href="zip__list_8hpp.html">beman/transpose/zip_list.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#if __has_include(&lt;simd&gt;)</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">    #include &lt;<a class="code" href="simd_8hpp.html">beman/transpose/simd.hpp</a>&gt;</span> <span class="comment">// self-gates further on C++26</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">    #include &lt;<a class="code" href="simd__lanes_8hpp.html">beman/transpose/simd_lanes.hpp</a>&gt;</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">#endif </span><span class="comment">// BEMAN_TRANSPOSE_HPP</span></div>
 <div class="ttc" id="aapply_8hpp_html"><div class="ttname"><a href="apply_8hpp.html">apply.hpp</a></div></div>
 <div class="ttc" id="aarray_8hpp_html"><div class="ttname"><a href="array_8hpp.html">array.hpp</a></div></div>
-<div class="ttc" id="aconceptbeman_1_1transpose_1_1transposable__structure_html"><div class="ttname"><a href="conceptbeman_1_1transpose_1_1transposable__structure.html">beman::transpose::transposable_structure</a></div><div class="ttdoc">It is deliberately not written in terms of traversable_object.</div><div class="ttdef"><b>Definition:</b> traverse.hpp:233</div></div>
 <div class="ttc" id="aerror__set_8hpp_html"><div class="ttname"><a href="error__set_8hpp.html">error_set.hpp</a></div></div>
 <div class="ttc" id="aexpected_8hpp_html"><div class="ttname"><a href="expected_8hpp.html">expected.hpp</a></div></div>
 <div class="ttc" id="afold_8hpp_html"><div class="ttname"><a href="fold_8hpp.html">fold.hpp</a></div></div>
@@ -160,14 +141,12 @@ $(document).ready(function(){initNavTree('transpose_8hpp_source.html',''); initR
 <div class="ttc" id="agrade_8hpp_html"><div class="ttname"><a href="grade_8hpp.html">grade.hpp</a></div></div>
 <div class="ttc" id="amonad_8hpp_html"><div class="ttname"><a href="monad_8hpp.html">monad.hpp</a></div></div>
 <div class="ttc" id="amonoid_8hpp_html"><div class="ttname"><a href="monoid_8hpp.html">monoid.hpp</a></div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html"><div class="ttname"><a href="namespacebeman_1_1transpose.html">beman::transpose</a></div><div class="ttdoc">The grade algebra: framework vocabulary only.</div><div class="ttdef"><b>Definition:</b> finger_tree_foldable.hpp:45</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_ae4ec1d59015f2ff0dc53f1a8a182367d"><div class="ttname"><a href="namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d">beman::transpose::transpose</a></div><div class="ttdeci">constexpr transpose_fn transpose</div><div class="ttdef"><b>Definition:</b> transpose.hpp:53</div></div>
+<div class="ttc" id="aoptional_8hpp_html"><div class="ttname"><a href="optional_8hpp.html">optional.hpp</a></div></div>
 <div class="ttc" id="asender_8hpp_html"><div class="ttname"><a href="sender_8hpp.html">sender.hpp</a></div></div>
 <div class="ttc" id="asequence_8hpp_html"><div class="ttname"><a href="sequence_8hpp.html">sequence.hpp</a></div></div>
 <div class="ttc" id="asimd_8hpp_html"><div class="ttname"><a href="simd_8hpp.html">simd.hpp</a></div></div>
 <div class="ttc" id="asimd__lanes_8hpp_html"><div class="ttname"><a href="simd__lanes_8hpp.html">simd_lanes.hpp</a></div></div>
-<div class="ttc" id="astructbeman_1_1transpose_1_1transpose__fn_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1transpose__fn.html">beman::transpose::transpose_fn</a></div><div class="ttdoc">The type of the transpose operation object; see traverse_fn.</div><div class="ttdef"><b>Definition:</b> transpose.hpp:42</div></div>
-<div class="ttc" id="astructbeman_1_1transpose_1_1transpose__fn_html_ae457452cadab08e7b16a2995cbb249aa"><div class="ttname"><a href="structbeman_1_1transpose_1_1transpose__fn.html#ae457452cadab08e7b16a2995cbb249aa">beman::transpose::transpose_fn::operator()</a></div><div class="ttdeci">constexpr auto operator()(T &amp;&amp;value) const</div><div class="ttdef"><b>Definition:</b> transpose.hpp:45</div></div>
+<div class="ttc" id="astring_8hpp_html"><div class="ttname"><a href="string_8hpp.html">string.hpp</a></div></div>
 <div class="ttc" id="atranspose_2config_8hpp_html"><div class="ttname"><a href="transpose_2config_8hpp.html">config.hpp</a></div></div>
 <div class="ttc" id="atraverse_8hpp_html"><div class="ttname"><a href="traverse_8hpp.html">traverse.hpp</a></div></div>
 <div class="ttc" id="azip__list_8hpp_html"><div class="ttname"><a href="zip__list_8hpp.html">zip_list.hpp</a></div></div>
@@ -176,7 +155,7 @@ $(document).ready(function(){initNavTree('transpose_8hpp_source.html',''); initR
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_94cf5e36d6dc57d8747f5a546f07158a.html">beman</a></li><li class="navelem"><a class="el" href="dir_dcca3582e3abd91b3ef0fe1a8f79e9b7.html">transpose</a></li><li class="navelem"><a class="el" href="transpose_8hpp.html">transpose.hpp</a></li>
+    <li class="navelem"><a class="el" href="dir_94cf5e36d6dc57d8747f5a546f07158a.html">beman</a></li><li class="navelem"><a class="el" href="transpose_8hpp.html">transpose.hpp</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>

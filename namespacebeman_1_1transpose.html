@@ -129,8 +129,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1applicative__value.html">applicative_value</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trait that extracts the element type from an applicative container.  <a href="structbeman_1_1transpose_1_1applicative__value.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1applicative__value_3_01std_1_1optional_3_01T_01_4_00_01void_01_4.html">applicative_value&lt; std::optional&lt; T &gt;, void &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html">applicative_value&lt; T, std::void_t&lt; typename std::remove_cvref_t&lt; T &gt;::value_type &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html">array_applicative_impl</a></td></tr>
@@ -265,7 +263,7 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structbeman_1_1transpose_1_1Monoid_3_01std_1_1string_01_4.html" title="Monoid&lt;std::string&gt;: concatenation monoid with identity &quot;&quot;.">Monoid&lt;std::string&gt;</a>: concatenation monoid with identity "".  <a href="structbeman_1_1transpose_1_1Monoid_3_01std_1_1string_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1Monoid_3_01std_1_1vector_3_01VALUE__TYPE_01_4_01_4.html">Monoid&lt; std::vector&lt; VALUE_TYPE &gt; &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Monoid&lt;std::vector&lt;T&gt;&gt;: concatenation monoid with identity empty vector.  <a href="structbeman_1_1transpose_1_1Monoid_3_01std_1_1vector_3_01VALUE__TYPE_01_4_01_4.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> for std::vector: concatenation, identity the empty vector.  <a href="structbeman_1_1transpose_1_1Monoid_3_01std_1_1vector_3_01VALUE__TYPE_01_4_01_4.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html">optional_applicative_impl</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applicative instance for std::optional: the flagship of the invoke core.  <a href="structbeman_1_1transpose_1_1optional__applicative__impl.html#details">More...</a><br /></td></tr>
@@ -273,10 +271,12 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__map.html">optional_applicative_map</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalFunctorImpl.html">OptionalFunctorImpl</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor instance for std::optional.  <a href="structbeman_1_1transpose_1_1OptionalFunctorImpl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalFunctorMap.html">OptionalFunctorMap</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalMonadImpl.html">OptionalMonadImpl</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Monad instance for std::optional.  <a href="structbeman_1_1transpose_1_1OptionalMonadImpl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1OptionalMonadMap.html">OptionalMonadMap</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -349,6 +349,7 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFoldableMap.html">VectorFoldableMap</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFunctorImpl.html">VectorFunctorImpl</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor instance for std::vector.  <a href="structbeman_1_1transpose_1_1VectorFunctorImpl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFunctorMap.html">VectorFunctorMap</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -625,14 +626,14 @@ Variables</h2></td></tr>
 <tr class="memitem:a7e597c6a18eec82d1cb5e01b367c89ff"><td class="memTemplParams" colspan="2">template&lt;class T , int N&gt; </td></tr>
 <tr class="memitem:a7e597c6a18eec82d1cb5e01b367c89ff"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a7e597c6a18eec82d1cb5e01b367c89ff">applicative&lt; simd_lanes&lt; T, N &gt; &gt;</a></td></tr>
 <tr class="separator:a7e597c6a18eec82d1cb5e01b367c89ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae4ec1d59015f2ff0dc53f1a8a182367d"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="structbeman_1_1transpose_1_1transpose__fn.html">transpose_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d">transpose</a> {}</td></tr>
-<tr class="separator:ae4ec1d59015f2ff0dc53f1a8a182367d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49e0c8561d2d876ceaf3ee5b49e5c995"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a49e0c8561d2d876ceaf3ee5b49e5c995"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a49e0c8561d2d876ceaf3ee5b49e5c995">traversable</a> = std::false_type{}</td></tr>
 <tr class="memdesc:a49e0c8561d2d876ceaf3ee5b49e5c995"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversable instance for <code>std::vector&lt;VALUE_TYPE&gt;</code>.  <br /></td></tr>
 <tr class="separator:a49e0c8561d2d876ceaf3ee5b49e5c995"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adca9192380d7c029a8d882576a9c7031"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="structbeman_1_1transpose_1_1traverse__fn.html">traverse_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#adca9192380d7c029a8d882576a9c7031">traverse</a> {}</td></tr>
 <tr class="separator:adca9192380d7c029a8d882576a9c7031"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4ec1d59015f2ff0dc53f1a8a182367d"><td class="memItemLeft" align="right" valign="top">constexpr <a class="el" href="structbeman_1_1transpose_1_1transpose__fn.html">transpose_fn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d">transpose</a> {}</td></tr>
+<tr class="separator:ae4ec1d59015f2ff0dc53f1a8a182367d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a991f0acec452db9587f59701c13e1abc"><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr class="memitem:a991f0acec452db9587f59701c13e1abc"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a991f0acec452db9587f59701c13e1abc">applicative&lt; zip_list&lt; T &gt; &gt;</a> = <a class="el" href="structbeman_1_1transpose_1_1ZipListApplicativeMap.html">ZipListApplicativeMap</a>&lt;T&gt;{}</td></tr>
 <tr class="memdesc:a991f0acec452db9587f59701c13e1abc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers <a class="el" href="structbeman_1_1transpose_1_1ZipListApplicativeMap.html" title="Applicative map for zip_list&lt;T&gt;: the native n-ary invoke core.">ZipListApplicativeMap</a> as the Applicative instance for zip_list&lt;T&gt;.  <br /></td></tr>
@@ -2099,28 +2100,6 @@ template&lt;class T , int N&gt; </div>
 </div><!-- fragment -->
 </div>
 </div>
-<a id="ae4ec1d59015f2ff0dc53f1a8a182367d" name="ae4ec1d59015f2ff0dc53f1a8a182367d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae4ec1d59015f2ff0dc53f1a8a182367d">&#9670;&#160;</a></span>transpose</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">constexpr <a class="el" href="structbeman_1_1transpose_1_1transpose__fn.html">transpose_fn</a> beman::transpose::transpose {}</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a49e0c8561d2d876ceaf3ee5b49e5c995" name="a49e0c8561d2d876ceaf3ee5b49e5c995"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a49e0c8561d2d876ceaf3ee5b49e5c995">&#9670;&#160;</a></span>traversable</h2>
 
@@ -2158,6 +2137,28 @@ template&lt;class T &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">constexpr <a class="el" href="structbeman_1_1transpose_1_1traverse__fn.html">traverse_fn</a> beman::transpose::traverse {}</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae4ec1d59015f2ff0dc53f1a8a182367d" name="ae4ec1d59015f2ff0dc53f1a8a182367d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4ec1d59015f2ff0dc53f1a8a182367d">&#9670;&#160;</a></span>transpose</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr <a class="el" href="structbeman_1_1transpose_1_1transpose__fn.html">transpose_fn</a> beman::transpose::transpose {}</td>
         </tr>
       </table>
   </td>

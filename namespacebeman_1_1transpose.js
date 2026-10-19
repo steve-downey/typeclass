@@ -8,7 +8,6 @@ var namespacebeman_1_1transpose =
     [ "any_of_fn", "structbeman_1_1transpose_1_1any__of__fn.html", "structbeman_1_1transpose_1_1any__of__fn" ],
     [ "ap_fn", "structbeman_1_1transpose_1_1ap__fn.html", "structbeman_1_1transpose_1_1ap__fn" ],
     [ "applicative_value", "structbeman_1_1transpose_1_1applicative__value.html", null ],
-    [ "applicative_value< std::optional< T >, void >", "structbeman_1_1transpose_1_1applicative__value_3_01std_1_1optional_3_01T_01_4_00_01void_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01std_1_1optional_3_01T_01_4_00_01void_01_4" ],
     [ "applicative_value< T, std::void_t< typename std::remove_cvref_t< T >::value_type > >", "structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html", "structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c" ],
     [ "array_applicative_impl", "structbeman_1_1transpose_1_1array__applicative__impl.html", "structbeman_1_1transpose_1_1array__applicative__impl" ],
     [ "array_applicative_map", "structbeman_1_1transpose_1_1array__applicative__map.html", null ],
@@ -176,8 +175,8 @@ var namespacebeman_1_1transpose =
     [ "monoid", "namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f", null ],
     [ "applicative< sender< T > >", "namespacebeman_1_1transpose.html#acdabb99fe2497d0d328fa99ce9137aa8", null ],
     [ "applicative< simd_lanes< T, N > >", "namespacebeman_1_1transpose.html#a7e597c6a18eec82d1cb5e01b367c89ff", null ],
-    [ "transpose", "namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d", null ],
     [ "traversable", "namespacebeman_1_1transpose.html#a49e0c8561d2d876ceaf3ee5b49e5c995", null ],
     [ "traverse", "namespacebeman_1_1transpose.html#adca9192380d7c029a8d882576a9c7031", null ],
+    [ "transpose", "namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d", null ],
     [ "applicative< zip_list< T > >", "namespacebeman_1_1transpose.html#a991f0acec452db9587f59701c13e1abc", null ]
 ];

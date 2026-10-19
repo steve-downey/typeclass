@@ -99,167 +99,137 @@ $(document).ready(function(){initNavTree('typeclass__base_8hpp_source.html','');
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#ifndef BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#define BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;array&gt;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;concepts&gt;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;cstddef&gt;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;optional&gt;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">// Every typeclass base uses deducing this (explicit object parameters,</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">// P0847). Fail once, here, on GCC 13 -- the compiler measured without it</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// (docs/transpose/decisions.md#execution-toolchain-floor) -- instead of with a</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// parser error at every `this auto &amp;&amp;self` member. The test is the compiler</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">// version, not __cpp_explicit_this_parameter: Clang 19 implements the feature</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">// without defining the macro.</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#if defined(__GNUC__) &amp;&amp; !defined(__clang__) &amp;&amp; __GNUC__ &lt; 14</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#error &quot;beman.transpose requires C++23 deducing this (P0847): GCC 14 or later.&quot;</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">// `= delete(&quot;reason&quot;)` (P2573) where the language mode has it, plain</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">// `= delete` otherwise. An operation an instance refuses is refused as a</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">// deleted function, so asking whether it exists answers false rather than</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">// failing, and a call gets the reason where the compiler can give it. The</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">// test is the language mode as well as the feature macro: Clang defines</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">// `__cpp_deleted_function` in C++23 mode, where the message is an extension</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="comment">// that warns.</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#if __cplusplus &gt; 202302L &amp;&amp; defined(__cpp_deleted_function) &amp;&amp;                \</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">    __cpp_deleted_function &gt;= 202403L</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#define BEMAN_TRANSPOSE_DELETE_WITH_REASON(REASON) delete (REASON)</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno"><a class="line" href="typeclass__base_8hpp.html#a3418cbd608e9c8ec1c519690505a1e55">   34</a></span><span class="preprocessor">#define BEMAN_TRANSPOSE_DELETE_WITH_REASON(REASON) delete</span></div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;concepts&gt;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;cstddef&gt;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;utility&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="comment">// Every typeclass base uses deducing this (explicit object parameters,</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="comment">// P0847). Fail once, here, on GCC 13 -- the compiler measured without it</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">// (docs/transpose/decisions.md#execution-toolchain-floor) -- instead of with a</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">// parser error at every `this auto &amp;&amp;self` member. The test is the compiler</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// version, not __cpp_explicit_this_parameter: Clang 19 implements the feature</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// without defining the macro.</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#if defined(__GNUC__) &amp;&amp; !defined(__clang__) &amp;&amp; __GNUC__ &lt; 14</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#error &quot;beman.transpose requires C++23 deducing this (P0847): GCC 14 or later.&quot;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">// `= delete(&quot;reason&quot;)` (P2573) where the language mode has it, plain</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment">// `= delete` otherwise. An operation an instance refuses is refused as a</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="comment">// deleted function, so asking whether it exists answers false rather than</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">// failing, and a call gets the reason where the compiler can give it. The</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="comment">// test is the language mode as well as the feature macro: Clang defines</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">// `__cpp_deleted_function` in C++23 mode, where the message is an extension</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="comment">// that warns.</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#if __cplusplus &gt; 202302L &amp;&amp; defined(__cpp_deleted_function) &amp;&amp;                \</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">    __cpp_deleted_function &gt;= 202403L</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#define BEMAN_TRANSPOSE_DELETE_WITH_REASON(REASON) delete (REASON)</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="typeclass__base_8hpp.html#a3418cbd608e9c8ec1c519690505a1e55">   32</a></span><span class="preprocessor">#define BEMAN_TRANSPOSE_DELETE_WITH_REASON(REASON) delete</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacebeman_1_1transpose.html">beman::transpose</a> {</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacebeman_1_1transpose.html">beman::transpose</a> {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">// Design invariants for the typeclass object pattern:</span></div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">// - Per-concept lookup objects (for example functor&lt;T&gt;) are the</span></div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">//   customization lookup points for typeclass dispatch.</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">// - Generic algorithms call through looked-up typeclass objects.</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment">// - New concepts should keep lookup static and explicit.</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment">// - Avoid adding parallel ADL-only customization paths for the same concept.</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">template</span> &lt;<span class="keyword">class</span>...&gt;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a57523cd1313746fafbc916065b03ef75">   57</a></span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a57523cd1313746fafbc916065b03ef75">always_false_v</a> = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> IMPL, <span class="keyword">class</span> <span class="keywordtype">SEL</span>F&gt;</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a87f80674c8200e2169a16600d1f0ee38">   74</a></span><span class="keyword">using </span><a class="code hl_typedef" href="namespacebeman_1_1transpose.html#a87f80674c8200e2169a16600d1f0ee38">impl_ref_t</a> =</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    std::conditional_t&lt;std::is_const_v&lt;std::remove_reference_t&lt;SELF&gt;&gt;,</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                       <span class="keyword">const</span> IMPL, IMPL&gt; &amp;;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> LOOKUP_RESULT&gt;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a1a4d7b1a15f9b55cb0970912130ddfff">   91</a></span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a1a4d7b1a15f9b55cb0970912130ddfff">has_instance_v</a> =</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    !std::is_same_v&lt;std::remove_cvref_t&lt;LOOKUP_RESULT&gt;, std::false_type&gt;;</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T, <span class="keyword">class</span> = <span class="keywordtype">void</span>&gt;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1applicative__value.html">   98</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1applicative__value.html">applicative_value</a>;</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html">  101</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1applicative__value.html">applicative_value</a>&lt;</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    T, std::void_t&lt;typename std::remove_cvref_t&lt;T&gt;::value_type&gt;&gt; {</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html#a32e93a9745ba6f336651ece396cc54c5">  103</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html#a32e93a9745ba6f336651ece396cc54c5">type</a> = <span class="keyword">typename</span> std::remove_cvref_t&lt;T&gt;::value_type;</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>};</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1applicative__value_3_01std_1_1optional_3_01T_01_4_00_01void_01_4.html">  107</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1applicative__value.html">applicative_value</a>&lt;std::optional&lt;T&gt;, void&gt; {</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1applicative__value_3_01std_1_1optional_3_01T_01_4_00_01void_01_4.html#a465389fea324310fb75abaeb8dfe725e">  108</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="structbeman_1_1transpose_1_1applicative__value_3_01std_1_1optional_3_01T_01_4_00_01void_01_4.html#a465389fea324310fb75abaeb8dfe725e">type</a> = T;</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>};</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">  113</a></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="keyword">using </span><a class="code hl_typedef" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">applicative_value_t</a> =</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keyword">typename</span> <a class="code hl_struct" href="structbeman_1_1transpose_1_1applicative__value.html">applicative_value&lt;std::remove_cvref_t&lt;T&gt;</a>&gt;::type;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="keyword">namespace </span>detail {</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span><span class="keyword">struct </span>is_optional : std::false_type {};</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span> </div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> U&gt;</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span><span class="keyword">struct </span>is_optional&lt;std::optional&lt;U&gt;&gt; : std::true_type {};</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> is_optional_v =</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    is_optional&lt;std::remove_cvref_t&lt;T&gt;&gt;::value;</div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> RESULT&gt;</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="keyword">concept </span>holdable_value = std::is_object_v&lt;std::remove_cvref_t&lt;RESULT&gt;&gt; &amp;&amp;</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>                         !std::is_array_v&lt;std::remove_cvref_t&lt;RESULT&gt;&gt; &amp;&amp;</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                         std::destructible&lt;std::remove_cvref_t&lt;RESULT&gt;&gt;;</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> RESULT&gt;</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span><span class="keyword">concept </span>optional_holdable_value =</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    holdable_value&lt;RESULT&gt; &amp;&amp;</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>    !std::same_as&lt;std::remove_cvref_t&lt;RESULT&gt;, std::nullopt_t&gt; &amp;&amp;</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    !std::same_as&lt;std::remove_cvref_t&lt;RESULT&gt;, std::in_place_t&gt;;</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> OPERAND&gt;</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span><span class="keyword">using </span>contained_ref_t = std::conditional_t&lt;</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    std::is_lvalue_reference_v&lt;OPERAND&gt;,</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    <span class="keyword">const</span> std::remove_reference_t&lt;decltype(*std::declval&lt;OPERAND &amp;&gt;())&gt; &amp;,</div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    <span class="keyword">decltype</span>(*std::declval&lt;OPERAND&gt;())&gt;;</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> OPERAND&gt;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> forward_contained(OPERAND &amp;&amp;operand)</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>    -&gt; contained_ref_t&lt;OPERAND&gt; {</div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    <span class="keywordflow">return</span> *std::forward&lt;OPERAND&gt;(operand);</div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>}</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span> </div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> CONTAINER&gt;</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> forward_at(CONTAINER &amp;&amp;container, std::size_t index)</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    -&gt; <span class="keyword">decltype</span>(<span class="keyword">auto</span>) {</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_lvalue_reference_v&lt;CONTAINER&gt;) {</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="keywordflow">return</span> std::as_const(container)[index];</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        <span class="keywordflow">return</span> std::move(container[index]);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">// Design invariants for the typeclass object pattern:</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">// - Per-concept lookup objects (for example functor&lt;T&gt;) are the</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">//   customization lookup points for typeclass dispatch.</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">// - Generic algorithms call through looked-up typeclass objects.</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">// - New concepts should keep lookup static and explicit.</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">// - Avoid adding parallel ADL-only customization paths for the same concept.</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="keyword">template</span> &lt;<span class="keyword">class</span>...&gt;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a57523cd1313746fafbc916065b03ef75">   55</a></span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a57523cd1313746fafbc916065b03ef75">always_false_v</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> IMPL, <span class="keyword">class</span> <span class="keywordtype">SEL</span>F&gt;</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a87f80674c8200e2169a16600d1f0ee38">   72</a></span><span class="keyword">using </span><a class="code hl_typedef" href="namespacebeman_1_1transpose.html#a87f80674c8200e2169a16600d1f0ee38">impl_ref_t</a> =</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    std::conditional_t&lt;std::is_const_v&lt;std::remove_reference_t&lt;SELF&gt;&gt;,</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                       <span class="keyword">const</span> IMPL, IMPL&gt; &amp;;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> LOOKUP_RESULT&gt;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a1a4d7b1a15f9b55cb0970912130ddfff">   89</a></span><span class="keyword">inline</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_variable" href="namespacebeman_1_1transpose.html#a1a4d7b1a15f9b55cb0970912130ddfff">has_instance_v</a> =</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    !std::is_same_v&lt;std::remove_cvref_t&lt;LOOKUP_RESULT&gt;, std::false_type&gt;;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T, <span class="keyword">class</span> = <span class="keywordtype">void</span>&gt;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1applicative__value.html">   96</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1applicative__value.html">applicative_value</a>;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html">   99</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structbeman_1_1transpose_1_1applicative__value.html">applicative_value</a>&lt;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    T, std::void_t&lt;typename std::remove_cvref_t&lt;T&gt;::value_type&gt;&gt; {</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html#a32e93a9745ba6f336651ece396cc54c5">  101</a></span>    <span class="keyword">using </span><a class="code hl_typedef" href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html#a32e93a9745ba6f336651ece396cc54c5">type</a> = <span class="keyword">typename</span> std::remove_cvref_t&lt;T&gt;::value_type;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>};</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">  106</a></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="keyword">using </span><a class="code hl_typedef" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">applicative_value_t</a> =</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keyword">typename</span> <a class="code hl_struct" href="structbeman_1_1transpose_1_1applicative__value.html">applicative_value&lt;std::remove_cvref_t&lt;T&gt;</a>&gt;::type;</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span><span class="keyword">namespace </span>detail {</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> RESULT&gt;</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span><span class="keyword">concept </span>holdable_value = std::is_object_v&lt;std::remove_cvref_t&lt;RESULT&gt;&gt; &amp;&amp;</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>                         !std::is_array_v&lt;std::remove_cvref_t&lt;RESULT&gt;&gt; &amp;&amp;</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>                         std::destructible&lt;std::remove_cvref_t&lt;RESULT&gt;&gt;;</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> OPERAND&gt;</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span><span class="keyword">using </span>contained_ref_t = std::conditional_t&lt;</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>    std::is_lvalue_reference_v&lt;OPERAND&gt;,</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    <span class="keyword">const</span> std::remove_reference_t&lt;decltype(*std::declval&lt;OPERAND &amp;&gt;())&gt; &amp;,</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    <span class="keyword">decltype</span>(*std::declval&lt;OPERAND&gt;())&gt;;</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> OPERAND&gt;</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> forward_contained(OPERAND &amp;&amp;operand)</div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    -&gt; contained_ref_t&lt;OPERAND&gt; {</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    <span class="keywordflow">return</span> *std::forward&lt;OPERAND&gt;(operand);</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>}</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> CONTAINER&gt;</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> forward_at(CONTAINER &amp;&amp;container, std::size_t index)</div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>    -&gt; <span class="keyword">decltype</span>(<span class="keyword">auto</span>) {</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (std::is_lvalue_reference_v&lt;CONTAINER&gt;) {</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        <span class="keywordflow">return</span> std::as_const(container)[index];</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>        <span class="keywordflow">return</span> std::move(container[index]);</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    }</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>}</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> CONTAINER&gt;</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span><span class="keyword">using </span>element_ref_t =</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>    <span class="keyword">decltype</span>(forward_at(std::declval&lt;CONTAINER&gt;(), std::size_t{}));</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span> </div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> RESULT&gt;</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span><span class="keyword">struct </span>probe_witness {</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ARGUMENT&gt;</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> operator()(<span class="keyword">const</span> ARGUMENT &amp;) <span class="keyword">const</span> -&gt; RESULT {</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>        std::unreachable();</div>
 <div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    }</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>}</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>};</div>
 <div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> CONTAINER&gt;</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span><span class="keyword">using </span>element_ref_t =</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    <span class="keyword">decltype</span>(forward_at(std::declval&lt;CONTAINER&gt;(), std::size_t{}));</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="keyword">template</span> &lt;<span class="keyword">class </span>U, std::size_t N, <span class="keyword">class </span>GENERATOR, std::size_t... INDICES&gt;</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span><span class="keyword">constexpr</span> <span class="keyword">auto</span> make_array(GENERATOR &amp;&amp;generator,</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>                          std::index_sequence&lt;INDICES...&gt;) -&gt; std::array&lt;U, N&gt; {</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    <span class="keywordflow">return</span> std::array&lt;U, N&gt;{generator(INDICES)...};</div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>}</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> RESULT&gt;</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span><span class="keyword">struct </span>probe_witness {</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ARGUMENT&gt;</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> operator()(<span class="keyword">const</span> ARGUMENT &amp;) <span class="keyword">const</span> -&gt; RESULT {</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        std::unreachable();</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    }</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>};</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ARGUMENT, <span class="keyword">class</span> RESULT&gt;</div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span><span class="keyword">struct </span>consuming_probe_witness {</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> operator()(ARGUMENT &amp;&amp;) <span class="keyword">const</span> -&gt; RESULT {</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        std::unreachable();</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>    }</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>};</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span> </div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> RESULT&gt;</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span><span class="keyword">struct </span>probe_witness2 {</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> FIRST, <span class="keyword">class</span> SECOND&gt;</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> operator()(<span class="keyword">const</span> FIRST &amp;, <span class="keyword">const</span> SECOND &amp;) <span class="keyword">const</span> -&gt; RESULT {</div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>        std::unreachable();</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>    }</div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>};</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span> </div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>} <span class="comment">// namespace detail</span></div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span> </div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>} <span class="comment">// namespace beman::transpose</span></div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span> </div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span><span class="preprocessor">#endif </span><span class="comment">// BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP</span></div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ARGUMENT, <span class="keyword">class</span> RESULT&gt;</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span><span class="keyword">struct </span>consuming_probe_witness {</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> operator()(ARGUMENT &amp;&amp;) <span class="keyword">const</span> -&gt; RESULT {</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>        std::unreachable();</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>    }</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>};</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span> </div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span><span class="keyword">template</span> &lt;<span class="keyword">class</span> RESULT&gt;</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span><span class="keyword">struct </span>probe_witness2 {</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    <span class="keyword">template</span> &lt;<span class="keyword">class</span> FIRST, <span class="keyword">class</span> SECOND&gt;</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="keyword">constexpr</span> <span class="keyword">auto</span> operator()(<span class="keyword">const</span> FIRST &amp;, <span class="keyword">const</span> SECOND &amp;) <span class="keyword">const</span> -&gt; RESULT {</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        std::unreachable();</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    }</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>};</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> </div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>} <span class="comment">// namespace detail</span></div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span> </div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>} <span class="comment">// namespace beman::transpose</span></div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span> </div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span><span class="preprocessor">#endif </span><span class="comment">// BEMAN_TRANSPOSE_DETAIL_TYPECLASS_BASE_HPP</span></div>
 <div class="ttc" id="anamespacebeman_1_1transpose_html"><div class="ttname"><a href="namespacebeman_1_1transpose.html">beman::transpose</a></div><div class="ttdoc">The grade algebra: framework vocabulary only.</div><div class="ttdef"><b>Definition:</b> finger_tree_foldable.hpp:45</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a1a4d7b1a15f9b55cb0970912130ddfff"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a1a4d7b1a15f9b55cb0970912130ddfff">beman::transpose::has_instance_v</a></div><div class="ttdeci">constexpr bool has_instance_v</div><div class="ttdoc">True when a typeclass lookup variable has been specialized away from its std::false_type default,...</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:91</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a46e5acce5433886d8105e0e6de949760"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">beman::transpose::applicative_value_t</a></div><div class="ttdeci">typename applicative_value&lt; std::remove_cvref_t&lt; T &gt; &gt;::type applicative_value_t</div><div class="ttdoc">Convenience alias for applicative_value&lt;T&gt;::type.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:114</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a57523cd1313746fafbc916065b03ef75"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a57523cd1313746fafbc916065b03ef75">beman::transpose::always_false_v</a></div><div class="ttdeci">constexpr bool always_false_v</div><div class="ttdoc">Always false, but dependent on a template parameter pack.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:57</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a87f80674c8200e2169a16600d1f0ee38"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a87f80674c8200e2169a16600d1f0ee38">beman::transpose::impl_ref_t</a></div><div class="ttdeci">std::conditional_t&lt; std::is_const_v&lt; std::remove_reference_t&lt; SELF &gt; &gt;, const IMPL, IMPL &gt; &amp; impl_ref_t</div><div class="ttdoc">The Impl sub-object reference a typeclass base's member should address, given the deduced type of its...</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:76</div></div>
-<div class="ttc" id="astructbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c_html_a32e93a9745ba6f336651ece396cc54c5"><div class="ttname"><a href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html#a32e93a9745ba6f336651ece396cc54c5">beman::transpose::applicative_value&lt; T, std::void_t&lt; typename std::remove_cvref_t&lt; T &gt;::value_type &gt; &gt;::type</a></div><div class="ttdeci">typename std::remove_cvref_t&lt; T &gt;::value_type type</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:103</div></div>
-<div class="ttc" id="astructbeman_1_1transpose_1_1applicative__value_3_01std_1_1optional_3_01T_01_4_00_01void_01_4_html_a465389fea324310fb75abaeb8dfe725e"><div class="ttname"><a href="structbeman_1_1transpose_1_1applicative__value_3_01std_1_1optional_3_01T_01_4_00_01void_01_4.html#a465389fea324310fb75abaeb8dfe725e">beman::transpose::applicative_value&lt; std::optional&lt; T &gt;, void &gt;::type</a></div><div class="ttdeci">T type</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:108</div></div>
-<div class="ttc" id="astructbeman_1_1transpose_1_1applicative__value_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1applicative__value.html">beman::transpose::applicative_value</a></div><div class="ttdoc">Trait that extracts the element type from an applicative container.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:98</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a1a4d7b1a15f9b55cb0970912130ddfff"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a1a4d7b1a15f9b55cb0970912130ddfff">beman::transpose::has_instance_v</a></div><div class="ttdeci">constexpr bool has_instance_v</div><div class="ttdoc">True when a typeclass lookup variable has been specialized away from its std::false_type default,...</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:89</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a46e5acce5433886d8105e0e6de949760"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">beman::transpose::applicative_value_t</a></div><div class="ttdeci">typename applicative_value&lt; std::remove_cvref_t&lt; T &gt; &gt;::type applicative_value_t</div><div class="ttdoc">Convenience alias for applicative_value&lt;T&gt;::type.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:107</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a57523cd1313746fafbc916065b03ef75"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a57523cd1313746fafbc916065b03ef75">beman::transpose::always_false_v</a></div><div class="ttdeci">constexpr bool always_false_v</div><div class="ttdoc">Always false, but dependent on a template parameter pack.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:55</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a87f80674c8200e2169a16600d1f0ee38"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a87f80674c8200e2169a16600d1f0ee38">beman::transpose::impl_ref_t</a></div><div class="ttdeci">std::conditional_t&lt; std::is_const_v&lt; std::remove_reference_t&lt; SELF &gt; &gt;, const IMPL, IMPL &gt; &amp; impl_ref_t</div><div class="ttdoc">The Impl sub-object reference a typeclass base's member should address, given the deduced type of its...</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:74</div></div>
+<div class="ttc" id="astructbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c_html_a32e93a9745ba6f336651ece396cc54c5"><div class="ttname"><a href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html#a32e93a9745ba6f336651ece396cc54c5">beman::transpose::applicative_value&lt; T, std::void_t&lt; typename std::remove_cvref_t&lt; T &gt;::value_type &gt; &gt;::type</a></div><div class="ttdeci">typename std::remove_cvref_t&lt; T &gt;::value_type type</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:101</div></div>
+<div class="ttc" id="astructbeman_1_1transpose_1_1applicative__value_html"><div class="ttname"><a href="structbeman_1_1transpose_1_1applicative__value.html">beman::transpose::applicative_value</a></div><div class="ttdoc">Trait that extracts the element type from an applicative container.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:96</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
