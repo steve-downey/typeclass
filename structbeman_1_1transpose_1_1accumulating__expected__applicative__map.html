@@ -112,10 +112,10 @@ Inheritance diagram for beman::transpose::accumulating_expected_applicative_map&
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a89de8ded4ec8bb24c3164057eb333188"><td class="memTemplParams" colspan="2">template&lt;class... ARGS&gt; </td></tr>
-<tr class="memitem:a89de8ded4ec8bb24c3164057eb333188"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1accumulating__expected__applicative__map.html#a89de8ded4ec8bb24c3164057eb333188">bind</a> (ARGS &amp;&amp;...) const</td></tr>
-<tr class="memdesc:a89de8ded4ec8bb24c3164057eb333188"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind is refused, not merely absent: sequencing needs a value from the first computation to feed the continuation, and when that computation failed there is none &ndash; a value-flow obstruction, not something grade bookkeeping can fix.  <br /></td></tr>
-<tr class="separator:a89de8ded4ec8bb24c3164057eb333188"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1d9afcde9959039cfdd7af82e8e2fa4"><td class="memTemplParams" colspan="2">template&lt;class... ARGS&gt; </td></tr>
+<tr class="memitem:aa1d9afcde9959039cfdd7af82e8e2fa4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1accumulating__expected__applicative__map.html#aa1d9afcde9959039cfdd7af82e8e2fa4">bind</a> (ARGS &amp;&amp;...) const</td></tr>
+<tr class="memdesc:aa1d9afcde9959039cfdd7af82e8e2fa4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind is refused, not merely absent: sequencing needs a value from the first computation to feed the continuation, and when that computation failed there is none &ndash; a value-flow obstruction, not something grade bookkeeping can fix.  <br /></td></tr>
+<tr class="separator:aa1d9afcde9959039cfdd7af82e8e2fa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_structbeman_1_1transpose_1_1derive__applicative"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_structbeman_1_1transpose_1_1derive__applicative')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html">beman::transpose::derive_applicative&lt; accumulating_expected_applicative_impl&lt; VALUE_TYPE, ERROR_TYPE &gt; &gt;</a></td></tr>
 <tr class="memitem:abe8613dc169e6fecf50f97e10283ee52 inherit pub_methods_structbeman_1_1transpose_1_1derive__applicative"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#abe8613dc169e6fecf50f97e10283ee52">invoke</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments)</td></tr>
 <tr class="separator:abe8613dc169e6fecf50f97e10283ee52 inherit pub_methods_structbeman_1_1transpose_1_1derive__applicative"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -161,8 +161,8 @@ requires (sizeof...(CARRIERS) &gt; 0) &amp;&amp; (<a class="el" href="namespaceb
 <tr class="separator:a491bdc3167bf81d5856836ecfef10d2f inherit pro_methods_structbeman_1_1transpose_1_1accumulating__expected__applicative__impl"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a89de8ded4ec8bb24c3164057eb333188" name="a89de8ded4ec8bb24c3164057eb333188"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89de8ded4ec8bb24c3164057eb333188">&#9670;&#160;</a></span>bind()</h2>
+<a id="aa1d9afcde9959039cfdd7af82e8e2fa4" name="aa1d9afcde9959039cfdd7af82e8e2fa4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1d9afcde9959039cfdd7af82e8e2fa4">&#9670;&#160;</a></span>bind()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -170,27 +170,20 @@ requires (sizeof...(CARRIERS) &gt; 0) &amp;&amp; (<a class="el" href="namespaceb
 template&lt;class VALUE_TYPE , class ERROR_TYPE &gt; </div>
 <div class="memtemplate">
 template&lt;class... ARGS&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr auto <a class="el" href="structbeman_1_1transpose_1_1accumulating__expected__applicative__map.html">beman::transpose::accumulating_expected_applicative_map</a>&lt; VALUE_TYPE, ERROR_TYPE &gt;::bind </td>
+          <td class="memname">void <a class="el" href="structbeman_1_1transpose_1_1accumulating__expected__applicative__map.html">beman::transpose::accumulating_expected_applicative_map</a>&lt; VALUE_TYPE, ERROR_TYPE &gt;::bind </td>
           <td>(</td>
           <td class="paramtype">ARGS &amp;&amp;&#160;</td>
           <td class="paramname"><em>...</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>Bind is refused, not merely absent: sequencing needs a value from the first computation to feed the continuation, and when that computation failed there is none &ndash; a value-flow obstruction, not something grade bookkeeping can fix. </p>
-<p>The framework never derives bind for this object. <code>always_false_v</code> defers the static_assert to the point of an actual call, so merely naming this type (as <code>accumulating_applicative&lt;T&gt;</code> does) stays well-formed; only calling <code>.<a class="el" href="namespacebeman_1_1transpose.html#a9ce465f427e17e5009fc088ce0db2ef7" title="Sequential composition: bind(ma, f).">bind(...)</a></code> on it fails, with this message. </p>
+<p>The framework never derives bind for this object.</p>
+<p>The refusal is a deleted function, not a <code>static_assert</code> in a body. A call to a deleted function is an invalid expression in the immediate context, so asking whether <code>bind</code> exists &ndash; as <code>monad_object</code> does, and as an algorithm dispatching between a sequential and an applicative route does &ndash; answers false. A <code>static_assert</code> in a deduced body fires when the probe instantiates the body, which makes the question a hard error. The message on the deletion is C++26 (P2573); <code>BEMAN_TRANSPOSE_DELETE_WITH_REASON</code> drops it where it is unavailable, and a call is still rejected, as a call to a deleted function. </p>
 
 </div>
 </div>

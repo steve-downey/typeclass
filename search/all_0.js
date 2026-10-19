@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['a_0',['A',['../structbeman_1_1transpose_1_1lifted__monoid.html#af4916259b22f35e8ad961d224224bd6a',1,'beman::transpose::lifted_monoid']]],
-  ['a_1',['a',['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node3.html#adf987b59b047fcf34572b56b0ac23735',1,'beman::fingertree::tree::ft::Elem::Node3::a()'],['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node2.html#a32a8edb300221c14e588856df0d3563c',1,'beman::fingertree::tree::ft::Elem::Node2::a()']]],
+  ['a_0',['a',['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node3.html#adf987b59b047fcf34572b56b0ac23735',1,'beman::fingertree::tree::ft::Elem::Node3::a()'],['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node2.html#a32a8edb300221c14e588856df0d3563c',1,'beman::fingertree::tree::ft::Elem::Node2::a()']]],
+  ['a_1',['A',['../structbeman_1_1transpose_1_1lifted__monoid.html#af4916259b22f35e8ad961d224224bd6a',1,'beman::transpose::lifted_monoid']]],
   ['accumulating_5fapplicative_2',['accumulating_applicative',['../namespacebeman_1_1transpose.html#a32e15c3cb9b99eeac61286bc962b6187',1,'beman::transpose']]],
   ['accumulating_5fexpected_5fapplicative_5fimpl_3',['accumulating_expected_applicative_impl',['../structbeman_1_1transpose_1_1accumulating__expected__applicative__impl.html',1,'beman::transpose']]],
   ['accumulating_5fexpected_5fapplicative_5fmap_4',['accumulating_expected_applicative_map',['../structbeman_1_1transpose_1_1accumulating__expected__applicative__map.html',1,'beman::transpose']]],
