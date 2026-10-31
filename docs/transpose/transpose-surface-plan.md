@@ -154,27 +154,37 @@ written for whichever Steve chooses:
 - *Fence holds.* No public eliminator for `error_set`; the heterogeneous-arm
   mechanism ships for sums only (`std::variant` and the variant-shaped layer
   in `tree_algorithms`), beside `overloaded`.
-- *Fence moves.* The same mechanism eliminates an `error_set` value: every
-  present witness is folded through the overload set, exhaustiveness is
-  checked against the grade, and the result type is the join of the arms,
-  which is a value when the arms agree and a canonical sum when they differ.
-Deliverables (both outcomes): the join-of-arms result-type computation, built
-on the canonical set from stage [set-home-and-abi](#set-home-and-abi); an
-`apply_type`-style form that passes the injection tag to the arm; tests with
-heterogeneous arms over a `std::variant` and over a `tree_algorithms` layer.
-Deliverables (fence moves): the `error_set` eliminator, with `recover`
-re-expressed through it or left as is per the ruling, and a negative test that
-a missing arm is a compile error naming the alternative.
+- *Fence moves.* Two `error_set` verbs, per the 2026-10-31 entry under
+  that slug: a `fold` over present witnesses with an explicit accumulator
+  and arms exhaustive against the grade, and a `collapse` to one error type
+  with the left-biased multiplicity rule of `combined_with`. `visit` stays
+  partial. Neither verb needs the join-of-arms type.
+Deliverables (both outcomes): the join-of-arms result-type computation for
+one-of sums, deduplicating and collapsing to the common type when the arms
+agree, built on the canonical set from stage
+[set-home-and-abi](#set-home-and-abi); an `apply_type`-style form that passes
+the injection tag to the arm; tests with heterogeneous arms over a
+`std::variant` and over a `tree_algorithms` layer.
+Deliverables (fence moves): `fold` and `collapse`, with `recover`
+re-expressed through `fold` or left as is per the ruling, a negative test that
+a missing arm is a compile error naming the alternative, and a positive test
+that two present witnesses reach the accumulator in canonical order.
+Deliverables (fence holds): a test pinning the boundary-collapse idiom through
+`recover` with a raising handler, and a paragraph in the paper's
+implementation-experience section stating the per-witness read as the cost of
+the witnessed-subset representation.
 Why: `std::visit` requiring one result type is the pain this mechanism
 removes, and it is the same pain in both clients. Writing it twice, once
 beside `overloaded` and once inside `error_set`, is the drift
 [functor-monad-grounding](decisions.md#functor-monad-grounding) warns about.
 Acceptance: heterogeneous arms compile and deduce the documented type; the
 catch-all ambiguity of `overloaded` still fires; goldens green.
-Tripwire: if the join-of-arms type for *values* turns out to need
-idempotent set semantics to be usable, STOP and reread
-[value-side-grading](decisions.md#value-side-grading): that is the position
-problem it predicts, and the answer is a positional sum, not a smaller set.
+Tripwire: deduplicating the arms' result types is expected and is not a
+value-side grade. If any operation object, `grade_of`, or `rebind_grade`
+has to *read* the join-of-arms result as a grade to make the tests pass, or
+if `fmap` over it wants to distribute per alternative, STOP and reread
+[value-side-grading](decisions.md#value-side-grading): that is the reading
+sub-question, and the proposed answer is no.
 
 ### Stage 4 — [instance-laws](#instance-laws) {#instance-laws}
 Test deliverable; closes no slug. Extends `tests/beman/transpose/laws.hpp`.

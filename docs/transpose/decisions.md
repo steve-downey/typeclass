@@ -654,6 +654,82 @@ verb is not a gap awaiting a verb; it is the fence line.
   plan, taken together with
   [heterogeneous-arm-elimination](#heterogeneous-arm-elimination), which wants
   the same join-of-arms result type.
+- 2026-10-31 — The challenge expanded at Steve's request, so that stage
+  [set-elimination](transpose-surface-plan.md#set-elimination) rules on
+  named sub-questions. The fence is **not** moved by this entry.
+  *What the fence guards.* The decision's premise was that a public
+  eliminator would have exactly one caller, `recover`. The challenge is not
+  that `recover` is the wrong mechanism. It is that two further callers
+  exist and today write the fold by hand. (a) *The boundary collapse:*
+  mapping every alternative of a grade to one error type at the edge of a
+  graded region, libfn's exhaustive `transform_error`. Today this is
+  expressible only by bending `recover`: handle every alternative with a
+  handler that returns `std::expected<VALUE, error_set<Common>>` and spells
+  `std::unexpected` by hand, so that the grade becomes `{Common}`. The
+  capability exists without a spelling, and it goes through the
+  value-or-raise return shape of a verb whose name says the opposite of what
+  is happening. (b) *The report:* doing something with every present
+  witness, as the consumer-story test in `accumulating_object.test.cpp` and
+  `graded_gadgets_example.cpp` both do, where the code reads `witness<E>()`
+  once per alternative and must be edited whenever the grade grows. The
+  fence says this is the whole story for a multi-witness value. Neither
+  client is `recover`, and the second is already in the tree.
+  *Two joins, not one.* libfn's `apply` solves one problem: the result type
+  is the join of the arms, so the arms may be heterogeneous. Its copack is
+  one-of, so it never meets a second problem that the witnessed-subset
+  amendment under [accumulation-evidence](#accumulation-evidence) creates
+  here: a value may hold several witnesses, so an eliminator applied per
+  witness yields several results at runtime and must say how they combine.
+  The type-level join of arms and the value-level combination of results
+  are different operations, and a total eliminator over `error_set` needs
+  the second whether or not it has the first. That is the strongest
+  argument the fence has, and the 2026-10-30 entry did not state it.
+  *The sub-questions a ruling must answer.*
+  1. *Multiplicity.* When two witnesses are present and each arm returns a
+     result, what is the result of the elimination? The options: a required
+     combine on the result (a semigroup, or the left-biased pick `recover`
+     already uses, matching `combined_with`); a fold with an explicit
+     accumulator and initial value, so that the user names the combine; or a
+     per-witness effect with no result, the `for_each` shape. A silent pick
+     drops the second result, which is the lie the `visit` precondition
+     exists to refuse. A fold is honest, and it is what both clients become
+     when written out.
+  2. *Heterogeneous arms under multiplicity.* If the arms disagree and the
+     result is a sum, two witnesses give two values of possibly different
+     alternatives, and no combine exists for that in general. The honest
+     answers are to require the arms to agree wherever multiplicity is
+     possible, or to make the fold's accumulator the one place a sum meets a
+     sum.
+  3. *Exhaustiveness.* Checked against the grade, with the `overloaded`
+     catch-all's diagnostic naming the unhandled alternative. This is the
+     per-type form of the check `std::visit` gives per variant and is not in
+     doubt.
+  4. *Relation to `recover`.* Whether `recover` is re-expressed through the
+     public fold, one mechanism as
+     [functor-monad-grounding](#functor-monad-grounding) prefers, or left as
+     is with the fold beside it. Re-expression is a refactor with no
+     observable change provided the tie-break is preserved.
+  *Likely shape if the fence moves.* Two verbs rather than one, because the
+  clients differ. A `fold` over present witnesses, taking an initial
+  accumulator and an overload set of `(Acc, E) -> Acc` arms exhaustive
+  against the grade, for the report. A `collapse` to a single error type,
+  whose arms all return `E2` and whose multiplicity rule is the left-biased
+  pick `combined_with` uses, for the boundary. `visit` stays partial and
+  unchanged. Neither verb needs the join-of-arms result type: `fold`'s arms
+  return the accumulator and `collapse`'s return `E2`. The
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination) mechanism
+  is a third thing, over one-of sums, and is the `std::visit` result-type
+  problem and nothing else. The 2026-10-30 entry's claim that it and the
+  `error_set` eliminator want the same result type is withdrawn.
+  *Likely shape if the fence holds.* The consumer story stays as written.
+  The boundary collapse is documented as the `recover`-with-raise idiom and
+  given a test of its own, since nothing pins it today. The hand-written
+  per-witness read is accepted as the cost of the witnessed-subset
+  representation and said so in the paper.
+  *What would move it.* Either client written a third time in this tree, or
+  the boundary-collapse idiom proving unteachable in the paper's
+  implementation-experience section. The ruling is Steve's and is taken in
+  stage set-elimination.
 
 ---
 
@@ -3936,13 +4012,52 @@ sum may have heterogeneous arms without the user naming the union?
   `error_set` or a sum of the same shape with a different name is answered by
   [value-side-grading](#value-side-grading) and
   [canonical-set-home](#canonical-set-home).
+- 2026-10-31 — Refined by the expanded challenge under
+  [multi-witness-elimination](#multi-witness-elimination): the `error_set`
+  eliminators sketched there return an accumulator or a single error type,
+  so they do not need the join-of-arms result type after all. This slug is
+  the `std::visit` problem alone, over `std::variant` and the variant-shaped
+  layer in `tree_algorithms`, and its result type is the deduplicated set of
+  the arms' results per the shape note under
+  [value-side-grading](#value-side-grading). The two slugs still share stage
+  [set-elimination](transpose-surface-plan.md#set-elimination) because they
+  share the exhaustiveness check and the `overloaded` diagnostic, not a
+  result type.
 
 ---
 
 ## value-side-grading
 
 **Question:** Is a grade ever carried on the value side of a context, as
-libfn carries a canonical sum on its success side?
+libfn carries a canonical sum on its success side? Concretely: does any
+operation in the library *read* a sum on the value side as a grade, by
+computing it with `grade_of`, re-indexing it with `rebind_grade`, joining it
+across `bind` or `invoke`, or lifting `fmap` through it one alternative at a
+time? A `std::variant` sitting in the `T` of `std::expected<T, E>` is a value
+and raises none of this. The question is whether the algebra ever treats it
+as more than a value.
+A ruling has to answer four sub-questions, in this order:
+1. *Production.* Which operations, if any, produce a value-side sum where no
+   input carried one? The candidates are the disjunction of
+   [alternative-disjunction-semantics](#alternative-disjunction-semantics)
+   over operands with different value types, and the eliminator of
+   [heterogeneous-arm-elimination](#heterogeneous-arm-elimination) when its
+   arms disagree. `traverse`, `invoke`, `bind` and `fmap` produce one result
+   type per structure and are not candidates.
+2. *Shape.* When such a sum is produced, is it a canonical set of types,
+   deduplicated and in canonical order, or a positional sum that keeps
+   repeated types in the order written? And is it spelled `std::variant`,
+   `error_set`, or a third type?
+3. *Reading.* Having produced it, does any later operation read it as a
+   grade? This is the question proper. Grading means the algebra tracks the
+   sum through what follows: `bind` taking one continuation per alternative
+   and joining their results, `fmap` distributing over the alternatives,
+   `invoke` expanding a conjunction into a sum of products. A sum no
+   operation reads this way is a `T`.
+4. *Identity.* If the value side is graded, what is its identity carrier,
+   the analogue of libfn's `just`? [empty-grade-spelling](#empty-grade-spelling)
+   spells the empty error grade as bare `T`; a graded value side needs its
+   own spelling, and a context infallible on both sides is a bare value.
 **Status:** OPEN 2026-10-30
 **Log:**
 - 2026-10-30 — Raised in discussion of the libfn comparison
@@ -3963,6 +4078,66 @@ libfn carries a canonical sum on its success side?
   disjunction case waits for
   [alternative-disjunction-semantics](#alternative-disjunction-semantics),
   where a positional sum of the two operand types is the honest answer.
+- 2026-10-31 — Expanded at Steve's request into the four sub-questions above
+  and the considerations here, so that stage
+  [failure-side](transpose-surface-plan.md#failure-side) rules on a stated
+  question rather than a slogan.
+  *The case for grading the value side,* as libfn makes it. A classifier's
+  success is one of several kinds: a parser or decoder returns a tagged
+  result, and dispatch on the tag is the next step. With a graded value side
+  the continuation is written per alternative and the result types join
+  without the user naming the union; a recovery may move into a different
+  type; the carrier is lawful over a sum because the sum is in the algebra.
+  These are real conveniences and libfn's tests exercise every one.
+  *The case against,* in three parts. First, the asymmetry the Tolstoy line
+  names. Errors are handled alike at a boundary: logged, reported, mapped to
+  one code, or recovered from. The handler for an error set rarely cares
+  which alternative it has beyond selecting an arm, so membership is all the
+  boundary asks of the type, and a set is the right abstraction. Values meet
+  continuations that differ per kind and whose results feed further
+  continuations, so a value sum is not the context of a computation but its
+  result, and the type that describes a result is the user's. Second,
+  idempotence. A canonical set collapses two alternatives of one type into
+  one. For errors that is right: two sources that may each raise `errc`
+  give a grade that may raise `errc`. For values it loses provenance when
+  two alternatives share a type but mean different things. libfn avoids
+  this by requiring distinct tag types in a value copack, which is to say
+  the user supplies the distinct types a `std::variant` would have carried
+  anyway. The 2026-10-30 entry's "positional meaning" objection applies to
+  products, where position is the whole content, and is withdrawn for sums;
+  see the note on shape below. Third, distribution. The conjunction of a
+  graded value side with anything else is a sum of products, and libfn
+  implements the Cartesian expansion. No client of this library wants it,
+  and it is exactly the growth in result type that a shape-preserving
+  `traverse` exists not to have.
+  *On shape,* answering sub-question 2 independently of 3. When the
+  eliminator's arms return `int`, `int` and `std::string`, the useful
+  result is "an `int` or a `std::string`", not a three-way positional sum
+  with two indistinguishable `int` slots. The join of arms therefore
+  deduplicates, and arms that all agree collapse to the common type, as
+  `std::visit` already demands. The same holds for the disjunction of two
+  `optional<int>`. Deduplication is a property of the type computation and
+  does not by itself make the value side graded. The stage
+  [set-elimination](transpose-surface-plan.md#set-elimination) tripwire,
+  which had drawn the line at deduplication, was rewritten on 2026-10-31 to
+  draw it at reading.
+  *What would move the proposed answer.* A client in this tree, or a user
+  pattern documented against the library, whose shape-preserving operation
+  naturally yields one-of-several and who today writes the `std::variant`
+  and its per-alternative continuation by hand repeatedly along a pipeline,
+  not once at an elimination site. The `tree_algorithms` fold layers are
+  elimination sites and do not qualify. A parser or decoder client would.
+  None exists at the time of writing.
+  *What a ruling of no must still state,* so the stages that depend on it
+  are not left guessing. The value-side result of a heterogeneous
+  disjunction is `std::variant` over the deduplicated operand value types,
+  or the common type when they agree. The eliminator's join of arms is the
+  same computation. Neither is read by `grade_of`, `rebind_grade`,
+  `mixes_with_model` or any operation object, and `fmap` over such a result
+  receives the whole `std::variant`. [canonical-set-home](#canonical-set-home)
+  then owns one deduplicating type-list computation shared by the error set
+  and by these two value-side uses: shared machinery, not shared meaning.
+  *Proposed resolution:* unchanged, no.
 
 ---
 
