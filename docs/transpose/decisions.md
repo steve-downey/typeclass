@@ -93,6 +93,15 @@ deductions on previously-valid code are not tolerated.
   `expected` was registered ungraded first, then the later grade stages
   preserved its existing same-error carrier spelling while adding only the
   previously ill-formed mixed-error territory.
+- 2026-10-30 — Residue noted by the libfn comparison
+  ([review](review/libfn-comparison.md)). libfn grades only on opt-in: it
+  rejects `expected<T, E1>` bound to `expected<U, E2>` unless one side already
+  carries a `copack`, on the principle that the algebra never silently
+  reinterprets a plain type. This decision joins them implicitly. The accepted
+  residue is a user whose two plain error types were meant to unify by
+  conversion, and who now deduces an `error_set` where they expected a
+  diagnostic. Recorded, not reopened: the choice stands on the
+  previously-ill-formed argument above.
 
 ---
 
@@ -301,6 +310,10 @@ with one model is renamed, not generic.
   Nothing was patched: this stage's charter is to log what the second model exposes, not to smooth it.
 - 2026-08-30 — REPAIR, by stage [model-dispatched-mixing](transpose-grading-plan.md#model-dispatched-mixing).
   `grade_join_t` now drives expected mixing points and the Boolean model drives an actual mixed deduction, so the leak detector's positive result has been repaired rather than documented around.
+- 2026-10-30 — The canonical type-set machinery (`canonical_t`, the sort and
+  dedupe over `type_list`) lives in `error_set.hpp` as detail, under the
+  model, although it is the half a second model or any other canonical set
+  would reuse. Filed as [canonical-set-home](#canonical-set-home).
 
 ---
 
@@ -312,6 +325,14 @@ constructor, named function, or both?
 **Status:** OPEN
 **Log:**
 - 2026-08-28 — Raised during planning.
+- 2026-10-30 — The libfn comparison ([review](review/libfn-comparison.md))
+  supplies a requirement any answer must meet: generic code must stay
+  well-formed at the empty grade, which means the uniform spelling has to be
+  reachable from generic code, and the error-side operations on it have to be
+  vacuous rather than rejected. Filed as
+  [generic-closure-at-empty-grade](#generic-closure-at-empty-grade); the two
+  questions are closed together in stage
+  [unit-and-closure](transpose-surface-plan.md#unit-and-closure).
 
 ---
 
@@ -391,6 +412,10 @@ official grade registration?
   not usable" objection above is closed. The question remains open because
   shipping the Boolean model as `optional`'s grade registration is a public
   surface decision, not an implementation-blocker.
+- 2026-10-30 — A route to an answer that is not "register `optional` as
+  graded": libfn licenses moves between its contexts by the information
+  preserved, not by a shared lattice. Filed as
+  [licensed-context-crossings](#licensed-context-crossings).
 
 ---
 
@@ -617,6 +642,18 @@ verb is not a gap awaiting a verb; it is the fence line.
   answer is forced, and under the fresh-agent-per-stage cadence an agent would
   otherwise hit this wall in its first hour and spend a stop-and-report cycle
   on a question that was never open.
+- 2026-10-30 — Challenged by the libfn comparison
+  ([review](review/libfn-comparison.md)). The second client this fence waits
+  for arrived in libfn's own history: an exhaustive overload-set elimination
+  over a canonical sum is the most used operation in that library, and an
+  exhaustive `transform_error` is how its users collapse a grade to one error
+  type. The witnessed-subset representation makes the eliminator a fold rather
+  than a visit, which is the mechanism `recover` already uses internally. Not
+  reopened here. The ruling is stage
+  [set-elimination](transpose-surface-plan.md#set-elimination) of the surface
+  plan, taken together with
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination), which wants
+  the same join-of-arms result type.
 
 ---
 
@@ -801,6 +838,11 @@ A product of grade models is a new semantic feature with no current client, the 
   the same-model check. Fixed by making "bare" mean semantic ungraded
   (`grade_of_t<T> == unit_grade`, spelled through `graded_context`) while
   preserving declared-error matching for the unmixed expected spelling.
+- 2026-10-30 — This decision forbids mixing at a mixing point. It says
+  nothing about a deliberate, named move of one value from one model's
+  carrier into another's. That question is
+  [licensed-context-crossings](#licensed-context-crossings), which must not
+  weaken this one.
 
 ---
 
@@ -3794,3 +3836,242 @@ source for [transpose.alg.transpose]; both moved to `traverse.hpp`, after
 is unchanged.
 **Log:**
 - 2026-10-19 — Applied to all three packages.
+---
+
+## unit-payload-spelling
+
+**Question:** How does a context with no value participate: `expected<void,
+E>` as a context, a `void`-returning function handed to `traverse`, and the
+result of traversing with such a function?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.1). Today `holdable_value` refuses a
+  `void` result and `applicative_value_t<std::expected<void, E>>` is `void`, so
+  `pure` cannot be probed and the context is unusable. The validation-pass and
+  IO shape, `f : T -> expected<void, E>`, is the most common fallible function
+  in real code, and a reviewer will write it in their first example.
+  libfn's rules, for reference: `void` stays `void` on a plain side and enters
+  a sum or product as the nullary product `pack<>`, which is the unit.
+  *Proposed resolution:* name a unit type (own, or `std::monostate`); let the
+  element type of a `void`-valued context be that unit; let `traverse` with a
+  `void`-returning effect either yield the structure of units, or add the
+  `traverse_`/`for_` shape that yields `C<unit>` and drops the structure. The
+  second form is the one callers actually want, and it is what makes
+  `for_each` with an effectful function meaningful. Which of the two, or both,
+  is the open part.
+
+---
+
+## generic-closure-at-empty-grade
+
+**Question:** Must generic code over graded contexts stay well-formed at the
+empty grade, and how, given that ∅ is spelled as the bare value
+([empty-grade-spelling](#empty-grade-spelling))?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.2). libfn's load-bearing
+  principle: `or_else` on `expected<T, copack<>>` is vacuously well-formed and
+  asks nothing of its handler, not even that it be callable, so a recovery
+  step written generically does not become ill-formed because an upstream
+  stage statically proved failure impossible. Bare `T` as ∅ is the right call
+  for an open boundary and is not in question here; its cost is that
+  `recover<...>` on the ∅ fiber is ill-formed, because there is no `expected`
+  to recover. *Proposed resolution:* the uniform spelling
+  ([uniform-form-surface](#uniform-form-surface)) is made reachable from
+  generic code, and `recover` and any later error-side operation are vacuous
+  on it: the handler is neither invoked nor instantiated, and the result is
+  the operand. The framework still never materializes the uniform form on a
+  user's behalf; the sentinel of empty-grade-spelling is untouched.
+
+---
+
+## licensed-context-crossings
+
+**Question:** Which moves of a value between contexts of different grade
+models, or between a graded context and an ungraded one, are licensed, and by
+what rule?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.3).
+  [cross-model-mixing](#cross-model-mixing) forbids mixing at a mixing point
+  and stands. This asks a different question: a deliberate, named move of one
+  value from one carrier to another. libfn's rule is about information, not
+  lattices. An infallible context may enter any fallible one on the success
+  path, because nothing is lost. Two fallible contexts may bridge only on the
+  failure path, through a handler that names the target and supplies what the
+  target needs (an error for an `optional`'s empty state, or nothing for an
+  `expected`'s error). This is the answer
+  [optional-grade-model](#optional-grade-model) is circling: `optional` and
+  `expected` do not share a lattice, but a crossing from the two-point model
+  into the error-set model is lossless in one direction and needs a witness in
+  the other. *Proposed resolution:* a decision stating the rule, a test-only
+  demonstration of the `optional` to `expected` lift under it, and no new
+  operation until a client needs one.
+
+---
+
+## heterogeneous-arm-elimination
+
+**Question:** Does the library provide an overload-set elimination whose
+result type is the join of the arms' result types, so that a visitor over a
+sum may have heterogeneous arms without the user naming the union?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.4 and §4). `std::visit` requires
+  every arm to return one type, which is the pain point libfn's `apply`,
+  `apply_r<copack_for<...>>` and copack `transform` exist to remove. In this
+  tree the pressure is a fold algebra over a variant-shaped layer in
+  `tree_algorithms`, where the arms return different types and the user
+  unifies by hand. The same join-of-arms result type is what a total
+  eliminator for `error_set` needs (see the 2026-10-30 entry under
+  [multi-witness-elimination](#multi-witness-elimination)). *Proposed
+  resolution:* one mechanism beside `overloaded`, not in the grade algebra,
+  whose result is the canonical set of the arms' results when they differ and
+  the common type when they agree; `apply_type`'s idea of passing the
+  injection tag to the arm is taken with it. Whether that canonical set is
+  `error_set` or a sum of the same shape with a different name is answered by
+  [value-side-grading](#value-side-grading) and
+  [canonical-set-home](#canonical-set-home).
+
+---
+
+## value-side-grading
+
+**Question:** Is a grade ever carried on the value side of a context, as
+libfn carries a canonical sum on its success side?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised in discussion of the libfn comparison
+  ([review](review/libfn-comparison.md) §4), with the Tolstoy framing: all
+  happy families are alike, each unhappy family is unhappy in its own way. The
+  argument for grading the value side is that a classifier's success is one
+  of several kinds, each wanting its own continuation. The argument against:
+  errors are handled alike at a boundary while values meet continuations that
+  differ per kind, so the sum multiplies at every branch; idempotence is right
+  for errors and often wrong for values, which carry positional meaning
+  (libfn restricts value sums to distinct tag types for this reason, and keeps
+  its product positional); and distribution expands a conjunction into a sum
+  of products nobody asked for. *Proposed resolution:* no. `traverse` and
+  `invoke` produce one result type per structure, which is the right contract
+  for a shape-preserving library. The heterogeneous-arms problem is an
+  eliminator problem, taken up by
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination); the
+  disjunction case waits for
+  [alternative-disjunction-semantics](#alternative-disjunction-semantics),
+  where a positional sum of the two operand types is the honest answer.
+
+---
+
+## failure-injection-spelling
+
+**Question:** What generic operation enters the failure state of a graded
+context, as the dual of `pure`, and how does it relate to the `zero<C>()`
+planned for Alternative?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.5). `pure<C>(v)` builds the success
+  side generically and `grade_subsume` widens, but nothing generic injects an
+  error: a caller writes `std::expected{std::unexpect, error_set<...>{e}}` by
+  hand, which names the carrier and so is not generic. libfn spells this as
+  `fail` (value to error, within the existing grade) and `unexpected{...}` at
+  the carrier. The MonadError name is `throwError`. *Proposed resolution:* a
+  `raise<C>(e)` operation object, parameterized on the context for the reason
+  `pure` is, with the grade of the result the singleton of `e`'s type joined
+  into `C`'s grade; `zero<C>()` for Alternative is the same shape and the two
+  are decided together under one rule ("builds a context, so names it").
+
+---
+
+## alternative-disjunction-semantics
+
+**Question:** When Alternative arrives, what are the value-side and
+error-side semantics of its disjunction, and does an infallible operand make
+the disjunction total?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.6). `first_monoid` in `monoid.hpp`
+  is the Alternative monoid for `optional`, already present without the
+  typeclass. libfn's `|` is a complete algebra: values sum into a canonical
+  set, errors multiply into a product reached only when every operand failed,
+  the leftmost success wins, and an infallible operand annihilates the error
+  channel so the whole disjunction folds into the identity cluster. Its
+  duality with `&` (values multiply, errors sum) is what a typeclass needs to
+  state the laws. *Proposed resolution:* take the algebra and leave the
+  operator spelling; for the value side, follow
+  [value-side-grading](#value-side-grading): a positional sum of the operand
+  value types where they differ, the common type where they agree. The
+  `empty`/`zero` naming note in `functor.hpp` is the standing decision on the
+  identity's name.
+
+---
+
+## canonical-set-home
+
+**Question:** Where does the canonical type-set machinery live: inside the
+`error_set` model, or beside the grade framework where a second model or a
+value-side sum can reuse it?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.7). `canonical_t`, `type_list`,
+  the sort, the dedupe and the name-based order are `detail` in
+  `error_set.hpp`. [grade-generality](#grade-generality) wants the framework
+  free of error vocabulary, and the set is the half with no error vocabulary
+  in it. libfn uses one `copack` for error grades, value-side joins and its
+  identity carrier, which is the evidence that the set is the reusable datum.
+  *Proposed resolution:* move the set machinery to a header of its own beside
+  `grade.hpp` (`detail/canonical_set.hpp` or a public `type_set.hpp`, the
+  publicity being the open part), with `error_set` as its first client, and
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination) its second.
+  This is also where [type-order-abi](#type-order-abi) lands, since the order
+  is the set's.
+
+---
+
+## operation-noexcept
+
+**Question:** Do the typeclass operations carry a computed `noexcept`
+specification, and is a result that must not be dropped marked
+`[[nodiscard]]`?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.9). No header under
+  `include/beman/transpose/` carries a `noexcept` outside `error_set.hpp`'s
+  observers. libfn computes it on every verb and tests that the pipeline
+  propagates the verb's own answer rather than promising `noexcept` and
+  terminating when a callback throws. Low conceptual weight; LEWG asks for it
+  on every proposal. *Proposed resolution:* conditional `noexcept` on the
+  basis operations of every registered instance and on the derived operations
+  of the CRTP bases, computed from the callable and the carrier's own
+  constructors, with the deduced-return members using the probe type the
+  constraint already names; `[[nodiscard]]` on every operation object and
+  derived member that returns a context. The wording generator must carry
+  both through.
+
+---
+
+## type-order-abi
+
+**Question:** How does the reference implementation guard against the
+canonical order changing under it, when the interim name-based order gives
+way to P2830 reflection-based ordering?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.10). libfn found that its interim
+  name ordering and `std::type_order` disagree, so a `copack`'s layout differs
+  by mode, and placed each mode in its own inline ABI namespace so that two
+  translation units in different modes fail to link instead of violating ODR
+  silently. `error_set_of` stores its witnesses as a tuple in canonical order,
+  so the same hazard arrives the day the order changes. The standard has one
+  order, so the paper is unaffected; this is a reference-implementation
+  concern and a rationale sentence. *Proposed resolution:* an inline namespace
+  on the order-dependent types, keyed on which order is in use, adopted before
+  a P2830 path exists so the day it does is a non-event.
