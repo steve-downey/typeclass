@@ -1524,6 +1524,29 @@ is out of scope for this decision.
   returning a doubled-replacement marker, and asserts `as_functor().replace`
   returns the marker, not the `fmap`-derived answer. Suite went from 154 to
   159.
+- 2026-11-01 — The one-off agreement test is generalized by the instance-law
+  harness, stage [instance-laws](transpose-surface-plan.md#instance-laws).
+  `tests/beman/transpose/laws.hpp` now carries Functor (identity,
+  composition), Applicative (identity, homomorphism, interchange,
+  composition, each in invoke/pure form and in its n-ary form) and Monad
+  (left identity, right identity, associativity) checkers quantified over an
+  object and a sample, each law its own `static_assert` message, plus the
+  coherence checks that pin every grown or derived operation to its basis:
+  `fmap(f, m) == bind(m, pure . f)` (this entry's theorem, as a law),
+  `join`/`bind`, the synthesized n-ary `invoke` against nested `bind`, `ap`
+  against `invoke(evaluate, ...)`, and `map`/`lift`/`zip_with` against
+  `invoke`/`pure`. The agreement itself is `fmap_agrees_with_invoke`, run
+  for the hand-written Functor, the Monad-grown `fmap` and the layered
+  `derive_functor<OptionalMonadMap>` against the Applicative's unary
+  `invoke`. Run in `laws.test.cpp` over `std::optional` and the test
+  `Identity` at compile time, and over `std::expected` (both objects; the
+  accumulating one takes no monad laws), `std::array` and `zip_list` at
+  runtime, because those instances' basis operations are not `constexpr`
+  (logged under
+  [derived-op-constant-evaluation](#derived-op-constant-evaluation)). The
+  probe algebra is string concatenation, not addition: a lawless `pure` that
+  leaves a mark is caught by the homomorphism law only because `x + "pure"
+  + "f"` and `x + "f" + "pure"` differ.
 
 ## derived-op-native-preference
 
@@ -3839,6 +3862,22 @@ own copy met that, so moving onto transpose's base must not lose it.
   constant-evaluated. They are `constexpr` and forward to a native
   `fold_left`/`fold_right` in a constant expression; the derived path is not.
   Replacing `std::function` there is open.
+- 2026-11-01 — Observed by stage
+  [instance-laws](transpose-surface-plan.md#instance-laws), which planned
+  to run its `consteval` law checkers over every registered instance: the
+  bases are `constexpr`, but the basis operations of three instances are
+  not. `expected_applicative_impl`, `accumulating_expected_applicative_impl`
+  and `ExpectedMonadImpl` (`pure`, `invoke`, `bind`), `array_applicative_impl`
+  (`pure`, `invoke`) and `ZipListApplicativeImpl` (`pure`, `invoke`, and
+  `zip_list`'s own `repeat` and `operator==`) are declared without it, so
+  calling them through a `constexpr` base in a constant expression fails.
+  This entry's decision names only `std::optional` and `std::vector`, so
+  this is a gap beside it rather than a contradiction of it. Not patched by
+  that stage, which is test-only: its laws for those three instances run at
+  runtime under `REQUIRE`, through the same `constexpr` per-law checkers,
+  and the test records which. Adding `constexpr` to those instances (and the
+  test `Identity`, done in that stage) would move them to `static_assert`
+  with no other change.
 
 ---
 

@@ -44,8 +44,13 @@
 
 #include <beman/transpose/grade.hpp>
 
+#include <array>
 #include <concepts>
+#include <cstddef>
+#include <functional>
 #include <memory>
+#include <ranges>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -367,6 +372,736 @@ template <graded_model MODEL>
 consteval auto check_graded_laws() -> bool {
     return check_grade_algebra(typename MODEL::grades{}) &&
            check_carriers(typename MODEL::grades{}, typename MODEL::values{});
+}
+
+// =========================================================================
+// INSTANCE LAWS: Functor, Applicative, Monad.
+//
+// The checkers above are about the grade algebra. These are about the
+// typeclass OBJECTS registered over a carrier: `applicative_object` and
+// `monad_object` are syntactic conformance, and this is the semantic half.
+// Same posture as above -- a test deliverable, never a registration gate --
+// and the same discipline: each law is its own `static_assert` with its
+// own message, so a violation names the law rather than collapsing to
+// `static_assert(false)` at the call site.
+//
+// STILL FRAMEWORK-FREE. Nothing here names a typeclass header. A checker is
+// quantified over an OBJECT -- any object with the member it exercises
+// (`fmap`, `pure`, `invoke`, `bind`, ...) -- and a SAMPLE, so the harness
+// includes no instance and no base; the test that runs it does.
+//
+// THE LAWS ARE STATED IN invoke/pure FORM. `invoke` is the user-facing
+// application verb of this library (apply.hpp's pattern invariants), and
+// McBride & Paterson's canonical form `pure f <*> u1 <*> ... <*> un` is
+// `invoke(f, u1, ..., un)`. The classic laws are recovered by taking the
+// function to be `evaluate` and the operands to be contexts of callables;
+// each checker says which form it is. Where an object also has `ap`, the
+// basis-coherence check pins `ap(u, v)` to `invoke(evaluate, u, v)`.
+//
+// A SAMPLE UNDER TEST supplies:
+//   - `context`: the carrier type, instantiated at `trace`.
+//   - `contexts()`: a `static constexpr` function returning the contexts to
+//     quantify over, as something range-for iterates. Include the empty or
+//     failing shapes: the laws are most informative where a function is
+//     never called.
+//   - `arrows()` (optional, monad laws only): a `static constexpr` function
+//     returning a `std::tuple` of extra Kleisli arrows `trace -> context`.
+//     The harness always adds arrows of the form `pure . f`; a sample adds
+//     the ones only it can spell, such as the one that fails.
+//
+// VALUE CATEGORY TRIPWIRE. The checkers hand every operand to the object as
+// a `const` lvalue, or as the prvalue the law itself constructs (`pure(x)`,
+// an inner `invoke`). No law asks an object to copy from an rvalue it did
+// not offer, and none asks for `noexcept`. If a checker here ever needs
+// either to compile, that is the probe-category defect
+// docs/transpose/decisions.md#operand-value-category already fixed once:
+// stop and log it, do not weaken the check.
+// =========================================================================
+
+// -- The probe algebra ----------------------------------------------------
+
+/** The value algebra the instance laws compute in: a short string under
+ * concatenation.
+ *
+ * Every law below is an equation between two ways of building a context,
+ * and the function the two sides apply is the only thing that can tell
+ * them apart. Under integer addition an instance that applies its function
+ * twice (`f(f(x))` for `f = +c` is `x + 2c`, and `x + c + c` is the same
+ * number) or applies its operands in the wrong order (`a + b == b + a`)
+ * can pass a law. Concatenation is neither idempotent nor commutative, so
+ * each application and each operand leaves a distinct mark in the result:
+ * a law that holds over it holds for the SHAPE of the computation, not for
+ * an accident of the numbers.
+ *
+ * A fixed buffer rather than `std::string`, so that a value is a literal
+ * type a `constexpr` variable may hold and a `static constexpr` sample
+ * function may return. */
+struct trace {
+    static constexpr std::size_t capacity = 32;
+
+    std::array<char, capacity> text{};
+    std::size_t length{0};
+
+    constexpr trace() = default;
+    constexpr explicit trace(const char *literal);
+
+    friend constexpr auto operator==(const trace &, const trace &)
+        -> bool = default;
+};
+
+/** Thrown when a concatenation would overflow `trace::capacity`. Inside a
+ * constant expression that is a compile error, pointing at the harness
+ * rather than at a law; at runtime it is a test failure. */
+struct trace_overflow {};
+
+constexpr auto operator+(const trace &left, const trace &right) -> trace;
+
+/** Appends a fixed tag: the unary function the laws map with. */
+struct append_tag {
+    trace tag;
+
+    constexpr auto operator()(const trace &value) const -> trace;
+};
+
+/** Concatenates: the binary function the n-ary laws invoke with. */
+struct concatenate {
+    constexpr auto operator()(const trace &left, const trace &right) const
+        -> trace;
+};
+
+/** A callable held IN a context: `prepend{a}(y) == a + y`. The classic
+ * forms of interchange and composition quantify over contexts of callables;
+ * the harness builds those from a sample's value contexts by invoking
+ * `make_prepend` over them, so a sample never has to spell one. */
+struct prepend {
+    trace left;
+
+    constexpr auto operator()(const trace &right) const -> trace;
+};
+
+struct make_prepend {
+    constexpr auto operator()(const trace &value) const -> prepend;
+};
+
+/** Applies a callable to one argument: the evaluator that recovers one-step
+ * application (`ap`) from the n-ary core. */
+struct evaluate {
+    template <class FUNCTION, class ARGUMENT>
+    constexpr auto operator()(const FUNCTION &function,
+                              const ARGUMENT &argument) const
+        -> std::invoke_result_t<const FUNCTION &, const ARGUMENT &>;
+};
+
+struct identity_function {
+    template <class VALUE>
+    constexpr auto operator()(VALUE &&value) const
+        -> std::remove_cvref_t<VALUE>;
+};
+
+/** The Kleisli arrow `pure . (+ tag)`: what the monad laws bind with when a
+ * sample supplies no arrows of its own. */
+template <const auto &OBJECT>
+struct pure_after {
+    trace tag;
+
+    constexpr auto operator()(const trace &value) const;
+};
+
+// -- What a sample under test supplies ------------------------------------
+
+template <class SAMPLE>
+concept instance_sample = requires {
+    typename SAMPLE::context;
+    requires std::ranges::input_range<decltype(SAMPLE::contexts())>;
+    requires std::same_as<
+        std::ranges::range_value_t<decltype(SAMPLE::contexts())>,
+        typename SAMPLE::context>;
+};
+
+template <class SAMPLE>
+concept supplies_arrows = requires { SAMPLE::arrows(); };
+
+// -- Declarations ---------------------------------------------------------
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto functor_identity() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto functor_composition() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_identity() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_homomorphism() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_interchange() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_interchange_nary() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_composition() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_composition_nary() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto ap_agrees_with_invoke() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto derived_applicative_agreement() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_left_identity() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_right_identity() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_associativity() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_fmap_grounding() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_join_coherence() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_invoke_coherence() -> bool;
+
+template <const auto &FUNCTOR_LIKE, const auto &APPLICATIVE,
+          instance_sample SAMPLE>
+constexpr auto fmap_agrees_with_invoke() -> bool;
+
+template <const auto &LEFT, const auto &RIGHT, instance_sample SAMPLE>
+constexpr auto invoke_agrees() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+consteval auto check_functor_laws() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+consteval auto check_applicative_laws() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+consteval auto check_monad_laws() -> bool;
+
+// -- The probe algebra, defined -------------------------------------------
+
+constexpr trace::trace(const char *literal) {
+    for (; *literal != '\0'; ++literal) {
+        if (length == capacity) {
+            throw trace_overflow{};
+        }
+        text[length++] = *literal;
+    }
+}
+
+constexpr auto operator+(const trace &left, const trace &right) -> trace {
+    if (left.length + right.length > trace::capacity) {
+        throw trace_overflow{};
+    }
+    trace result = left;
+    for (std::size_t index = 0; index < right.length; ++index) {
+        result.text[result.length++] = right.text[index];
+    }
+    return result;
+}
+
+constexpr auto append_tag::operator()(const trace &value) const -> trace {
+    return value + tag;
+}
+
+constexpr auto concatenate::operator()(const trace &left,
+                                       const trace &right) const -> trace {
+    return left + right;
+}
+
+constexpr auto prepend::operator()(const trace &right) const -> trace {
+    return left + right;
+}
+
+constexpr auto make_prepend::operator()(const trace &value) const -> prepend {
+    return prepend{value};
+}
+
+template <class FUNCTION, class ARGUMENT>
+constexpr auto evaluate::operator()(const FUNCTION &function,
+                                    const ARGUMENT &argument) const
+    -> std::invoke_result_t<const FUNCTION &, const ARGUMENT &> {
+    return std::invoke(function, argument);
+}
+
+template <class VALUE>
+constexpr auto identity_function::operator()(VALUE &&value) const
+    -> std::remove_cvref_t<VALUE> {
+    return std::forward<VALUE>(value);
+}
+
+template <const auto &OBJECT>
+constexpr auto pure_after<OBJECT>::operator()(const trace &value) const {
+    return OBJECT.pure(value + tag);
+}
+
+// The non-idempotent, order-sensitive probe values and functions every law
+// uses. One character each so that the deepest nesting stays well inside
+// `trace::capacity`.
+inline constexpr trace probe_x{"x"};
+inline constexpr trace probe_y{"y"};
+inline constexpr append_tag probe_f{trace{"f"}};
+inline constexpr append_tag probe_g{trace{"g"}};
+inline constexpr concatenate probe_h{};
+
+// A `trace` and its tags really do form a non-idempotent, order-sensitive
+// algebra; otherwise the laws below could be satisfied by accident.
+static_assert(probe_x + probe_x != probe_x, "concatenation is not idempotent");
+static_assert(probe_x + probe_y != probe_y + probe_x,
+              "concatenation is not commutative");
+static_assert(probe_f(probe_f(probe_x)) != probe_f(probe_x),
+              "applying the probe function twice is observable");
+
+namespace detail {
+
+/** The Kleisli arrows the monad laws quantify over: the harness's own
+ * `pure . f` arrows, followed by whatever the sample adds. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto arrows_for() {
+    auto own = std::tuple{pure_after<OBJECT>{trace{"k"}},
+                          pure_after<OBJECT>{trace{"h"}}};
+    if constexpr (supplies_arrows<SAMPLE>) {
+        return std::tuple_cat(own, SAMPLE::arrows());
+    } else {
+        return own;
+    }
+}
+
+/** `predicate` holds for every element of `tuple`. */
+template <class TUPLE, class PREDICATE>
+constexpr auto all_of_tuple(const TUPLE &tuple, PREDICATE &&predicate) -> bool {
+    return std::apply(
+        [&](const auto &...element) { return (predicate(element) && ...); },
+        tuple);
+}
+
+} // namespace detail
+
+// -- Functor laws ---------------------------------------------------------
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto functor_identity() -> bool {
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(OBJECT.fmap(identity_function{}, context) == context)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto functor_composition() -> bool {
+    auto composed = [](const trace &value) { return probe_f(probe_g(value)); };
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(OBJECT.fmap(composed, context) ==
+              OBJECT.fmap(probe_f, OBJECT.fmap(probe_g, context)))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// -- Applicative laws -----------------------------------------------------
+
+/** identity: `invoke(id, v) == v`. The unary case of `invoke` is the
+ * functor's map, and this is its identity law stated on the applicative
+ * object; it holds for contexts that cannot hold a callable at all. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_identity() -> bool {
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(OBJECT.invoke(identity_function{}, context) == context)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** homomorphism: `invoke(f, pure(x)) == pure(f(x))`, and at arity two
+ * `invoke(h, pure(x), pure(y)) == pure(h(x, y))`. Pure operands never
+ * leave the pure fibre, and `pure` leaves no mark of its own. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_homomorphism() -> bool {
+    return OBJECT.invoke(probe_f, OBJECT.pure(probe_x)) ==
+               OBJECT.pure(probe_f(probe_x)) &&
+           OBJECT.invoke(probe_h, OBJECT.pure(probe_x), OBJECT.pure(probe_y)) ==
+               OBJECT.pure(probe_h(probe_x, probe_y));
+}
+
+/** interchange, classic form: `u <*> pure y == pure ($ y) <*> u`, spelled
+ * `invoke(evaluate, u, pure(y)) == invoke(g -> g(y), u)` for a context `u`
+ * of callables, which the harness builds from each value context. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_interchange() -> bool {
+    auto apply_to_y = [](const prepend &function) { return function(probe_y); };
+    for (const auto &context : SAMPLE::contexts()) {
+        const auto functions = OBJECT.invoke(make_prepend{}, context);
+        if (!(OBJECT.invoke(evaluate{}, functions, OBJECT.pure(probe_y)) ==
+              OBJECT.invoke(apply_to_y, functions))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** interchange, n-ary form: a pure operand floats out of an application in
+ * either position, `invoke(h, u, pure(y)) == invoke(a -> h(a, y), u)` and
+ * `invoke(h, pure(x), v) == invoke(b -> h(x, b), v)`. With `h = evaluate`
+ * the first is the classic law; stated for every `h` because `invoke` is
+ * n-ary here and the pure operand may be anywhere in the list. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_interchange_nary() -> bool {
+    auto with_y = [](const trace &a) { return probe_h(a, probe_y); };
+    auto with_x = [](const trace &b) { return probe_h(probe_x, b); };
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(OBJECT.invoke(probe_h, context, OBJECT.pure(probe_y)) ==
+              OBJECT.invoke(with_y, context))) {
+            return false;
+        }
+        if (!(OBJECT.invoke(probe_h, OBJECT.pure(probe_x), context) ==
+              OBJECT.invoke(with_x, context))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** composition, classic form: `pure (.) <*> u <*> v <*> w == u <*> (v <*>
+ * w)`, spelled `invoke((f, g, x) -> f(g(x)), u, v, w) == invoke(evaluate,
+ * u, invoke(evaluate, v, w))` for contexts `u`, `v` of callables built from
+ * the sample's value contexts and `w` a value context. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_composition() -> bool {
+    auto compose = [](const prepend &f, const prepend &g, const trace &x) {
+        return f(g(x));
+    };
+    const auto contexts = SAMPLE::contexts();
+    for (const auto &first : contexts) {
+        const auto u = OBJECT.invoke(make_prepend{}, first);
+        for (const auto &second : contexts) {
+            const auto v = OBJECT.invoke(make_prepend{}, second);
+            for (const auto &w : contexts) {
+                if (!(OBJECT.invoke(compose, u, v, w) ==
+                      OBJECT.invoke(evaluate{}, u,
+                                    OBJECT.invoke(evaluate{}, v, w)))) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+/** composition, n-ary form: nesting `invoke` inside `invoke` is the same as
+ * one flat `invoke` of the composed function, whichever operand the inner
+ * one occupies. `invoke(h, u, invoke(h, v, w)) == invoke((a, b, c) -> h(a,
+ * h(b, c)), u, v, w)` and the left-nested mirror. This is what makes the
+ * n-ary core a presentation of the classic `<*>` chain rather than a
+ * separate operation: a traversal that folds its accumulator through
+ * `invoke` relies on exactly this. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto applicative_composition_nary() -> bool {
+    auto right_nested = [](const trace &a, const trace &b, const trace &c) {
+        return probe_h(a, probe_h(b, c));
+    };
+    auto left_nested = [](const trace &a, const trace &b, const trace &c) {
+        return probe_h(probe_h(a, b), c);
+    };
+    const auto contexts = SAMPLE::contexts();
+    for (const auto &u : contexts) {
+        for (const auto &v : contexts) {
+            for (const auto &w : contexts) {
+                if (!(OBJECT.invoke(probe_h, u, OBJECT.invoke(probe_h, v, w)) ==
+                      OBJECT.invoke(right_nested, u, v, w))) {
+                    return false;
+                }
+                if (!(OBJECT.invoke(probe_h, OBJECT.invoke(probe_h, u, v), w) ==
+                      OBJECT.invoke(left_nested, u, v, w))) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+/** basis coherence: where the object has `ap`, `ap(u, v) == invoke(evaluate,
+ * u, v)`. Whichever half of the dual basis the instance supplied, the other
+ * half is derived, and the two must describe one applicative. Vacuously
+ * true for an object without `ap`. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto ap_agrees_with_invoke() -> bool {
+    const auto contexts = SAMPLE::contexts();
+    for (const auto &first : contexts) {
+        const auto functions = OBJECT.invoke(make_prepend{}, first);
+        for (const auto &argument : contexts) {
+            if constexpr (requires { OBJECT.ap(functions, argument); }) {
+                if (!(OBJECT.ap(functions, argument) ==
+                      OBJECT.invoke(evaluate{}, functions, argument))) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+/** derived operations: `map`, `lift` and `zip_with` are each pinned to the
+ * basis they are derived from. Each is checked only where the object has
+ * it; a monad object grows no `map`. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto derived_applicative_agreement() -> bool {
+    if constexpr (requires { OBJECT.lift(probe_x); }) {
+        if (!(OBJECT.lift(probe_x) == OBJECT.pure(probe_x))) {
+            return false;
+        }
+    }
+    const auto contexts = SAMPLE::contexts();
+    for (const auto &first : contexts) {
+        if constexpr (requires { OBJECT.map(probe_f, first); }) {
+            if (!(OBJECT.map(probe_f, first) ==
+                  OBJECT.invoke(probe_f, first))) {
+                return false;
+            }
+        }
+        for (const auto &second : contexts) {
+            if constexpr (requires {
+                              OBJECT.zip_with(probe_h, first, second);
+                          }) {
+                if (!(OBJECT.zip_with(probe_h, first, second) ==
+                      OBJECT.invoke(probe_h, first, second))) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+// -- Monad laws -----------------------------------------------------------
+
+/** left identity: `bind(pure(x), k) == k(x)`. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_left_identity() -> bool {
+    return detail::all_of_tuple(
+        detail::arrows_for<OBJECT, SAMPLE>(), [](const auto &arrow) {
+            return OBJECT.bind(OBJECT.pure(probe_x), arrow) == arrow(probe_x) &&
+                   OBJECT.bind(OBJECT.pure(probe_y), arrow) == arrow(probe_y);
+        });
+}
+
+/** right identity: `bind(m, pure) == m`. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_right_identity() -> bool {
+    auto lift = [](const trace &value) { return OBJECT.pure(value); };
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(OBJECT.bind(context, lift) == context)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** associativity: `bind(bind(m, k), h) == bind(m, a -> bind(k(a), h))`. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_associativity() -> bool {
+    const auto arrows = detail::arrows_for<OBJECT, SAMPLE>();
+    for (const auto &context : SAMPLE::contexts()) {
+        const bool holds = detail::all_of_tuple(arrows, [&](const auto &k) {
+            return detail::all_of_tuple(arrows, [&](const auto &h) {
+                auto then_h = [&](const trace &a) {
+                    return OBJECT.bind(k(a), h);
+                };
+                return OBJECT.bind(OBJECT.bind(context, k), h) ==
+                       OBJECT.bind(context, then_h);
+            });
+        });
+        if (!holds) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** grounding: the `fmap` a monad object grows is `bind(m, pure . f)`. This
+ * is the theorem docs/transpose/decisions.md#functor-monad-grounding rests
+ * on, stated as a law over the object rather than checked once by hand. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_fmap_grounding() -> bool {
+    auto pure_after_f = [](const trace &a) { return OBJECT.pure(probe_f(a)); };
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(OBJECT.fmap(probe_f, context) ==
+              OBJECT.bind(context, pure_after_f))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** join: `join(pure(m)) == m` and `join(fmap(k, m)) == bind(m, k)`, the two
+ * halves of the join/bind pair being one operation. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_join_coherence() -> bool {
+    const auto arrows = detail::arrows_for<OBJECT, SAMPLE>();
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(OBJECT.join(OBJECT.pure(context)) == context)) {
+            return false;
+        }
+        const bool holds = detail::all_of_tuple(arrows, [&](const auto &k) {
+            return OBJECT.join(OBJECT.fmap(k, context)) ==
+                   OBJECT.bind(context, k);
+        });
+        if (!holds) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** invoke: the n-ary `invoke` a monad object synthesizes is the nest of
+ * binds it is specified as, `invoke(h, u, v) == bind(u, a -> bind(v, b ->
+ * pure(h(a, b))))`, with the unary case `invoke(f, u) == fmap(f, u)`. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto monad_invoke_coherence() -> bool {
+    const auto contexts = SAMPLE::contexts();
+    for (const auto &u : contexts) {
+        if (!(OBJECT.invoke(probe_f, u) == OBJECT.fmap(probe_f, u))) {
+            return false;
+        }
+        for (const auto &v : contexts) {
+            auto nested = [&](const trace &a) {
+                return OBJECT.bind(v, [&](const trace &b) {
+                    return OBJECT.pure(probe_h(a, b));
+                });
+            };
+            if (!(OBJECT.invoke(probe_h, u, v) == OBJECT.bind(u, nested))) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// -- Agreement between objects over one carrier ---------------------------
+
+/** `FUNCTOR_LIKE.fmap(f, v) == APPLICATIVE.invoke(f, v)`: a hand-written
+ * Functor, or the `fmap` a Monad grows, agrees with the registered
+ * Applicative's unary `invoke`. The one-off agreement test for
+ * `std::optional` in laws.test.cpp, generalized. */
+template <const auto &FUNCTOR_LIKE, const auto &APPLICATIVE,
+          instance_sample SAMPLE>
+constexpr auto fmap_agrees_with_invoke() -> bool {
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(FUNCTOR_LIKE.fmap(probe_f, context) ==
+              APPLICATIVE.invoke(probe_f, context))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** Two objects over one carrier compute the same `invoke`: the monad object
+ * (synthesizing it from `bind`) and the applicative object (native). */
+template <const auto &LEFT, const auto &RIGHT, instance_sample SAMPLE>
+constexpr auto invoke_agrees() -> bool {
+    const auto contexts = SAMPLE::contexts();
+    for (const auto &u : contexts) {
+        if (!(LEFT.invoke(probe_f, u) == RIGHT.invoke(probe_f, u))) {
+            return false;
+        }
+        for (const auto &v : contexts) {
+            if (!(LEFT.invoke(probe_h, u, v) == RIGHT.invoke(probe_h, u, v))) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+// -- Quantification -------------------------------------------------------
+//
+// One `static_assert` per law, so the diagnostic names the law. The
+// per-law checkers above are `constexpr`, not `consteval`, so that an
+// instance that is not constant-evaluable can run the same checks at
+// runtime under REQUIRE; these aggregates are the compile-time surface.
+
+/** Checks the Functor laws for `OBJECT.fmap` over SAMPLE. Usable as
+ * `static_assert(check_functor_laws<functor<C>, Sample>())`. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+consteval auto check_functor_laws() -> bool {
+    static_assert(functor_identity<OBJECT, SAMPLE>(),
+                  "functor identity: fmap(identity, v) must equal v.");
+    static_assert(functor_composition<OBJECT, SAMPLE>(),
+                  "functor composition: fmap(f . g, v) must equal "
+                  "fmap(f, fmap(g, v)).");
+    return true;
+}
+
+/** Checks the Applicative laws for `OBJECT` over SAMPLE, in invoke/pure
+ * form, plus the coherence of its derived operations with its basis. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+consteval auto check_applicative_laws() -> bool {
+    static_assert(applicative_identity<OBJECT, SAMPLE>(),
+                  "applicative identity: invoke(identity, v) must equal v.");
+    static_assert(applicative_homomorphism<OBJECT, SAMPLE>(),
+                  "applicative homomorphism: invoke(f, pure(x)) must equal "
+                  "pure(f(x)), and invoke(h, pure(x), pure(y)) must equal "
+                  "pure(h(x, y)).");
+    static_assert(applicative_interchange<OBJECT, SAMPLE>(),
+                  "applicative interchange: invoke(evaluate, u, pure(y)) must "
+                  "equal invoke(g -> g(y), u) for a context u of callables.");
+    static_assert(applicative_interchange_nary<OBJECT, SAMPLE>(),
+                  "applicative interchange (n-ary): a pure operand floats "
+                  "out, invoke(h, u, pure(y)) must equal "
+                  "invoke(a -> h(a, y), u), and symmetrically on the left.");
+    static_assert(applicative_composition<OBJECT, SAMPLE>(),
+                  "applicative composition: invoke((f, g, x) -> f(g(x)), u, "
+                  "v, w) must equal invoke(evaluate, u, invoke(evaluate, v, "
+                  "w)) for contexts u, v of callables.");
+    static_assert(applicative_composition_nary<OBJECT, SAMPLE>(),
+                  "applicative composition (n-ary): invoke(h, u, invoke(h, "
+                  "v, w)) must equal invoke((a, b, c) -> h(a, h(b, c)), u, "
+                  "v, w), and symmetrically left-nested.");
+    static_assert(ap_agrees_with_invoke<OBJECT, SAMPLE>(),
+                  "applicative basis coherence: ap(u, v) must equal "
+                  "invoke(evaluate, u, v) wherever the object has ap.");
+    static_assert(derived_applicative_agreement<OBJECT, SAMPLE>(),
+                  "applicative derived operations: map(f, v) must equal "
+                  "invoke(f, v), lift(x) must equal pure(x), and "
+                  "zip_with(h, u, v) must equal invoke(h, u, v).");
+    return true;
+}
+
+/** Checks the Monad laws for `OBJECT` over SAMPLE, plus the coherence of
+ * the operations it grows -- `fmap`, `join`, `invoke` -- with `bind`. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+consteval auto check_monad_laws() -> bool {
+    static_assert(monad_left_identity<OBJECT, SAMPLE>(),
+                  "monad left identity: bind(pure(x), k) must equal k(x).");
+    static_assert(monad_right_identity<OBJECT, SAMPLE>(),
+                  "monad right identity: bind(m, pure) must equal m.");
+    static_assert(monad_associativity<OBJECT, SAMPLE>(),
+                  "monad associativity: bind(bind(m, k), h) must equal "
+                  "bind(m, a -> bind(k(a), h)).");
+    static_assert(monad_fmap_grounding<OBJECT, SAMPLE>(),
+                  "monad fmap grounding: fmap(f, m) must equal "
+                  "bind(m, pure . f).");
+    static_assert(monad_join_coherence<OBJECT, SAMPLE>(),
+                  "monad join coherence: join(pure(m)) must equal m, and "
+                  "join(fmap(k, m)) must equal bind(m, k).");
+    static_assert(monad_invoke_coherence<OBJECT, SAMPLE>(),
+                  "monad invoke coherence: invoke(h, u, v) must equal "
+                  "bind(u, a -> bind(v, b -> pure(h(a, b)))), and "
+                  "invoke(f, u) must equal fmap(f, u).");
+    return true;
 }
 
 } // namespace beman::transpose::test::laws
