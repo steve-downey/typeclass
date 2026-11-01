@@ -318,6 +318,13 @@ deduced body → STOP; that is a basis that is not SFINAE-friendly, which
 `apply.hpp`'s invariant forbids, and the fix is upstream of this stage.
 
 ### Stage 8 — [surface-paper-revision](#surface-paper-revision) {#surface-paper-revision}
+Status: DONE 2026-11-01 on branch `surface-paper-revision`, except that the
+`noexcept` sweep's effect on the paper is the regenerated wording alone, which
+stage noexcept-sweep commits. Added to `papers/D3200R0.md`: `raise` and `zero`
+in the proposed operations and beside `pure`; a section on `overloaded` and
+`eliminate`; the eliminators, the unit, and the empty-grade closure in the
+grading rationale; the crossing rule in Compatibility; value-side grading and
+Alternative in the deliberate omissions.
 Deliverables: P3200 rationale for the unit and the `void` effect; the
 closure-at-∅ argument and the uniform spelling; the crossing rule as a
 sentence in the compatibility section; the eliminator, if shipped, beside
