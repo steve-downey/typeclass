@@ -3,20 +3,26 @@
 
 #include "laws.hpp"
 
+#include "test_support.hpp"
+
+#include <beman/transpose/array.hpp>
 #include <beman/transpose/error_set.hpp>
 #include <beman/transpose/expected.hpp>
 #include <beman/transpose/functor.hpp>
 #include <beman/transpose/grade.hpp>
 #include <beman/transpose/monad.hpp>
 #include <beman/transpose/optional.hpp>
+#include <beman/transpose/zip_list.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <array>
 #include <expected>
 #include <future>
 #include <memory>
 #include <optional>
 #include <system_error>
+#include <tuple>
 #include <type_traits>
 
 namespace bt = beman::transpose;
@@ -490,3 +496,325 @@ TEST_CASE("laws: a second, unrelated model satisfies the same laws") {
     SUCCEED("the Boolean semilattice passes the harness written against the "
             "concept");
 }
+
+// =========================================================================
+// INSTANCE LAWS: every registered Applicative and Monad object, against the
+// Functor, Applicative and Monad laws in laws.hpp.
+//
+// This generalizes the one-off agreement test above: where that checked
+// that the hand-written Functor and the Monad-grown fmap agree on
+// std::optional<int>, the harness checks the laws themselves, over every
+// instance, and the agreement as one law among them. See
+// docs/transpose/decisions.md#functor-monad-grounding.
+//
+// COMPILE TIME WHERE THE INSTANCE ALLOWS IT. The optional instance and the
+// test Identity instance are constant-evaluable, so their laws are
+// static_asserts. The expected, array and zip_list instances are not: their
+// basis operations (`pure`, `invoke`, `bind`) are not declared constexpr, so
+// the same per-law checkers run under REQUIRE instead. The checkers are the
+// same functions either way; only the evaluation time differs.
+// =========================================================================
+
+namespace instance_laws {
+
+using laws::trace;
+
+/** std::optional<trace>: two engaged values and the empty one. */
+struct optional_sample {
+    using context = std::optional<trace>;
+
+    static constexpr auto contexts() {
+        return std::array{context{trace{"a"}}, context{trace{"b"}}, context{}};
+    }
+
+    /** The arrow that fails, which no `pure . f` can spell. */
+    static constexpr auto arrows() {
+        return std::tuple{[](const trace &) { return context{}; }};
+    }
+};
+
+/** A named error type for the expected sample: two alternatives, so that
+ * which failing operand is observed -- leftmost, by
+ * docs/transpose/decisions.md#applicative-objects -- is visible in the
+ * result rather than collapsing to one value. */
+enum class fault { first, second };
+
+/** std::expected<trace, fault>: two values and both failures. */
+struct expected_sample {
+    using context = std::expected<trace, fault>;
+
+    static constexpr auto contexts() {
+        return std::array{context{trace{"a"}}, context{trace{"b"}},
+                          context{std::unexpect, fault::first},
+                          context{std::unexpect, fault::second}};
+    }
+
+    static constexpr auto arrows() {
+        return std::tuple{[](const trace &) {
+            return context{std::unexpect, fault::second};
+        }};
+    }
+};
+
+/** std::array<trace, 2>: positional application over two lanes. */
+struct array_sample {
+    using context = std::array<trace, 2>;
+
+    static constexpr auto contexts() {
+        return std::array{context{trace{"a"}, trace{"b"}},
+                          context{trace{"c"}, trace{"d"}}};
+    }
+};
+
+/** zip_list<trace>: two finite lists of different lengths, so truncation is
+ * exercised, and the repeating list that `pure` produces. */
+struct zip_list_sample {
+    using context = bt::zip_list<trace>;
+
+    static auto contexts() {
+        return std::array{context{{trace{"a"}, trace{"b"}}},
+                          context{{trace{"c"}}}, context::repeat(trace{"r"})};
+    }
+};
+
+/** The test Identity: one value, nothing else to it. */
+struct identity_sample {
+    using context = bt::test::Identity<trace>;
+
+    static constexpr auto contexts() { return std::array{context{trace{"a"}}}; }
+};
+
+// The samples really are samples.
+static_assert(laws::instance_sample<optional_sample>);
+static_assert(laws::instance_sample<expected_sample>);
+static_assert(laws::instance_sample<array_sample>);
+static_assert(laws::instance_sample<zip_list_sample>);
+static_assert(laws::instance_sample<identity_sample>);
+
+// -- std::optional: everything at compile time ----------------------------
+
+using optional_context = optional_sample::context;
+
+static_assert(
+    laws::check_functor_laws<bt::functor<optional_context>, optional_sample>());
+static_assert(
+    laws::check_functor_laws<bt::monad<optional_context>, optional_sample>());
+static_assert(laws::check_applicative_laws<bt::applicative<optional_context>,
+                                           optional_sample>());
+static_assert(laws::check_applicative_laws<bt::monad<optional_context>,
+                                           optional_sample>());
+static_assert(
+    laws::check_monad_laws<bt::monad<optional_context>, optional_sample>());
+
+// The layered instance -- the full Functor spelled over the Monad object --
+// satisfies the functor laws too, at compile time.
+constexpr bt::derive_functor<bt::OptionalMonadMap<trace>>
+    layered_trace_functor{};
+
+static_assert(
+    laws::check_functor_laws<layered_trace_functor, optional_sample>());
+
+// The agreement the grounding decision records, as laws: hand-written
+// Functor, Monad-grown fmap, and the layered instance each agree with the
+// Applicative's unary invoke, and the Monad's synthesized invoke agrees with
+// the Applicative's native one.
+static_assert(laws::fmap_agrees_with_invoke<bt::functor<optional_context>,
+                                            bt::applicative<optional_context>,
+                                            optional_sample>(),
+              "optional: functor.fmap must equal applicative.invoke");
+static_assert(laws::fmap_agrees_with_invoke<bt::monad<optional_context>,
+                                            bt::applicative<optional_context>,
+                                            optional_sample>(),
+              "optional: monad.fmap must equal applicative.invoke");
+static_assert(laws::fmap_agrees_with_invoke<layered_trace_functor,
+                                            bt::applicative<optional_context>,
+                                            optional_sample>(),
+              "optional: the layered functor's fmap must equal "
+              "applicative.invoke");
+static_assert(
+    laws::invoke_agrees<bt::monad<optional_context>,
+                        bt::applicative<optional_context>, optional_sample>(),
+    "optional: monad.invoke must equal applicative.invoke");
+
+// -- The test Identity: at compile time -----------------------------------
+
+using identity_context = identity_sample::context;
+
+static_assert(laws::check_applicative_laws<bt::applicative<identity_context>,
+                                           identity_sample>());
+
+// -- Runtime: the same checkers, for instances that are not constexpr -----
+
+/** Every applicative law, one REQUIRE each, so a failure names the law. */
+template <const auto &OBJECT, laws::instance_sample SAMPLE>
+void require_applicative_laws() {
+    REQUIRE(laws::applicative_identity<OBJECT, SAMPLE>());
+    REQUIRE(laws::applicative_homomorphism<OBJECT, SAMPLE>());
+    REQUIRE(laws::applicative_interchange<OBJECT, SAMPLE>());
+    REQUIRE(laws::applicative_interchange_nary<OBJECT, SAMPLE>());
+    REQUIRE(laws::applicative_composition<OBJECT, SAMPLE>());
+    REQUIRE(laws::applicative_composition_nary<OBJECT, SAMPLE>());
+    REQUIRE(laws::ap_agrees_with_invoke<OBJECT, SAMPLE>());
+    REQUIRE(laws::derived_applicative_agreement<OBJECT, SAMPLE>());
+}
+
+/** Every monad law, one REQUIRE each. */
+template <const auto &OBJECT, laws::instance_sample SAMPLE>
+void require_monad_laws() {
+    REQUIRE(laws::functor_identity<OBJECT, SAMPLE>());
+    REQUIRE(laws::functor_composition<OBJECT, SAMPLE>());
+    REQUIRE(laws::monad_left_identity<OBJECT, SAMPLE>());
+    REQUIRE(laws::monad_right_identity<OBJECT, SAMPLE>());
+    REQUIRE(laws::monad_associativity<OBJECT, SAMPLE>());
+    REQUIRE(laws::monad_fmap_grounding<OBJECT, SAMPLE>());
+    REQUIRE(laws::monad_join_coherence<OBJECT, SAMPLE>());
+    REQUIRE(laws::monad_invoke_coherence<OBJECT, SAMPLE>());
+}
+
+using expected_context = expected_sample::context;
+using array_context = array_sample::context;
+using zip_list_context = zip_list_sample::context;
+
+} // namespace instance_laws
+
+TEST_CASE("laws: std::expected's short-circuit object satisfies the "
+          "applicative and monad laws") {
+    using namespace instance_laws;
+    require_applicative_laws<bt::applicative<expected_context>,
+                             expected_sample>();
+    require_applicative_laws<bt::monad<expected_context>, expected_sample>();
+    require_monad_laws<bt::monad<expected_context>, expected_sample>();
+    REQUIRE(laws::fmap_agrees_with_invoke<bt::monad<expected_context>,
+                                          bt::applicative<expected_context>,
+                                          expected_sample>());
+    REQUIRE(laws::invoke_agrees<bt::monad<expected_context>,
+                                bt::applicative<expected_context>,
+                                expected_sample>());
+}
+
+TEST_CASE("laws: std::expected's accumulating object satisfies the "
+          "applicative laws") {
+    // No monad laws: the accumulating object has no bind, by
+    // docs/transpose/decisions.md#applicative-objects.
+    using namespace instance_laws;
+    require_applicative_laws<bt::accumulating_applicative<expected_context>,
+                             expected_sample>();
+}
+
+TEST_CASE("laws: std::array satisfies the applicative laws") {
+    using namespace instance_laws;
+    require_applicative_laws<bt::applicative<array_context>, array_sample>();
+}
+
+TEST_CASE("laws: zip_list satisfies the applicative laws") {
+    using namespace instance_laws;
+    require_applicative_laws<bt::applicative<zip_list_context>,
+                             zip_list_sample>();
+}
+
+TEST_CASE("laws: the constexpr instances satisfy the instance laws") {
+    // Compile-time only; reaching here means the static_asserts above held.
+    SUCCEED("optional (functor, applicative, monad, layered functor) and the "
+            "test Identity pass the instance laws in a constant expression");
+}
+
+// =========================================================================
+// THE LAWLESS INSTANCE: the acceptance test for the harness itself.
+//
+// An instance whose `pure` leaves a mark fails the homomorphism law --
+// invoke(f, pure(x)) computes x + "pure" + "f", pure(f(x)) computes
+// x + "f" + "pure" -- and the diagnostic must NAME that law. Note that the
+// identity law still holds for it, and that over integer addition the two
+// sides would be equal: the order-sensitive algebra is what catches it.
+//
+// There is no compile-fail test mechanism in this repository, so the
+// demonstration is behind a macro. Enabling it, with
+//
+//     -DBEMAN_TRANSPOSE_LAWS_DEMONSTRATE_LAWLESS
+//
+// fails the build of this translation unit with exactly these three errors
+// (GCC 15.2; paths and line numbers trimmed):
+//
+//   laws.hpp: In instantiation of 'consteval bool
+//   beman::transpose::test::laws::check_applicative_laws() [with const
+//   auto& OBJECT = beman::transpose::applicative<lawless_demo::Lawless<
+//   trace> >; SAMPLE = lawless_demo::lawless_sample]':
+//   laws.test.cpp: required from here
+//   laws.hpp: error: static assertion failed: applicative homomorphism:
+//   invoke(f, pure(x)) must equal pure(f(x)), and
+//   invoke(h, pure(x), pure(y)) must equal pure(h(x, y)).
+//   laws.hpp: error: static assertion failed: applicative interchange:
+//   invoke(evaluate, u, pure(y)) must equal invoke(g -> g(y), u) for a
+//   context u of callables.
+//   laws.hpp: error: static assertion failed: applicative interchange
+//   (n-ary): a pure operand floats out, invoke(h, u, pure(y)) must equal
+//   invoke(a -> h(a, y), u), and symmetrically on the left.
+//
+// Each law `pure` breaks is named by its own message; the laws it does not
+// break (identity, both compositions, the coherence checks) are silent; and
+// nothing collapses to a bare `static_assert(false)`.
+// =========================================================================
+
+#if defined(BEMAN_TRANSPOSE_LAWS_DEMONSTRATE_LAWLESS)
+
+namespace lawless_demo {
+
+/** A single-element context, like the test Identity. */
+template <class VALUE_TYPE>
+struct Lawless {
+    using value_type = VALUE_TYPE;
+
+    VALUE_TYPE value;
+
+    friend constexpr auto operator==(const Lawless &, const Lawless &)
+        -> bool = default;
+};
+
+struct lawless_sample {
+    using context = Lawless<laws::trace>;
+
+    static constexpr auto contexts() {
+        return std::array{context{laws::trace{"a"}}};
+    }
+};
+
+} // namespace lawless_demo
+
+namespace beman::transpose {
+
+template <class VALUE_TYPE>
+struct LawlessApplicativeImpl {
+    /** The violation: `pure` is not a plain embedding. */
+    constexpr auto pure(this auto &&, const test::laws::trace &value)
+        -> lawless_demo::Lawless<test::laws::trace> {
+        return {value + test::laws::trace{"pure"}};
+    }
+
+    template <class FUNCTION, class FIRST, class... REST>
+    constexpr auto invoke(this auto &&, FUNCTION &&function,
+                          const lawless_demo::Lawless<FIRST> &first,
+                          const lawless_demo::Lawless<REST> &...rest)
+        -> lawless_demo::Lawless<std::remove_cvref_t<
+            std::invoke_result_t<FUNCTION &, const FIRST &, const REST &...>>> {
+        return {std::invoke(function, first.value, rest.value...)};
+    }
+};
+
+template <class VALUE_TYPE>
+struct LawlessApplicativeMap
+    : derive_applicative<LawlessApplicativeImpl<VALUE_TYPE>> {
+    using LawlessApplicativeImpl<VALUE_TYPE>::invoke;
+    using LawlessApplicativeImpl<VALUE_TYPE>::pure;
+};
+
+template <class VALUE_TYPE>
+inline constexpr auto applicative<lawless_demo::Lawless<VALUE_TYPE>> =
+    LawlessApplicativeMap<VALUE_TYPE>{};
+
+} // namespace beman::transpose
+
+static_assert(laws::check_applicative_laws<
+              bt::applicative<lawless_demo::lawless_sample::context>,
+              lawless_demo::lawless_sample>());
+
+#endif // BEMAN_TRANSPOSE_LAWS_DEMONSTRATE_LAWLESS
