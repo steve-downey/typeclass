@@ -446,6 +446,12 @@ official grade registration?
   graded": libfn licenses moves between its contexts by the information
   preserved, not by a shared lattice. Filed as
   [licensed-context-crossings](#licensed-context-crossings).
+- 2026-11-01 — Advanced by that slug's decision: the Boolean model and the
+  error-set model now have a stated crossing rule, so `optional` and
+  `expected` can be related without sharing a lattice. What remains open
+  here is narrower than before: whether `std::optional` is registered as the
+  Boolean model's carrier at all, which is a public-surface decision and not
+  needed for the crossing rule to apply to it.
 
 ---
 
@@ -991,6 +997,8 @@ A product of grade models is a new semantic feature with no current client, the 
   carrier into another's. That question is
   [licensed-context-crossings](#licensed-context-crossings), which must not
   weaken this one.
+- 2026-11-01 — licensed-context-crossings decided; the mixing-point tests
+  in `laws.test.cpp` are unchanged by it, as required.
 
 ---
 
@@ -4140,7 +4148,36 @@ at the empty grade is recorded as a scoped exception under
 **Question:** Which moves of a value between contexts of different grade
 models, or between a graded context and an ungraded one, are licensed, and by
 what rule?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01.
+**Decision:** A crossing is a deliberate, named move of one value from one
+carrier into another; it is not a mixing point, and
+[cross-model-mixing](#cross-model-mixing) is untouched by it. A crossing is
+licensed in exactly two cases. First, when it loses no information, which is
+the case exactly when the source is at its model's bottom: a value that
+cannot fail enters any fallible context, and the identity carriers of two
+models (`expected<T, error_set<>>` and the Boolean model's `Fallible<T,
+never_fails>`) cross in both directions with nothing asked. Second, on the
+failure path through a handler: entering a context whose failure state
+carries more than the source's needs a handler that **supplies** it (an
+error for an empty Boolean value); entering one whose failure state carries
+less needs a handler that **consumes** what would be dropped (the error set,
+on the way to a Boolean value). Success values pass through every licensed
+crossing unchanged, and the handler is never asked on the success path. The
+rule is stated against models, not carriers: it reads the source's grade
+and the target's, never the carrier names. No operation ships. The rule is
+demonstrated test-only in `laws.test.cpp` against the Boolean model's
+`Fallible`, and a future `into<C>` must satisfy it.
+**Why:** Without a stated rule every future question about `optional` and
+`expected` together re-derives it from the lattice, and the lattice is the
+wrong instrument: the two models share none, and what decides whether a
+move is honest is whether information is lost. libfn's identity cluster is
+the evidence that the rule fits on a page. Stating it against models keeps
+the tripwire of stage
+[context-crossings](transpose-surface-plan.md#context-crossings) intact:
+nothing here registers `std::optional` as graded, which remains
+[optional-grade-model](#optional-grade-model)'s own question.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.3).
@@ -4158,6 +4195,15 @@ what rule?
   the other. *Proposed resolution:* a decision stating the rule, a test-only
   demonstration of the `optional` to `expected` lift under it, and no new
   operation until a client needs one.
+- 2026-11-01 — Shipped by stage
+  [context-crossings](transpose-surface-plan.md#context-crossings): the
+  `context_crossing` section of `laws.test.cpp`, with `into_expected` and
+  `into_fallible` as the demonstration, a concept pinning that a lossless
+  crossing exists without a handler and a lossy one does not in either
+  direction, and runtime tests that the handler is asked exactly on the
+  failure path. `cross-model-mixing`'s tests are unchanged. The
+  demonstration uses `Fallible`, not `std::optional`; the tripwire did not
+  fire.
 
 ---
 

@@ -241,6 +241,9 @@ once.
 ### Stage 5 — [context-crossings](#context-crossings) {#context-crossings}
 Closes [licensed-context-crossings](decisions.md#licensed-context-crossings);
 advances [optional-grade-model](decisions.md#optional-grade-model).
+Status: DONE 2026-11-01 on branch `context-crossings`. The rule is decided
+and demonstrated test-only in `laws.test.cpp` against the Boolean model's
+`Fallible`; no operation shipped; the tripwire did not fire.
 Deliverables:
 - The rule, as a decision: a crossing is licensed when it loses no
   information, or when it is on the failure path through a handler that
