@@ -6,9 +6,13 @@
 
 ```cpp
 template<class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
-constexpr auto invoke(this auto&& self, FUNCTION&& function,
-                      FIRST_ARGUMENT&& first_argument,
-                      REST_ARGUMENTS&&... rest_arguments);
+[[nodiscard]] constexpr auto invoke(
+    this auto&& self, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
+    REST_ARGUMENTS&&... rest_arguments) noexcept($applicative-invoke-nothrow$<Impl,
+                                                                            decltype(self),
+                                                                            FUNCTION,
+                                                                            FIRST_ARGUMENT,
+                                                                            REST_ARGUMENTS...>);
 ```
 
 [x]{.pnum} *Constraints*: Either `Impl` provides an `invoke` accepting `function` and the arguments, or `Impl` provides an `ap` and the application described in the *Effects* element below is well-formed, which requires that `function` be invocable with the values held by all of the arguments.
@@ -21,8 +25,12 @@ constexpr auto invoke(this auto&& self, FUNCTION&& function,
 
 ```cpp
 template<class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
-constexpr auto ap(this auto&& self, FUNCTION_IN_CONTEXT&& function,
-                  ARGUMENT_IN_CONTEXT&& argument);
+[[nodiscard]] constexpr auto ap(
+    this auto&& self, FUNCTION_IN_CONTEXT&& function,
+    ARGUMENT_IN_CONTEXT&&
+        argument) noexcept($applicative-ap-nothrow$<Impl, decltype(self),
+                                                  FUNCTION_IN_CONTEXT,
+                                                  ARGUMENT_IN_CONTEXT>);
 ```
 
 [x+4]{.pnum} *Constraints*: `Impl` provides either an `ap` accepting `function` and `argument`, or an `invoke` able to apply a callable held in the context to one argument in the context. The second alternative is satisfied only where the context can hold a callable, so `ap` does not participate in overload resolution for a context that cannot.

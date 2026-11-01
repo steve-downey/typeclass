@@ -34,6 +34,9 @@ namespace beman::transpose {
 //   stateless objects whose calls resolve statically.
 // - identity and combine must stay coherent for a single associative law
 //   domain.
+// - identity and combine carry computed exception specifications, so that a
+//   fold's own specification, which is computed through them, can be true
+//   (docs/transpose/decisions.md#operation-noexcept).
 
 /** Customization point for the Monoid registry.
  * Specialize this struct for type `VALUE_TYPE` and provide `identity()` and
@@ -88,9 +91,13 @@ template <class T>
 struct sum_monoid {
     using value_type = T;
 
-    constexpr auto identity() const -> T { return T{}; }
+    constexpr auto identity() const
+        noexcept(std::is_nothrow_default_constructible_v<T>) -> T {
+        return T{};
+    }
 
-    constexpr auto combine(const T &lhs, const T &rhs) const -> T {
+    constexpr auto combine(const T &lhs, const T &rhs) const
+        noexcept(noexcept(T(lhs + rhs))) -> T {
         return lhs + rhs;
     }
 };
@@ -100,9 +107,13 @@ template <class T>
 struct product_monoid {
     using value_type = T;
 
-    constexpr auto identity() const -> T { return T{1}; }
+    constexpr auto identity() const
+        noexcept(std::is_nothrow_constructible_v<T, int>) -> T {
+        return T{1};
+    }
 
-    constexpr auto combine(const T &lhs, const T &rhs) const -> T {
+    constexpr auto combine(const T &lhs, const T &rhs) const
+        noexcept(noexcept(T(lhs * rhs))) -> T {
         return lhs * rhs;
     }
 };
@@ -118,7 +129,8 @@ template <class T>
 struct max_monoid {
     using value_type = T;
 
-    constexpr auto identity() const -> T {
+    constexpr auto identity() const
+        noexcept(std::is_nothrow_copy_constructible_v<T>) -> T {
         if constexpr (std::numeric_limits<T>::has_infinity) {
             return -std::numeric_limits<T>::infinity();
         } else {
@@ -126,7 +138,9 @@ struct max_monoid {
         }
     }
 
-    constexpr auto combine(const T &lhs, const T &rhs) const -> T {
+    constexpr auto combine(const T &lhs, const T &rhs) const
+        noexcept(noexcept(lhs < rhs) && std::is_nothrow_copy_constructible_v<T>)
+            -> T {
         return lhs < rhs ? rhs : lhs;
     }
 };
@@ -140,7 +154,8 @@ template <class T>
 struct min_monoid {
     using value_type = T;
 
-    constexpr auto identity() const -> T {
+    constexpr auto identity() const
+        noexcept(std::is_nothrow_copy_constructible_v<T>) -> T {
         if constexpr (std::numeric_limits<T>::has_infinity) {
             return std::numeric_limits<T>::infinity();
         } else {
@@ -148,7 +163,9 @@ struct min_monoid {
         }
     }
 
-    constexpr auto combine(const T &lhs, const T &rhs) const -> T {
+    constexpr auto combine(const T &lhs, const T &rhs) const
+        noexcept(noexcept(rhs < lhs) && std::is_nothrow_copy_constructible_v<T>)
+            -> T {
         return rhs < lhs ? rhs : lhs;
     }
 };
@@ -158,9 +175,9 @@ struct min_monoid {
 struct any_monoid {
     using value_type = bool;
 
-    constexpr auto identity() const -> bool { return false; }
+    constexpr auto identity() const noexcept -> bool { return false; }
 
-    constexpr auto combine(bool lhs, bool rhs) const -> bool {
+    constexpr auto combine(bool lhs, bool rhs) const noexcept -> bool {
         return lhs || rhs;
     }
 };
@@ -170,9 +187,9 @@ struct any_monoid {
 struct all_monoid {
     using value_type = bool;
 
-    constexpr auto identity() const -> bool { return true; }
+    constexpr auto identity() const noexcept -> bool { return true; }
 
-    constexpr auto combine(bool lhs, bool rhs) const -> bool {
+    constexpr auto combine(bool lhs, bool rhs) const noexcept -> bool {
         return lhs && rhs;
     }
 };
@@ -185,11 +202,11 @@ template <class T>
 struct first_monoid {
     using value_type = std::optional<T>;
 
-    constexpr auto identity() const -> std::optional<T> { return {}; }
+    constexpr auto identity() const noexcept -> std::optional<T> { return {}; }
 
     constexpr auto combine(const std::optional<T> &lhs,
                            const std::optional<T> &rhs) const
-        -> std::optional<T> {
+        noexcept(std::is_nothrow_copy_constructible_v<T>) -> std::optional<T> {
         return lhs.has_value() ? lhs : rhs;
     }
 };
@@ -210,10 +227,13 @@ struct dual_monoid {
 
     M d_inner{};
 
-    constexpr auto identity() const -> value_type { return d_inner.identity(); }
+    constexpr auto identity() const noexcept(noexcept(d_inner.identity()))
+        -> value_type {
+        return d_inner.identity();
+    }
 
     constexpr auto combine(const value_type &lhs, const value_type &rhs) const
-        -> value_type {
+        noexcept(noexcept(d_inner.combine(rhs, lhs))) -> value_type {
         return d_inner.combine(rhs, lhs);
     }
 };
@@ -227,14 +247,27 @@ struct tuple_monoid {
 
     std::tuple<M...> d_inners{};
 
-    constexpr auto identity() const -> value_type {
+    constexpr auto identity() const noexcept(
+        (noexcept(std::declval<const M &>().identity()) && ...) &&
+        std::is_nothrow_constructible_v<
+            value_type, decltype(std::declval<const M &>().identity())...>)
+        -> value_type {
         return std::apply(
             [](const M &...inner) { return value_type{inner.identity()...}; },
             d_inners);
     }
 
     constexpr auto combine(const value_type &lhs, const value_type &rhs) const
-        -> value_type {
+        noexcept(
+            (noexcept(std::declval<const M &>().combine(
+                 std::declval<const monoid_value_t<M> &>(),
+                 std::declval<const monoid_value_t<M> &>())) &&
+             ...) &&
+            std::is_nothrow_constructible_v<
+                value_type, decltype(std::declval<const M &>().combine(
+                                std::declval<const monoid_value_t<M> &>(),
+                                std::declval<const monoid_value_t<M> &>()))...>)
+            -> value_type {
         return [&]<std::size_t... I>(std::index_sequence<I...>) {
             return value_type{std::get<I>(d_inners).combine(
                 std::get<I>(lhs), std::get<I>(rhs))...};
@@ -249,14 +282,17 @@ struct tuple_monoid {
 
 /** Returns the identity element of the registered Monoid of VALUE_TYPE. */
 template <class VALUE_TYPE>
-constexpr auto monoid_identity() -> VALUE_TYPE {
+constexpr auto
+monoid_identity() noexcept(noexcept(monoid<VALUE_TYPE>.identity()))
+    -> VALUE_TYPE {
     return monoid<VALUE_TYPE>.identity();
 }
 
 /** Combines two values using the registered Monoid of VALUE_TYPE. */
 template <class VALUE_TYPE>
-constexpr auto monoid_combine(const VALUE_TYPE &lhs, const VALUE_TYPE &rhs)
-    -> VALUE_TYPE {
+constexpr auto
+monoid_combine(const VALUE_TYPE &lhs, const VALUE_TYPE &rhs) noexcept(
+    noexcept(monoid<VALUE_TYPE>.combine(lhs, rhs))) -> VALUE_TYPE {
     return monoid<VALUE_TYPE>.combine(lhs, rhs);
 }
 

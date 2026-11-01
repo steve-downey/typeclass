@@ -52,7 +52,9 @@ struct SimdVecApplicativeImpl {
 
     /** Broadcast a scalar to every lane. */
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value)
+    [[nodiscard]] auto pure(this auto &&, VALUE &&value) noexcept(
+        noexcept(std::simd::vec<std::remove_cvref_t<VALUE>, width>(
+            std::forward<VALUE>(value))))
         -> std::simd::vec<std::remove_cvref_t<VALUE>, width>
         requires requires {
             std::simd::vec<std::remove_cvref_t<VALUE>, width>(
@@ -64,10 +66,18 @@ struct SimdVecApplicativeImpl {
     }
 
     /** N-ary core: a plain function applied lane by lane across the
-     * operands, via the generator constructor. */
+     * operands, via the generator constructor. The lanes are vectorizable
+     * scalars, so the application is noexcept exactly when the function is.
+     */
     template <class FUNCTION, class FIRST, class... REST>
-    auto invoke(this auto &&, FUNCTION &&function, const FIRST &first,
-                const REST &...rest)
+    [[nodiscard]] auto
+    invoke(this auto &&, FUNCTION &&function, const FIRST &first,
+           const REST
+               &...rest) noexcept(std::
+                                      is_nothrow_invocable_v<
+                                          FUNCTION &,
+                                          const typename FIRST::value_type &,
+                                          const typename REST::value_type &...>)
         -> std::simd::vec<std::remove_cvref_t<std::invoke_result_t<
                               FUNCTION &, const typename FIRST::value_type &,
                               const typename REST::value_type &...>>,

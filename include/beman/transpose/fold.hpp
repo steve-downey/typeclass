@@ -127,7 +127,8 @@ using fold_result_t = std::remove_cvref_t<
 struct identity_probe_witness {
     template <class ARGUMENT>
         requires std::copy_constructible<ARGUMENT>
-    constexpr auto operator()(const ARGUMENT &argument) const -> ARGUMENT {
+    constexpr auto operator()(const ARGUMENT &argument) const
+        noexcept(std::is_nothrow_copy_constructible_v<ARGUMENT>) -> ARGUMENT {
         return argument;
     }
 };
@@ -155,6 +156,15 @@ struct vector_probe_witness {
 // invoke_result_t on the callable -- fails the probe softly instead of
 // accepting a callable that the body then cannot use. Like probe_witness,
 // each body establishes only the result type.
+//
+// Each call operator's exception specification is that of the lambda it
+// stands in for, so a derived operation can compute the exception
+// specification of its derived route by asking whether the fold with the
+// probe is noexcept (docs/transpose/decisions.md#operation-noexcept).
+// vector_probe_witness carries none: the lambda it stands in for allocates.
+// The two std::function-returning witnesses carry none either; the programs
+// fold_left and fold_right compose cannot be called without the possibility
+// of an exception, so those derivations are never noexcept.
 
 /** Stands in for the lambda that derives `fold_map` from `fold_right`:
  * `monoid.combine(std::invoke(function, element), std::move(acc))`. `F` and
@@ -172,7 +182,10 @@ struct fold_map_step_probe_witness {
                              std::move(acc))
                      } -> std::convertible_to<RESULT>;
                  }
-    constexpr auto operator()(const ELEMENT &, const RESULT &) const -> RESULT {
+    constexpr auto operator()(const ELEMENT &, const RESULT &) const
+        noexcept(noexcept(std::declval<MONOID &>().combine(
+            std::invoke(std::declval<F &>(), std::declval<const ELEMENT &>()),
+            std::declval<RESULT>()))) -> RESULT {
         std::unreachable();
     }
 };
@@ -221,7 +234,11 @@ struct predicate_probe_witness {
         requires std::invocable<PREDICATE &, const ARGUMENT &> &&
                  std::constructible_from<
                      bool, std::invoke_result_t<PREDICATE &, const ARGUMENT &>>
-    constexpr auto operator()(const ARGUMENT &) const -> bool {
+    constexpr auto operator()(const ARGUMENT &) const
+        noexcept(std::is_nothrow_invocable_v<PREDICATE &, const ARGUMENT &> &&
+                 std::is_nothrow_constructible_v<
+                     bool, std::invoke_result_t<PREDICATE &, const ARGUMENT &>>)
+            -> bool {
         std::unreachable();
     }
 };
@@ -238,7 +255,12 @@ struct find_first_probe_witness {
                      std::invoke_result_t<PREDICATE &, const ARGUMENT &>> &&
                  std::constructible_from<std::optional<ELEMENT>,
                                          const ARGUMENT &>
-    constexpr auto operator()(const ARGUMENT &) const
+    constexpr auto operator()(const ARGUMENT &) const noexcept(
+        std::is_nothrow_invocable_v<PREDICATE &, const ARGUMENT &> &&
+        std::is_nothrow_constructible_v<
+            bool, std::invoke_result_t<PREDICATE &, const ARGUMENT &>> &&
+        std::is_nothrow_constructible_v<std::optional<ELEMENT>,
+                                        const ARGUMENT &>)
         -> std::optional<ELEMENT> {
         std::unreachable();
     }
@@ -286,6 +308,13 @@ concept foldable_impl = requires(const IMPL &impl, const STRUCTURE &structure) {
  * the derived operations that must name the element type: the
  * two-argument `fold_map`, `combine_all` and `fold` without an instance,
  * `to_vector` and `find_first`.
+ *
+ * Every operation carries a computed exception specification: that of the
+ * route it takes, spelled from the same requires-expression the body selects
+ * the route by, with the derived route asked through the probe the
+ * constraint names (docs/transpose/decisions.md#operation-noexcept). The
+ * derived `fold_left` and `fold_right` are never noexcept, because the
+ * programs they compose are `std::function`s.
  */
 template <class Impl>
 struct derive_foldable : protected Impl {
@@ -315,8 +344,23 @@ struct derive_foldable : protected Impl {
     // Impl::fold_map preferred; derived from fold_right otherwise.
     // foldMap f = foldr (\x acc -> f x <> acc) mempty
     template <class F, class T, class MONOID>
-    constexpr auto fold_map(this auto &&self, F &&function, T &&value,
-                            MONOID monoid)
+    [[nodiscard]] constexpr auto fold_map(this auto &&self, F &&function,
+                                          T &&value, MONOID monoid)
+        noexcept(requires {
+            impl_of(self).fold_map(std::forward<F>(function),
+                                   std::forward<T>(value), monoid);
+        } ? requires {
+            {
+                impl_of(self).fold_map(std::forward<F>(function),
+                                       std::forward<T>(value), monoid)
+            } noexcept;
+        } : requires {
+            {
+                impl_of(self).fold_right(
+                    std::forward<T>(value), monoid.identity(),
+                    detail::fold_map_step_probe_witness<F, MONOID>{})
+            } noexcept;
+        })
         requires requires(const Impl &impl) {
             impl.fold_map(std::forward<F>(function), std::forward<T>(value),
                           monoid);
@@ -378,7 +422,22 @@ struct derive_foldable : protected Impl {
     // not a candidate here; the caller passes the instance. An Impl may
     // still supply a native two-argument fold_map of its own.
     template <class F, class T>
-    constexpr auto fold_map(this auto &&self, F &&function, T &&value)
+    [[nodiscard]] constexpr auto fold_map(this auto &&self, F &&function,
+                                          T &&value)
+        noexcept(requires {
+            impl_of(self).fold_map(std::forward<F>(function),
+                                   std::forward<T>(value));
+        } ? requires {
+            {
+                impl_of(self).fold_map(std::forward<F>(function),
+                                       std::forward<T>(value))
+            } noexcept;
+        } : requires {
+            {
+                self.fold_map(std::forward<F>(function), std::forward<T>(value),
+                              Monoid<detail::fold_result_t<Impl, F>>{})
+            } noexcept;
+        })
         requires requires(const Impl &impl) {
             impl.fold_map(std::forward<F>(function), std::forward<T>(value));
         } || requires {
@@ -404,7 +463,17 @@ struct derive_foldable : protected Impl {
 
     /** Returns the number of elements in the foldable container. */
     template <class T>
-    constexpr auto length(this auto &&self, T &&value) -> std::size_t
+    [[nodiscard]] constexpr auto length(this auto &&self, T &&value)
+        noexcept(requires {
+            impl_of(self).length(std::forward<T>(value));
+        } ? requires {
+            { impl_of(self).length(std::forward<T>(value)) } noexcept;
+        } : requires {
+            {
+                self.fold_map(detail::probe_witness<std::size_t>{},
+                              std::forward<T>(value), sum_monoid<std::size_t>{})
+            } noexcept;
+        }) -> std::size_t
         requires requires(const Impl &impl) {
             impl.length(std::forward<T>(value));
         } || requires {
@@ -432,8 +501,21 @@ struct derive_foldable : protected Impl {
      * element in traversal order, starting from `initial_state`.
      */
     template <class T, class STATE, class F>
-    constexpr auto fold_left(this auto &&self, T &&value, STATE initial_state,
-                             F &&function)
+    [[nodiscard]] constexpr auto fold_left(this auto &&self, T &&value,
+                                           STATE initial_state, F &&function)
+        // The derived route composes std::function programs and then calls
+        // one, neither of which can be promised not to throw.
+        noexcept(requires {
+            impl_of(self).fold_left(std::forward<T>(value),
+                                    std::move(initial_state),
+                                    std::forward<F>(function));
+        } ? requires {
+            {
+                impl_of(self).fold_left(std::forward<T>(value),
+                                        std::move(initial_state),
+                                        std::forward<F>(function))
+            } noexcept;
+        } : false)
         requires requires(const Impl &impl) {
             impl.fold_left(std::forward<T>(value), std::move(initial_state),
                            std::forward<F>(function));
@@ -481,8 +563,20 @@ struct derive_foldable : protected Impl {
      * element in reverse traversal order, starting from `initial_state`.
      */
     template <class T, class STATE, class F>
-    constexpr auto fold_right(this auto &&self, T &&value, STATE initial_state,
-                              F &&function)
+    [[nodiscard]] constexpr auto fold_right(this auto &&self, T &&value,
+                                            STATE initial_state, F &&function)
+        // See fold_left: the derived route is never noexcept.
+        noexcept(requires {
+            impl_of(self).fold_right(std::forward<T>(value),
+                                     std::move(initial_state),
+                                     std::forward<F>(function));
+        } ? requires {
+            {
+                impl_of(self).fold_right(std::forward<T>(value),
+                                         std::move(initial_state),
+                                         std::forward<F>(function))
+            } noexcept;
+        } : false)
         requires requires(const Impl &impl) {
             impl.fold_right(std::forward<T>(value), std::move(initial_state),
                             std::forward<F>(function));
@@ -533,7 +627,20 @@ struct derive_foldable : protected Impl {
      * type.
      */
     template <class T, class MONOID>
-    constexpr auto combine_all(this auto &&self, T &&value, MONOID monoid)
+    [[nodiscard]] constexpr auto combine_all(this auto &&self, T &&value,
+                                             MONOID monoid)
+        noexcept(requires {
+            impl_of(self).combine_all(std::forward<T>(value), monoid);
+        } ? requires {
+            {
+                impl_of(self).combine_all(std::forward<T>(value), monoid)
+            } noexcept;
+        } : requires {
+            {
+                self.fold_map(detail::identity_probe_witness{},
+                              std::forward<T>(value), monoid)
+            } noexcept;
+        })
         requires requires(const Impl &impl) {
             impl.combine_all(std::forward<T>(value), monoid);
         } || requires {
@@ -558,7 +665,17 @@ struct derive_foldable : protected Impl {
      * with several monoids takes the two-argument form.
      */
     template <class T>
-    constexpr auto combine_all(this auto &&self, T &&value)
+    [[nodiscard]] constexpr auto combine_all(this auto &&self, T &&value)
+        noexcept(requires {
+            impl_of(self).combine_all(std::forward<T>(value));
+        } ? requires {
+            { impl_of(self).combine_all(std::forward<T>(value)) } noexcept;
+        } : requires {
+            {
+                self.fold_map(detail::identity_probe_witness{},
+                              std::forward<T>(value))
+            } noexcept;
+        })
         requires requires(const Impl &impl) {
             impl.combine_all(std::forward<T>(value));
         } || requires {
@@ -585,7 +702,15 @@ struct derive_foldable : protected Impl {
      * that provides a native combine_all directly but no fold_map at all.
      */
     template <class T, class MONOID>
-    constexpr auto fold(this auto &&self, T &&value, MONOID monoid)
+    [[nodiscard]] constexpr auto fold(this auto &&self, T &&value,
+                                      MONOID monoid)
+        noexcept(requires {
+            impl_of(self).fold(std::forward<T>(value), monoid);
+        } ? requires {
+            { impl_of(self).fold(std::forward<T>(value), monoid) } noexcept;
+        } : requires {
+            { self.combine_all(std::forward<T>(value), monoid) } noexcept;
+        })
         requires requires(const Impl &impl) {
             impl.fold(std::forward<T>(value), monoid);
         } || requires { self.combine_all(std::forward<T>(value), monoid); }
@@ -600,7 +725,14 @@ struct derive_foldable : protected Impl {
     }
 
     template <class T>
-    constexpr auto fold(this auto &&self, T &&value)
+    [[nodiscard]] constexpr auto fold(this auto &&self, T &&value)
+        noexcept(requires {
+            impl_of(self).fold(std::forward<T>(value));
+        } ? requires {
+            { impl_of(self).fold(std::forward<T>(value)) } noexcept;
+        } : requires {
+            { self.combine_all(std::forward<T>(value)) } noexcept;
+        })
         requires requires(const Impl &impl) {
             impl.fold(std::forward<T>(value));
         } || requires { self.combine_all(std::forward<T>(value)); }
@@ -616,8 +748,22 @@ struct derive_foldable : protected Impl {
 
     /** Returns `true` if any element satisfies `predicate`. */
     template <class T, class PREDICATE>
-    constexpr auto any_of(this auto &&self, T &&value, PREDICATE &&predicate)
-        -> bool
+    [[nodiscard]] constexpr auto any_of(this auto &&self, T &&value,
+                                        PREDICATE &&predicate)
+        noexcept(requires {
+            impl_of(self).any_of(std::forward<T>(value),
+                                 std::forward<PREDICATE>(predicate));
+        } ? requires {
+            {
+                impl_of(self).any_of(std::forward<T>(value),
+                                     std::forward<PREDICATE>(predicate))
+            } noexcept;
+        } : requires {
+            {
+                self.fold_map(detail::predicate_probe_witness<PREDICATE>{},
+                              std::forward<T>(value), any_monoid{})
+            } noexcept;
+        }) -> bool
         requires requires(const Impl &impl) {
             impl.any_of(std::forward<T>(value),
                         std::forward<PREDICATE>(predicate));
@@ -648,8 +794,22 @@ struct derive_foldable : protected Impl {
 
     /** Returns `true` if all elements satisfy `predicate`. */
     template <class T, class PREDICATE>
-    constexpr auto all_of(this auto &&self, T &&value, PREDICATE &&predicate)
-        -> bool
+    [[nodiscard]] constexpr auto all_of(this auto &&self, T &&value,
+                                        PREDICATE &&predicate)
+        noexcept(requires {
+            impl_of(self).all_of(std::forward<T>(value),
+                                 std::forward<PREDICATE>(predicate));
+        } ? requires {
+            {
+                impl_of(self).all_of(std::forward<T>(value),
+                                     std::forward<PREDICATE>(predicate))
+            } noexcept;
+        } : requires {
+            {
+                self.fold_map(detail::predicate_probe_witness<PREDICATE>{},
+                              std::forward<T>(value), all_monoid{})
+            } noexcept;
+        }) -> bool
         requires requires(const Impl &impl) {
             impl.all_of(std::forward<T>(value),
                         std::forward<PREDICATE>(predicate));
@@ -681,7 +841,17 @@ struct derive_foldable : protected Impl {
      * no fold_map at all.
      */
     template <class T>
-    constexpr auto empty(this auto &&self, T &&value) -> bool
+    [[nodiscard]] constexpr auto empty(this auto &&self, T &&value)
+        noexcept(requires {
+            impl_of(self).empty(std::forward<T>(value));
+        } ? requires {
+            { impl_of(self).empty(std::forward<T>(value)) } noexcept;
+        } : requires {
+            {
+                self.any_of(std::forward<T>(value),
+                            detail::probe_witness<bool>{})
+            } noexcept;
+        }) -> bool
         requires requires(const Impl &impl) {
             impl.empty(std::forward<T>(value));
         } || requires {
@@ -706,7 +876,18 @@ struct derive_foldable : protected Impl {
      * instances (docs/transpose/decisions.md#instance-placement).
      */
     template <class T>
-    constexpr auto to_vector(this auto &&self, T &&value)
+    [[nodiscard]] constexpr auto to_vector(this auto &&self, T &&value)
+        noexcept(requires {
+            impl_of(self).to_vector(std::forward<T>(value));
+        } ? requires {
+            { impl_of(self).to_vector(std::forward<T>(value)) } noexcept;
+        } : requires {
+            {
+                self.fold_map(
+                    detail::vector_probe_witness{}, std::forward<T>(value),
+                    detail::vector_concat_monoid<typename Impl::element_type>{})
+            } noexcept;
+        })
         requires requires(const Impl &impl) {
             impl.to_vector(std::forward<T>(value));
         } || requires {
@@ -735,8 +916,25 @@ struct derive_foldable : protected Impl {
      * type, so like `to_vector` it needs Impl to declare `element_type`.
      */
     template <class T, class PREDICATE>
-    constexpr auto find_first(this auto &&self, T &&value,
-                              PREDICATE &&predicate)
+    [[nodiscard]] constexpr auto find_first(this auto &&self, T &&value,
+                                            PREDICATE &&predicate)
+        noexcept(requires {
+            impl_of(self).find_first(std::forward<T>(value),
+                                     std::forward<PREDICATE>(predicate));
+        } ? requires {
+            {
+                impl_of(self).find_first(std::forward<T>(value),
+                                         std::forward<PREDICATE>(predicate))
+            } noexcept;
+        } : requires {
+            {
+                self.fold_map(
+                    detail::find_first_probe_witness<
+                        PREDICATE, typename Impl::element_type>{},
+                    std::forward<T>(value),
+                    first_monoid<typename Impl::element_type>{})
+            } noexcept;
+        })
         requires requires(const Impl &impl) {
             impl.find_first(std::forward<T>(value),
                             std::forward<PREDICATE>(predicate));
@@ -773,7 +971,7 @@ struct derive_foldable : protected Impl {
   private:
     //! \omit
     template <class SELF>
-    static constexpr decltype(auto) impl_of(SELF &&self) {
+    static constexpr decltype(auto) impl_of(SELF &&self) noexcept {
         return static_cast<impl_ref_t<Impl, SELF>>(self);
     }
 };
@@ -825,7 +1023,11 @@ struct fold_map_fn {
             TC.fold_map(std::declval<F>(), std::declval<T>(),
                         std::declval<MONOID>());
         }
-    constexpr auto operator()(F &&function, T &&value, MONOID monoid) const {
+    [[nodiscard]] constexpr auto operator()(F &&function, T &&value,
+                                            MONOID monoid) const
+        noexcept(noexcept(TC.fold_map(std::forward<F>(function),
+                                      std::forward<T>(value),
+                                      std::move(monoid)))) {
         return TC.fold_map(std::forward<F>(function), std::forward<T>(value),
                            std::move(monoid));
     }
@@ -834,7 +1036,9 @@ struct fold_map_fn {
     template <class F, class T,
               const auto &TC = foldable<std::remove_cvref_t<T>>>
         requires requires { TC.fold_map(std::declval<F>(), std::declval<T>()); }
-    constexpr auto operator()(F &&function, T &&value) const {
+    [[nodiscard]] constexpr auto operator()(F &&function, T &&value) const
+        noexcept(noexcept(TC.fold_map(std::forward<F>(function),
+                                      std::forward<T>(value)))) {
         return TC.fold_map(std::forward<F>(function), std::forward<T>(value));
     }
 };
@@ -851,8 +1055,11 @@ struct fold_left_fn {
             TC.fold_left(std::declval<T>(), std::declval<STATE>(),
                          std::declval<F>());
         }
-    constexpr auto operator()(T &&value, STATE initial_state,
-                              F &&function) const {
+    [[nodiscard]] constexpr auto operator()(T &&value, STATE initial_state,
+                                            F &&function) const
+        noexcept(noexcept(TC.fold_left(std::forward<T>(value),
+                                       std::move(initial_state),
+                                       std::forward<F>(function)))) {
         return TC.fold_left(std::forward<T>(value), std::move(initial_state),
                             std::forward<F>(function));
     }
@@ -870,8 +1077,11 @@ struct fold_right_fn {
             TC.fold_right(std::declval<T>(), std::declval<STATE>(),
                           std::declval<F>());
         }
-    constexpr auto operator()(T &&value, STATE initial_state,
-                              F &&function) const {
+    [[nodiscard]] constexpr auto operator()(T &&value, STATE initial_state,
+                                            F &&function) const
+        noexcept(noexcept(TC.fold_right(std::forward<T>(value),
+                                        std::move(initial_state),
+                                        std::forward<F>(function)))) {
         return TC.fold_right(std::forward<T>(value), std::move(initial_state),
                              std::forward<F>(function));
     }
@@ -885,7 +1095,8 @@ struct length_fn {
     /** Number of elements in the container. */
     template <class T, const auto &TC = foldable<std::remove_cvref_t<T>>>
         requires requires { TC.length(std::declval<T>()); }
-    constexpr auto operator()(T &&value) const -> std::size_t {
+    [[nodiscard]] constexpr auto operator()(T &&value) const
+        noexcept(noexcept(TC.length(std::forward<T>(value)))) -> std::size_t {
         return TC.length(std::forward<T>(value));
     }
 };
@@ -901,7 +1112,9 @@ struct combine_all_fn {
         requires requires {
             TC.combine_all(std::declval<T>(), std::declval<MONOID>());
         }
-    constexpr auto operator()(T &&value, MONOID monoid) const {
+    [[nodiscard]] constexpr auto operator()(T &&value, MONOID monoid) const
+        noexcept(noexcept(TC.combine_all(std::forward<T>(value),
+                                         std::move(monoid)))) {
         return TC.combine_all(std::forward<T>(value), std::move(monoid));
     }
 
@@ -909,7 +1122,8 @@ struct combine_all_fn {
      * type; not a candidate where the element type has no registration. */
     template <class T, const auto &TC = foldable<std::remove_cvref_t<T>>>
         requires requires { TC.combine_all(std::declval<T>()); }
-    constexpr auto operator()(T &&value) const {
+    [[nodiscard]] constexpr auto operator()(T &&value) const
+        noexcept(noexcept(TC.combine_all(std::forward<T>(value)))) {
         return TC.combine_all(std::forward<T>(value));
     }
 };
@@ -925,7 +1139,11 @@ struct any_of_fn {
         requires requires {
             TC.any_of(std::declval<T>(), std::declval<PREDICATE>());
         }
-    constexpr auto operator()(T &&value, PREDICATE &&predicate) const -> bool {
+    [[nodiscard]] constexpr auto operator()(T &&value,
+                                            PREDICATE &&predicate) const
+        noexcept(noexcept(TC.any_of(std::forward<T>(value),
+                                    std::forward<PREDICATE>(predicate))))
+            -> bool {
         return TC.any_of(std::forward<T>(value),
                          std::forward<PREDICATE>(predicate));
     }
@@ -942,7 +1160,11 @@ struct all_of_fn {
         requires requires {
             TC.all_of(std::declval<T>(), std::declval<PREDICATE>());
         }
-    constexpr auto operator()(T &&value, PREDICATE &&predicate) const -> bool {
+    [[nodiscard]] constexpr auto operator()(T &&value,
+                                            PREDICATE &&predicate) const
+        noexcept(noexcept(TC.all_of(std::forward<T>(value),
+                                    std::forward<PREDICATE>(predicate))))
+            -> bool {
         return TC.all_of(std::forward<T>(value),
                          std::forward<PREDICATE>(predicate));
     }
@@ -958,7 +1180,8 @@ struct empty_fn {
     /** True when the container holds no elements. */
     template <class T, const auto &TC = foldable<std::remove_cvref_t<T>>>
         requires requires { TC.empty(std::declval<T>()); }
-    constexpr auto operator()(T &&value) const -> bool {
+    [[nodiscard]] constexpr auto operator()(T &&value) const
+        noexcept(noexcept(TC.empty(std::forward<T>(value)))) -> bool {
         return TC.empty(std::forward<T>(value));
     }
 };
@@ -971,7 +1194,8 @@ struct to_vector_fn {
     /** Collects every element into a `std::vector` in traversal order. */
     template <class T, const auto &TC = foldable<std::remove_cvref_t<T>>>
         requires requires { TC.to_vector(std::declval<T>()); }
-    constexpr auto operator()(T &&value) const {
+    [[nodiscard]] constexpr auto operator()(T &&value) const
+        noexcept(noexcept(TC.to_vector(std::forward<T>(value)))) {
         return TC.to_vector(std::forward<T>(value));
     }
 };
@@ -987,7 +1211,10 @@ struct find_first_fn {
         requires requires {
             TC.find_first(std::declval<T>(), std::declval<PREDICATE>());
         }
-    constexpr auto operator()(T &&value, PREDICATE &&predicate) const {
+    [[nodiscard]] constexpr auto operator()(T &&value,
+                                            PREDICATE &&predicate) const
+        noexcept(noexcept(TC.find_first(std::forward<T>(value),
+                                        std::forward<PREDICATE>(predicate)))) {
         return TC.find_first(std::forward<T>(value),
                              std::forward<PREDICATE>(predicate));
     }

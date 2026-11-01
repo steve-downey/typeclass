@@ -145,7 +145,11 @@ struct derive_traversable : protected Impl {
 
     // \ref{transpose.traversable.ops}, traversal operations
     template <class T, class F>
-    constexpr auto for_each(this auto &&self, T &&value, F &&function)
+    constexpr auto for_each(this auto &&self, T &&value, F &&function) noexcept(
+        noexcept(self.traverse(
+            applicative<std::remove_cvref_t<std::invoke_result_t<
+                F &, detail::traversal_argument_t<decltype(self), T>>>>,
+            std::forward<F>(function), std::forward<T>(value))))
         requires requires {
             self.traverse(
                 applicative<std::remove_cvref_t<std::invoke_result_t<
@@ -155,7 +159,10 @@ struct derive_traversable : protected Impl {
 
     template <class T>
         requires applicative_context<typename Impl::element_type>
-    constexpr auto transpose(this auto &&self, T &&value)
+    [[nodiscard]] constexpr auto
+    transpose(this auto &&self, T &&value) noexcept(
+        noexcept(self.traverse(applicative<typename Impl::element_type>,
+                               std::identity{}, std::forward<T>(value))))
         requires requires {
             self.traverse(applicative<typename Impl::element_type>,
                           std::identity{}, std::forward<T>(value));
@@ -163,9 +170,19 @@ struct derive_traversable : protected Impl {
 
     // \ref{transpose.traversable.delegate}, delegated traversal
     template <class TRAVERSABLE_MAP, class T, class F>
-    constexpr auto traverse_with(this auto &&,
-                                 const TRAVERSABLE_MAP &traversable_map,
-                                 F &&function, T &&value)
+    [[nodiscard]] constexpr auto traverse_with(
+        this auto &&, const TRAVERSABLE_MAP &traversable_map, F &&function,
+        T &&value) noexcept(noexcept(traversable_map
+                                         .traverse(
+                                             applicative<std::remove_cvref_t<
+                                                 std::invoke_result_t<
+                                                     F &,
+                                                     detail::
+                                                         traversal_argument_t<
+                                                             TRAVERSABLE_MAP,
+                                                             T>>>>,
+                                             std::forward<F>(function),
+                                             std::forward<T>(value))))
         requires requires {
             traversable_map.traverse(
                 applicative<std::remove_cvref_t<std::invoke_result_t<
@@ -174,10 +191,13 @@ struct derive_traversable : protected Impl {
         };
 
     template <class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
-    constexpr auto traverse_with(this auto &&,
-                                 const TRAVERSABLE_MAP &traversable_map,
-                                 const APPLICATIVE_MAP &applicative_map,
-                                 F &&function, T &&value)
+    [[nodiscard]] constexpr auto traverse_with(
+        this auto &&, const TRAVERSABLE_MAP &traversable_map,
+        const APPLICATIVE_MAP &applicative_map, F &&function,
+        T &&value) noexcept(noexcept(traversable_map
+                                         .traverse(applicative_map,
+                                                   std::forward<F>(function),
+                                                   std::forward<T>(value))))
         requires requires {
             traversable_map.traverse(applicative_map, std::forward<F>(function),
                                      std::forward<T>(value));
@@ -186,9 +206,12 @@ struct derive_traversable : protected Impl {
     template <class TRAVERSABLE_MAP, class T>
         requires applicative_context<
             typename std::remove_cvref_t<TRAVERSABLE_MAP>::element_type>
-    constexpr auto transpose_with(this auto &&self,
-                                  const TRAVERSABLE_MAP &traversable_map,
-                                  T &&value)
+    [[nodiscard]] constexpr auto transpose_with(
+        this auto &&self, const TRAVERSABLE_MAP &traversable_map,
+        T &&value) noexcept(noexcept(self.traverse_with(traversable_map,
+                                                        std::identity{},
+                                                        std::forward<T>(
+                                                            value))))
         requires requires {
             self.traverse_with(traversable_map, std::identity{},
                                std::forward<T>(value));
@@ -197,7 +220,7 @@ struct derive_traversable : protected Impl {
   private:
     //! \omit
     template <class SELF>
-    static constexpr decltype(auto) impl_of(SELF &&self) {
+    static constexpr decltype(auto) impl_of(SELF &&self) noexcept {
         return static_cast<impl_ref_t<Impl, SELF>>(self);
     }
 };
@@ -468,11 +491,19 @@ concept traversable_object =
 //! \remarks Elements are visited in the structure's iteration order. If `self`
 //! declares consumption and `value` is a non-`const`, non-`volatile` rvalue,
 //! `function` receives rvalue elements; otherwise it receives `const` lvalue
-//! elements.
+//! elements. The exception specification is that of the `traverse` call the
+//! operation makes. The result is the only operation of this object whose
+//! result a caller may discard: `for_each` is `traverse` with its arguments
+//! the other way round, and is the spelling for a traversal made for its
+//! effects.
 template <class Impl>
 template <class T, class F>
-constexpr auto derive_traversable<Impl>::for_each(this auto &&self, T &&value,
-                                                  F &&function)
+constexpr auto derive_traversable<Impl>::
+    for_each(this auto &&self, T &&value, F &&function) noexcept(
+        noexcept(self.traverse(
+            applicative<std::remove_cvref_t<std::invoke_result_t<
+                F &, detail::traversal_argument_t<decltype(self), T>>>>,
+            std::forward<F>(function), std::forward<T>(value))))
     requires requires {
         self.traverse(
             applicative<std::remove_cvref_t<std::invoke_result_t<
@@ -498,11 +529,15 @@ constexpr auto derive_traversable<Impl>::for_each(this auto &&self, T &&value,
 //! constraint is what lets a caller ask whether this operation is available
 //! for a structure whose elements are not a context: the return type is
 //! deduced, so without it the only answer available is a diagnostic from
-//! inside the body.
+//! inside the body. The exception specification is that of the `traverse`
+//! call the operation makes.
 template <class Impl>
 template <class T>
     requires applicative_context<typename Impl::element_type>
-constexpr auto derive_traversable<Impl>::transpose(this auto &&self, T &&value)
+[[nodiscard]] constexpr auto
+derive_traversable<Impl>::transpose(this auto &&self, T &&value) noexcept(
+    noexcept(self.traverse(applicative<typename Impl::element_type>,
+                           std::identity{}, std::forward<T>(value))))
     requires requires {
         self.traverse(applicative<typename Impl::element_type>, std::identity{},
                       std::forward<T>(value));
@@ -524,12 +559,21 @@ constexpr auto derive_traversable<Impl>::transpose(this auto &&self, T &&value)
 //! one `applicative` names for the context `function` returns for that
 //! argument type.
 //! \returns The result of that traversal.
+//! \remarks The exception specification is that of the `traverse` call the
+//! operation makes.
 template <class Impl>
 template <class TRAVERSABLE_MAP, class T, class F>
-constexpr auto
-derive_traversable<Impl>::traverse_with(this auto &&,
-                                        const TRAVERSABLE_MAP &traversable_map,
-                                        F &&function, T &&value)
+[[nodiscard]] constexpr auto derive_traversable<Impl>::traverse_with(
+    this auto &&, const TRAVERSABLE_MAP &traversable_map, F &&function,
+    T &&value) noexcept(noexcept(traversable_map
+                                     .traverse(
+                                         applicative<std::remove_cvref_t<
+                                             std::invoke_result_t<
+                                                 F &,
+                                                 detail::traversal_argument_t<
+                                                     TRAVERSABLE_MAP, T>>>>,
+                                         std::forward<F>(function),
+                                         std::forward<T>(value))))
     requires requires {
         traversable_map.traverse(
             applicative<std::remove_cvref_t<std::invoke_result_t<
@@ -549,9 +593,13 @@ derive_traversable<Impl>::traverse_with(this auto &&,
 //! \effects-equiv
 template <class Impl>
 template <class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
-constexpr auto derive_traversable<Impl>::traverse_with(
+[[nodiscard]] constexpr auto derive_traversable<Impl>::traverse_with(
     this auto &&, const TRAVERSABLE_MAP &traversable_map,
-    const APPLICATIVE_MAP &applicative_map, F &&function, T &&value)
+    const APPLICATIVE_MAP &applicative_map, F &&function,
+    T &&value) noexcept(noexcept(traversable_map
+                                     .traverse(applicative_map,
+                                               std::forward<F>(function),
+                                               std::forward<T>(value))))
     requires requires {
         traversable_map.traverse(applicative_map, std::forward<F>(function),
                                  std::forward<T>(value));
@@ -570,8 +618,11 @@ template <class Impl>
 template <class TRAVERSABLE_MAP, class T>
     requires applicative_context<
         typename std::remove_cvref_t<TRAVERSABLE_MAP>::element_type>
-constexpr auto derive_traversable<Impl>::transpose_with(
-    this auto &&self, const TRAVERSABLE_MAP &traversable_map, T &&value)
+[[nodiscard]] constexpr auto derive_traversable<Impl>::transpose_with(
+    this auto &&self, const TRAVERSABLE_MAP &traversable_map,
+    T &&value) noexcept(noexcept(self.traverse_with(traversable_map,
+                                                    std::identity{},
+                                                    std::forward<T>(value))))
     requires requires {
         self.traverse_with(traversable_map, std::identity{},
                            std::forward<T>(value));
@@ -598,8 +649,10 @@ struct traverse_fn {
               class POLICY = std::remove_cvref_t<
                   decltype(applicative<traverse_context_t<F, T>>)>>
         requires applicative_object_for<POLICY, traverse_context_t<F, T>>
-    constexpr auto operator()(F &&function, T &&value,
-                              POLICY policy = POLICY{}) const {
+    [[nodiscard]] constexpr auto operator()(F &&function, T &&value,
+                                            POLICY policy = POLICY{}) const
+        noexcept(noexcept(traversable<std::remove_cvref_t<T>>.traverse(
+            policy, std::forward<F>(function), std::forward<T>(value)))) {
         const auto &map = traversable<std::remove_cvref_t<T>>;
         return map.traverse(policy, std::forward<F>(function),
                             std::forward<T>(value));
@@ -643,7 +696,10 @@ struct traverse_fn {
 //! composition rather than sequential dependence -- which is also why
 //! retaining the first failure is as far as the default policy can go. There
 //! is nothing for a composition to decline to produce: by the time it sees
-//! an element's context, that context has already been computed.
+//! an element's context, that context has already been computed. The
+//! exception specification is equivalent to
+//! `noexcept(traversable<remove_cvref_t<T>>.traverse(policy, function,
+//! value))`.
 inline constexpr traverse_fn traverse{};
 
 // `transpose` flips a structure of contextual values into a single contextual
@@ -659,7 +715,9 @@ inline constexpr traverse_fn traverse{};
 struct transpose_fn {
     template <class T>
         requires transposable_structure<T>
-    constexpr auto operator()(T &&value) const {
+    [[nodiscard]] constexpr auto operator()(T &&value) const
+        noexcept(noexcept(traversable<std::remove_cvref_t<T>>.transpose(
+            std::forward<T>(value)))) {
         const auto &map = traversable<std::remove_cvref_t<T>>;
         return map.transpose(std::forward<T>(value));
     }
@@ -690,7 +748,9 @@ struct transpose_fn {
 //! elements collected however the traversal is written. Every applicative
 //! object this library registers composes an rvalue operand without
 //! duplicating the value it holds, so for those the total number of element
-//! operations is linear in the number of elements.
+//! operations is linear in the number of elements. The exception
+//! specification is equivalent to
+//! `noexcept(traversable<remove_cvref_t<decltype((value))>>.transpose(value))`.
 inline constexpr transpose_fn transpose{};
 
 } // namespace beman::transpose

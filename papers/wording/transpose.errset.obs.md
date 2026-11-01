@@ -23,7 +23,7 @@ template<class ERROR> constexpr auto holds() const noexcept -> bool;
 [x+4]{.pnum} *Remarks*: This is a value-level question -- what was actually raised.
 
 ```cpp
-template<class ERROR> constexpr auto witness() const -> const optional<ERROR>&;
+template<class ERROR> constexpr auto witness() const noexcept -> const optional<ERROR>&;
 ```
 
 [x+5]{.pnum} *Constraints*: `ERROR` is one of the alternatives.
@@ -39,7 +39,10 @@ constexpr auto witness_count() const noexcept -> size_t;
 [x+8]{.pnum} *Remarks*: Always at least one, by the class invariant. Short-circuiting composition produces exactly one; accumulating composition may produce more. It is an observer rather than an implementation detail so that a caller can check `visit`'s precondition instead of tripping it.
 
 ```cpp
-template<class HANDLER> constexpr auto visit(HANDLER&& handler) const -> decltype(auto);
+template<class HANDLER>
+constexpr auto visit(HANDLER&& handler) const
+    noexcept((is_nothrow_copy_constructible_v<ERRORS> && ...) &&
+             (is_nothrow_invocable_v<HANDLER, ERRORS> && ...)) -> decltype(auto);
 ```
 
 [x+9]{.pnum} *Preconditions*: `witness_count()` is 1.
@@ -48,7 +51,7 @@ template<class HANDLER> constexpr auto visit(HANDLER&& handler) const -> decltyp
 
 [x+11]{.pnum} *Returns*: The result of that invocation.
 
-[x+12]{.pnum} *Remarks*: The precondition is checked rather than assumed. Every value produced by short-circuiting composition satisfies it; a subset with more than one witness, which only accumulating composition produces, has no single value to hand back, and answering with the leftmost would turn a dropped error into a quiet wrong answer. For such a value, use `witness` per alternative, guarded by `holds` or `witness_count`.
+[x+12]{.pnum} *Remarks*: The precondition is checked rather than assumed. Every value produced by short-circuiting composition satisfies it; a subset with more than one witness, which only accumulating composition produces, has no single value to hand back, and answering with the leftmost would turn a dropped error into a quiet wrong answer. For such a value, use `witness` per alternative, guarded by `holds` or `witness_count`. The exception specification is that of copying the witness out and invoking `handler` on it as an rvalue, for every alternative; a violated precondition stops the program and does not throw.
 
 :::
 

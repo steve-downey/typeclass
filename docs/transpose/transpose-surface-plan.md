@@ -298,6 +298,13 @@ stage assumes.
 
 ### Stage 7 — [noexcept-sweep](#noexcept-sweep) {#noexcept-sweep}
 Closes [operation-noexcept](decisions.md#operation-noexcept).
+Status: DONE 2026-11-01 on branch `noexcept-sweep`. Every basis, derived and
+object operation carries a computed specification, the route-selecting
+derived members computing theirs from the requires-expression the body
+selects by; operations that allocate carry none, by rule, and the rule is
+recorded under the slug. `[[nodiscard]]` is on every result-bearing operation
+except `for_each`. The wording regenerates and verifies. The tripwire did not
+fire.
 Deliverables:
 - Conditional `noexcept` on every basis operation of every registered
   instance and on every derived operation of the CRTP bases, computed from
