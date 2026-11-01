@@ -397,6 +397,39 @@ struct pure_fn {
     }
 };
 
+/** Operation object for `raise`, the dual of `pure`: it builds a context in
+ * its failure state, so like `pure` it must name the context. Dispatches to
+ * the applicative object's own `raise`; an object that has none, because its
+ * context's failure state carries no witness or because it cannot fail, is a
+ * constraint that does not match. */
+//! \omit
+template <class CONTEXT,
+          const auto &TC = applicative<std::remove_cvref_t<CONTEXT>>>
+struct raise_fn {
+    /** Enters the failure state of the context with `error` as its witness. */
+    template <class ERROR>
+        requires requires { TC.raise(std::declval<ERROR>()); }
+    constexpr auto operator()(ERROR &&error) const {
+        return TC.raise(std::forward<ERROR>(error));
+    }
+};
+
+/** Operation object for `zero`, the failure state that carries no witness:
+ * the identity of Alternative's disjunction, decided under the same rule as
+ * `raise` (docs/transpose/decisions.md#failure-injection-spelling). Only a
+ * context whose failure state needs nothing has one. */
+//! \omit
+template <class CONTEXT,
+          const auto &TC = applicative<std::remove_cvref_t<CONTEXT>>>
+struct zero_fn {
+    /** The context in its witness-free failure state. */
+    constexpr auto operator()() const
+        requires requires { TC.zero(); }
+    {
+        return TC.zero();
+    }
+};
+
 /** Operation object for the derived `zip_with`. */
 //! \omit
 struct zip_with_fn {
@@ -896,6 +929,35 @@ inline constexpr ap_fn ap{};
 //! carries it.
 template <class CONTEXT>
 inline constexpr pure_fn<CONTEXT> pure{};
+
+//! \seebelow
+//! \constraints For a call `raise<CONTEXT>(error)`, let `C` be
+//! `remove_cvref_t<CONTEXT>`. `applicative<C>.raise(error)` is a valid
+//! expression.
+//! \effects Equivalent to `applicative<C>.raise(error)`, with `error`
+//! forwarded in its own value category.
+//! \remarks The name `raise` denotes a family of operation objects, one per
+//! context, the dual of `pure`: where `pure` enters the context's success
+//! state with a value, `raise` enters its failure state with a witness. The
+//! context is named for the reason `pure`'s is: the operation builds a
+//! context rather than consuming one. The grade of the result is the
+//! object's business; for the error-set model it is the join of the context's
+//! grade with the grade `error`'s type alone would carry, spelled lazily.
+template <class CONTEXT>
+inline constexpr raise_fn<CONTEXT> raise{};
+
+//! \seebelow
+//! \constraints For a call `zero<CONTEXT>()`, let `C` be
+//! `remove_cvref_t<CONTEXT>`. `applicative<C>.zero()` is a valid expression.
+//! \effects Equivalent to `applicative<C>.zero()`.
+//! \remarks The name `zero` denotes a family of operation objects, one per
+//! context: the failure state that carries no witness, which only a context
+//! whose failure state needs nothing has. It is the identity of the
+//! disjunction an Alternative object would supply, and is spelled now so that
+//! `raise` and `zero` are decided under one rule. `std::expected` has no
+//! `zero`: its failure state needs a witness, which is what `raise` supplies.
+template <class CONTEXT>
+inline constexpr zero_fn<CONTEXT> zero{};
 
 //! \seebelow
 //! \constraints For a call `zip_with(function, first_argument,

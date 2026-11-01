@@ -67,6 +67,8 @@ struct optional_applicative_impl {
     constexpr auto pure(this auto &&, VALUE &&value)
         -> std::optional<std::remove_cvref_t<VALUE>>;
 
+    constexpr auto zero(this auto &&) -> std::optional<VALUE_TYPE>;
+
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_optional_v<FIRST> &&
                  (detail::is_optional_v<REST> && ...) &&
@@ -88,6 +90,7 @@ struct optional_applicative_map
     : derive_applicative<optional_applicative_impl<VALUE_TYPE>> {
     using optional_applicative_impl<VALUE_TYPE>::invoke;
     using optional_applicative_impl<VALUE_TYPE>::pure;
+    using optional_applicative_impl<VALUE_TYPE>::zero;
 };
 
 /// Applicative instance for `std::optional<VALUE_TYPE>`.
@@ -183,6 +186,16 @@ constexpr auto optional_applicative_impl<VALUE_TYPE>::pure(this auto &&,
     -> std::optional<std::remove_cvref_t<VALUE>> {
     return std::optional<std::remove_cvref_t<VALUE>>{
         std::forward<VALUE>(value)};
+}
+
+//! \returns A disengaged `optional<VALUE_TYPE>`.
+//! \remarks The failure state of `optional` carries no witness, so `optional`
+//! has a `zero`; it is the identity of the first-engaged disjunction that
+//! `first_monoid` already folds with.
+template <class VALUE_TYPE>
+constexpr auto optional_applicative_impl<VALUE_TYPE>::zero(this auto &&)
+    -> std::optional<VALUE_TYPE> {
+    return std::optional<VALUE_TYPE>{};
 }
 
 //! \returns If every operand is engaged, an engaged `optional` holding the

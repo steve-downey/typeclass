@@ -227,6 +227,49 @@ template <class F, class A>
 using bind_result_t =
     std::remove_cvref_t<std::invoke_result_t<F, bind_argument_t<A>>>;
 
+/** The carrier `raise` yields on the object over
+ * `std::expected<VALUE_TYPE, ERROR_TYPE>` for a witness of type `ERROR`: the
+ * declared spelling verbatim when `ERROR` is `ERROR_TYPE` itself, which is the
+ * lazy carrier spelling the cores keep, and otherwise the carrier re-indexed
+ * at the join of the object's grade with the grade `ERROR` alone would carry.
+ * `ERROR` may itself be an error set, which contributes its members.
+ */
+//! \expos
+template <class VALUE_TYPE, class ERROR_TYPE, class ERROR>
+struct raise_result {
+    using type = rebind_grade_t<
+        std::expected<VALUE_TYPE, ERROR_TYPE>,
+        grade_join_t<grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
+                     grade_of_t<std::expected<VALUE_TYPE, ERROR>>>>;
+};
+
+template <class VALUE_TYPE, class ERROR_TYPE>
+struct raise_result<VALUE_TYPE, ERROR_TYPE, ERROR_TYPE> {
+    using type = std::expected<VALUE_TYPE, ERROR_TYPE>;
+};
+
+//! \expos
+template <class VALUE_TYPE, class ERROR_TYPE, class ERROR>
+using raise_result_t = typename raise_result<VALUE_TYPE, ERROR_TYPE,
+                                             std::remove_cvref_t<ERROR>>::type;
+
+/** Whether the object over `std::expected<VALUE_TYPE, ERROR_TYPE>` can raise
+ * an `ERROR`: the result's error alternative is constructible from it. */
+//! \expos
+template <class VALUE_TYPE, class ERROR_TYPE, class ERROR>
+concept raisable = std::constructible_from<
+    typename raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>::error_type, ERROR>;
+
+/** Builds the raised carrier. Shared by both applicative objects: raising is
+ * the same for each, as `pure` is. */
+template <class VALUE_TYPE, class ERROR_TYPE, class ERROR>
+constexpr auto raise_into(ERROR &&error)
+    -> raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR> {
+    using Result = raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>;
+    return Result{std::unexpect,
+                  typename Result::error_type(std::forward<ERROR>(error))};
+}
+
 /** The element `bind` hands on: the held value, or the unit for a `void`
  * expected. */
 template <class A, class ERROR_TYPE>
@@ -321,6 +364,11 @@ struct expected_applicative_impl {
     auto pure(this auto &&, VALUE &&value)
         -> detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE>;
 
+    template <class ERROR>
+        requires detail::raisable<VALUE_TYPE, ERROR_TYPE, ERROR>
+    auto raise(this auto &&, ERROR &&error)
+        -> detail::raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>;
+
     /** N-ary core: all operands share ERROR_TYPE; leftmost error wins.
      *
      * Operands are deduced through forwarding references rather than matched
@@ -393,6 +441,7 @@ struct expected_applicative_map
     : derive_applicative<expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>> {
     using expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke;
     using expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure;
+    using expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::raise;
 };
 
 /** Applicative instance for `std::expected<VALUE_TYPE, ERROR_TYPE>`. */
@@ -459,6 +508,11 @@ struct accumulating_expected_applicative_impl {
     auto pure(this auto &&, VALUE &&value)
         -> detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE>;
 
+    template <class ERROR>
+        requires detail::raisable<VALUE_TYPE, ERROR_TYPE, ERROR>
+    auto raise(this auto &&, ERROR &&error)
+        -> detail::raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>;
+
     /** N-ary core: all operands share ERROR_TYPE. When ERROR_TYPE is itself
      * a witnessed subset (the traverse case: one function, one declared
      * error, possibly several members), failures of distinct members all
@@ -522,6 +576,7 @@ struct accumulating_expected_applicative_map
     using accumulating_expected_applicative_impl<VALUE_TYPE,
                                                  ERROR_TYPE>::invoke;
     using accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure;
+    using accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::raise;
 
     /// Bind is refused, not merely absent: sequencing needs a value from
     /// the first computation to feed the continuation, and when that
@@ -636,6 +691,28 @@ auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure(this auto &&,
     } else {
         return Returned{std::forward<VALUE>(value)};
     }
+}
+
+//! \constraints The error alternative of the result is constructible from
+//! `error`.
+//! \returns An `expected` holding `error` as its error, at the grade that is
+//! the join of this object's grade with the grade `error`'s type alone would
+//! carry. When that type is `ERROR_TYPE` itself the result is
+//! `expected<VALUE_TYPE, ERROR_TYPE>`, carried verbatim.
+//! \remarks This is the dual of `pure`: the generic entry into the failure
+//! state, so that generic graded code can fail without naming the carrier.
+//! Carrier spelling stays lazy, as for the cores: raising the declared
+//! alternative leaves the spelling alone, and only a genuinely different
+//! alternative widens it into an error set. `error` may itself be an error
+//! set, whose members join.
+template <class VALUE_TYPE, class ERROR_TYPE>
+template <class ERROR>
+    requires detail::raisable<VALUE_TYPE, ERROR_TYPE, ERROR>
+auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::raise(this auto &&,
+                                                              ERROR &&error)
+    -> detail::raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR> {
+    return detail::raise_into<VALUE_TYPE, ERROR_TYPE>(
+        std::forward<ERROR>(error));
 }
 
 //! \returns If every operand holds a value, an `expected` holding the result
@@ -785,6 +862,19 @@ auto accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure(
     -> detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE> {
     return applicative<std::expected<VALUE_TYPE, ERROR_TYPE>>.pure(
         std::forward<VALUE>(value));
+}
+
+//! \constraints As for the short-circuit object's `raise`.
+//! \returns As for the short-circuit object's `raise`: the two objects share
+//! the carrier, so they share the entry into its failure state.
+template <class VALUE_TYPE, class ERROR_TYPE>
+template <class ERROR>
+    requires detail::raisable<VALUE_TYPE, ERROR_TYPE, ERROR>
+auto accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::raise(
+    this auto &&, ERROR &&error)
+    -> detail::raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR> {
+    return detail::raise_into<VALUE_TYPE, ERROR_TYPE>(
+        std::forward<ERROR>(error));
 }
 
 //! \returns If every operand holds a value, an `expected` holding the result

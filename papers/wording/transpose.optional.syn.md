@@ -39,6 +39,8 @@ namespace std {
     template<class VALUE>
     constexpr auto pure(this auto&&, VALUE&& value) -> optional<remove_cvref_t<VALUE>>;
 
+    constexpr auto zero(this auto&&) -> optional<VALUE_TYPE>;
+
     template<class FUNCTION, class FIRST, class... REST>
       requires $is-optional-v$<FIRST> && ($is-optional-v$<REST> && ...) &&
                invocable<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...> &&
@@ -59,6 +61,7 @@ namespace std {
       : derive_applicative<$optional-applicative-impl$<VALUE_TYPE>> {
     using $optional-applicative-impl$<VALUE_TYPE>::invoke;
     using $optional-applicative-impl$<VALUE_TYPE>::pure;
+    using $optional-applicative-impl$<VALUE_TYPE>::zero;
   }; // exposition only
 }
 ```

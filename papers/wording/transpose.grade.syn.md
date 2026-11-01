@@ -56,6 +56,13 @@ struct grade_model;
 
 :::
 
+```cpp
+namespace std {
+  template<class LEFT, class RIGHT>
+  using $grade-join-t$ = typename grade_join<LEFT, RIGHT>::type; // exposition only
+}
+```
+
 ::: wording
 
 ```cpp

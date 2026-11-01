@@ -75,6 +75,7 @@ struct grade_subsumes;
 template <class GRADE>
 struct grade_model;
 
+//! \expos
 template <class LEFT, class RIGHT>
 using grade_join_t = typename grade_join<LEFT, RIGHT>::type;
 

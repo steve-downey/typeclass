@@ -181,6 +181,45 @@ namespace std {
 
 ```cpp
 namespace std {
+  template<class VALUE_TYPE, class ERROR_TYPE, class ERROR>
+  struct $raise-result$ {
+    using type =
+        $rebind-grade-t$<expected<VALUE_TYPE, ERROR_TYPE>,
+                       $grade-join-t$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
+                                    $grade-of-t$<expected<VALUE_TYPE, ERROR>>>>;
+  }; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class VALUE_TYPE, class ERROR_TYPE>
+  struct $raise-result$<VALUE_TYPE, ERROR_TYPE, ERROR_TYPE> {
+    using type = expected<VALUE_TYPE, ERROR_TYPE>;
+  }; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class VALUE_TYPE, class ERROR_TYPE, class ERROR>
+  using $raise-result-t$ =
+      typename $raise-result$<VALUE_TYPE, ERROR_TYPE,
+                            remove_cvref_t<ERROR>>::type; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class VALUE_TYPE, class ERROR_TYPE, class ERROR>
+  concept $raisable$ = constructible_from<
+      typename $raise-result-t$<VALUE_TYPE, ERROR_TYPE, ERROR>::error_type,
+      ERROR>; // exposition only
+}
+```
+
+```cpp
+namespace std {
   template<class ERROR_TYPE, class... CARRIERS>
   inline constexpr bool $all-declare-v$ =
       ($is-expected-with-error-v$<remove_cvref_t<CARRIERS>, ERROR_TYPE> &&
@@ -229,6 +268,11 @@ namespace std {
     auto pure(this auto&&, VALUE&& value)
         -> $expected-pure-t$<VALUE_TYPE, VALUE, ERROR_TYPE>;
 
+    template<class ERROR>
+      requires $raisable$<VALUE_TYPE, ERROR_TYPE, ERROR>
+    auto raise(this auto&&, ERROR&& error)
+        -> $raise-result-t$<VALUE_TYPE, ERROR_TYPE, ERROR>;
+
     template<class FUNCTION, class... CARRIERS>
       requires(sizeof...(CARRIERS) > 0) && $all-declare-v$<ERROR_TYPE, CARRIERS...>
     auto invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands)
@@ -270,6 +314,7 @@ namespace std {
       : derive_applicative<$expected-applicative-impl$<VALUE_TYPE, ERROR_TYPE>> {
     using $expected-applicative-impl$<VALUE_TYPE, ERROR_TYPE>::invoke;
     using $expected-applicative-impl$<VALUE_TYPE, ERROR_TYPE>::pure;
+    using $expected-applicative-impl$<VALUE_TYPE, ERROR_TYPE>::raise;
   }; // exposition only
 }
 ```
@@ -282,6 +327,11 @@ namespace std {
     template<class VALUE>
     auto pure(this auto&&, VALUE&& value)
         -> $expected-pure-t$<VALUE_TYPE, VALUE, ERROR_TYPE>;
+
+    template<class ERROR>
+      requires $raisable$<VALUE_TYPE, ERROR_TYPE, ERROR>
+    auto raise(this auto&&, ERROR&& error)
+        -> $raise-result-t$<VALUE_TYPE, ERROR_TYPE, ERROR>;
 
     template<class FUNCTION, class... CARRIERS>
       requires(sizeof...(CARRIERS) > 0) && $all-declare-v$<ERROR_TYPE, CARRIERS...>
@@ -325,6 +375,7 @@ namespace std {
             $accumulating-expected-applicative-impl$<VALUE_TYPE, ERROR_TYPE>> {
     using $accumulating-expected-applicative-impl$<VALUE_TYPE, ERROR_TYPE>::invoke;
     using $accumulating-expected-applicative-impl$<VALUE_TYPE, ERROR_TYPE>::pure;
+    using $accumulating-expected-applicative-impl$<VALUE_TYPE, ERROR_TYPE>::raise;
   }; // exposition only
 }
 ```
