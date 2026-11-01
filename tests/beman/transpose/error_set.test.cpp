@@ -7,6 +7,7 @@
 
 #include <expected>
 #include <optional>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 
@@ -654,4 +655,34 @@ TEST_CASE("recover: generic code stays well-formed at the empty grade") {
     STATIC_REQUIRE(
         std::is_same_v<decltype(untouched), std::expected<int, empty_set>>);
     REQUIRE(*untouched == 9);
+}
+
+// =========================================================================
+// The type-order key. `error_set_of` lays its witness tuple out in canonical
+// order, so it is declared in the inline namespace `ordered_by_type_name`,
+// the key of the order in use (docs/transpose/decisions.md#type-order-abi).
+// The stage asked for a compile-fail test that two translation units cannot
+// mix order keys; with one key in existence that cannot be written, and
+// this is the honest substitute: the key is part of the type's identity --
+// visible in the compiler's rendering and reachable by the qualified
+// spelling -- while every unqualified spelling above is unchanged.
+// =========================================================================
+
+TEST_CASE("error_set: the type-order key is part of error_set_of's identity") {
+    STATIC_REQUIRE(
+        std::is_same_v<set_a,
+                       bt::ordered_by_type_name::error_set_of<err_alpha>>);
+    STATIC_REQUIRE(
+        std::is_same_v<empty_set, bt::ordered_by_type_name::error_set_of<>>);
+    STATIC_REQUIRE(
+        std::is_same_v<bt::error_set<err_alpha>, bt::error_set_of<err_alpha>>);
+
+#if defined(__GNUC__) && !defined(__clang__)
+    // GCC's __PRETTY_FUNCTION__ renders inline namespaces, so the key is
+    // visible in the type's name. Clang suppresses them in that rendering,
+    // which is why this half is GCC-only; the is_same checks above hold on
+    // every compiler.
+    STATIC_REQUIRE(bt::detail::type_name<set_ab>().find(
+                       "ordered_by_type_name") != std::string_view::npos);
+#endif
 }

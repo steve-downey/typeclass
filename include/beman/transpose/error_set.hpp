@@ -39,24 +39,36 @@
 // accessor that hands out the underlying variant. Having only the subset
 // conversions is the coherence argument compiled into the overload set.
 //
-// TYPE ORDERING is P2830's job. Until it is available this header uses an
-// interim ordering read out of the compiler's own function signature, valid
-// only for the documented restrictions: named types, external linkage,
+// TYPE ORDERING is P2830's job. Until it is available the canonical set uses
+// an interim ordering read out of the compiler's own function signature,
+// valid only for the documented restrictions: named types, external linkage,
 // stable spelling. Two distinct types that render to the same name would be
 // silently conflated, so that case is a hard error rather than a wrong
-// answer -- see the static_assert in error_set_of.
+// answer -- see the static_assert in error_set_of. The set machinery and the
+// order live in detail/canonical_set.hpp, which has no error vocabulary
+// (docs/transpose/decisions.md#canonical-set-home); this header is its
+// first client.
+//
+// THE ORDER IS PART OF THE ABI. `error_set_of` stores its witnesses as a
+// tuple in canonical order, so its layout follows the order in use. It is
+// therefore declared in the inline namespace `ordered_by_type_name`, the
+// same key the order itself carries, so that the day a P2830 order exists a
+// translation unit built against it cannot be linked with one built against
+// the name order -- the mismatch fails at link time rather than violating
+// the ODR silently. User code and the wording spell `error_set<...>` and
+// `error_set_of<...>` as before; the key is part of the type's identity, not
+// of its spelling. See docs/transpose/decisions.md#type-order-abi.
 
+#include <beman/transpose/detail/canonical_set.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>
 #include <beman/transpose/grade.hpp>
 
-#include <array>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <expected>
 #include <functional>
 #include <optional>
-#include <string_view>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -64,171 +76,14 @@
 
 namespace beman::transpose {
 
+inline namespace ordered_by_type_name {
+
 template <class... ERRORS>
 class error_set_of;
 
+} // namespace ordered_by_type_name
+
 namespace detail {
-
-// -- Interim type ordering (P2830 fallback) -------------------------------
-
-/** The compiler's spelling of T, extracted from the enclosing signature.
- * Valid as an ordering key only under the documented restrictions: named
- * types with external linkage and a stable spelling.
- */
-template <class T>
-consteval auto type_name() -> std::string_view {
-#if defined(_MSC_VER) && !defined(__clang__)
-    // MSVC has no __PRETTY_FUNCTION__. __FUNCSIG__ spells the specialization
-    // as `... type_name<T>(void)`, so the name is what sits between the
-    // template argument list and the last `>`. Should that spelling ever
-    // change, fall back to the whole signature, which still names T and so
-    // is still an injective key -- a duller order, not a broken one.
-    const std::string_view signature{__FUNCSIG__};
-    constexpr std::string_view marker{"type_name<"};
-
-    const auto found = signature.find(marker);
-    const auto stop = signature.rfind('>');
-    if (found == std::string_view::npos || stop == std::string_view::npos ||
-        stop <= found + marker.size()) {
-        return signature;
-    }
-    const auto start = found + marker.size();
-    return signature.substr(start, stop - start);
-#else
-    const std::string_view signature{__PRETTY_FUNCTION__};
-    constexpr std::string_view marker{"T = "};
-
-    const auto start = signature.find(marker) + marker.size();
-    auto stop = signature.find(';', start);
-    if (stop == std::string_view::npos) {
-        stop = signature.rfind(']');
-    }
-    return signature.substr(start, stop - start);
-#endif
-}
-
-/** Strict total order on types, by name. Interim stand-in for P2830. */
-template <class LEFT, class RIGHT>
-inline constexpr bool type_precedes_v = type_name<LEFT>() < type_name<RIGHT>();
-
-// -- Type list machinery --------------------------------------------------
-
-//! \omit
-template <class... ERRORS>
-struct type_list {};
-
-template <class T, class LIST>
-inline constexpr bool list_contains_v = false;
-
-template <class T, class... ERRORS>
-inline constexpr bool list_contains_v<T, type_list<ERRORS...>> =
-    (std::is_same_v<T, ERRORS> || ...);
-
-template <class T, class LIST>
-struct list_prepend;
-
-//! \omit
-template <class T, class... ERRORS>
-struct list_prepend<T, type_list<ERRORS...>> {
-    using type = type_list<T, ERRORS...>;
-};
-
-template <class T, class LIST>
-using list_prepend_t = typename list_prepend<T, LIST>::type;
-
-template <class T, class LIST>
-struct list_remove;
-
-//! \omit
-template <class T>
-struct list_remove<T, type_list<>> {
-    using type = type_list<>;
-};
-
-//! \omit
-template <class T, class HEAD, class... TAIL>
-struct list_remove<T, type_list<HEAD, TAIL...>> {
-  private:
-    using rest = typename list_remove<T, type_list<TAIL...>>::type;
-
-  public:
-    using type = std::conditional_t<std::is_same_v<T, HEAD>, rest,
-                                    list_prepend_t<HEAD, rest>>;
-};
-
-/** Deduplicate by type identity, keeping the first occurrence. Identity is
- * std::is_same, never the name: names are an ordering key, not an equality. */
-template <class LIST>
-struct list_dedupe;
-
-//! \omit
-template <>
-struct list_dedupe<type_list<>> {
-    using type = type_list<>;
-};
-
-//! \omit
-template <class HEAD, class... TAIL>
-struct list_dedupe<type_list<HEAD, TAIL...>> {
-    using type =
-        list_prepend_t<HEAD, typename list_dedupe<typename list_remove<
-                                 HEAD, type_list<TAIL...>>::type>::type>;
-};
-
-template <class T, class LIST>
-struct list_insert_sorted;
-
-//! \omit
-template <class T>
-struct list_insert_sorted<T, type_list<>> {
-    using type = type_list<T>;
-};
-
-//! \omit
-template <class T, class HEAD, class... TAIL>
-struct list_insert_sorted<T, type_list<HEAD, TAIL...>> {
-    using type = std::conditional_t<
-        type_precedes_v<T, HEAD>, type_list<T, HEAD, TAIL...>,
-        list_prepend_t<
-            HEAD, typename list_insert_sorted<T, type_list<TAIL...>>::type>>;
-};
-
-template <class LIST>
-struct list_sort;
-
-//! \omit
-template <>
-struct list_sort<type_list<>> {
-    using type = type_list<>;
-};
-
-//! \omit
-template <class HEAD, class... TAIL>
-struct list_sort<type_list<HEAD, TAIL...>> {
-    using type = typename list_insert_sorted<
-        HEAD, typename list_sort<type_list<TAIL...>>::type>::type;
-};
-
-/** The canonical form of a pack: deduplicated, then sorted. */
-template <class... ERRORS>
-using canonical_t =
-    typename list_sort<typename list_dedupe<type_list<ERRORS...>>::type>::type;
-
-/** False when two DISTINCT types render to the same name, which is exactly
- * the case the interim ordering cannot handle. */
-template <class... ERRORS>
-consteval auto names_are_distinct() -> bool {
-    constexpr std::size_t count = sizeof...(ERRORS);
-    const std::array<std::string_view, count> names{type_name<ERRORS>()...};
-    for (std::size_t i = 0; i < count; ++i) {
-        for (std::size_t j = i + 1; j < count; ++j) {
-            if (names[i] == names[j]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
 
 template <class LIST>
 struct error_set_from_list;
@@ -307,7 +162,7 @@ inline constexpr bool error_set_is_canonical_v =
 //! \expos
 template <class... ERRORS>
 inline constexpr bool error_set_names_distinct_v =
-    names_are_distinct<ERRORS...>();
+    names_are_distinct_v<ERRORS...>;
 
 } // namespace detail
 
@@ -317,6 +172,13 @@ inline constexpr bool error_set_names_distinct_v =
 //! \expos
 template <class T, class... ERRORS>
 inline constexpr bool error_set_has_v = (std::is_same_v<T, ERRORS> || ...);
+
+// The order-dependent type. Its witness tuple is laid out in canonical order,
+// so it carries the order's key; see the header comment and
+// docs/transpose/decisions.md#type-order-abi. The namespace closes after the
+// empty specialization below; `error_set` and everything after it are
+// ordinary members of beman::transpose.
+inline namespace ordered_by_type_name {
 
 /// The set of error types a computation may raise, at a canonical pack.
 ///
@@ -572,6 +434,8 @@ class error_set_of<> {
         -> bool = default;
 };
 
+} // namespace ordered_by_type_name
+
 // \rSec3[transpose.errset.empty]{The empty error set}
 
 //! \seebelow
@@ -674,46 +538,9 @@ constexpr auto combine_grade_evidence(const error_set_of<ERRORS...> &lhs,
 
 namespace detail {
 
-// -- Type-level: set difference and list concatenation --------------------
-
-/** FROM_LIST with every member of REMOVE_LIST taken out. */
-template <class REMOVE_LIST, class FROM_LIST>
-struct list_subtract;
-
-template <class FROM_LIST>
-struct list_subtract<type_list<>, FROM_LIST> {
-    using type = FROM_LIST;
-};
-
-template <class HEAD, class... TAIL, class FROM_LIST>
-struct list_subtract<type_list<HEAD, TAIL...>, FROM_LIST> {
-    using type = typename list_subtract<
-        type_list<TAIL...>, typename list_remove<HEAD, FROM_LIST>::type>::type;
-};
-
-template <class REMOVE_LIST, class FROM_LIST>
-using list_subtract_t = typename list_subtract<REMOVE_LIST, FROM_LIST>::type;
-
-/** Concatenates any number of type_lists, left to right. */
-template <class... LISTS>
-struct list_concat_all;
-
-template <>
-struct list_concat_all<> {
-    using type = type_list<>;
-};
-
-template <class... ERRORS>
-struct list_concat_all<type_list<ERRORS...>> {
-    using type = type_list<ERRORS...>;
-};
-
-template <class... LEFT, class... RIGHT, class... REST>
-struct list_concat_all<type_list<LEFT...>, type_list<RIGHT...>, REST...>
-    : list_concat_all<type_list<LEFT..., RIGHT...>, REST...> {};
-
-template <class... LISTS>
-using list_concat_all_t = typename list_concat_all<LISTS...>::type;
+// -- Type-level: the canonical error_set of a list -------------------------
+// Set difference (`list_subtract`) and concatenation (`list_concat_all`) are
+// the canonical set's own, in detail/canonical_set.hpp.
 
 /** The canonical error_set for an arbitrary (possibly unsorted, possibly
  * duplicate-bearing) type_list -- the type_list-input counterpart of the

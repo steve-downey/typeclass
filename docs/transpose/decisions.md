@@ -4330,7 +4330,28 @@ the disjunction total?
 **Question:** Where does the canonical type-set machinery live: inside the
 `error_set` model, or beside the grade framework where a second model or a
 value-side sum can reuse it?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed answer
+on 2026-11-01.
+**Decision:** A header of its own beside `grade.hpp`:
+`include/beman/transpose/detail/canonical_set.hpp`, holding `type_list` and
+its operations, `canonical_t`, the interim name order with its collision
+check, set difference and concatenation. It is `detail` for now and becomes
+public when stage
+[set-elimination](transpose-surface-plan.md#set-elimination) gives it a
+second client. It carries no error vocabulary. `error_set.hpp` includes it
+and keeps only what names `error_set`: `error_set_from_list`,
+`error_set_of_list_t`, and the two traits the class's Mandates name.
+`grade.hpp` does not include it, and the law harness still includes
+`grade.hpp` alone. The order's ABI key lands here too; see
+[type-order-abi](#type-order-abi).
+**Why:** [grade-generality](#grade-generality) says the framework is free of
+error vocabulary, and the set is the half with none in it; kept under the
+model, the one reusable datum was the model's private property. libfn's
+single `copack` serving error grades, value-side joins and its identity
+carrier is the evidence that the set is what gets reused. `detail` rather
+than public because a public header with one client is a promise made before
+the second client has said what it needs.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.7). `canonical_t`, `type_list`,
@@ -4345,6 +4366,24 @@ value-side sum can reuse it?
   [heterogeneous-arm-elimination](#heterogeneous-arm-elimination) its second.
   This is also where [type-order-abi](#type-order-abi) lands, since the order
   is the set's.
+- 2026-11-01 — Shipped by stage
+  [set-home-and-abi](transpose-surface-plan.md#set-home-and-abi). Moved:
+  `type_name`, `type_precedes_v`, `names_are_distinct`, `type_list`,
+  `list_contains_v`, `list_prepend`, `list_remove`, `list_dedupe`,
+  `list_insert_sorted`, `list_sort`, `canonical_t`, `list_subtract`,
+  `list_concat_all`. The pack parameters were renamed `ERRORS` to `TYPES` on
+  the way, which is the only edit to a moved declaration. Two consequences
+  for the wording, both under
+  [wording-visible-internals](#wording-visible-internals): the moved entities
+  the wording names (`type_list`, `canonical_t`, `list_subtract_t`,
+  `list_concat_all_t`) are `\expos` where they are now defined, and render
+  as their exposition spellings; and `names_are_distinct_v` was added beside
+  `names_are_distinct` because specgen's cross-header `\expos` reaches alias
+  and variable templates but did not take on the function template, so
+  `error_set_names_distinct_v` names the trait. The `list_subtract` and
+  `list_concat_all` specializations that had leaked unmarked into
+  `transpose.errset.lattice.md` leave it with the move. The goldens are
+  byte-identical; no deduced `error_set` spelling changed.
 
 ---
 
@@ -4376,7 +4415,30 @@ specification, and is a result that must not be dropped marked
 **Question:** How does the reference implementation guard against the
 canonical order changing under it, when the interim name-based order gives
 way to P2830 reflection-based ordering?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed answer
+on 2026-11-01.
+**Decision:** An inline namespace keyed on the order in use. The key today is
+`ordered_by_type_name`. It wraps the order itself -- `type_name`,
+`type_precedes_v`, `names_are_distinct`, `names_are_distinct_v` -- in
+`beman::transpose::detail`, and the order-dependent type `error_set_of` --
+forward declaration, definition, out-of-line members, and the empty
+specialization -- in `beman::transpose`. `error_set`, the lattice operations,
+`recover` and the model registration are ordinary members of
+`beman::transpose`, so every `error_set<...>` and `error_set_of<...>`
+spelling in user code, tests and wording is unchanged. A P2830
+`std::type_order` key is a second inline namespace beside this one, never a
+change to this one's contents.
+**Why:** libfn found that its interim name order and `std::type_order`
+disagree, so a `copack`'s layout differs by mode; `error_set_of` lays its
+witness tuple out in canonical order and inherits the hazard the day the
+order changes. With the key in place, two translation units built against
+different orders fail to link instead of violating the ODR silently, and
+adopting it while there is one order makes that day a non-event. The key
+goes on the type whose layout follows the order and on the order itself, and
+nowhere else: `type_list` and `canonical_t` carry no layout, so a second
+order gives them distinct instantiations rather than conflicting
+definitions. The standard has one order, so the paper is unaffected.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.10). libfn found that its interim
@@ -4389,3 +4451,19 @@ way to P2830 reflection-based ordering?
   concern and a rationale sentence. *Proposed resolution:* an inline namespace
   on the order-dependent types, keyed on which order is in use, adopted before
   a P2830 path exists so the day it does is a non-event.
+- 2026-11-01 — Shipped by stage
+  [set-home-and-abi](transpose-surface-plan.md#set-home-and-abi).
+  SUBSTITUTION for one acceptance item: the stage asks for a compile-fail
+  test that two translation units cannot mix order keys, and with one key in
+  existence that test cannot be written. The substitute, in
+  `tests/beman/transpose/error_set.test.cpp`, pins that the key is part of
+  the type's identity: `error_set<A>` is the same type as
+  `ordered_by_type_name::error_set_of<A>`, and the key appears in
+  `type_name<error_set<A, B>>()`. The second half is GCC-only: Clang
+  suppresses inline namespaces in `__PRETTY_FUNCTION__`, so there the key is
+  in the mangled name but not the rendered one. The compile-fail test is due
+  the day a second key exists. Two observations: because GCC renders the key,
+  an `error_set` that were itself an element of a canonical set would now
+  sort by a different name on GCC than before -- nothing nests one, and the
+  goldens are byte-identical; and specgen renders the synopsis without the
+  inline namespace, so the wording does not see it.

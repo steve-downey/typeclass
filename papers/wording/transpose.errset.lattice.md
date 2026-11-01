@@ -51,55 +51,9 @@ return lhs.combined_with(rhs);
 
 ```cpp
 namespace std {
-  template<class FROM_LIST>
-  struct list_subtract<type_list<>, FROM_LIST> {
-    using type = FROM_LIST;
-  };
-}
-```
-
-```cpp
-namespace std {
-  template<class HEAD, class... TAIL, class FROM_LIST>
-  struct list_subtract<type_list<HEAD, TAIL...>, FROM_LIST> {
-    using type =
-        typename list_subtract<type_list<TAIL...>,
-                               typename list_remove<HEAD, FROM_LIST>::type>::type;
-  };
-}
-```
-
-```cpp
-namespace std {
-  template<>
-  struct list_concat_all<> {
-    using type = type_list<>;
-  };
-}
-```
-
-```cpp
-namespace std {
-  template<class... ERRORS>
-  struct list_concat_all<type_list<ERRORS...>> {
-    using type = type_list<ERRORS...>;
-  };
-}
-```
-
-```cpp
-namespace std {
-  template<class... LEFT, class... RIGHT, class... REST>
-  struct list_concat_all<type_list<LEFT...>, type_list<RIGHT...>, REST...>
-      : list_concat_all<type_list<LEFT..., RIGHT...>, REST...> {};
-}
-```
-
-```cpp
-namespace std {
   template<class RESULT, class VALUE>
   struct raised_by_result {
-    using type = type_list<>;
+    using type = $type-list$<>;
   };
 }
 ```
@@ -108,7 +62,7 @@ namespace std {
 namespace std {
   template<class VALUE, class... RS>
   struct raised_by_result<expected<VALUE, error_set_of<RS...>>, VALUE> {
-    using type = type_list<RS...>;
+    using type = $type-list$<RS...>;
   };
 }
 ```
@@ -128,10 +82,10 @@ namespace std {
 namespace std {
   template<class HANDLER, class VALUE, class... ERRORS, class... HANDLED>
   struct recover_final_grade<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...> {
-    using remainder = list_subtract_t<type_list<HANDLED...>, type_list<ERRORS...>>;
-    using raised = list_concat_all_t<typename raised_by_result<
+    using remainder = $list-subtract-t$<$type-list$<HANDLED...>, $type-list$<ERRORS...>>;
+    using raised = $list-concat-all-t$<typename raised_by_result<
         typename handler_result_of<HANDLER, VALUE, HANDLED>::type, VALUE>::type...>;
-    using type = error_set_of_list_t<list_concat_all_t<remainder, raised>>;
+    using type = error_set_of_list_t<$list-concat-all-t$<remainder, raised>>;
   };
 }
 ```
