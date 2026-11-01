@@ -610,13 +610,25 @@ one-of form and must be revised before the accumulating object can exist.
 
 **Question:** How is a multi-witness `error_set` value eliminated, now that
 `visit` is partial and defined only for the singleton case?
-**Status:** DECIDED 2026-08-29
+**Status:** DECIDED 2026-08-29, amended 2026-11-01
+**Decided by:** Steve Downey.
 **Decision:** `visit` stays the one-of eliminator — partial, precondition
 checked — and is **not** extended to multi-witness. Multi-witness elimination
-is a **static per-type fold over the handled set**, implemented as `recover`'s
-internal mechanism and **not** shipped as a public verb. The impoverished-API
-fence holds until a second client outside `recover` demonstrates the need —
-the same YAGNI posture as [datum-entry-point](#datum-entry-point).
+is a **static per-type fold over the handled set**. Until 2026-11-01 that fold
+was `recover`'s internal mechanism only, fenced until a second client outside
+`recover` demonstrated the need. The fence moved on 2026-11-01: two public
+verbs ship from the compiled sketch in
+[error-set-eliminators-sketch.md](error-set-eliminators-sketch.md), named
+`fold_witnesses(errors, init, handler)` and
+`collapse<TARGET>(errors_or_expected, handler[, combine])`. `collapse`'s
+combine defaults to the left-biased pick of `combined_with`; `collapse` on the
+`std::expected` returns the ungraded `std::expected<VALUE, TARGET>`, and a
+caller who wants to stay graded names `collapse<error_set<TARGET>>`. The
+elimination vocabulary is then `visit`, `recover`, `collapse`,
+`fold_witnesses`, and nothing else; the join-of-arms result type of
+[heterogeneous-arm-elimination](#heterogeneous-arm-elimination) is not part of
+it. Whether `recover` is re-expressed through `fold_witnesses` is left to
+stage [set-elimination](transpose-surface-plan.md#set-elimination).
 **Why:** No runtime visitation verb is required, because the handled set {H}
 is a compile-time type-set. Elimination is a static fold over the grade with
 runtime presence filtering: for each E in H, if a witness is present, feed it
@@ -739,6 +751,12 @@ verb is not a gap awaiting a verb; it is the fence line.
   the ruling must settle listed there: the name beside the Foldable family in
   `fold.hpp`, whether `collapse` may default its combine to keep-first, and
   that `collapse` on the `std::expected` leaves the grade. Still not a ruling.
+- 2026-11-01 — Answered by Steve: the fence moves, and yes on the sketch's
+  three points as written (the names `fold_witnesses` and `collapse` beside
+  the Foldable family; `collapse` keeps its keep-first default; `collapse` on
+  the `std::expected` leaves the grade). The library's job is to provide the
+  forms so that programmers write less. Decision text amended above; the
+  original 2026-08-29 Why stands as the record of why the fence existed.
 
 ---
 

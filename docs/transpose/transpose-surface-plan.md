@@ -1,6 +1,11 @@
 # The edges of the context surface in beman.transpose — closure plan
 
-Status: DRAFT for review by Steve before any execution
+Status: ACCEPTED by Steve 2026-11-01 ("proceed with the plan"), after the
+rulings on [value-side-grading](decisions.md#value-side-grading) (no) and
+[multi-witness-elimination](decisions.md#multi-witness-elimination) (fence
+moves). Where a stage below still says a ruling is needed, the plan's proposed
+answer is the ruling, recorded in the slug as decided by Steve's acceptance
+of this plan, and any divergence from it is a dated Log entry.
 Audience: a Claude Code agent executing concrete work in `beman.transpose`
 (P3200). This document is the contract between the plan and the agent: **the
 Why sections are load-bearing.**
@@ -155,8 +160,8 @@ written for whichever Steve chooses:
 - *Fence holds.* No public eliminator for `error_set`; the heterogeneous-arm
   mechanism ships for sums only (`std::variant` and the variant-shaped layer
   in `tree_algorithms`), beside `overloaded`.
-- *Fence moves.* Two `error_set` verbs, per the 2026-10-31 entry under
-  that slug and the compiled sketch in
+- *Fence moves* (ruled 2026-11-01). Two `error_set` verbs, per the
+  2026-10-31 entry under that slug and the compiled sketch in
   [error-set-eliminators-sketch.md](error-set-eliminators-sketch.md): a
   `fold_witnesses` over present witnesses with an explicit accumulator and
   arms exhaustive against the grade, and a `collapse` to one error type whose
