@@ -4,7 +4,7 @@
 namespace std {
   template<class... ERRORS>
   inline constexpr bool $error-set-is-canonical-v$ =
-      is_same_v<canonical_t<ERRORS...>, type_list<ERRORS...>>; // exposition only
+      is_same_v<$canonical-t$<ERRORS...>, $type-list$<ERRORS...>>; // exposition only
 }
 ```
 
@@ -12,7 +12,7 @@ namespace std {
 namespace std {
   template<class... ERRORS>
   inline constexpr bool $error-set-names-distinct-v$ =
-      names_are_distinct<ERRORS...>(); // exposition only
+      $names-are-distinct-v$<ERRORS...>; // exposition only
 }
 ```
 

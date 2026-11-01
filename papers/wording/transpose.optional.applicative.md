@@ -23,7 +23,7 @@ constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&...
 - [x+1.#]{.pnum} `$is-optional-v$<FIRST>` is `true`,
 - [x+1.#]{.pnum} `($is-optional-v$<REST> && ...)` is `true`,
 - [x+1.#]{.pnum} `invocable<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>` is satisfied,
-- [x+1.#]{.pnum} `invoke_result_t< FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>` models `$optional-holdable-value$`.
+- [x+1.#]{.pnum} `invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>` models `$optional-holdable-value$`.
 
 [x+2]{.pnum} *Returns*: If every operand is engaged, an engaged `optional` holding the result of invoking `function` with the contained values, in the order written; otherwise a disengaged `optional`.
 

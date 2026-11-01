@@ -81,7 +81,8 @@ namespace std {
   struct $expected-applicative-impl$ {
     // @[transpose.expected.applicative]{- .sref}@, applicative instance for expected
     template<class VALUE>
-    auto pure(this auto&&, VALUE&& value) -> expected<remove_cvref_t<VALUE>, ERROR_TYPE>;
+    auto pure(this auto&&, VALUE&& value)
+        -> expected<remove_cvref_t<VALUE>, ERROR_TYPE>;
 
     template<class FUNCTION, class... CARRIERS>
       requires(sizeof...(CARRIERS) > 0) && $all-declare-v$<ERROR_TYPE, CARRIERS...>
@@ -95,15 +96,16 @@ namespace std {
               (!$all-declare-v$<ERROR_TYPE, CARRIERS...>) &&
               $all-declare-or-bare-v$<ERROR_TYPE, CARRIERS...>
     auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
-        -> expected<remove_cvref_t<
-                        invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>>,
+        -> expected<remove_cvref_t<invoke_result_t<
+                        FUNCTION&, const $carrier-value-t$<CARRIERS>&...>>,
                     ERROR_TYPE>;
 
     template<class FUNCTION, class... CARRIERS>
       requires(sizeof...(CARRIERS) > 0) &&
               ($is-expected-v$<remove_cvref_t<CARRIERS>> || ...) &&
               (!$all-declare-or-bare-v$<ERROR_TYPE, CARRIERS...>) &&
-              ($mixes-with-model$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>, CARRIERS> &&
+              ($mixes-with-model$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
+                                CARRIERS> &&
                ...)
     auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
         -> $mixed-result-t$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
@@ -132,7 +134,8 @@ namespace std {
   struct $accumulating-expected-applicative-impl$ {
     // @[transpose.expected.accumulating]{- .sref}@, accumulating instance
     template<class VALUE>
-    auto pure(this auto&&, VALUE&& value) -> expected<remove_cvref_t<VALUE>, ERROR_TYPE>;
+    auto pure(this auto&&, VALUE&& value)
+        -> expected<remove_cvref_t<VALUE>, ERROR_TYPE>;
 
     template<class FUNCTION, class... CARRIERS>
       requires(sizeof...(CARRIERS) > 0) && $all-declare-v$<ERROR_TYPE, CARRIERS...>
@@ -146,15 +149,16 @@ namespace std {
               (!$all-declare-v$<ERROR_TYPE, CARRIERS...>) &&
               $all-declare-or-bare-v$<ERROR_TYPE, CARRIERS...>
     auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
-        -> expected<remove_cvref_t<
-                        invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>>,
+        -> expected<remove_cvref_t<invoke_result_t<
+                        FUNCTION&, const $carrier-value-t$<CARRIERS>&...>>,
                     ERROR_TYPE>;
 
     template<class FUNCTION, class... CARRIERS>
       requires(sizeof...(CARRIERS) > 0) &&
               ($is-expected-v$<remove_cvref_t<CARRIERS>> || ...) &&
               (!$all-declare-or-bare-v$<ERROR_TYPE, CARRIERS...>) &&
-              ($mixes-with-model$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>, CARRIERS> &&
+              ($mixes-with-model$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
+                                CARRIERS> &&
                ...)
     auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
         -> $mixed-result-t$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
