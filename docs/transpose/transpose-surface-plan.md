@@ -156,9 +156,12 @@ written for whichever Steve chooses:
   mechanism ships for sums only (`std::variant` and the variant-shaped layer
   in `tree_algorithms`), beside `overloaded`.
 - *Fence moves.* Two `error_set` verbs, per the 2026-10-31 entry under
-  that slug: a `fold` over present witnesses with an explicit accumulator
-  and arms exhaustive against the grade, and a `collapse` to one error type
-  with the left-biased multiplicity rule of `combined_with`. `visit` stays
+  that slug and the compiled sketch in
+  [error-set-eliminators-sketch.md](error-set-eliminators-sketch.md): a
+  `fold_witnesses` over present witnesses with an explicit accumulator and
+  arms exhaustive against the grade, and a `collapse` to one error type whose
+  multiplicity rule is a combine, defaulting to the left-biased pick of
+  `combined_with` unless the ruling removes the default. `visit` stays
   partial. Neither verb needs the join-of-arms type.
 Deliverables (both outcomes): the join-of-arms result-type computation for
 one-of sums, deduplicating and collapsing to the common type when the arms
@@ -166,8 +169,9 @@ agree, built on the canonical set from stage
 [set-home-and-abi](#set-home-and-abi); an `apply_type`-style form that passes
 the injection tag to the arm; tests with heterogeneous arms over a
 `std::variant` and over a `tree_algorithms` layer.
-Deliverables (fence moves): `fold` and `collapse`, with `recover`
-re-expressed through `fold` or left as is per the ruling, a negative test that
+Deliverables (fence moves): `fold_witnesses` and `collapse` from the sketch
+after the house-style pass, with `recover` re-expressed through
+`fold_witnesses` or left as is per the ruling, a negative test that
 a missing arm is a compile error naming the alternative, and a positive test
 that two present witnesses reach the accumulator in canonical order.
 Deliverables (fence holds): a test pinning the boundary-collapse idiom through

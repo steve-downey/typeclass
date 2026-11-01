@@ -730,6 +730,15 @@ verb is not a gap awaiting a verb; it is the fence line.
   the boundary-collapse idiom proving unteachable in the paper's
   implementation-experience section. The ruling is Steve's and is taken in
   stage set-elimination.
+- 2026-11-01 — Steve asked to see the two verbs before ruling, since the
+  library's job is to provide the forms so programmers write less. Sketched,
+  compiled against the current `error_set.hpp`, and run:
+  [error-set-eliminators-sketch.md](error-set-eliminators-sketch.md). The
+  forms are `fold_witnesses(errors, init, handler)` and
+  `collapse<TARGET>(errors_or_expected, handler[, combine])`, with the points
+  the ruling must settle listed there: the name beside the Foldable family in
+  `fold.hpp`, whether `collapse` may default its combine to keep-first, and
+  that `collapse` on the `std::expected` leaves the grade. Still not a ruling.
 
 ---
 
