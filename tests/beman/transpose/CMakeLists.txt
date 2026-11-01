@@ -18,6 +18,7 @@ set(transpose_tests
     fold
     grade
     laws
+    noexcept
     monad
     induced_monoid
     objects

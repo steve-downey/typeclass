@@ -27,7 +27,9 @@ namespace std {
   template<class T, size_t N>
   struct $array-applicative-impl$ {
     // @[transpose.array.applicative]{- .sref}@, applicative instance for array
-    template<class VALUE> auto pure(this auto&&, VALUE&& value);
+    template<class VALUE>
+    [[nodiscard]] auto pure(this auto&&, VALUE&& value) noexcept(
+        is_nothrow_constructible_v<remove_cvref_t<VALUE>, VALUE&>);
 
     template<class FUNCTION, class FIRST, class... REST>
       requires $is-std-array-of-extent-v$<FIRST, N> &&
@@ -35,7 +37,9 @@ namespace std {
                invocable<FUNCTION&, $element-ref-t$<FIRST>, $element-ref-t$<REST>...> &&
                $holdable-value$<invoke_result_t<FUNCTION&, $element-ref-t$<FIRST>,
                                               $element-ref-t$<REST>...>>
-    auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest);
+    [[nodiscard]] auto invoke(
+        this auto&&, FUNCTION&& function, FIRST&& first,
+        REST&&... rest) noexcept($lanewise-invoke-nothrow$<FUNCTION, FIRST, REST...>);
   }; // exposition only
 }
 ```

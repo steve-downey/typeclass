@@ -67,7 +67,8 @@ template <class T, std::size_t N>
 struct array_applicative_impl {
     // \ref{transpose.array.applicative}, applicative instance for array
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value);
+    [[nodiscard]] auto pure(this auto &&, VALUE &&value) noexcept(
+        std::is_nothrow_constructible_v<std::remove_cvref_t<VALUE>, VALUE &>);
 
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_std_array_of_extent_v<FIRST, N> &&
@@ -77,8 +78,11 @@ struct array_applicative_impl {
                  detail::holdable_value<std::invoke_result_t<
                      FUNCTION &, detail::element_ref_t<FIRST>,
                      detail::element_ref_t<REST>...>>
-    auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
-                REST &&...rest);
+    [[nodiscard]] auto
+    invoke(this auto &&, FUNCTION &&function, FIRST &&first,
+           REST &&...rest) noexcept(detail::lanewise_invoke_nothrow<FUNCTION,
+                                                                    FIRST,
+                                                                    REST...>);
 };
 
 /// Applicative map for std::array<T, N>: the native n-ary invoke core.
@@ -96,9 +100,14 @@ inline constexpr auto applicative<std::array<T, N>> =
 
 namespace detail {
 
+// The composition copies each field into its tuple, so this and
+// transpose_tuple are noexcept exactly when every field type is nothrow
+// copy constructible.
 template <std::size_t N, class... Ts, std::size_t... Is>
-auto transpose_tuple_impl(const std::tuple<std::array<Ts, N>...> &soa,
-                          std::index_sequence<Is...>)
+auto transpose_tuple_impl(
+    const std::tuple<std::array<Ts, N>...> &soa,
+    std::index_sequence<
+        Is...>) noexcept((std::is_nothrow_copy_constructible_v<Ts> && ...))
     -> std::array<std::tuple<Ts...>, N> {
     const auto &app = applicative<std::array<std::tuple<Ts...>, N>>;
     return app.invoke([](const Ts &...elems) { return std::tuple{elems...}; },
@@ -113,7 +122,9 @@ auto transpose_tuple_impl(const std::tuple<std::array<Ts, N>...> &soa,
 //! elements is a copy of `value`.
 template <class T, std::size_t N>
 template <class VALUE>
-auto array_applicative_impl<T, N>::pure(this auto &&, VALUE &&value) {
+[[nodiscard]] auto
+array_applicative_impl<T, N>::pure(this auto &&, VALUE &&value) noexcept(
+    std::is_nothrow_constructible_v<std::remove_cvref_t<VALUE>, VALUE &>) {
     using U = std::remove_cvref_t<VALUE>;
     // Constructed directly rather than default-constructed and filled: every
     // element is a copy of `value`, which is all this operation documents,
@@ -143,8 +154,10 @@ template <class FUNCTION, class FIRST, class... REST>
              detail::holdable_value<
                  std::invoke_result_t<FUNCTION &, detail::element_ref_t<FIRST>,
                                       detail::element_ref_t<REST>...>>
-auto array_applicative_impl<T, N>::invoke(this auto &&, FUNCTION &&function,
-                                          FIRST &&first, REST &&...rest) {
+[[nodiscard]] auto array_applicative_impl<T, N>::invoke(
+    this auto &&, FUNCTION &&function, FIRST &&first,
+    REST &&...rest) noexcept(detail::lanewise_invoke_nothrow<FUNCTION, FIRST,
+                                                             REST...>) {
     using Result =
         std::invoke_result_t<FUNCTION &, detail::element_ref_t<FIRST>,
                              detail::element_ref_t<REST>...>;
@@ -172,9 +185,14 @@ auto array_applicative_impl<T, N>::invoke(this auto &&, FUNCTION &&function,
 //! \remarks This is a heterogeneous traversal. Each operand array may have a
 //! different element type, so the homogeneous traversable loop, which
 //! requires one element type, does not apply; the composition is over the
-//! tuple positions instead, through the array applicative object.
+//! tuple positions instead, through the array applicative object. The
+//! exception specification is equivalent to
+//! `(is_nothrow_copy_constructible_v<Ts> && ...)`: each element of each
+//! operand is copied into its tuple.
 template <std::size_t N, class... Ts>
-auto transpose_tuple(const std::tuple<std::array<Ts, N>...> &soa)
+[[nodiscard]] auto
+transpose_tuple(const std::tuple<std::array<Ts, N>...> &soa) noexcept(
+    (std::is_nothrow_copy_constructible_v<Ts> && ...))
     -> std::array<std::tuple<Ts...>, N> {
     return detail::transpose_tuple_impl(soa, std::index_sequence_for<Ts...>{});
 }

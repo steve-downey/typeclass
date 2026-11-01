@@ -164,4 +164,16 @@ namespace std {
 }
 ```
 
+::: wording
+
+```cpp
+template<class EVIDENCE>
+constexpr auto combine_grade_evidence(
+    const EVIDENCE& lhs,
+    const EVIDENCE& /*rhs*/) noexcept(is_nothrow_copy_constructible_v<EVIDENCE>)
+    -> EVIDENCE;
+```
+
+:::
+
 :::

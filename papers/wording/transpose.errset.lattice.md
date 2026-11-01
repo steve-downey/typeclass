@@ -34,8 +34,14 @@ template<class LEFT, class RIGHT> inline constexpr bool error_set_subsumes_v = f
 
 ```cpp
 template<class... ERRORS>
-constexpr auto error_set_combine(const error_set_of<ERRORS...>& lhs,
-                                 const error_set_of<ERRORS...>& rhs)
+[[nodiscard]] constexpr auto error_set_combine(
+    const error_set_of<ERRORS...>& lhs,
+    const error_set_of<ERRORS...>& rhs) noexcept(noexcept(lhs.combined_with(rhs)))
+    -> error_set_of<ERRORS...>;
+template<class... ERRORS>
+constexpr auto combine_grade_evidence(
+    const error_set_of<ERRORS...>& lhs,
+    const error_set_of<ERRORS...>& rhs) noexcept(noexcept(error_set_combine(lhs, rhs)))
     -> error_set_of<ERRORS...>;
 ```
 
@@ -98,6 +104,45 @@ namespace std {
                                                   HANDLED...>>; // exposition only
 }
 ```
+
+```cpp
+namespace std {
+  template<class HANDLER, class VALUE, class GRADE, class... HANDLED>
+  struct $recover-nothrow$; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class HANDLER, class VALUE, class... ERRORS, class... HANDLED>
+  struct $recover-nothrow$<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...> {
+    using final_grade =
+        recover_final_grade_t<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...>;
+    using returned =
+        $recover-return-t$<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...>;
+    static constexpr bool value =
+        (is_nothrow_invocable_v<HANDLER&, const HANDLED&> && ...) &&
+        (is_nothrow_copy_constructible_v<ERRORS> && ...) &&
+        is_nothrow_copy_constructible_v<final_grade> &&
+        is_nothrow_move_constructible_v<final_grade> &&
+        is_nothrow_copy_constructible_v<VALUE> &&
+        is_nothrow_move_constructible_v<VALUE> &&
+        is_nothrow_constructible_v<returned, const VALUE&> &&
+        (is_same_v<returned, VALUE> ||
+         is_nothrow_constructible_v<returned, unexpect_t, const final_grade&>);
+  }; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class HANDLER, class VALUE, class GRADE, class... HANDLED>
+  inline constexpr bool $recover-nothrow-v$ =
+      $recover-nothrow$<HANDLER, VALUE, GRADE, HANDLED...>::value; // exposition only
+}
+```
+
+[x+6]{.pnum} *Remarks*: `$recover-nothrow-v$<HANDLER, VALUE, GRADE, HANDLED...>` is `true` when invoking `HANDLER` on each handled alternative, copying the value and every witness that survives, and constructing the result are all non-throwing.
 
 :::
 

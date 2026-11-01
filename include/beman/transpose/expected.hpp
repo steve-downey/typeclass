@@ -192,6 +192,18 @@ template <class VALUE_TYPE, class VALUE, class ERROR_TYPE>
 using expected_pure_t =
     typename expected_pure<VALUE_TYPE, VALUE, ERROR_TYPE>::type;
 
+//! \expos
+//! \remarks `$expected-pure-nothrow$<VALUE_TYPE, VALUE, ERROR_TYPE>` is
+//! `true` when `$expected-pure-t$<VALUE_TYPE, VALUE, ERROR_TYPE>` can be
+//! constructed from `VALUE` without throwing; a `void` expected is
+//! constructed from nothing.
+template <class VALUE_TYPE, class VALUE, class ERROR_TYPE>
+inline constexpr bool expected_pure_nothrow =
+    std::is_void_v<
+        typename expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE>::value_type> ||
+    std::is_nothrow_constructible_v<
+        expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE>, VALUE>;
+
 /** Constructs `RETURNED` from invoking `function` on `args`: when the result
  * is `void`, the call is made and a value-holding `RETURNED` is returned. */
 template <class RETURNED, class FUNCTION, class... ARGS>
@@ -260,10 +272,24 @@ template <class VALUE_TYPE, class ERROR_TYPE, class ERROR>
 concept raisable = std::constructible_from<
     typename raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>::error_type, ERROR>;
 
+//! \expos
+//! \remarks `$raise-nothrow$<VALUE_TYPE, ERROR_TYPE, ERROR>` is `true` when
+//! the result's error alternative can be constructed from `ERROR`, and the
+//! result from that alternative, without throwing.
+template <class VALUE_TYPE, class ERROR_TYPE, class ERROR>
+inline constexpr bool raise_nothrow =
+    std::is_nothrow_constructible_v<
+        typename raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>::error_type,
+        ERROR> &&
+    std::is_nothrow_constructible_v<
+        raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>, std::unexpect_t,
+        typename raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>::error_type>;
+
 /** Builds the raised carrier. Shared by both applicative objects: raising is
  * the same for each, as `pure` is. */
 template <class VALUE_TYPE, class ERROR_TYPE, class ERROR>
-constexpr auto raise_into(ERROR &&error)
+constexpr auto
+raise_into(ERROR &&error) noexcept(raise_nothrow<VALUE_TYPE, ERROR_TYPE, ERROR>)
     -> raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR> {
     using Result = raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>;
     return Result{std::unexpect,
@@ -323,13 +349,86 @@ constexpr auto operand_value(const CARRIER &operand) -> decltype(auto) {
 /** Whether an operand currently carries an error. A bare value never does:
  * ∅ has no failure alternative to be in. */
 template <class CARRIER>
-constexpr auto operand_failed(const CARRIER &operand) -> bool {
+constexpr auto operand_failed(const CARRIER &operand) noexcept -> bool {
     if constexpr (is_expected_v<std::remove_cvref_t<CARRIER>>) {
         return !operand.has_value();
     } else {
         return false;
     }
 }
+
+/** Whether an operand's error can be recorded as `ERROR`, the error
+ * alternative of a composed result, without throwing: vacuously for a bare
+ * operand, which has none, and by constructing `ERROR` from a `const` lvalue
+ * of the operand's own error type otherwise. */
+//! \expos
+template <class ERROR, class CARRIER>
+struct error_widens_nothrow : std::true_type {};
+
+template <class ERROR, class VALUE, class OPERAND_ERROR>
+struct error_widens_nothrow<ERROR, std::expected<VALUE, OPERAND_ERROR>>
+    : std::bool_constant<
+          std::is_nothrow_constructible_v<ERROR, const OPERAND_ERROR &>> {};
+
+//! \expos
+//! \remarks `$expected-failure-nothrow$<RETURNED, CARRIERS...>` is `true`
+//! when the failure path of a short-circuiting composition yielding
+//! `RETURNED` is non-throwing: recording the first failing operand's error as
+//! `RETURNED`'s error alternative, moving it, and constructing `RETURNED`
+//! from it.
+template <class RETURNED, class... CARRIERS>
+inline constexpr bool expected_failure_nothrow =
+    (error_widens_nothrow<typename RETURNED::error_type,
+                          std::remove_cvref_t<CARRIERS>>::value &&
+     ...) &&
+    std::is_nothrow_move_constructible_v<typename RETURNED::error_type> &&
+    std::is_nothrow_constructible_v<RETURNED, std::unexpect_t,
+                                    typename RETURNED::error_type>;
+
+//! \expos
+//! \remarks `$expected-accumulate-nothrow$<RETURNED, CARRIERS...>` is `true`
+//! when the failure path of an accumulating composition yielding `RETURNED`
+//! is non-throwing: as for `$expected-failure-nothrow$`, and additionally
+//! combining two witnesses at `RETURNED`'s error alternative and assigning
+//! the combination.
+template <class RETURNED, class... CARRIERS>
+inline constexpr bool expected_accumulate_nothrow =
+    expected_failure_nothrow<RETURNED, CARRIERS...> &&
+    std::is_nothrow_move_assignable_v<typename RETURNED::error_type> &&
+    noexcept(combine_grade_evidence(
+        std::declval<const typename RETURNED::error_type &>(),
+        std::declval<const typename RETURNED::error_type &>()));
+
+/** The exception specification of the ungraded `bind`: invoking `F` on the
+ * held value, constructing the continuation's result from what it yields, and
+ * constructing it from the operand's error are all non-throwing. Omitted with
+ * the Monad instance it serves. */
+//! \omit
+template <class F, class A, class ERROR_TYPE>
+inline constexpr bool expected_bind_nothrow =
+    invokes_nothrow_into<bind_result_t<F, A>, F, bind_argument_t<A>> &&
+    std::is_nothrow_constructible_v<bind_result_t<F, A>, std::unexpect_t,
+                                    const ERROR_TYPE &>;
+
+/** The exception specification of the graded `bind` yielding `RETURNED`:
+ * invoking `F` on the held value and holding its result; widening either
+ * side's error into `RETURNED`'s error alternative and constructing `RETURNED`
+ * from it; and constructing `RETURNED` from the continuation's value. Omitted
+ * with the Monad instance it serves. */
+//! \omit
+template <class RETURNED, class F, class A, class ERROR_TYPE>
+inline constexpr bool expected_mixed_bind_nothrow =
+    invokes_nothrow_into<bind_result_t<F, A>, F, bind_argument_t<A>> &&
+    std::is_nothrow_constructible_v<typename RETURNED::error_type,
+                                    const ERROR_TYPE &> &&
+    std::is_nothrow_constructible_v<
+        typename RETURNED::error_type,
+        const typename bind_result_t<F, A>::error_type &> &&
+    std::is_nothrow_constructible_v<RETURNED, std::unexpect_t,
+                                    typename RETURNED::error_type> &&
+    (std::is_void_v<typename bind_result_t<F, A>::value_type> ||
+     std::is_nothrow_constructible_v<RETURNED,
+                                     typename bind_result_t<F, A>::value_type>);
 
 } // namespace detail
 
@@ -361,12 +460,14 @@ template <class VALUE_TYPE, class ERROR_TYPE>
 struct expected_applicative_impl {
     // \ref{transpose.expected.applicative}, applicative instance for expected
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value)
+    [[nodiscard]] auto pure(this auto &&, VALUE &&value) noexcept(
+        detail::expected_pure_nothrow<VALUE_TYPE, VALUE, ERROR_TYPE>)
         -> detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE>;
 
     template <class ERROR>
         requires detail::raisable<VALUE_TYPE, ERROR_TYPE, ERROR>
-    auto raise(this auto &&, ERROR &&error)
+    [[nodiscard]] auto raise(this auto &&, ERROR &&error) noexcept(
+        detail::raise_nothrow<VALUE_TYPE, ERROR_TYPE, ERROR>)
         -> detail::raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>;
 
     /** N-ary core: all operands share ERROR_TYPE; leftmost error wins.
@@ -380,7 +481,20 @@ struct expected_applicative_impl {
     template <class FUNCTION, class... CARRIERS>
         requires(sizeof...(CARRIERS) > 0) &&
                 detail::all_declare_v<ERROR_TYPE, CARRIERS...>
-    auto invoke(this auto &&, FUNCTION &&function, CARRIERS &&...operands)
+    [[nodiscard]] auto
+    invoke(this auto &&, FUNCTION &&function, CARRIERS &&...operands) noexcept(
+        detail::invokes_nothrow_into<
+            detail::expected_result_t<
+                std::invoke_result_t<FUNCTION &,
+                                     detail::expected_contained_t<CARRIERS>...>,
+                ERROR_TYPE>,
+            FUNCTION &, detail::expected_contained_t<CARRIERS>...> &&
+        detail::expected_failure_nothrow<
+            detail::expected_result_t<
+                std::invoke_result_t<FUNCTION &,
+                                     detail::expected_contained_t<CARRIERS>...>,
+                ERROR_TYPE>,
+            CARRIERS...>)
         -> detail::expected_result_t<
             std::invoke_result_t<FUNCTION &,
                                  detail::expected_contained_t<CARRIERS>...>,
@@ -395,7 +509,29 @@ struct expected_applicative_impl {
                 (is_expected_v<std::remove_cvref_t<CARRIERS>> || ...) &&
                 (!detail::all_declare_v<ERROR_TYPE, CARRIERS...>) &&
                 detail::all_declare_or_bare_v<ERROR_TYPE, CARRIERS...>
-    auto invoke(this auto &&, FUNCTION &&function, const CARRIERS &...operands)
+    [[nodiscard]] auto invoke(
+        this auto &&, FUNCTION &&function,
+        const CARRIERS
+            &...operands) noexcept(detail::
+                                       invokes_nothrow_into<
+                                           detail::expected_result_t<
+                                               std::invoke_result_t<
+                                                   FUNCTION &,
+                                                   const detail::
+                                                       carrier_value_t<CARRIERS>
+                                                           &...>,
+                                               ERROR_TYPE>,
+                                           FUNCTION &,
+                                           const detail::carrier_value_t<
+                                               CARRIERS> &...> &&
+                                   detail::expected_failure_nothrow<
+                                       detail::expected_result_t<
+                                           std::invoke_result_t<
+                                               FUNCTION &,
+                                               const detail::carrier_value_t<
+                                                   CARRIERS> &...>,
+                                           ERROR_TYPE>,
+                                       CARRIERS...>)
         -> detail::expected_result_t<
             std::invoke_result_t<FUNCTION &,
                                  const detail::carrier_value_t<CARRIERS> &...>,
@@ -425,7 +561,38 @@ struct expected_applicative_impl {
                      grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
                      CARRIERS> &&
                  ...)
-    auto invoke(this auto &&, FUNCTION &&function, const CARRIERS &...operands)
+    [[nodiscard]] auto invoke(
+        this auto &&, FUNCTION &&function,
+        const CARRIERS
+            &...operands) noexcept(detail::
+                                       invokes_nothrow_into<
+                                           detail::mixed_result_t<
+                                               grade_of_t<std::expected<
+                                                   VALUE_TYPE, ERROR_TYPE>>,
+                                               detail::expected_result_t<
+                                                   std::invoke_result_t<
+                                                       FUNCTION &,
+                                                       const detail::
+                                                           carrier_value_t<
+                                                               CARRIERS> &...>,
+                                                   ERROR_TYPE>,
+                                               CARRIERS...>,
+                                           FUNCTION &,
+                                           const detail::carrier_value_t<
+                                               CARRIERS> &...> &&
+                                   detail::expected_failure_nothrow<
+                                       detail::mixed_result_t<
+                                           grade_of_t<std::expected<
+                                               VALUE_TYPE, ERROR_TYPE>>,
+                                           detail::expected_result_t<
+                                               std::invoke_result_t<
+                                                   FUNCTION &,
+                                                   const detail::
+                                                       carrier_value_t<CARRIERS>
+                                                           &...>,
+                                               ERROR_TYPE>,
+                                           CARRIERS...>,
+                                       CARRIERS...>)
         -> detail::mixed_result_t<
             grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
             detail::expected_result_t<
@@ -505,12 +672,14 @@ template <class VALUE_TYPE, class ERROR_TYPE>
 struct accumulating_expected_applicative_impl {
     // \ref{transpose.expected.accumulating}, accumulating instance
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value)
+    [[nodiscard]] auto pure(this auto &&, VALUE &&value) noexcept(
+        detail::expected_pure_nothrow<VALUE_TYPE, VALUE, ERROR_TYPE>)
         -> detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE>;
 
     template <class ERROR>
         requires detail::raisable<VALUE_TYPE, ERROR_TYPE, ERROR>
-    auto raise(this auto &&, ERROR &&error)
+    [[nodiscard]] auto raise(this auto &&, ERROR &&error) noexcept(
+        detail::raise_nothrow<VALUE_TYPE, ERROR_TYPE, ERROR>)
         -> detail::raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR>;
 
     /** N-ary core: all operands share ERROR_TYPE. When ERROR_TYPE is itself
@@ -525,7 +694,20 @@ struct accumulating_expected_applicative_impl {
     template <class FUNCTION, class... CARRIERS>
         requires(sizeof...(CARRIERS) > 0) &&
                 detail::all_declare_v<ERROR_TYPE, CARRIERS...>
-    auto invoke(this auto &&, FUNCTION &&function, CARRIERS &&...operands)
+    [[nodiscard]] auto
+    invoke(this auto &&, FUNCTION &&function, CARRIERS &&...operands) noexcept(
+        detail::invokes_nothrow_into<
+            detail::expected_result_t<
+                std::invoke_result_t<FUNCTION &,
+                                     detail::expected_contained_t<CARRIERS>...>,
+                ERROR_TYPE>,
+            FUNCTION &, detail::expected_contained_t<CARRIERS>...> &&
+        detail::expected_accumulate_nothrow<
+            detail::expected_result_t<
+                std::invoke_result_t<FUNCTION &,
+                                     detail::expected_contained_t<CARRIERS>...>,
+                ERROR_TYPE>,
+            CARRIERS...>)
         -> detail::expected_result_t<
             std::invoke_result_t<FUNCTION &,
                                  detail::expected_contained_t<CARRIERS>...>,
@@ -540,7 +722,29 @@ struct accumulating_expected_applicative_impl {
                 (is_expected_v<std::remove_cvref_t<CARRIERS>> || ...) &&
                 (!detail::all_declare_v<ERROR_TYPE, CARRIERS...>) &&
                 detail::all_declare_or_bare_v<ERROR_TYPE, CARRIERS...>
-    auto invoke(this auto &&, FUNCTION &&function, const CARRIERS &...operands)
+    [[nodiscard]] auto invoke(
+        this auto &&, FUNCTION &&function,
+        const CARRIERS
+            &...operands) noexcept(detail::
+                                       invokes_nothrow_into<
+                                           detail::expected_result_t<
+                                               std::invoke_result_t<
+                                                   FUNCTION &,
+                                                   const detail::
+                                                       carrier_value_t<CARRIERS>
+                                                           &...>,
+                                               ERROR_TYPE>,
+                                           FUNCTION &,
+                                           const detail::carrier_value_t<
+                                               CARRIERS> &...> &&
+                                   detail::expected_accumulate_nothrow<
+                                       detail::expected_result_t<
+                                           std::invoke_result_t<
+                                               FUNCTION &,
+                                               const detail::carrier_value_t<
+                                                   CARRIERS> &...>,
+                                           ERROR_TYPE>,
+                                       CARRIERS...>)
         -> detail::expected_result_t<
             std::invoke_result_t<FUNCTION &,
                                  const detail::carrier_value_t<CARRIERS> &...>,
@@ -558,7 +762,38 @@ struct accumulating_expected_applicative_impl {
                      grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
                      CARRIERS> &&
                  ...)
-    auto invoke(this auto &&, FUNCTION &&function, const CARRIERS &...operands)
+    [[nodiscard]] auto invoke(
+        this auto &&, FUNCTION &&function,
+        const CARRIERS
+            &...operands) noexcept(detail::
+                                       invokes_nothrow_into<
+                                           detail::mixed_result_t<
+                                               grade_of_t<std::expected<
+                                                   VALUE_TYPE, ERROR_TYPE>>,
+                                               detail::expected_result_t<
+                                                   std::invoke_result_t<
+                                                       FUNCTION &,
+                                                       const detail::
+                                                           carrier_value_t<
+                                                               CARRIERS> &...>,
+                                                   ERROR_TYPE>,
+                                               CARRIERS...>,
+                                           FUNCTION &,
+                                           const detail::carrier_value_t<
+                                               CARRIERS> &...> &&
+                                   detail::expected_accumulate_nothrow<
+                                       detail::mixed_result_t<
+                                           grade_of_t<std::expected<
+                                               VALUE_TYPE, ERROR_TYPE>>,
+                                           detail::expected_result_t<
+                                               std::invoke_result_t<
+                                                   FUNCTION &,
+                                                   const detail::
+                                                       carrier_value_t<CARRIERS>
+                                                           &...>,
+                                               ERROR_TYPE>,
+                                           CARRIERS...>,
+                                       CARRIERS...>)
         -> detail::mixed_result_t<
             grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
             detail::expected_result_t<
@@ -627,12 +862,15 @@ struct ExpectedMonadImpl {
 
     //! \omit
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value)
+    [[nodiscard]] auto pure(this auto &&, VALUE &&value) noexcept(
+        detail::expected_pure_nothrow<VALUE_TYPE, VALUE, ERROR_TYPE>)
         -> detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE>;
 
     //! \omit
     template <class A, class F>
-    auto bind(this auto &&, const std::expected<A, ERROR_TYPE> &ma, F &&f)
+    [[nodiscard]] auto
+    bind(this auto &&, const std::expected<A, ERROR_TYPE> &ma,
+         F &&f) noexcept(detail::expected_bind_nothrow<F, A, ERROR_TYPE>)
         -> detail::bind_result_t<F, A>
         requires detail::is_expected_with_error_v<detail::bind_result_t<F, A>,
                                                   ERROR_TYPE>;
@@ -656,7 +894,15 @@ struct ExpectedMonadImpl {
                  detail::mixes_with_model<
                      grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
                      detail::bind_result_t<F, A>>
-    auto bind(this auto &&, const std::expected<A, ERROR_TYPE> &ma, F &&f)
+    [[nodiscard]] auto
+    bind(this auto &&, const std::expected<A, ERROR_TYPE> &ma, F &&f) noexcept(
+        detail::expected_mixed_bind_nothrow<
+            detail::mixed_result_t<
+                grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
+                std::expected<typename detail::bind_result_t<F, A>::value_type,
+                              ERROR_TYPE>,
+                std::expected<A, ERROR_TYPE>, detail::bind_result_t<F, A>>,
+            F, A, ERROR_TYPE>)
         -> detail::mixed_result_t<
             grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
             std::expected<typename detail::bind_result_t<F, A>::value_type,
@@ -682,8 +928,10 @@ inline constexpr auto monad<std::expected<VALUE_TYPE, ERROR_TYPE>> =
 //! \returns An `expected` holding `value`.
 template <class VALUE_TYPE, class ERROR_TYPE>
 template <class VALUE>
-auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure(this auto &&,
-                                                             VALUE &&value)
+[[nodiscard]] auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure(
+    this auto &&,
+    VALUE &&value) noexcept(detail::expected_pure_nothrow<VALUE_TYPE, VALUE,
+                                                          ERROR_TYPE>)
     -> detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE> {
     using Returned = detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE>;
     if constexpr (std::is_void_v<typename Returned::value_type>) {
@@ -708,8 +956,10 @@ auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure(this auto &&,
 template <class VALUE_TYPE, class ERROR_TYPE>
 template <class ERROR>
     requires detail::raisable<VALUE_TYPE, ERROR_TYPE, ERROR>
-auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::raise(this auto &&,
-                                                              ERROR &&error)
+[[nodiscard]] auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::raise(
+    this auto &&,
+    ERROR
+        &&error) noexcept(detail::raise_nothrow<VALUE_TYPE, ERROR_TYPE, ERROR>)
     -> detail::raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR> {
     return detail::raise_into<VALUE_TYPE, ERROR_TYPE>(
         std::forward<ERROR>(error));
@@ -727,12 +977,24 @@ template <class VALUE_TYPE, class ERROR_TYPE>
 template <class FUNCTION, class... CARRIERS>
     requires(sizeof...(CARRIERS) > 0) &&
             detail::all_declare_v<ERROR_TYPE, CARRIERS...>
-auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
-    this auto &&, FUNCTION &&function, CARRIERS &&...operands)
-    -> detail::expected_result_t<
-        std::invoke_result_t<FUNCTION &,
-                             detail::expected_contained_t<CARRIERS>...>,
-        ERROR_TYPE> {
+[[nodiscard]] auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::
+    invoke(this auto &&, FUNCTION &&function, CARRIERS &&...operands) noexcept(
+        detail::invokes_nothrow_into<
+            detail::expected_result_t<
+                std::invoke_result_t<FUNCTION &,
+                                     detail::expected_contained_t<CARRIERS>...>,
+                ERROR_TYPE>,
+            FUNCTION &, detail::expected_contained_t<CARRIERS>...> &&
+        detail::expected_failure_nothrow<
+            detail::expected_result_t<
+                std::invoke_result_t<FUNCTION &,
+                                     detail::expected_contained_t<CARRIERS>...>,
+                ERROR_TYPE>,
+            CARRIERS...>)
+        -> detail::expected_result_t<
+            std::invoke_result_t<FUNCTION &,
+                                 detail::expected_contained_t<CARRIERS>...>,
+            ERROR_TYPE> {
     using Returned = detail::expected_result_t<
         std::invoke_result_t<FUNCTION &,
                              detail::expected_contained_t<CARRIERS>...>,
@@ -767,8 +1029,28 @@ template <class FUNCTION, class... CARRIERS>
             (is_expected_v<std::remove_cvref_t<CARRIERS>> || ...) &&
             (!detail::all_declare_v<ERROR_TYPE, CARRIERS...>) &&
             detail::all_declare_or_bare_v<ERROR_TYPE, CARRIERS...>
-auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
-    this auto &&, FUNCTION &&function, const CARRIERS &...operands)
+[[nodiscard]] auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
+    this auto &&, FUNCTION &&function,
+    const CARRIERS
+        &...operands) noexcept(detail::
+                                   invokes_nothrow_into<
+                                       detail::expected_result_t<
+                                           std::invoke_result_t<
+                                               FUNCTION &,
+                                               const detail::carrier_value_t<
+                                                   CARRIERS> &...>,
+                                           ERROR_TYPE>,
+                                       FUNCTION &,
+                                       const detail::carrier_value_t<CARRIERS>
+                                           &...> &&
+                               detail::expected_failure_nothrow<
+                                   detail::expected_result_t<
+                                       std::invoke_result_t<
+                                           FUNCTION &,
+                                           const detail::carrier_value_t<
+                                               CARRIERS> &...>,
+                                       ERROR_TYPE>,
+                                   CARRIERS...>)
     -> detail::expected_result_t<
         std::invoke_result_t<FUNCTION &,
                              const detail::carrier_value_t<CARRIERS> &...>,
@@ -816,8 +1098,37 @@ template <class FUNCTION, class... CARRIERS>
             (detail::mixes_with_model<
                  grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>, CARRIERS> &&
              ...)
-auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
-    this auto &&, FUNCTION &&function, const CARRIERS &...operands)
+[[nodiscard]] auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
+    this auto &&, FUNCTION &&function,
+    const CARRIERS
+        &...operands) noexcept(detail::
+                                   invokes_nothrow_into<
+                                       detail::mixed_result_t<
+                                           grade_of_t<std::expected<
+                                               VALUE_TYPE, ERROR_TYPE>>,
+                                           detail::expected_result_t<
+                                               std::invoke_result_t<
+                                                   FUNCTION &,
+                                                   const detail::
+                                                       carrier_value_t<CARRIERS>
+                                                           &...>,
+                                               ERROR_TYPE>,
+                                           CARRIERS...>,
+                                       FUNCTION &,
+                                       const detail::carrier_value_t<CARRIERS>
+                                           &...> &&
+                               detail::expected_failure_nothrow<
+                                   detail::mixed_result_t<
+                                       grade_of_t<std::expected<VALUE_TYPE,
+                                                                ERROR_TYPE>>,
+                                       detail::expected_result_t<
+                                           std::invoke_result_t<
+                                               FUNCTION &,
+                                               const detail::carrier_value_t<
+                                                   CARRIERS> &...>,
+                                           ERROR_TYPE>,
+                                       CARRIERS...>,
+                                   CARRIERS...>)
     -> detail::mixed_result_t<
         grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
         detail::expected_result_t<
@@ -857,8 +1168,11 @@ auto expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
 //! \returns An `expected` holding `value`.
 template <class VALUE_TYPE, class ERROR_TYPE>
 template <class VALUE>
-auto accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure(
-    this auto &&, VALUE &&value)
+[[nodiscard]] auto
+accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure(
+    this auto &&,
+    VALUE &&value) noexcept(detail::expected_pure_nothrow<VALUE_TYPE, VALUE,
+                                                          ERROR_TYPE>)
     -> detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE> {
     return applicative<std::expected<VALUE_TYPE, ERROR_TYPE>>.pure(
         std::forward<VALUE>(value));
@@ -870,8 +1184,11 @@ auto accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::pure(
 template <class VALUE_TYPE, class ERROR_TYPE>
 template <class ERROR>
     requires detail::raisable<VALUE_TYPE, ERROR_TYPE, ERROR>
-auto accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::raise(
-    this auto &&, ERROR &&error)
+[[nodiscard]] auto
+accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::raise(
+    this auto &&,
+    ERROR
+        &&error) noexcept(detail::raise_nothrow<VALUE_TYPE, ERROR_TYPE, ERROR>)
     -> detail::raise_result_t<VALUE_TYPE, ERROR_TYPE, ERROR> {
     return detail::raise_into<VALUE_TYPE, ERROR_TYPE>(
         std::forward<ERROR>(error));
@@ -889,12 +1206,25 @@ template <class VALUE_TYPE, class ERROR_TYPE>
 template <class FUNCTION, class... CARRIERS>
     requires(sizeof...(CARRIERS) > 0) &&
             detail::all_declare_v<ERROR_TYPE, CARRIERS...>
-auto accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
-    this auto &&, FUNCTION &&function, CARRIERS &&...operands)
-    -> detail::expected_result_t<
-        std::invoke_result_t<FUNCTION &,
-                             detail::expected_contained_t<CARRIERS>...>,
-        ERROR_TYPE> {
+[[nodiscard]] auto
+accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::
+    invoke(this auto &&, FUNCTION &&function, CARRIERS &&...operands) noexcept(
+        detail::invokes_nothrow_into<
+            detail::expected_result_t<
+                std::invoke_result_t<FUNCTION &,
+                                     detail::expected_contained_t<CARRIERS>...>,
+                ERROR_TYPE>,
+            FUNCTION &, detail::expected_contained_t<CARRIERS>...> &&
+        detail::expected_accumulate_nothrow<
+            detail::expected_result_t<
+                std::invoke_result_t<FUNCTION &,
+                                     detail::expected_contained_t<CARRIERS>...>,
+                ERROR_TYPE>,
+            CARRIERS...>)
+        -> detail::expected_result_t<
+            std::invoke_result_t<FUNCTION &,
+                                 detail::expected_contained_t<CARRIERS>...>,
+            ERROR_TYPE> {
     using Returned = detail::expected_result_t<
         std::invoke_result_t<FUNCTION &,
                              detail::expected_contained_t<CARRIERS>...>,
@@ -929,8 +1259,29 @@ template <class FUNCTION, class... CARRIERS>
             (is_expected_v<std::remove_cvref_t<CARRIERS>> || ...) &&
             (!detail::all_declare_v<ERROR_TYPE, CARRIERS...>) &&
             detail::all_declare_or_bare_v<ERROR_TYPE, CARRIERS...>
-auto accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
-    this auto &&, FUNCTION &&function, const CARRIERS &...operands)
+[[nodiscard]] auto
+accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
+    this auto &&, FUNCTION &&function,
+    const CARRIERS
+        &...operands) noexcept(detail::
+                                   invokes_nothrow_into<
+                                       detail::expected_result_t<
+                                           std::invoke_result_t<
+                                               FUNCTION &,
+                                               const detail::carrier_value_t<
+                                                   CARRIERS> &...>,
+                                           ERROR_TYPE>,
+                                       FUNCTION &,
+                                       const detail::carrier_value_t<CARRIERS>
+                                           &...> &&
+                               detail::expected_accumulate_nothrow<
+                                   detail::expected_result_t<
+                                       std::invoke_result_t<
+                                           FUNCTION &,
+                                           const detail::carrier_value_t<
+                                               CARRIERS> &...>,
+                                       ERROR_TYPE>,
+                                   CARRIERS...>)
     -> detail::expected_result_t<
         std::invoke_result_t<FUNCTION &,
                              const detail::carrier_value_t<CARRIERS> &...>,
@@ -974,8 +1325,38 @@ template <class FUNCTION, class... CARRIERS>
             (detail::mixes_with_model<
                  grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>, CARRIERS> &&
              ...)
-auto accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
-    this auto &&, FUNCTION &&function, const CARRIERS &...operands)
+[[nodiscard]] auto
+accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
+    this auto &&, FUNCTION &&function,
+    const CARRIERS
+        &...operands) noexcept(detail::
+                                   invokes_nothrow_into<
+                                       detail::mixed_result_t<
+                                           grade_of_t<std::expected<
+                                               VALUE_TYPE, ERROR_TYPE>>,
+                                           detail::expected_result_t<
+                                               std::invoke_result_t<
+                                                   FUNCTION &,
+                                                   const detail::
+                                                       carrier_value_t<CARRIERS>
+                                                           &...>,
+                                               ERROR_TYPE>,
+                                           CARRIERS...>,
+                                       FUNCTION &,
+                                       const detail::carrier_value_t<CARRIERS>
+                                           &...> &&
+                               detail::expected_accumulate_nothrow<
+                                   detail::mixed_result_t<
+                                       grade_of_t<std::expected<VALUE_TYPE,
+                                                                ERROR_TYPE>>,
+                                       detail::expected_result_t<
+                                           std::invoke_result_t<
+                                               FUNCTION &,
+                                               const detail::carrier_value_t<
+                                                   CARRIERS> &...>,
+                                           ERROR_TYPE>,
+                                       CARRIERS...>,
+                                   CARRIERS...>)
     -> detail::mixed_result_t<
         grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
         detail::expected_result_t<
@@ -1013,8 +1394,10 @@ auto accumulating_expected_applicative_impl<VALUE_TYPE, ERROR_TYPE>::invoke(
 //! \omit
 template <class VALUE_TYPE, class ERROR_TYPE>
 template <class VALUE>
-auto ExpectedMonadImpl<VALUE_TYPE, ERROR_TYPE>::pure(this auto &&,
-                                                     VALUE &&value)
+[[nodiscard]] auto ExpectedMonadImpl<VALUE_TYPE, ERROR_TYPE>::pure(
+    this auto &&,
+    VALUE &&value) noexcept(detail::expected_pure_nothrow<VALUE_TYPE, VALUE,
+                                                          ERROR_TYPE>)
     -> detail::expected_pure_t<VALUE_TYPE, VALUE, ERROR_TYPE> {
     return applicative<std::expected<VALUE_TYPE, ERROR_TYPE>>.pure(
         std::forward<VALUE>(value));
@@ -1023,8 +1406,9 @@ auto ExpectedMonadImpl<VALUE_TYPE, ERROR_TYPE>::pure(this auto &&,
 //! \omit
 template <class VALUE_TYPE, class ERROR_TYPE>
 template <class A, class F>
-auto ExpectedMonadImpl<VALUE_TYPE, ERROR_TYPE>::bind(
-    this auto &&, const std::expected<A, ERROR_TYPE> &ma, F &&f)
+[[nodiscard]] auto ExpectedMonadImpl<VALUE_TYPE, ERROR_TYPE>::bind(
+    this auto &&, const std::expected<A, ERROR_TYPE> &ma,
+    F &&f) noexcept(detail::expected_bind_nothrow<F, A, ERROR_TYPE>)
     -> detail::bind_result_t<F, A>
     requires detail::is_expected_with_error_v<detail::bind_result_t<F, A>,
                                               ERROR_TYPE>
@@ -1048,13 +1432,20 @@ template <class A, class F>
              detail::mixes_with_model<
                  grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
                  detail::bind_result_t<F, A>>
-auto ExpectedMonadImpl<VALUE_TYPE, ERROR_TYPE>::bind(
-    this auto &&, const std::expected<A, ERROR_TYPE> &ma, F &&f)
-    -> detail::mixed_result_t<
-        grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
-        std::expected<typename detail::bind_result_t<F, A>::value_type,
-                      ERROR_TYPE>,
-        std::expected<A, ERROR_TYPE>, detail::bind_result_t<F, A>> {
+[[nodiscard]] auto ExpectedMonadImpl<VALUE_TYPE, ERROR_TYPE>::
+    bind(this auto &&, const std::expected<A, ERROR_TYPE> &ma, F &&f) noexcept(
+        detail::expected_mixed_bind_nothrow<
+            detail::mixed_result_t<
+                grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
+                std::expected<typename detail::bind_result_t<F, A>::value_type,
+                              ERROR_TYPE>,
+                std::expected<A, ERROR_TYPE>, detail::bind_result_t<F, A>>,
+            F, A, ERROR_TYPE>)
+        -> detail::mixed_result_t<
+            grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
+            std::expected<typename detail::bind_result_t<F, A>::value_type,
+                          ERROR_TYPE>,
+            std::expected<A, ERROR_TYPE>, detail::bind_result_t<F, A>> {
     using Continuation = detail::bind_result_t<F, A>;
     using Returned = detail::mixed_result_t<
         grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,

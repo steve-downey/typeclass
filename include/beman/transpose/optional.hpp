@@ -54,6 +54,17 @@ concept optional_holdable_value =
     !std::same_as<std::remove_cvref_t<RESULT>, std::nullopt_t> &&
     !std::same_as<std::remove_cvref_t<RESULT>, std::in_place_t>;
 
+//! \expos
+//! \remarks `$optional-invoke-nothrow$<FUNCTION, FIRST, REST...>` is `true`
+//! when invoking `FUNCTION` on the values the operands hold, each in its
+//! operand's value category, and constructing an `optional` from the result
+//! are both non-throwing.
+template <class FUNCTION, class FIRST, class... REST>
+inline constexpr bool optional_invoke_nothrow = invokes_nothrow_into<
+    std::optional<std::remove_cvref_t<std::invoke_result_t<
+        FUNCTION &, contained_ref_t<FIRST>, contained_ref_t<REST>...>>>,
+    FUNCTION &, contained_ref_t<FIRST>, contained_ref_t<REST>...>;
+
 } // namespace detail
 
 /// Applicative instance for std::optional: the flagship of the invoke core.
@@ -64,10 +75,13 @@ template <class VALUE_TYPE>
 struct optional_applicative_impl {
     // \ref{transpose.optional.applicative}, applicative instance for optional
     template <class VALUE>
-    constexpr auto pure(this auto &&, VALUE &&value)
+    [[nodiscard]] constexpr auto pure(this auto &&, VALUE &&value) noexcept(
+        std::is_nothrow_constructible_v<
+            std::optional<std::remove_cvref_t<VALUE>>, VALUE>)
         -> std::optional<std::remove_cvref_t<VALUE>>;
 
-    constexpr auto zero(this auto &&) -> std::optional<VALUE_TYPE>;
+    [[nodiscard]] constexpr auto zero(this auto &&) noexcept
+        -> std::optional<VALUE_TYPE>;
 
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_optional_v<FIRST> &&
@@ -77,8 +91,11 @@ struct optional_applicative_impl {
                  detail::optional_holdable_value<std::invoke_result_t<
                      FUNCTION &, detail::contained_ref_t<FIRST>,
                      detail::contained_ref_t<REST>...>>
-    constexpr auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
-                          REST &&...rest)
+    [[nodiscard]] constexpr auto
+    invoke(this auto &&, FUNCTION &&function, FIRST &&first,
+           REST &&...rest) noexcept(detail::optional_invoke_nothrow<FUNCTION,
+                                                                    FIRST,
+                                                                    REST...>)
         -> std::optional<std::remove_cvref_t<
             std::invoke_result_t<FUNCTION &, detail::contained_ref_t<FIRST>,
                                  detail::contained_ref_t<REST>...>>>;
@@ -112,8 +129,15 @@ struct OptionalFunctorImpl {
         requires std::invocable<F, const VALUE_TYPE &> &&
                  detail::optional_holdable_value<
                      std::invoke_result_t<F, const VALUE_TYPE &>>
-    constexpr auto fmap(this auto &&, F &&function,
-                        const std::optional<VALUE_TYPE> &value) {
+    [[nodiscard]] constexpr auto
+    fmap(this auto &&, F &&function,
+         const std::optional<VALUE_TYPE>
+             &value) noexcept(detail::
+                                  invokes_nothrow_into<
+                                      std::optional<std::remove_cvref_t<
+                                          std::invoke_result_t<
+                                              F, const VALUE_TYPE &>>>,
+                                      F, const VALUE_TYPE &>) {
         using Result = std::invoke_result_t<F, const VALUE_TYPE &>;
         if (!value) {
             return std::optional<std::remove_cvref_t<Result>>{};
@@ -143,7 +167,9 @@ struct OptionalMonadImpl {
     using element_type = VALUE_TYPE;
 
     template <class VALUE>
-    constexpr auto pure(this auto &&, VALUE &&value)
+    [[nodiscard]] constexpr auto pure(this auto &&, VALUE &&value) noexcept(
+        noexcept(applicative<std::optional<VALUE_TYPE>>.pure(
+            std::forward<VALUE>(value))))
         -> std::optional<std::remove_cvref_t<VALUE>> {
         return applicative<std::optional<VALUE_TYPE>>.pure(
             std::forward<VALUE>(value));
@@ -153,7 +179,11 @@ struct OptionalMonadImpl {
     // plain result would be returned as-is, with a value-initialized one
     // standing in for the empty case, which breaks the monad laws.
     template <class A, class F>
-    constexpr auto bind(this auto &&, const std::optional<A> &ma, F &&f)
+    [[nodiscard]] constexpr auto
+    bind(this auto &&, const std::optional<A> &ma, F &&f) noexcept(
+        detail::invokes_nothrow_into<
+            std::remove_cvref_t<std::invoke_result_t<F, const A &>>, F,
+            const A &>)
         -> std::remove_cvref_t<std::invoke_result_t<F, const A &>>
         requires detail::is_optional_v<std::invoke_result_t<F, const A &>>
     {
@@ -181,9 +211,11 @@ inline constexpr auto monad<std::optional<VALUE_TYPE>> =
 //! \returns An engaged `optional` holding `value`.
 template <class VALUE_TYPE>
 template <class VALUE>
-constexpr auto optional_applicative_impl<VALUE_TYPE>::pure(this auto &&,
-                                                           VALUE &&value)
-    -> std::optional<std::remove_cvref_t<VALUE>> {
+[[nodiscard]] constexpr auto optional_applicative_impl<VALUE_TYPE>::
+    pure(this auto &&, VALUE &&value) noexcept(
+        std::is_nothrow_constructible_v<
+            std::optional<std::remove_cvref_t<VALUE>>, VALUE>)
+        -> std::optional<std::remove_cvref_t<VALUE>> {
     return std::optional<std::remove_cvref_t<VALUE>>{
         std::forward<VALUE>(value)};
 }
@@ -193,7 +225,8 @@ constexpr auto optional_applicative_impl<VALUE_TYPE>::pure(this auto &&,
 //! has a `zero`; it is the identity of the first-engaged disjunction that
 //! `first_monoid` already folds with.
 template <class VALUE_TYPE>
-constexpr auto optional_applicative_impl<VALUE_TYPE>::zero(this auto &&)
+[[nodiscard]] constexpr auto
+optional_applicative_impl<VALUE_TYPE>::zero(this auto &&) noexcept
     -> std::optional<VALUE_TYPE> {
     return std::optional<VALUE_TYPE>{};
 }
@@ -215,9 +248,10 @@ template <class FUNCTION, class FIRST, class... REST>
              detail::optional_holdable_value<std::invoke_result_t<
                  FUNCTION &, detail::contained_ref_t<FIRST>,
                  detail::contained_ref_t<REST>...>>
-constexpr auto
-optional_applicative_impl<VALUE_TYPE>::invoke(this auto &&, FUNCTION &&function,
-                                              FIRST &&first, REST &&...rest)
+[[nodiscard]] constexpr auto optional_applicative_impl<VALUE_TYPE>::invoke(
+    this auto &&, FUNCTION &&function, FIRST &&first,
+    REST &&...rest) noexcept(detail::optional_invoke_nothrow<FUNCTION, FIRST,
+                                                             REST...>)
     -> std::optional<std::remove_cvref_t<
         std::invoke_result_t<FUNCTION &, detail::contained_ref_t<FIRST>,
                              detail::contained_ref_t<REST>...>>> {

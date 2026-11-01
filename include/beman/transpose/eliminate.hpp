@@ -151,7 +151,12 @@ using eliminate_indexed_result_t = typename eliminate_indexed_result<
  * that type, and by its exact alternative otherwise, so that two result
  * types convertible to each other are never confused. */
 template <class JOINED, class RESULT>
-constexpr auto into_join(RESULT &&result) -> JOINED {
+constexpr auto into_join(RESULT &&result) noexcept(
+    std::is_same_v<std::remove_cvref_t<RESULT>, JOINED>
+        ? std::is_nothrow_constructible_v<JOINED, RESULT>
+        : std::is_nothrow_constructible_v<
+              JOINED, std::in_place_type_t<std::remove_cvref_t<RESULT>>,
+              RESULT>) -> JOINED {
     using Result = std::remove_cvref_t<RESULT>;
     if constexpr (std::is_same_v<Result, JOINED>) {
         return std::forward<RESULT>(result);
@@ -160,12 +165,64 @@ constexpr auto into_join(RESULT &&result) -> JOINED {
     }
 }
 
+/** Whether eliminating `VARIANT` with `HANDLER` is non-throwing: for every
+ * alternative, invoking the arm on it as presented and placing the result
+ * into the join. A variant that is valueless by exception holds no
+ * alternative and is outside both eliminators' preconditions, so neither
+ * specification accounts for it. */
+//! \expos
+template <class VARIANT, class HANDLER, class ALTERNATIVES>
+struct eliminate_nothrow;
+
+template <class VARIANT, class HANDLER, class... ALTERNATIVES>
+struct eliminate_nothrow<VARIANT, HANDLER, type_list<ALTERNATIVES...>>
+    : std::bool_constant<(
+          noexcept(into_join<eliminate_result_t<VARIANT, HANDLER>>(std::invoke(
+              std::declval<HANDLER &>(),
+              std::declval<presented_t<VARIANT, ALTERNATIVES>>()))) &&
+          ...)> {};
+
+//! \expos
+//! \remarks `$eliminate-nothrow-v$<VARIANT, HANDLER>` is `true` when, for
+//! every alternative of `VARIANT`, invoking `HANDLER` on it as presented and
+//! placing the result into the join are non-throwing.
+template <class VARIANT, class HANDLER>
+inline constexpr bool eliminate_nothrow_v = eliminate_nothrow<
+    VARIANT, HANDLER,
+    typename alternatives_of<std::remove_cvref_t<VARIANT>>::type>::value;
+
+//! \expos
+template <class VARIANT, class HANDLER, class INDICES, class ALTERNATIVES>
+struct eliminate_indexed_nothrow;
+
+template <class VARIANT, class HANDLER, std::size_t... INDICES,
+          class... ALTERNATIVES>
+struct eliminate_indexed_nothrow<VARIANT, HANDLER,
+                                 std::index_sequence<INDICES...>,
+                                 type_list<ALTERNATIVES...>>
+    : std::bool_constant<(
+          noexcept(into_join<eliminate_indexed_result_t<VARIANT, HANDLER>>(
+              std::invoke(
+                  std::declval<HANDLER &>(), std::in_place_index<INDICES>,
+                  std::declval<presented_t<VARIANT, ALTERNATIVES>>()))) &&
+          ...)> {};
+
+//! \expos
+//! \remarks `$eliminate-indexed-nothrow-v$<VARIANT, HANDLER>` is as
+//! `$eliminate-nothrow-v$`, with each arm invoked with its index tag.
+template <class VARIANT, class HANDLER>
+inline constexpr bool eliminate_indexed_nothrow_v = eliminate_indexed_nothrow<
+    VARIANT, HANDLER,
+    std::make_index_sequence<std::variant_size_v<std::remove_cvref_t<VARIANT>>>,
+    typename alternatives_of<std::remove_cvref_t<VARIANT>>::type>::value;
+
 } // namespace detail
 
 //! \constraints `remove_cvref_t<VARIANT>` is a specialization of `variant`,
 //! and for every alternative `A` of it `handler` is invocable with `A`
 //! presented in `variant`'s value category, with a result that is not
 //! `void`.
+//! \expects `variant.valueless_by_exception()` is `false`.
 //! \effects Invokes `handler` with the alternative `variant` holds, presented
 //! in `variant`'s value category.
 //! \returns The result of that invocation, as the join of the arms: when
@@ -175,10 +232,14 @@ constexpr auto into_join(RESULT &&result) -> JOINED {
 //! \remarks The join is a value and is read as a grade by nothing. Results of
 //! one type from different arms share one position: the join records what
 //! was produced, not which arm produced it; `eliminate_indexed` is for arms
-//! that need the position.
+//! that need the position. The exception specification is
+//! `$eliminate-nothrow-v$<VARIANT, HANDLER>`: the arms' own, and the join's
+//! construction from what they return.
 template <class VARIANT, class HANDLER>
     requires detail::variant_specialization<VARIANT>
-constexpr auto eliminate(VARIANT &&variant, HANDLER &&handler)
+[[nodiscard]] constexpr auto eliminate(
+    VARIANT &&variant,
+    HANDLER &&handler) noexcept(detail::eliminate_nothrow_v<VARIANT, HANDLER>)
     -> detail::eliminate_result_t<VARIANT, HANDLER> {
     using Joined = detail::eliminate_result_t<VARIANT, HANDLER>;
     return std::visit(
@@ -191,15 +252,19 @@ constexpr auto eliminate(VARIANT &&variant, HANDLER &&handler)
 
 //! \constraints As for `eliminate`, with `handler` invocable with
 //! `in_place_index_t<I>` followed by the alternative, for each index `I`.
+//! \expects `variant.valueless_by_exception()` is `false`.
 //! \effects Invokes `handler` with `in_place_index<I>` and the alternative
 //! `variant` holds at index `I`, presented in `variant`'s value category.
 //! \returns As for `eliminate`.
 //! \remarks The index tag is the injection into the sum: an arm that receives
 //! it can tell two alternatives of one type apart, or use the position as a
-//! template argument.
+//! template argument. The exception specification is
+//! `$eliminate-indexed-nothrow-v$<VARIANT, HANDLER>`.
 template <class VARIANT, class HANDLER>
     requires detail::variant_specialization<VARIANT>
-constexpr auto eliminate_indexed(VARIANT &&variant, HANDLER &&handler)
+[[nodiscard]] constexpr auto
+eliminate_indexed(VARIANT &&variant, HANDLER &&handler) noexcept(
+    detail::eliminate_indexed_nothrow_v<VARIANT, HANDLER>)
     -> detail::eliminate_indexed_result_t<VARIANT, HANDLER> {
     using Joined = detail::eliminate_indexed_result_t<VARIANT, HANDLER>;
     using Variant = std::remove_cvref_t<VARIANT>;

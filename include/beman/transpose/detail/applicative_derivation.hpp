@@ -50,7 +50,8 @@ struct terminating_partial {
     template <class NEXT_ARG>
         requires(sizeof...(BOUND_ARGS) + 1 == ARITY) &&
                 std::invocable<FUNCTION &, BOUND_ARGS &..., NEXT_ARG>
-    constexpr auto operator()(NEXT_ARG &&next_arg)
+    constexpr auto operator()(NEXT_ARG &&next_arg) noexcept(
+        std::is_nothrow_invocable_v<FUNCTION &, BOUND_ARGS &..., NEXT_ARG>)
         -> std::invoke_result_t<FUNCTION &, BOUND_ARGS &..., NEXT_ARG> {
         return std::apply(
             [&](BOUND_ARGS &...bound) -> decltype(auto) {
@@ -65,8 +66,10 @@ struct terminating_partial {
                 std::invocable<const FUNCTION &, const BOUND_ARGS &...,
                                NEXT_ARG>
     constexpr auto operator()(NEXT_ARG &&next_arg) const
-        -> std::invoke_result_t<const FUNCTION &, const BOUND_ARGS &...,
-                                NEXT_ARG> {
+        noexcept(std::is_nothrow_invocable_v<const FUNCTION &,
+                                             const BOUND_ARGS &..., NEXT_ARG>)
+            -> std::invoke_result_t<const FUNCTION &, const BOUND_ARGS &...,
+                                    NEXT_ARG> {
         return std::apply(
             [&](const BOUND_ARGS &...bound) -> decltype(auto) {
                 return std::invoke(function, bound...,
@@ -78,8 +81,12 @@ struct terminating_partial {
     template <class NEXT_ARG>
         requires(sizeof...(BOUND_ARGS) + 1 < ARITY)
     constexpr auto operator()(NEXT_ARG &&next_arg) const
-        -> terminating_partial<ARITY, FUNCTION, BOUND_ARGS...,
-                               std::remove_cvref_t<NEXT_ARG>> {
+        noexcept(std::is_nothrow_copy_constructible_v<FUNCTION> &&
+                 (std::is_nothrow_copy_constructible_v<BOUND_ARGS> && ...) &&
+                 std::is_nothrow_constructible_v<std::remove_cvref_t<NEXT_ARG>,
+                                                 NEXT_ARG>)
+            -> terminating_partial<ARITY, FUNCTION, BOUND_ARGS...,
+                                   std::remove_cvref_t<NEXT_ARG>> {
         return {function,
                 std::tuple_cat(bound_args,
                                std::tuple<std::remove_cvref_t<NEXT_ARG>>{
@@ -88,7 +95,8 @@ struct terminating_partial {
 };
 
 template <std::size_t ARITY, class FUNCTION>
-constexpr auto make_terminating_partial(FUNCTION &&function)
+constexpr auto make_terminating_partial(FUNCTION &&function) noexcept(
+    std::is_nothrow_constructible_v<std::remove_cvref_t<FUNCTION>, FUNCTION>)
     -> terminating_partial<ARITY, std::remove_cvref_t<FUNCTION>> {
     return {std::forward<FUNCTION>(function), std::tuple<>{}};
 }
@@ -115,6 +123,33 @@ struct ap_chain_valid<SELF, ACCUMULATED, FIRST, REST...>
                          std::declval<ACCUMULATED>(), std::declval<FIRST>())),
                      REST...> {};
 
+// Whether every step of that fold is non-throwing, and the fold's result can
+// be moved out without throwing -- the one move the chain makes, of its
+// final value. Meaningful only where ap_chain_valid holds, which is where the
+// derived invoke's exception specification consults it.
+template <class SELF, class ACCUMULATED, class... ARGUMENTS>
+struct ap_chain_nothrow : std::false_type {};
+
+template <class SELF, class ACCUMULATED>
+struct ap_chain_nothrow<SELF, ACCUMULATED>
+    : std::bool_constant<std::is_nothrow_move_constructible_v<
+          std::remove_cvref_t<ACCUMULATED>>> {};
+
+template <class SELF, class ACCUMULATED, class FIRST, class... REST>
+    requires requires {
+        std::declval<SELF>().ap(std::declval<ACCUMULATED>(),
+                                std::declval<FIRST>());
+    }
+struct ap_chain_nothrow<SELF, ACCUMULATED, FIRST, REST...>
+    : std::bool_constant<noexcept(std::declval<SELF>().ap(
+                             std::declval<ACCUMULATED>(),
+                             std::declval<FIRST>())) &&
+                         ap_chain_nothrow<SELF,
+                                          decltype(std::declval<SELF>().ap(
+                                              std::declval<ACCUMULATED>(),
+                                              std::declval<FIRST>())),
+                                          REST...>::value> {};
+
 // Whether the invoke-from-ap derivation of SELF.invoke(function,
 // arguments...) is well-formed: pure can embed the curried function, and
 // ap can then apply it to every argument in turn, the last application
@@ -128,6 +163,22 @@ concept invocable_through_ap =
                            std::declval<FUNCTION>()))),
                    ARGUMENTS...>::value;
 
+// Whether that derivation is non-throwing: embedding the curried function
+// with pure, and every ap in the chain. This is what the derived invoke's
+// exception specification is where no native invoke is found, computed from
+// the same chain its constraint checks.
+//! \expos
+template <class SELF, class FUNCTION, class... ARGUMENTS>
+inline constexpr bool nothrow_invocable_through_ap =
+    noexcept(std::declval<SELF>().pure(
+        make_terminating_partial<sizeof...(ARGUMENTS)>(
+            std::declval<FUNCTION>()))) &&
+    ap_chain_nothrow<SELF,
+                     decltype(std::declval<SELF>().pure(
+                         make_terminating_partial<sizeof...(ARGUMENTS)>(
+                             std::declval<FUNCTION>()))),
+                     ARGUMENTS...>::value;
+
 // The evaluator that recovers one-step application (ap) from the n-ary
 // core: ap(cf, cx) = invoke(applicative_eval, cf, cx) -- GHC's
 // (<*>) = liftA2 id. The trailing return type keeps it SFINAE-visible so
@@ -136,7 +187,8 @@ concept invocable_through_ap =
 struct applicative_eval_t {
     template <class FUNCTION, class ARGUMENT>
     constexpr auto operator()(FUNCTION &&function, ARGUMENT &&argument) const
-        -> std::invoke_result_t<FUNCTION, ARGUMENT> {
+        noexcept(std::is_nothrow_invocable_v<FUNCTION, ARGUMENT>)
+            -> std::invoke_result_t<FUNCTION, ARGUMENT> {
         return std::invoke(std::forward<FUNCTION>(function),
                            std::forward<ARGUMENT>(argument));
     }
@@ -146,8 +198,16 @@ inline constexpr applicative_eval_t applicative_eval{};
 // Free-function form for generic internal use.
 template <class APPLICATIVE_MAP, class FUNCTIONS_IN_CONTEXT,
           class ARGUMENTS_IN_CONTEXT>
-constexpr auto ap(const APPLICATIVE_MAP &map, FUNCTIONS_IN_CONTEXT &&functions,
-                  ARGUMENTS_IN_CONTEXT &&arguments) {
+constexpr auto
+ap(const APPLICATIVE_MAP &map, FUNCTIONS_IN_CONTEXT &&functions,
+   ARGUMENTS_IN_CONTEXT &&
+       arguments) noexcept(noexcept(map
+                                        .invoke(
+                                            applicative_eval,
+                                            std::forward<FUNCTIONS_IN_CONTEXT>(
+                                                functions),
+                                            std::forward<ARGUMENTS_IN_CONTEXT>(
+                                                arguments)))) {
     return map.invoke(applicative_eval,
                       std::forward<FUNCTIONS_IN_CONTEXT>(functions),
                       std::forward<ARGUMENTS_IN_CONTEXT>(arguments));

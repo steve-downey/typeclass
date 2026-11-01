@@ -67,7 +67,15 @@ inline constexpr bool always_false_v = false;
  * protectedly, so only a member of that base may perform the conversion;
  * each base carries a three-line private `impl_of` that does, and they all
  * name this alias. See `docs/transpose/decisions.md#impl-access-through-bases`.
+ * Each `impl_of` is `noexcept`: the derived operations spell their exception
+ * specifications through it, and a cast that was potentially throwing by
+ * declaration would make every one of them so.
+ *
+ * Exposition-only, because the exception specifications of the derived
+ * operations name it: each probes `Impl` through exactly this reference, so
+ * that the route the specification computes is the route the body takes.
  */
+//! \expos
 template <class IMPL, class SELF>
 using impl_ref_t =
     std::conditional_t<std::is_const_v<std::remove_reference_t<SELF>>,
@@ -123,6 +131,25 @@ concept holdable_value = std::is_object_v<std::remove_cvref_t<RESULT>> &&
                          !std::is_array_v<std::remove_cvref_t<RESULT>> &&
                          std::destructible<std::remove_cvref_t<RESULT>>;
 
+/** Whether invoking `FUNCTION` on `ARGUMENTS` and holding the result in a
+ * `RETURNED` is non-throwing: the invocation itself, and the construction of
+ * `RETURNED` from what it yields. A `void` result is held by a `RETURNED`
+ * whose value type is the unit, which is constructed from nothing.
+ *
+ * This is the computation every instance's basis makes for its exception
+ * specification (docs/transpose/decisions.md#operation-noexcept): an
+ * operation is `noexcept` exactly when the callable it was handed is and the
+ * carrier it builds can be built without throwing. Nothing is promised that
+ * the callable did not promise first.
+ */
+//! \expos
+template <class RETURNED, class FUNCTION, class... ARGUMENTS>
+inline constexpr bool invokes_nothrow_into =
+    std::is_nothrow_invocable_v<FUNCTION, ARGUMENTS...> &&
+    (std::is_void_v<std::invoke_result_t<FUNCTION, ARGUMENTS...>> ||
+     std::is_nothrow_constructible_v<
+         RETURNED, std::invoke_result_t<FUNCTION, ARGUMENTS...>>);
+
 /** The type `forward_contained` yields for an operand of type `OPERAND`,
  * for naming in a trailing return type. Spelled before the function so that
  * the function can name it and keep a trailing return type, rather than
@@ -157,8 +184,8 @@ using contained_ref_t = std::conditional_t<
  * `contained_ref_t`.
  */
 template <class OPERAND>
-constexpr auto forward_contained(OPERAND &&operand)
-    -> contained_ref_t<OPERAND> {
+constexpr auto forward_contained(OPERAND &&operand) noexcept(
+    noexcept(*std::declval<OPERAND>())) -> contained_ref_t<OPERAND> {
     return *std::forward<OPERAND>(operand);
 }
 
@@ -174,7 +201,8 @@ constexpr auto forward_contained(OPERAND &&operand)
  * would be a mutable reference into the caller's container.
  */
 template <class CONTAINER>
-constexpr auto forward_at(CONTAINER &&container, std::size_t index)
+constexpr auto forward_at(CONTAINER &&container, std::size_t index) noexcept(
+    noexcept(std::as_const(container)[index]) && noexcept(container[index]))
     -> decltype(auto) {
     if constexpr (std::is_lvalue_reference_v<CONTAINER>) {
         return std::as_const(container)[index];
@@ -188,6 +216,20 @@ constexpr auto forward_at(CONTAINER &&container, std::size_t index)
 template <class CONTAINER>
 using element_ref_t =
     decltype(forward_at(std::declval<CONTAINER>(), std::size_t{}));
+
+/** Whether a lanewise application of `FUNCTION` across the positions of
+ * `CONTAINERS` is non-throwing: reading each position, invoking `FUNCTION` on
+ * one element of each, and constructing the result element from what it
+ * yields. The lanewise objects (`std::array`, `simd_lanes`) build their
+ * result from these elements directly, so nothing else is constructed.
+ */
+//! \expos
+template <class FUNCTION, class... CONTAINERS>
+inline constexpr bool lanewise_invoke_nothrow =
+    (noexcept(forward_at(std::declval<CONTAINERS>(), std::size_t{})) && ...) &&
+    invokes_nothrow_into<std::remove_cvref_t<std::invoke_result_t<
+                             FUNCTION &, element_ref_t<CONTAINERS>...>>,
+                         FUNCTION &, element_ref_t<CONTAINERS>...>;
 
 /** Representative witness callable for probing a one-argument derived
  * operation that is templated over an arbitrary callable -- `fmap`, `map`,
@@ -205,12 +247,19 @@ using element_ref_t =
  * so `RESULT{}` reaches the compiler and rejects contexts over
  * non-default-constructible elements. The body is never executed -- a concept
  * is checked, not evaluated -- so `std::unreachable` is the honest spelling.
+ *
+ * The call is `noexcept`, as every probe's is. A derived operation computes
+ * the exception specification of its derived route from the probe its
+ * constraint names standing in for the callable the body writes, and the
+ * callables the bodies write for these probes do not throw; a probe that was
+ * potentially throwing would make every such route potentially throwing by
+ * fiat rather than by computation.
  */
 //! \expos
 template <class RESULT>
 struct probe_witness {
     template <class ARGUMENT>
-    constexpr auto operator()(const ARGUMENT &) const -> RESULT {
+    constexpr auto operator()(const ARGUMENT &) const noexcept -> RESULT {
         std::unreachable();
     }
 };
@@ -233,7 +282,7 @@ struct probe_witness {
 //! \expos
 template <class ARGUMENT, class RESULT>
 struct consuming_probe_witness {
-    constexpr auto operator()(ARGUMENT &&) const -> RESULT {
+    constexpr auto operator()(ARGUMENT &&) const noexcept -> RESULT {
         std::unreachable();
     }
 };
@@ -253,7 +302,8 @@ struct consuming_probe_witness {
 template <class RESULT>
 struct probe_witness2 {
     template <class FIRST, class SECOND>
-    constexpr auto operator()(const FIRST &, const SECOND &) const -> RESULT {
+    constexpr auto operator()(const FIRST &, const SECOND &) const noexcept
+        -> RESULT {
         std::unreachable();
     }
 };

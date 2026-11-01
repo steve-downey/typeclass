@@ -33,7 +33,9 @@ struct simd_lanes {
 
     std::array<T, N> data;
 
-    static auto repeat(T value) -> simd_lanes {
+    static auto
+    repeat(T value) noexcept(std::is_nothrow_copy_constructible_v<T>)
+        -> simd_lanes {
         // Built element by element rather than default-constructed and
         // filled, so T need only be copy-constructible.
         return simd_lanes{detail::make_array<T, static_cast<std::size_t>(N)>(
@@ -68,8 +70,12 @@ inline constexpr bool is_simd_lanes_of_width_v =
 
 template <class T, int N>
 struct SimdLanesApplicativeImpl {
+    // The value is constructed from the argument and then copied into every
+    // lane, so this is noexcept exactly when both are.
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value) {
+    [[nodiscard]] auto pure(this auto &&, VALUE &&value) noexcept(
+        std::is_nothrow_constructible_v<std::remove_cvref_t<VALUE>, VALUE> &&
+        std::is_nothrow_copy_constructible_v<std::remove_cvref_t<VALUE>>) {
         using U = std::remove_cvref_t<VALUE>;
         return simd_lanes<U, N>::repeat(U(std::forward<VALUE>(value)));
     }
@@ -86,8 +92,15 @@ struct SimdLanesApplicativeImpl {
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_simd_lanes_of_width_v<FIRST, N> &&
                  (detail::is_simd_lanes_of_width_v<REST, N> && ...)
-    auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
-                REST &&...rest) {
+    [[nodiscard]] auto
+    invoke(this auto &&, FUNCTION &&function, FIRST &&first,
+           REST &&...rest) noexcept(detail::
+                                        lanewise_invoke_nothrow<
+                                            FUNCTION,
+                                            decltype(std::forward<FIRST>(first)
+                                                         .data),
+                                            decltype(std::forward<REST>(rest)
+                                                         .data)...>) {
         using Result = std::invoke_result_t<
             FUNCTION &,
             detail::element_ref_t<decltype(std::forward<FIRST>(first).data)>,

@@ -4604,7 +4604,69 @@ the second client has said what it needs.
 **Question:** Do the typeclass operations carry a computed `noexcept`
 specification, and is a result that must not be dropped marked
 `[[nodiscard]]`?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed answer
+on 2026-11-01.
+**Decision:** Yes to both, under one rule: every exception specification is
+computed and propagated, never promised.
+
+1. **A basis operation** of a registered instance computes its specification
+   from the callable's invocation and the carrier's constructors, and from
+   nothing else: `detail::invokes_nothrow_into<RETURNED, F, ARGS...>` is
+   the spelling, with the failure path's constructors added where the
+   carrier has one (`expected-failure-nothrow`,
+   `expected-accumulate-nothrow`, `raise-nothrow`). An operation promises
+   nothing the callable and the carrier did not promise first.
+2. **A derived operation** of a CRTP base carries the specification of the
+   route its body takes, Impl's own operation where Impl has one that
+   accepts the arguments and the derivation otherwise, computed from the
+   same requires-expression the body selects the route by. In `apply.hpp`
+   each is a named exposition-only trait (`applicative-map-nothrow` and its
+   siblings) probing Impl through `impl_ref_t<Impl, decltype(self)>`, the
+   reference the body addresses Impl by; in the evidence headers (`functor`,
+   `monad`, `fold`) the same conditional is spelled inline on the member.
+   The derived route is asked through the probe type the constraint already
+   names, and every probe carries the specification of the continuation it
+   stands in for, so asking whether `bind` with the probe is `noexcept`
+   answers for the body's own closure.
+3. **An operation object** propagates the member it dispatches to:
+   `noexcept(noexcept(TC.op(args...)))`. The wording states this as "the
+   exception specification is equivalent to `noexcept(applicative<C>.op(
+   ...))`", since the object types are omitted from the synopsis.
+4. **An operation that allocates carries no specification.** The absence
+   is the specification, as it is for the standard containers' own
+   allocating operations; `noexcept(false)` is not written. These are the
+   vector `traverse` and `fmap`, `Monoid<vector>::combine`,
+   `Monoid<string>::combine`, `zip_list`'s `invoke`, both operations of the
+   demonstration `sender`, and the derived routes of `fold_left`,
+   `fold_right` (spelled `false`: they compose `std::function`) and
+   `to_vector`.
+5. **`[[nodiscard]]`** is on every operation object's call operator, every
+   derived member that returns a value, every instance basis operation
+   (`pure`, `raise`, `zero`, `invoke`, `fmap`, `bind`, `traverse`,
+   `fold_map`, `length`), and the free operations `eliminate`,
+   `eliminate_indexed`, `fold_witnesses`, `collapse`, `recover`, `fallible`,
+   `error_set_combine`, `grade_subsume`, `combined_with` and `mbind`. It is
+   deliberately not on `for_each`, which is `traverse` with its arguments
+   the other way round and the spelling for a traversal made for its
+   effects; not on `visit`, whose result may be `void`; and not on the
+   monoid instances, which are not operations of a typeclass object.
+6. A `std::variant` that is valueless by exception is a precondition
+   violation for `eliminate` and `eliminate_indexed`, stated as an
+   *Expects*; the indexed form already dispatched through a jump table that
+   has no entry for it. Both are `noexcept` exactly when their arms and the
+   join's construction are.
+
+**Why:** LEWG asks on every proposal, and the honest answer is the one the
+types already know. libfn's test, that the pipeline propagates the verb's
+own answer rather than promising `noexcept` and terminating when a callback
+throws, is the shape copied here: a specification that is computed from the
+callable and the carrier can only be wrong where the body does something the
+computation did not read, and a specification that mirrors the body's route
+cannot name a route the body did not take. The SFINAE-friendly basis that
+`apply.hpp`'s invariants already require is what makes the derived
+specifications computable without instantiating a deduced body; had one
+needed that, it would have been a basis defect upstream of this stage.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.9). No header under
@@ -4619,6 +4681,39 @@ specification, and is a result that must not be dropped marked
   constraint already names; `[[nodiscard]]` on every operation object and
   derived member that returns a context. The wording generator must carry
   both through.
+- 2026-11-01 — Decided by Steve Downey's acceptance of the surface plan, and
+  shipped by stage
+  [noexcept-sweep](transpose-surface-plan.md#noexcept-sweep) on branch
+  `noexcept-sweep`. Swept: `apply`, `functor`, `monad`, `traverse`, `fold`,
+  `optional`, `expected`, `sequence`, `array`, `zip_list`, `sender`,
+  `simd_lanes`, `simd`, `string`, `monoid`, `grade`, `error_set`,
+  `eliminate`, and `detail/typeclass_base` and
+  `detail/applicative_derivation`. `impl_ref_t` and `combine_grade_evidence`
+  became exposition-only so the traits could name them; `join`'s identity
+  continuation became the named `detail::identity_continuation`, so that the
+  constraint, the body and the specification name one callable; the derived
+  monad `ap` gained two continuation probes for its specification alone,
+  since its constraint names none; `probe_witness` and its siblings are
+  `noexcept`, as the closures they stand in for are; and every base's
+  private `impl_of` is `noexcept`, without which each specification spelled
+  through it read as potentially throwing, the one surprise of the sweep.
+  The tripwire did not fire: no operation's specification needed a deduced
+  body instantiated.
+  The operations left without a specification are exactly those point 4
+  names, by rule, and `simd.hpp`'s two were written against its existing
+  constraint tokens but not compiled here, where `<simd>` is unavailable.
+  The `[[nodiscard]]` audit was done by hand with `-Werror=unused-result`
+  over a scratch unit dropping each operation's result: eighteen diagnosed,
+  `for_each` silent. `noexcept.test.cpp` pins propagation: a throwing
+  callable's `noexcept(false)` through `traverse` over `vector<int>` into
+  `optional`, and `invoke`, `fmap`, `bind`, `pure` and `zero` on `optional`
+  answering what the carrier's constructors answer. The standard leaves
+  `optional`'s converting constructor without a specification and libstdc++
+  gives it a conditional one, so the tests state the equalities with the
+  trait the computation reads and assert the bare `noexcept(true)` form
+  only under `__GLIBCXX__`; for the same reason `pure<optional<string>>`
+  from an rvalue is `noexcept` there (a move) while from an lvalue it is not
+  (a copy that may allocate), which is the case the stage's test describes.
 
 ---
 
