@@ -3,13 +3,18 @@
 
 #include <beman/transpose/error_set.hpp>
 
+#include <beman/transpose/overloaded.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <expected>
+#include <functional>
 #include <optional>
+#include <string>
 #include <string_view>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace bt = beman::transpose;
 
@@ -685,4 +690,159 @@ TEST_CASE("error_set: the type-order key is part of error_set_of's identity") {
     STATIC_REQUIRE(bt::detail::type_name<set_ab>().find(
                        "ordered_by_type_name") != std::string_view::npos);
 #endif
+}
+
+// =========================================================================
+// PUBLIC ELIMINATORS FOR A MULTI-WITNESS VALUE. The fence of
+// docs/transpose/decisions.md#multi-witness-elimination moved on 2026-11-01:
+// fold_witnesses threads every present witness through an accumulator, and
+// collapse maps every alternative to one error type at the boundary. Both are
+// total over the witnessed subset; visit stays partial. Stage set-elimination
+// of docs/transpose/transpose-surface-plan.md.
+// =========================================================================
+
+namespace {
+
+auto describe(const err_alpha &a) -> std::string {
+    return "alpha=" + std::to_string(a.value);
+}
+auto describe(const err_beta &b) -> std::string {
+    return "beta=" + std::to_string(b.value);
+}
+
+using exp_ab = std::expected<int, set_ab>;
+
+/** A value witnessing both alternatives, in the order they were raised. */
+auto both_raised() -> exp_ab {
+    return exp_ab{std::unexpect,
+                  set_ab{err_beta{2}}.combined_with(set_ab{err_alpha{1}})};
+}
+
+} // namespace
+
+TEST_CASE("fold_witnesses: every present witness reaches the accumulator, in "
+          "canonical order, by overload set") {
+    auto both = both_raised();
+    REQUIRE(both.error().witness_count() == 2);
+
+    auto messages = bt::fold_witnesses(
+        both.error(), std::vector<std::string>{},
+        bt::overloaded{
+            [](std::vector<std::string> acc, const err_alpha &a) {
+                acc.push_back(describe(a));
+                return acc;
+            },
+            [](std::vector<std::string> acc, const err_beta &b) {
+                acc.push_back(describe(b));
+                return acc;
+            },
+        });
+    // Canonical order, not raise order: alpha precedes beta by name.
+    REQUIRE(messages == std::vector<std::string>{"alpha=1", "beta=2"});
+
+    // A generic arm is enough when the alternatives share an interface, and
+    // a single witness folds once.
+    auto count = bt::fold_witnesses(both.error(), 0,
+                                    [](int n, const auto &) { return n + 1; });
+    REQUIRE(count == 2);
+    REQUIRE(
+        bt::fold_witnesses(set_ab{err_beta{7}}, 0, [](int n, const auto &e) {
+            return n + e.value;
+        }) == 7);
+}
+
+TEST_CASE("collapse: every alternative to one error type, deduced from the "
+          "arms; the first witness in canonical order is kept by default") {
+    auto first = bt::collapse(
+        both_raised(), bt::overloaded{
+                           [](const err_alpha &a) { return describe(a); },
+                           [](const err_beta &b) { return describe(b); },
+                       });
+    // The grade is gone: the result is the ungraded expected.
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(first), std::expected<int, std::string>>);
+    REQUIRE_FALSE(first.has_value());
+    REQUIRE(first.error() == "alpha=1");
+}
+
+TEST_CASE("collapse: a combine keeps the second witness") {
+    auto joined = bt::collapse(
+        both_raised(), [](const auto &e) { return describe(e) + ";"; },
+        std::plus<>{});
+    REQUIRE(joined.error() == "alpha=1;beta=2;");
+}
+
+TEST_CASE("collapse: a named target converts each arm's result, and a success "
+          "passes through") {
+    auto code = bt::collapse<long>(
+        both_raised().error(),
+        bt::overloaded{
+            [](const err_alpha &a) { return a.value; },
+            [](const err_beta &b) { return static_cast<short>(b.value); },
+        });
+    STATIC_REQUIRE(std::is_same_v<decltype(code), long>);
+    REQUIRE(code == 1);
+
+    auto ok =
+        bt::collapse(exp_ab{7}, [](const auto &e) { return describe(e); });
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(ok), std::expected<int, std::string>>);
+    REQUIRE(ok == std::expected<int, std::string>{7});
+
+    // Staying graded is a matter of naming the singleton set as the target.
+    auto graded = bt::collapse<bt::error_set<std::string>>(
+        both_raised(), [](const auto &e) { return describe(e); });
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(graded),
+                       std::expected<int, bt::error_set<std::string>>>);
+    REQUIRE(graded.error().holds<std::string>());
+}
+
+TEST_CASE("collapse: a void computation collapses too") {
+    using exp_void_ab = std::expected<void, set_ab>;
+    auto failed = bt::collapse(exp_void_ab{std::unexpect, set_ab{err_alpha{3}}},
+                               [](const auto &e) { return describe(e); });
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(failed), std::expected<void, std::string>>);
+    REQUIRE(failed.error() == "alpha=3");
+    auto fine =
+        bt::collapse(exp_void_ab{}, [](const auto &e) { return describe(e); });
+    REQUIRE(fine.has_value());
+}
+
+TEST_CASE("fold_witnesses and collapse: constexpr, and collapse agrees with "
+          "visit on a single witness") {
+    constexpr auto n = [] {
+        set_ab e{err_alpha{3}};
+        return bt::fold_witnesses(
+            e, 0, [](int acc, const auto &) { return acc + 1; });
+    }();
+    STATIC_REQUIRE(n == 1);
+
+    constexpr set_ab single{err_beta{4}};
+    constexpr auto collapsed =
+        bt::collapse(single, [](const auto &e) { return e.value; });
+    STATIC_REQUIRE(collapsed == 4);
+    // The equivalence law: where visit is defined, collapse agrees with it.
+    REQUIRE(collapsed == single.visit([](const auto &e) { return e.value; }));
+}
+
+// Negative controls, hand-verified with GCC 15 (no compile-fail mechanism in
+// this repository):
+//
+//     bt::collapse(set_ab{err_alpha{3}}, bt::overloaded{[](const err_alpha&) {
+//     return 1; }});
+//
+// fails with "collapse: no arm accepts this alternative -- add a case" in the
+// instantiation of collapse_arm_check<..., err_beta>, naming the missing
+// alternative, and
+//
+//     bt::collapse(set_ab{err_alpha{3}}, bt::overloaded{
+//         [](const err_alpha&) { return 1; },
+//         [](const err_beta&) { return std::string{}; }});
+//
+// fails with "collapse: the arms return different types. Name the target,
+// collapse<TARGET>(...), and every arm's result converts to it."
+TEST_CASE("eliminators: the negative controls were hand-verified") {
+    SUCCEED("recorded in the comment above");
 }

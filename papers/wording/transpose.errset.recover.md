@@ -49,6 +49,80 @@ namespace std {
 }
 ```
 
+```cpp
+namespace std {
+  template<class HANDLER, class... ARGS>
+  concept $witness-arm-for$ =
+      invocable<HANDLER&, ARGS...> &&
+      !is_void_v<invoke_result_t<HANDLER&, ARGS...>>; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class HANDLER, class ACC, class E>
+  struct $fold-arm-check$ {
+    static constexpr bool value = true;
+  }; // exposition only
+}
+```
+
+[x+10]{.pnum} A program that instantiates `fold_arm_check<HANDLER, ACC, E>` is ill-formed unless `$witness-arm-for$<HANDLER, ACC&&, const E&>` is satisfied and `is_invocable_r_v<ACC, HANDLER&, ACC&&, const E&>` is `true`.
+
+```cpp
+namespace std {
+  template<class HANDLER, class E>
+  struct $collapse-arm-check$ {
+    using type = remove_cvref_t<invoke_result_t<HANDLER&, const E&>>;
+  }; // exposition only
+}
+```
+
+[x+11]{.pnum} A program that instantiates `collapse_arm_check<HANDLER, E>` is ill-formed unless `$witness-arm-for$<HANDLER, const E&>` is satisfied.
+
+```cpp
+namespace std {
+  template<class HANDLER, class... ERRORS>
+  struct $common-arm-result$; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class HANDLER, class FIRST, class... REST>
+  struct $common-arm-result$<HANDLER, FIRST, REST...> {
+    using type = typename $collapse-arm-check$<HANDLER, FIRST>::type;
+  }; // exposition only
+}
+```
+
+[x+12]{.pnum} A program that instantiates `common_arm_result` is ill-formed unless `(is_same_v<type, typename $collapse-arm-check$<HANDLER, REST>::type> && ...)` is `true`.
+
+```cpp
+namespace std {
+  template<class TARGET, class HANDLER, class... ERRORS>
+  struct $collapse-target$ {
+    using type = TARGET;
+  }; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class HANDLER, class... ERRORS>
+  struct $collapse-target$<void, HANDLER, ERRORS...>
+      : $common-arm-result$<HANDLER, ERRORS...> {}; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class TARGET, class HANDLER, class... ERRORS>
+  using $collapse-target-t$ =
+      typename $collapse-target$<TARGET, HANDLER, ERRORS...>::type; // exposition only
+}
+```
+
 :::
 
 :::

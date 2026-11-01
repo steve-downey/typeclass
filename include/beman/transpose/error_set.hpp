@@ -63,6 +63,7 @@
 #include <beman/transpose/detail/typeclass_base.hpp>
 #include <beman/transpose/grade.hpp>
 
+#include <concepts>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
@@ -798,6 +799,189 @@ inline constexpr bool is_expected_v = false;
 //! \also
 template <class VALUE, class ERROR>
 inline constexpr bool is_expected_v<std::expected<VALUE, ERROR>> = true;
+
+// -- Public eliminators for a multi-witness value --------------------------
+// docs/transpose/decisions.md#multi-witness-elimination, amended 2026-11-01:
+// the fence moved. `visit` stays the one-of eliminator, partial by
+// precondition. These two are total over the witnessed subset: `fold_witnesses`
+// threads every present witness through an accumulator, in canonical order,
+// so that multiplicity is the caller's stated business; `collapse` maps every
+// alternative to one error type and folds the results with a combine, for the
+// boundary where a graded region ends. Both are built from the public API
+// only, `holds<E>()` and `witness<E>()`, as `recover`'s own fold is. Neither
+// needs the join-of-arms result type of eliminate.hpp: `fold_witnesses`'s arms
+// return the accumulator and `collapse`'s return the target.
+
+namespace detail {
+
+/** Whether `HANDLER` has an arm for `ARGS`: invocable and not returning
+ * `void`. `overloaded`'s consteval catch-all is invocable and returns `void`,
+ * so this reports it as the missing arm it stands for, before its own
+ * diagnostic fires. */
+//! \expos
+template <class HANDLER, class... ARGS>
+concept witness_arm_for =
+    std::invocable<HANDLER &, ARGS...> &&
+    !std::is_void_v<std::invoke_result_t<HANDLER &, ARGS...>>;
+
+/** One instantiation per alternative, so that a failing assertion names the
+ * alternative in its instantiation context. */
+//! \expos
+template <class HANDLER, class ACC, class E>
+struct fold_arm_check {
+    static_assert(witness_arm_for<HANDLER, ACC &&, const E &>,
+                  "fold_witnesses: no arm accepts (ACC, const E&) for this "
+                  "alternative -- add a case");
+    static_assert(std::is_invocable_r_v<ACC, HANDLER &, ACC &&, const E &>,
+                  "fold_witnesses: this arm's result does not convert to ACC");
+    static constexpr bool value = true;
+};
+
+//! \expos
+template <class HANDLER, class E>
+struct collapse_arm_check {
+    static_assert(witness_arm_for<HANDLER, const E &>,
+                  "collapse: no arm accepts this alternative -- add a case");
+    using type =
+        std::remove_cvref_t<std::invoke_result_t<HANDLER &, const E &>>;
+};
+
+/** The common result of every arm; ill-formed, with a message, when the arms
+ * disagree and no TARGET was named. */
+//! \expos
+template <class HANDLER, class... ERRORS>
+struct common_arm_result;
+
+template <class HANDLER, class FIRST, class... REST>
+struct common_arm_result<HANDLER, FIRST, REST...> {
+    using type = typename collapse_arm_check<HANDLER, FIRST>::type;
+    static_assert(
+        (std::is_same_v<type,
+                        typename collapse_arm_check<HANDLER, REST>::type> &&
+         ...),
+        "collapse: the arms return different types. Name the target, "
+        "collapse<TARGET>(...), and every arm's result converts to it.");
+};
+
+/** TARGET as written, or the arms' common result when TARGET is void. A
+ * specialization rather than conditional_t, so that naming TARGET never
+ * instantiates the agreement check. */
+//! \expos
+template <class TARGET, class HANDLER, class... ERRORS>
+struct collapse_target {
+    using type = TARGET;
+};
+
+template <class HANDLER, class... ERRORS>
+struct collapse_target<void, HANDLER, ERRORS...>
+    : common_arm_result<HANDLER, ERRORS...> {};
+
+//! \expos
+template <class TARGET, class HANDLER, class... ERRORS>
+using collapse_target_t =
+    typename collapse_target<TARGET, HANDLER, ERRORS...>::type;
+
+} // namespace detail
+
+// \rSec3[transpose.errset.fold]{fold_witnesses}
+
+//! \mandates For every alternative `E` of the set, `handler` is invocable
+//! with `(ACC&&, const E&)` and the result converts to `ACC`.
+//! \effects For each alternative the set witnesses, in canonical order,
+//! replaces the accumulator with `handler(std::move(acc), witness)`, starting
+//! from `init`.
+//! \returns The final accumulator.
+//! \remarks Multiplicity is the caller's stated business: the accumulator is
+//! where two witnesses meet, and nothing is dropped unless an arm drops it.
+//! An alternative no arm accepts is ill-formed; the diagnostic names it.
+template <class ACC, class HANDLER, class... ERRORS>
+constexpr auto fold_witnesses(const error_set_of<ERRORS...> &errors, ACC init,
+                              HANDLER &&handler) -> ACC {
+    static_assert((detail::fold_arm_check<HANDLER, ACC, ERRORS>::value && ...));
+    ACC acc = std::move(init);
+    auto step = [&]<class E>(std::type_identity<E>) {
+        if (errors.template holds<E>()) {
+            acc = std::invoke(handler, std::move(acc),
+                              *errors.template witness<E>());
+        }
+    };
+    (step(std::type_identity<ERRORS>{}), ...);
+    return acc;
+}
+
+// \rSec3[transpose.errset.collapse]{collapse}
+
+//! \remarks `keep_first` is the default multiplicity rule of `collapse`: of
+//! two results, the first in canonical order is kept, matching
+//! `error_set_of::combined_with` and `recover`.
+struct keep_first {
+    // \ref{transpose.errset.collapse}, the default combine
+    //! \returns `first`.
+    template <class T>
+    constexpr auto operator()(T first, const T &) const -> T {
+        return first;
+    }
+};
+
+//! \mandates For every alternative `E` of the set, `handler` is invocable
+//! with `const E&`. If `TARGET` is `void`, every arm's decayed result is one
+//! type; otherwise each arm's result converts to `TARGET`.
+//! \effects Invokes `handler` on each present witness in canonical order and
+//! folds the results with `combine`, which by default keeps the first.
+//! \returns One `TARGET`, or when `TARGET` is `void` one value of the arms'
+//! common result type.
+//! \remarks This is the boundary verb: a graded region ends here and one
+//! error type leaves. The set is non-empty by invariant, so there is always
+//! a result. Pass a combine when a second witness must not be dropped; the
+//! default is the left-biased pick of `combined_with`, which is the silent
+//! drop `visit`'s precondition refuses, made explicit by the name.
+template <class TARGET = void, class HANDLER, class COMBINE = keep_first,
+          class... ERRORS>
+    requires(sizeof...(ERRORS) > 0)
+constexpr auto collapse(const error_set_of<ERRORS...> &errors,
+                        HANDLER &&handler, COMBINE combine = {})
+    -> detail::collapse_target_t<TARGET, HANDLER, ERRORS...> {
+    using Result = detail::collapse_target_t<TARGET, HANDLER, ERRORS...>;
+    std::optional<Result> acc;
+    auto step = [&]<class E>(std::type_identity<E>) {
+        if (errors.template holds<E>()) {
+            Result r = std::invoke(handler, *errors.template witness<E>());
+            acc = acc.has_value()
+                      ? std::invoke(combine, std::move(*acc), std::move(r))
+                      : std::move(r);
+        }
+    };
+    (step(std::type_identity<ERRORS>{}), ...);
+    return std::move(*acc);
+}
+
+//! \effects If `computation` holds a value, nothing; otherwise as for
+//! `collapse` on `computation.error()`.
+//! \returns `expected<VALUE, T>`, where `T` is the type `collapse` on the
+//! error yields: holding `computation`'s value, or the collapsed error.
+//! \remarks The result is the ungraded `expected<VALUE, T>`: the grade is
+//! gone. A caller who wants to stay graded names `collapse<error_set<T>>`,
+//! and the singleton set converts from `T` through the injecting
+//! constructor.
+template <class TARGET = void, class VALUE, class... ERRORS, class HANDLER,
+          class COMBINE = keep_first>
+    requires(sizeof...(ERRORS) > 0)
+constexpr auto
+collapse(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
+         HANDLER &&handler, COMBINE combine = {})
+    -> std::expected<VALUE,
+                     detail::collapse_target_t<TARGET, HANDLER, ERRORS...>> {
+    using Result = detail::collapse_target_t<TARGET, HANDLER, ERRORS...>;
+    if (computation.has_value()) {
+        if constexpr (std::is_void_v<VALUE>) {
+            return std::expected<VALUE, Result>{};
+        } else {
+            return std::expected<VALUE, Result>(std::in_place, *computation);
+        }
+    }
+    return std::unexpected(collapse<TARGET>(
+        computation.error(), std::forward<HANDLER>(handler), combine));
+}
 
 // \rSec3[transpose.errset.fallible]{The uniform spelling}
 

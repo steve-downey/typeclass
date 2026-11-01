@@ -787,6 +787,21 @@ verb is not a gap awaiting a verb; it is the fence line.
   the `std::expected` leaves the grade). The library's job is to provide the
   forms so that programmers write less. Decision text amended above; the
   original 2026-08-29 Why stands as the record of why the fence existed.
+- 2026-11-01 — Shipped by stage
+  [set-elimination](transpose-surface-plan.md#set-elimination):
+  `fold_witnesses` and `collapse` in `error_set.hpp`, with `keep_first` as
+  the named default combine, wording sections `[transpose.errset.fold]` and
+  `[transpose.errset.collapse]` included in the paper after `recover`, and
+  tests in `error_set.test.cpp` (both witnesses reach the accumulator in
+  canonical order; a combine keeps the second; a named target converts; a
+  void computation collapses; the single-witness `collapse` agrees with
+  `visit`). Sub-question 4 is answered: `recover` is **left as is**. Its fold
+  carries two accumulators, the recovered value and the surviving witnesses,
+  and threads the unhandled witnesses through `carry_witness`; re-expressing
+  that through `fold_witnesses` would mean a tuple accumulator and a second
+  pass for the carry, which is more mechanism than it removes. The two folds
+  are built from the same two public observers, which is the sharing
+  [functor-monad-grounding](#functor-monad-grounding) asks for.
 
 ---
 
@@ -4151,7 +4166,31 @@ what rule?
 **Question:** Does the library provide an overload-set elimination whose
 result type is the join of the arms' result types, so that a visitor over a
 sum may have heterogeneous arms without the user naming the union?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01; the name and the order rule by the stage.
+**Decision:** Yes: `eliminate(variant, arms)` in `eliminate.hpp`, beside
+`overloaded`. Its result is the join of the arms: the one type every arm
+returns when their decayed results agree, otherwise `std::variant` of the
+distinct results **in alternative order**, deduplicated by identity and not
+sorted, holding the result at the position of its type. `eliminate_indexed`
+passes `std::in_place_index_t<I>` to the arm as well, for arms that must tell
+two alternatives of one type apart or want the position as a template
+argument. An alternative no arm accepts is a compile error naming it, with
+`overloaded`'s consteval catch-all counted as a missing arm. The join is a
+value: no operation object, `grade_of` or `rebind_grade` reads it, per
+[value-side-grading](#value-side-grading). The header is proposed with
+`overloaded` ([overloaded-home](#overloaded-home)) and, like it, has no
+wording yet.
+**Why:** `std::visit` requiring one result type is the pain in both clients:
+an algebra over a variant-shaped layer in `tree_algorithms` spells the layer
+type on every arm, and a visitor whose arms produce different things names
+their union by hand. Alternative order rather than canonical order is forced
+by the first client: the join of arms that rebuild a `variant<Zero,
+Succ<B>>` must be exactly that type, which a sorted set would not be. That
+is a divergence from the plan's "built on the canonical set", logged below;
+the Why held and the What did not, so only the deduplication is shared with
+the error set.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.4 and §4). `std::visit` requires
@@ -4169,6 +4208,17 @@ sum may have heterogeneous arms without the user naming the union?
   `error_set` or a sum of the same shape with a different name is answered by
   [value-side-grading](#value-side-grading) and
   [canonical-set-home](#canonical-set-home).
+- 2026-11-01 — Divergence under the protocol of stage
+  [set-elimination](transpose-surface-plan.md#set-elimination): the plan's
+  deliverable said the join-of-arms type is "built on the canonical set".
+  Canonical means sorted, and a sorted join of `Zero` and `Succ<B>` is not
+  `NatF<B>`. The What was false and the Why true, so the join deduplicates in
+  alternative order and shares only `list_dedupe` with
+  [canonical-set-home](#canonical-set-home)'s header. Shipped: `eliminate.hpp`,
+  `eliminate.test.cpp`, and a layer test in
+  `tests/beman/tree_algorithms/functors.test.cpp`. The name `eliminate` was
+  chosen over `visit_join` and `match`: it is the term the rest of this log
+  uses for consuming a sum, and `match` is the pattern-matching proposals'.
 - 2026-10-31 — Refined by the expanded challenge under
   [multi-witness-elimination](#multi-witness-elimination): the `error_set`
   eliminators sketched there return an accumulator or a single error type,
@@ -4316,6 +4366,13 @@ writes the variant and its continuations by hand repeatedly along a pipeline.
 - 2026-10-31 — Answered by Steve: no, at least for now. Stage
   [failure-side](transpose-surface-plan.md#failure-side) no longer rules on
   this; it assumes it.
+- 2026-11-01 — Confirmed in stage
+  [set-elimination](transpose-surface-plan.md#set-elimination): `eliminate`'s
+  join-of-arms result is a `std::variant` that nothing reads as a grade, and
+  the shape sub-question's order is settled as alternative order, not
+  canonical, for the reason logged under
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination). The
+  tripwire did not fire.
 
 ---
 

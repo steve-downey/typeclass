@@ -6,6 +6,7 @@ set(transpose_tests
     demo_sender_golden
     monoid
     overloaded
+    eliminate
     dual_monoid
     error_set
     crtp_absorption

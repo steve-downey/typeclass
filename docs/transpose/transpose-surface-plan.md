@@ -133,6 +133,10 @@ ill-formed.
 ### Stage 2 — [set-home-and-abi](#set-home-and-abi) {#set-home-and-abi}
 Closes [canonical-set-home](decisions.md#canonical-set-home),
 [type-order-abi](decisions.md#type-order-abi).
+Status: DONE 2026-11-01 on branch `set-home-and-abi`. The header is
+`detail/canonical_set.hpp`; the key is `ordered_by_type_name`; the two-TU
+compile-fail test was substituted by identity checks, logged under
+type-order-abi.
 Deliverables:
 - The canonical set machinery (`type_list`, sort, dedupe, `canonical_t`, the
   name order and its collision check) in its own header beside `grade.hpp`,
@@ -158,6 +162,12 @@ move → STOP; this stage is a relocation.
 Closes [heterogeneous-arm-elimination](decisions.md#heterogeneous-arm-elimination);
 rules on the 2026-10-30 challenge under
 [multi-witness-elimination](decisions.md#multi-witness-elimination).
+Status: DONE 2026-11-01 on branch `set-elimination`, fence moved. Shipped
+`eliminate`/`eliminate_indexed` in `eliminate.hpp` and `fold_witnesses`/
+`collapse` in `error_set.hpp`. One divergence, logged under
+heterogeneous-arm-elimination: the join of arms deduplicates in alternative
+order, not canonical order. `recover` is left as is. The tripwire did not
+fire.
 Read that slug and [accumulation-evidence](decisions.md#accumulation-evidence)
 before starting. The ruling has two possible outcomes, and the stage must be
 written for whichever Steve chooses:
@@ -202,6 +212,11 @@ sub-question, and the proposed answer is no.
 
 ### Stage 4 — [instance-laws](#instance-laws) {#instance-laws}
 Test deliverable; closes no slug. Extends `tests/beman/transpose/laws.hpp`.
+Status: DONE 2026-11-01 on branch `instance-laws`. `optional` and the test
+`Identity` run at compile time; `expected`, `array` and `zip_list` run at
+runtime because their basis operations are not `constexpr`, logged under
+derived-op-constant-evaluation. The lawless instance is demonstrated behind
+a macro, with the diagnostics recorded.
 Deliverables:
 - Applicative laws (identity, homomorphism, interchange, composition) and
   Monad laws (left identity, right identity, associativity) as `consteval`

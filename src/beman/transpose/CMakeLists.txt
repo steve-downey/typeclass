@@ -24,6 +24,7 @@ target_sources(
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/config.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/apply.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/array.hpp
+                ${PROJECT_SOURCE_DIR}/include/beman/transpose/eliminate.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/error_set.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/expected.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/fold.hpp
