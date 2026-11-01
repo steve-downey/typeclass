@@ -98,6 +98,10 @@ needs the eliminator for its tests and the crossing rule for `optional`'s
 Closes [unit-payload-spelling](decisions.md#unit-payload-spelling),
 [generic-closure-at-empty-grade](decisions.md#generic-closure-at-empty-grade),
 [uniform-form-surface](decisions.md#uniform-form-surface).
+Status: DONE 2026-11-01 on branch `unit-and-closure`. Rulings taken: the
+unit is `std::monostate`; `traverse` yields the structure of units and no
+effect-only form is added; the uniform spelling is the named function
+`fallible`. The tripwire did not fire: `holdable_value` is unchanged.
 Deliverables:
 - A ruling on the unit type (own type, or `std::monostate`) and on how a
   `void`-valued context reports its element type.

@@ -25,6 +25,8 @@
 ./transpose.errset.empty.md
 ./transpose.errset.lattice.md
 ./transpose.errset.recover.md
+./transpose.errset.fallible.md
+./transpose.errset.model.md
 ./transpose.expected.syn.md
 ./transpose.expected.applicative.md
 ./transpose.expected.accumulating.md

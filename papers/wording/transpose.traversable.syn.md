@@ -37,7 +37,8 @@ namespace std {
                         !is_volatile_v<remove_reference_t<T>> &&
                         $consuming-traversable-object$<remove_cvref_t<OBJ>>,
                     typename remove_cvref_t<OBJ>::element_type&&,
-                    const typename remove_cvref_t<OBJ>::element_type&>; // exposition only
+                    const typename remove_cvref_t<OBJ>::element_type&>; // exposition
+                                                                        // only
 }
 ```
 
@@ -56,15 +57,17 @@ namespace std {
     using Impl::traverse;
     using element_type = typename Impl::element_type;
 
-    static constexpr bool consumes_rvalue_structure = $consuming-traversable-object$<Impl>;
+    static constexpr bool consumes_rvalue_structure =
+        $consuming-traversable-object$<Impl>;
 
     // @[transpose.traversable.ops]{- .sref}@, traversal operations
     template<class T, class F>
     constexpr auto for_each(this auto&& self, T&& value, F&& function)
       requires requires {
-        self.traverse(applicative<remove_cvref_t<
-                          invoke_result_t<F&, $traversal-argument-t$<decltype(self), T>>>>,
-                      forward<F>(function), forward<T>(value));
+        self.traverse(
+            applicative<remove_cvref_t<
+                invoke_result_t<F&, $traversal-argument-t$<decltype(self), T>>>>,
+            forward<F>(function), forward<T>(value));
       };
 
     template<class T>
@@ -96,7 +99,8 @@ namespace std {
       };
 
     template<class TRAVERSABLE_MAP, class T>
-      requires $applicative-context$<typename remove_cvref_t<TRAVERSABLE_MAP>::element_type>
+      requires $applicative-context$<
+          typename remove_cvref_t<TRAVERSABLE_MAP>::element_type>
     constexpr auto transpose_with(this auto&& self,
                                   const TRAVERSABLE_MAP& traversable_map, T&& value)
       requires requires {
