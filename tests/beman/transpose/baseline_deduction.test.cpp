@@ -39,6 +39,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
 namespace bt = beman::transpose;
@@ -426,6 +427,60 @@ static_assert(
             std::declval<
                 const std::expected<int, bt::error_set<std::errc>> &>())),
         std::expected<int, bt::error_set<std::errc>>>);
+
+// =========================================================================
+// 10. The unit and the uniform spelling. Golden as of stage unit-and-closure
+//     (docs/transpose/transpose-surface-plan.md#unit-and-closure).
+//
+// The element of expected<void, E> is the unit, std::monostate; a callable
+// returning void yields expected<void, E>; traversing with such an effect
+// yields the structure of units. The uniform spelling expected<T,
+// error_set<>> is reached only by `fallible`, written by the user, and the
+// framework's re-indexing at the empty grade is still the bare value (the
+// sentinel of docs/transpose/decisions.md#empty-grade-spelling, re-asserted).
+// =========================================================================
+
+using exp_void = std::expected<void, std::errc>;
+
+[[maybe_unused]] auto check_of(const int &) -> exp_void { return exp_void{}; }
+[[maybe_unused]] auto discard(const int &) -> void {}
+
+static_assert(
+    std::is_same_v<bt::applicative_value_t<exp_void>, std::monostate>);
+static_assert(applicative_registered<exp_void>);
+static_assert(monad_registered<exp_void>);
+
+// pure on the void object inverts the element reading; on any other object
+// the unit is a value like any other.
+static_assert(std::is_same_v<decltype(bt::applicative<exp_void>.pure(
+                                 std::declval<std::monostate>())),
+                             exp_void>);
+static_assert(
+    std::is_same_v<decltype(exp_app.pure(std::declval<std::monostate>())),
+                   std::expected<std::monostate, std::errc>>);
+
+// void stays void: a void-returning callable lands in expected<void, E>.
+static_assert(std::is_same_v<decltype(exp_app.invoke(
+                                 discard, std::declval<const exp_int &>())),
+                             exp_void>);
+static_assert(std::is_same_v<decltype(bt::mbind(std::declval<const exp_int &>(),
+                                                check_of)),
+                             exp_void>);
+
+// The structure of units.
+static_assert(
+    std::is_same_v<decltype(bt::traverse(check_of, std::declval<vec_int>())),
+                   std::expected<std::vector<std::monostate>, std::errc>>);
+
+// The uniform spelling is the user's; the framework never produces it.
+static_assert(std::is_same_v<decltype(bt::fallible(std::declval<int>())),
+                             std::expected<int, bt::error_set<>>>);
+static_assert(std::is_same_v<bt::rebind_grade_t<int, bt::error_set<>>, int>);
+static_assert(
+    std::is_same_v<bt::rebind_grade_t<exp_int, bt::error_set<>>, int>);
+static_assert(std::is_same_v<
+              decltype(bt::grade_subsume<bt::error_set<>>(std::declval<int>())),
+              int>);
 
 } // namespace
 

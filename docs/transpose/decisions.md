@@ -43,6 +43,12 @@ without the user writing it violates this decision.
 - 2026-08-30 — Sentinel generalized off the shipped model by stage [law-harness](transpose-grading-plan.md#law-harness): the harness asserts for EVERY model that re-indexing a carrier at that model's bottom yields the bare value, so "no framework path materializes an ∅-graded carrier the user did not write" is now checked for the Boolean model too, not only for `error_set`.
   Doing so surfaced that this decision's ∅ and the framework's `unit_grade` are different types that behave differently here — see [bottom-grade-identity](#bottom-grade-identity).
   Steve's ruling accepts the generalization but changes the implementation target: framework-∅ is a pure sentinel, not a model grade or carrier.
+- 2026-11-01 — The explicit uniform spelling is now reachable by name,
+  `fallible` ([uniform-form-surface](#uniform-form-surface)). The sentinel is
+  re-asserted in golden section 10 of `baseline_deduction.test.cpp`:
+  re-indexing a bare value or an `expected` at the empty set is still the
+  bare value, and `grade_subsume<error_set<>>` on a bare value is still the
+  bare value.
 
 ---
 
@@ -274,6 +280,12 @@ recursion — compile-time cost and specification complexity for a rare
 construct. Annotate-and-check keeps grade computation a fold of joins.
 **Log:**
 - 2026-08-28 — Adopted.
+- 2026-11-01 — Scoped exception, by
+  [generic-closure-at-empty-grade](#generic-closure-at-empty-grade): at the
+  empty grade `recover` does not check `HANDLED` against the grade, because
+  the grade is empty and the check would reject every annotation. `HANDLED`
+  is still annotated and still non-empty; nothing is inferred. Everywhere
+  the grade is non-empty the check stands unchanged.
 
 ---
 
@@ -322,7 +334,20 @@ with one model is renamed, not generic.
 **Question:** What is the surface for the explicit uniform spelling (the
 documented iso from [empty-grade-spelling](#empty-grade-spelling)) —
 constructor, named function, or both?
-**Status:** OPEN
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01.
+**Decision:** A named function, `fallible`, in `error_set.hpp`: on a value
+that is not an `expected` it yields `expected<remove_cvref_t<T>, error_set<>>`;
+on any `expected` it is the identity, at whatever grade that carries. The
+constructor is `std::expected`'s own and remains available by hand. The empty
+`error_set_of<>` gains a defaulted, vacuous `operator==`, so the uniform form
+compares equal whenever its value does, as the bare value it stands for.
+**Why:** Generic code needs one spelling it can apply to an operand that may
+or may not already be fallible, which a constructor cannot be. The name says
+what the carrier is for; `graded` would be framework vocabulary in the
+model's header. Equality is what keeps a graded carrier as usable as an
+ungraded one, per [error-set-identity](#error-set-identity).
 **Log:**
 - 2026-08-28 — Raised during planning.
 - 2026-10-30 — The libfn comparison ([review](review/libfn-comparison.md))
@@ -333,6 +358,11 @@ constructor, named function, or both?
   [generic-closure-at-empty-grade](#generic-closure-at-empty-grade); the two
   questions are closed together in stage
   [unit-and-closure](transpose-surface-plan.md#unit-and-closure).
+- 2026-11-01 — Shipped by that stage: `fallible` and its wording section
+  `[transpose.errset.fallible]`, included in the paper after `recover`; the
+  grade-model registration got its own section
+  `[transpose.errset.model]` at the same time, having ridden in `recover`'s
+  fragment before.
 
 ---
 
@@ -3946,7 +3976,33 @@ is unchanged.
 **Question:** How does a context with no value participate: `expected<void,
 E>` as a context, a `void`-returning function handed to `traverse`, and the
 result of traversing with such a function?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01.
+**Decision:** The unit is `std::monostate`. The element type of
+`std::expected<void, E>` is `std::monostate`, registered beside the `expected`
+instance, so the `void` context is an applicative and a monad at the same
+grade reading as the valued form. A callable returning `void` yields
+`std::expected<void, E>` from every `expected` object: `void` stays `void` in
+the carrier, and only the element reading is the unit. A `void` operand hands
+its callable `std::monostate{}`; `bind` hands its continuation the same. The
+object over `std::expected<void, E>` maps `pure(std::monostate)` back to
+`std::expected<void, E>`, so that the element reading and `pure` round-trip;
+on every other object `pure(std::monostate)` is `expected<monostate, E>`, a
+user's own type. `traverse` with `f : T -> expected<void, E>` yields the
+structure of units, `expected<vector<monostate>, E>` for a vector, because
+every traversal preserves shape. No effect-only form (`traverse_`, `for_`) is
+added: it would be the first operation in the library that discards the
+structure, and a caller who wants `expected<void, E>` maps the result with a
+`void` callable. It is deferred until a caller asks, not refused.
+**Why:** `std::monostate` is the unit the standard already has, is regular,
+and is what `std::variant` means by the same thing; a second unit type would
+be two units that do not convert. Making `void` itself the element would
+break every probe that hands an element to a callable, and admitting `void`
+into `holdable_value` would make `optional<void>` a context. Keeping `void`
+in the carrier and the unit in the reading is libfn's rule ("void stays void
+on a plain side") and is what makes `f : T -> expected<void, E>`, the most
+common fallible function in real code, traverse without ceremony.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.1). Today `holdable_value` refuses a
@@ -3963,6 +4019,15 @@ result of traversing with such a function?
   second form is the one callers actually want, and it is what makes
   `for_each` with an effectful function meaningful. Which of the two, or both,
   is the open part.
+- 2026-11-01 — Shipped by stage
+  [unit-and-closure](transpose-surface-plan.md#unit-and-closure): the unit
+  traits and the `void`-aware cores in `expected.hpp`, tests in
+  `expected.test.cpp` and `traverse.test.cpp`, and golden section 10 of
+  `baseline_deduction.test.cpp`. Known edge, not addressed here: `fmap` with
+  a `void` callable over an `expected` resolves through the monad's derived
+  `fmap`, whose continuation is `pure . f`, and `pure(void)` fails the
+  constraint softly; the applicative `map` route handles it. A follow-up if
+  anyone meets it.
 
 ---
 
@@ -3971,7 +4036,28 @@ result of traversing with such a function?
 **Question:** Must generic code over graded contexts stay well-formed at the
 empty grade, and how, given that ∅ is spelled as the bare value
 ([empty-grade-spelling](#empty-grade-spelling))?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01.
+**Decision:** Yes, through the uniform spelling. `fallible` (the answer to
+[uniform-form-surface](#uniform-form-surface)) is how generic code reaches
+`expected<T, error_set<>>`, and `recover` on that type is vacuous: a separate
+overload returns its operand, invokes nothing, places no requirement on the
+handler, not even that it be callable, and waives the membership check of
+`HANDLED` against the grade, since the grade is empty. `HANDLED` is still
+annotated and still required to be non-empty. The general `recover` is
+constrained to non-empty grades so that the two overloads are complementary
+by constraint and the general one's return type is never substituted at the
+empty grade. Later error-side operations follow the same rule. The framework
+still never materializes the uniform form; a user writes `fallible`.
+**Why:** A recovery step written once for every grade must not become
+ill-formed because an upstream stage proved failure impossible; that is
+libfn's load-bearing principle and the one place bare `T` as the empty grade
+has a cost. Paying it with an explicit spelling keeps the cost where the
+decision put it, in the user's hands, and keeps the sentinel of
+[empty-grade-spelling](#empty-grade-spelling) intact. Waiving the check only
+at the empty grade is recorded as a scoped exception under
+[recover-grade-inference](#recover-grade-inference).
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.2). libfn's load-bearing
@@ -3987,6 +4073,11 @@ empty grade, and how, given that ∅ is spelled as the bare value
   on it: the handler is neither invoked nor instantiated, and the result is
   the operand. The framework still never materializes the uniform form on a
   user's behalf; the sentinel of empty-grade-spelling is untouched.
+- 2026-11-01 — Shipped by stage
+  [unit-and-closure](transpose-surface-plan.md#unit-and-closure): the
+  vacuous `recover` overload in `error_set.hpp`, the constraint on the
+  general one, and the `settle` generic-code test in `error_set.test.cpp`,
+  instantiated at a real grade and at the empty grade.
 
 ---
 

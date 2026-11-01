@@ -42,9 +42,10 @@ namespace std {
     template<class FUNCTION, class FIRST, class... REST>
       requires $is-optional-v$<FIRST> && ($is-optional-v$<REST> && ...) &&
                invocable<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...> &&
-               $optional-holdable-value$<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>,
-                                                       $contained-ref-t$<REST>...>>
-    constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest)
+               $optional-holdable-value$<invoke_result_t<
+                   FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>>
+    constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first,
+                          REST&&... rest)
         -> optional<remove_cvref_t<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>,
                                                    $contained-ref-t$<REST>...>>>;
   }; // exposition only

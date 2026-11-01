@@ -562,6 +562,14 @@ class error_set_of<> {
     static constexpr auto contains() noexcept -> bool {
         return false;
     }
+
+    //! \returns `true`.
+    //! \remarks Vacuous, and present for the reason the valued set's equality
+    //! is: `expected<T, error_set<>>`, the explicit uniform spelling of the
+    //! empty grade, compares equal whenever its value does, as the bare value
+    //! it stands for would.
+    friend auto operator==(const error_set_of &, const error_set_of &)
+        -> bool = default;
 };
 
 // \rSec3[transpose.errset.empty]{The empty error set}
@@ -865,6 +873,7 @@ using recover_return_t =
 //! witnessed and each independently recovers a value, the first in canonical
 //! order is the result, matching the tie-break of `combined_with`.
 template <class... HANDLED, class VALUE, class... ERRORS, class HANDLER>
+    requires(sizeof...(ERRORS) > 0)
 constexpr auto
 recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
         HANDLER &&handler)
@@ -923,13 +932,34 @@ recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
     }
 }
 
-// -- Registration as a model of the grade algebra -------------------------
-// The direction of dependency is the point: the model knows about the
-// framework, never the reverse. Everything above this line is error
-// vocabulary; everything below translates it into grade vocabulary, and is
-// the only place the two meet. A second algebra registers the same way and
-// needs nothing from here -- which is the claim the law harness exists to
-// test (docs/transpose/decisions.md#grade-generality).
+// -- recover at the empty grade: vacuous ----------------------------------
+// docs/transpose/decisions.md#generic-closure-at-empty-grade. Generic code
+// that recovers from E must stay well-formed where an upstream stage has
+// proved E impossible. At the empty grade there is no witness to hand a
+// handler, so the operation is the identity on its operand, and asks nothing
+// of the handler -- not membership of HANDLED in the grade, which is empty,
+// and not that the handler be callable. The handled set is still annotated;
+// what is waived is the check, and only here, where the grade itself says
+// there is nothing to check
+// (docs/transpose/decisions.md#recover-grade-inference records the exception).
+// The uniform spelling is the user's to write, by `fallible` below or by hand;
+// this overload never produces it.
+
+//! \constraints The computation's grade is the empty error set.
+//! \effects None. `handler` is not invoked, and no requirement is placed on
+//! it.
+//! \returns `computation`.
+//! \remarks At the empty grade no alternative can be witnessed, so there is
+//! nothing to recover from and nothing to check `HANDLED` against. This is
+//! what keeps a generic recovery step well-formed when an earlier stage has
+//! statically eliminated every failure.
+template <class... HANDLED, class VALUE, class HANDLER>
+constexpr auto recover(const std::expected<VALUE, error_set_of<>> &computation,
+                       HANDLER &&) -> std::expected<VALUE, error_set_of<>> {
+    static_assert(sizeof...(HANDLED) > 0,
+                  "recover needs at least one HANDLED type.");
+    return computation;
+}
 
 /// Whether T is a specialization of std::expected. Exposition-only: it is
 /// named by the re-indexing constraints below and by the expected instance's
@@ -941,6 +971,50 @@ inline constexpr bool is_expected_v = false;
 //! \also
 template <class VALUE, class ERROR>
 inline constexpr bool is_expected_v<std::expected<VALUE, ERROR>> = true;
+
+// \rSec3[transpose.errset.fallible]{The uniform spelling}
+
+// docs/transpose/decisions.md#uniform-form-surface. The empty grade is spelled
+// by the bare value (docs/transpose/decisions.md#empty-grade-spelling); the
+// uniform spelling `expected<T, error_set<>>` exists as an explicit form, and
+// this is the one operation that reaches it. It is written by the user, in
+// generic code that is about to apply an error-side operation and needs a
+// carrier to apply it to. Nothing in the framework calls it.
+
+//! \constraints `remove_cvref_t<VALUE>` is not a specialization of
+//! `expected`.
+//! \returns `expected<remove_cvref_t<VALUE>, error_set<>>` holding `value`.
+//! \remarks This is the explicit spelling of a value at the empty grade: a
+//! computation that cannot fail, written in the fallible carrier so that the
+//! error-side operations apply to it, vacuously. The bare value remains the
+//! spelling of the empty grade everywhere the user does not write this.
+template <class VALUE>
+    requires(!is_expected_v<std::remove_cvref_t<VALUE>>)
+constexpr auto fallible(VALUE &&value)
+    -> std::expected<std::remove_cvref_t<VALUE>, error_set<>> {
+    return std::expected<std::remove_cvref_t<VALUE>, error_set<>>{
+        std::in_place, std::forward<VALUE>(value)};
+}
+
+//! \returns `computation`.
+//! \remarks An `expected` is already in the carrier, at whatever grade it
+//! carries; `fallible` is the identity on it, so generic code can apply it to
+//! an operand that may or may not already be fallible.
+template <class VALUE, class ERROR>
+constexpr auto fallible(std::expected<VALUE, ERROR> computation)
+    -> std::expected<VALUE, ERROR> {
+    return computation;
+}
+
+// \rSec3[transpose.errset.model]{Registration as a grade model}
+
+// -- Registration as a model of the grade algebra -------------------------
+// The direction of dependency is the point: the model knows about the
+// framework, never the reverse. Everything above this line is error
+// vocabulary; everything below translates it into grade vocabulary, and is
+// the only place the two meet. A second algebra registers the same way and
+// needs nothing from here -- which is the claim the law harness exists to
+// test (docs/transpose/decisions.md#grade-generality).
 
 //! \remarks `error_set_model` names the model that the error-set grades
 //! belong to. It is what makes two grades comparable: grades of different
