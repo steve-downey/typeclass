@@ -38,7 +38,8 @@ The questions, each OPEN in the log as of 2026-10-30:
 - [heterogeneous-arm-elimination](decisions.md#heterogeneous-arm-elimination),
   with a challenge logged under
   [multi-witness-elimination](decisions.md#multi-witness-elimination)
-- [value-side-grading](decisions.md#value-side-grading)
+- [value-side-grading](decisions.md#value-side-grading), decided no on
+  2026-10-31 and listed here because stages C and F assume it
 - [failure-injection-spelling](decisions.md#failure-injection-spelling)
 - [alternative-disjunction-semantics](decisions.md#alternative-disjunction-semantics)
 - [canonical-set-home](decisions.md#canonical-set-home)
@@ -74,10 +75,10 @@ splitting them would leave a PR that cannot be tested on its own.
 |---|---|---|
 | A | [unit-and-closure](#unit-and-closure) | the unit and the uniform spelling are the two degenerate corners of one carrier, and the vacuity rule for error-side operations is stated once for both |
 | B | [set-home-and-abi](#set-home-and-abi) | moving the set and adding its ABI namespace touch the same declarations once |
-| C | [set-elimination](#set-elimination) | the `error_set` eliminator and the heterogeneous-arm visitor are one join-of-arms mechanism with two clients |
+| C | [set-elimination](#set-elimination) | the `error_set` eliminators and the heterogeneous-arm visitor share the exhaustiveness check and the `overloaded` diagnostic, and the fence ruling shapes both |
 | D | [instance-laws](#instance-laws) | test-only; independent of every other PR |
 | E | [context-crossings](#context-crossings) | a ruling and a test-only demonstration; no shipped surface |
-| F | [failure-side](#failure-side) | `raise` and `zero` are decided under one rule, and Alternative's disjunction depends on the value-side ruling |
+| F | [failure-side](#failure-side) | `raise` and `zero` are decided under one rule, and Alternative's disjunction is spelled under the value-side ruling |
 | G | [noexcept-sweep](#noexcept-sweep) | touches every header and the wording generator; isolating it keeps the diff reviewable |
 | H | [surface-paper-revision](#surface-paper-revision) | last, after the rulings |
 
@@ -233,12 +234,13 @@ demonstration work → STOP; that is optional-grade-model's own question and
 must be answered there, not here as a side effect.
 
 ### Stage 6 — [failure-side](#failure-side) {#failure-side}
-Closes [failure-injection-spelling](decisions.md#failure-injection-spelling),
-[alternative-disjunction-semantics](decisions.md#alternative-disjunction-semantics),
-[value-side-grading](decisions.md#value-side-grading).
+Closes [failure-injection-spelling](decisions.md#failure-injection-spelling)
+and
+[alternative-disjunction-semantics](decisions.md#alternative-disjunction-semantics).
+Assumes [value-side-grading](decisions.md#value-side-grading), decided no on
+2026-10-31: the disjunction's value side is a `std::variant` over the
+deduplicated operand types, or the common type, and is not read as a grade.
 Deliverables:
-- Ruling on value-side-grading first; the proposed answer is no, and the rest
-  of this stage assumes it.
 - `raise<C>(e)`: an operation object parameterized on the context, result at
   the join of `C`'s grade with the singleton of `e`'s type; the ungraded
   `expected<T, E>` case accepts an `E` and deduces `expected<T, E>`.
@@ -255,9 +257,9 @@ it" rule in one place.
 Acceptance: `raise` deduces the documented grades; the goldens are untouched;
 if Alternative ships, its laws are added to the stage
 [instance-laws](#instance-laws) harness in the same PR.
-Tripwire: if `alt`'s value side wants a canonical set to type-check its own
-tests, STOP; that contradicts the value-side-grading ruling this stage began
-with.
+Tripwire: if `alt`'s value side wants to be read as a grade to type-check
+its own tests, STOP; that contradicts the value-side-grading ruling this
+stage assumes.
 
 ### Stage 7 — [noexcept-sweep](#noexcept-sweep) {#noexcept-sweep}
 Closes [operation-noexcept](decisions.md#operation-noexcept).

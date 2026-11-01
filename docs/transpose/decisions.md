@@ -4058,7 +4058,25 @@ A ruling has to answer four sub-questions, in this order:
    the analogue of libfn's `just`? [empty-grade-spelling](#empty-grade-spelling)
    spells the empty error grade as bare `T`; a graded value side needs its
    own spelling, and a context infallible on both sides is a bare value.
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-10-31
+**Decided by:** Steve Downey.
+**Decision:** No, for now. No operation reads a value-side sum as a grade.
+Where an operation yields one of several value types, the disjunction of
+[alternative-disjunction-semantics](#alternative-disjunction-semantics) and
+the eliminator of
+[heterogeneous-arm-elimination](#heterogeneous-arm-elimination), the result
+is a `std::variant` over the deduplicated types, or the common type when they
+agree, and from then on it is an ordinary value: `fmap` receives the whole
+variant, `bind` takes one continuation, nothing joins or distributes. A user
+who wants a classifier-shaped success writes the sum type by hand.
+**Why:** Steve is unconvinced that joining per-alternative continuations
+automatically is worth more than a hand-written sum type, and finds combining
+unrelated functions into one dispatch under-motivated. The considerations in
+the log stand as the fuller argument: the boundary handles errors alike, so a
+set fits there and not on the value side; deduplication loses provenance for
+values; distribution grows the result type that shape preservation exists to
+hold fixed. "For now" is the reopening condition in the log: a client that
+writes the variant and its continuations by hand repeatedly along a pipeline.
 **Log:**
 - 2026-10-30 — Raised in discussion of the libfn comparison
   ([review](review/libfn-comparison.md) §4), with the Tolstoy framing: all
@@ -4138,6 +4156,9 @@ A ruling has to answer four sub-questions, in this order:
   then owns one deduplicating type-list computation shared by the error set
   and by these two value-side uses: shared machinery, not shared meaning.
   *Proposed resolution:* unchanged, no.
+- 2026-10-31 — Answered by Steve: no, at least for now. Stage
+  [failure-side](transpose-surface-plan.md#failure-side) no longer rules on
+  this; it assumes it.
 
 ---
 
