@@ -14,6 +14,7 @@
 
 #include <beman/transpose/config.hpp>
 
+#include <beman/transpose/alternative.hpp>
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/array.hpp>
 #include <beman/transpose/eliminate.hpp>

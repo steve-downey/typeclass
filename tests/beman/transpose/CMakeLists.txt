@@ -13,6 +13,7 @@ set(transpose_tests
     accumulating_object
     collect_hook
     functor
+    alternative
     apply
     expected
     fold

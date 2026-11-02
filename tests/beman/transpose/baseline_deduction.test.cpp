@@ -35,6 +35,7 @@
 #include <expected>
 #include <ios>
 #include <optional>
+#include <string>
 #include <system_error>
 #include <tuple>
 #include <type_traits>
@@ -513,6 +514,64 @@ static_assert(has_zero<opt_int>);
 static_assert(!has_zero<exp_int>);
 static_assert(has_raise<exp_int, std::errc>);
 static_assert(!has_raise<opt_int, int>);
+
+// =========================================================================
+// 12. The disjunction. Golden as of the Alternative typeclass shipping as
+//     evidence (docs/transpose/decisions.md#alternative-disjunction-semantics).
+//
+// alt yields the leftmost operand holding a value. Agreeing value types keep
+// their type; differing ones join into a variant in operand order; a bare
+// last operand, or one at the empty grade, makes the result total; expected
+// operands of differing grades join lazily, as the cores join; the void
+// context takes part with the unit. Nothing here reads a value-side variant
+// as a grade.
+// =========================================================================
+
+using opt_str = std::optional<std::string>;
+using exp_str = std::expected<std::string, std::errc>;
+using exp_io = std::expected<int, std::io_errc>;
+
+static_assert(std::is_same_v<decltype(bt::alt(std::declval<opt_int>(),
+                                              std::declval<opt_int>())),
+                             opt_int>);
+static_assert(std::is_same_v<decltype(bt::alt(std::declval<opt_int>(),
+                                              std::declval<opt_str>())),
+                             std::optional<std::variant<int, std::string>>>);
+static_assert(
+    std::is_same_v<
+        decltype(bt::alt(std::declval<opt_int>(), std::declval<int>())), int>);
+static_assert(std::is_same_v<decltype(bt::alt(std::declval<opt_int>(),
+                                              std::declval<opt_str>(),
+                                              std::declval<double>())),
+                             std::variant<int, std::string, double>>);
+static_assert(std::is_same_v<decltype(bt::alt(std::declval<exp_int>(),
+                                              std::declval<exp_int>())),
+                             exp_int>);
+static_assert(std::is_same_v<decltype(bt::alt(std::declval<exp_int>(),
+                                              std::declval<exp_io>())),
+                             std::expected<int, mixed_errors>>);
+static_assert(
+    std::is_same_v<decltype(bt::alt(std::declval<exp_int>(),
+                                    std::declval<exp_str>())),
+                   std::expected<std::variant<int, std::string>, std::errc>>);
+static_assert(
+    std::is_same_v<
+        decltype(bt::alt(std::declval<exp_int>(), std::declval<int>())), int>);
+static_assert(
+    std::is_same_v<decltype(bt::alt(std::declval<exp_int>(),
+                                    bt::fallible(std::declval<int>()))),
+                   int>);
+static_assert(std::is_same_v<decltype(bt::alt(std::declval<exp_void>(),
+                                              std::declval<exp_void>())),
+                             exp_void>);
+// zero on the alternative object agrees with the applicative's: optional has
+// one, expected does not.
+static_assert(
+    std::is_same_v<decltype(bt::alternative<opt_int>.zero()), opt_int>);
+template <class CONTEXT>
+concept has_alternative_zero = requires { bt::alternative<CONTEXT>.zero(); };
+static_assert(has_alternative_zero<opt_int>);
+static_assert(!has_alternative_zero<exp_int>);
 
 } // namespace
 

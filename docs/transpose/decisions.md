@@ -4481,9 +4481,10 @@ error-side semantics of its disjunction, and does an infallible operand make
 the disjunction total?
 **Status:** DECIDED 2026-11-01
 **Decided by:** Steve Downey, by accepting the surface plan's proposed
-answer on 2026-11-01; the typeclass itself deferred by the stage.
-**Decision:** The semantics, decided now so that the typeclass has nothing
-left to decide when a client asks for it. `alt(a, b, ...)` yields the
+answer on 2026-11-01; the typeclass itself deferred by the stage, then
+shipped as evidence the same day on Steve's ruling ("Do Alternative").
+**Decision:** The semantics, decided before the typeclass so that it had
+nothing left to decide when written. `alt(a, b, ...)` yields the
 leftmost operand that holds a value. *Value side:* when the operands' value
 types agree, that type; when they differ, `std::variant` of the distinct
 value types in operand order, deduplicated by identity, the same join
@@ -4499,10 +4500,10 @@ alternative. *Identity:* `zero<C>()` where `C` has one. *Laws:* `zero` is a
 two-sided identity of `alt`; `alt` is associative; left catch,
 `alt(pure(a), x) == pure(a)`; and the annihilation rule. The operator
 spelling is left to libfn; this library's verbs are named. The typeclass,
-`derive_alternative<Impl>` with `zero` and `alt` as basis and `first_monoid`
-re-expressed through the `optional` instance, is **deferred** until a
-client calls `alt`, on the same footing as Monad: decided, unshipped, and
-never framed as rejected.
+`derive_alternative<Impl>` in `alternative.hpp` with the n-ary `alt` as
+basis and `zero` as a basis operation where the context has one, ships as
+**evidence**, on the same footing as Monad: decided, implemented, unproposed,
+and never framed as rejected. It stays unproposed until a client calls `alt`.
 **Why:** libfn's `|` is a complete algebra and the duality with `&` is what
 a typeclass needs to state the laws; writing them down now costs a
 paragraph and spares the typeclass a second design pass. The error side as
@@ -4534,6 +4535,56 @@ evidence label Monad carries without Monad's proof-of-mechanism reason.
   [heterogeneous-arm-elimination](#heterogeneous-arm-elimination). `zero`
   shipped; `alt` did not. The stage's tripwire did not fire: nothing here
   reads a value-side sum as a grade.
+- 2026-11-01 — Steve ruled the typeclass in: "it's better to continue to
+  make sure anything I might want is still working and not blocked by other
+  decisions." Shipped as evidence on branch `alternative`:
+  `include/beman/transpose/alternative.hpp` (`derive_alternative<Impl>`,
+  the `alternative<T>` lookup, `alternative_impl` and `alternative_object`,
+  the `alt` operation object), instances for `optional` and `expected` in
+  their headers, the five laws as `check_alternative_laws` in the harness
+  (compile-time for `optional`, runtime for `expected`), golden section 12
+  of `baseline_deduction.test.cpp`, and `alternative.test.cpp`. Four
+  divergences from the Decision's sketch of the typeclass, each a
+  consequence of writing it down:
+  1. **The basis is `alt`; `zero` is a basis operation where the context
+     has one**, not a required half of the basis. `expected` has a
+     disjunction and no identity, and it is the one instance on which the
+     error-side rule has any content; requiring `zero` would have excluded
+     it. An instance without `zero` is a semigroup, and the two identity laws
+     are vacuous for it rather than false. `alternative_impl` therefore
+     requires only `alt`.
+  2. **`alt` is n-ary at the basis**, not a binary basis folded by the base.
+     Folding nests the value join -- `variant<variant<A, B>, C>` where
+     `variant<A, B, C>` is meant -- and only the instance sees all of its
+     operands at once. The base derives nothing today; it exists so that the
+     lookup, the concepts and the operation object have the family's shape.
+  3. **`first_monoid` is not re-expressed through the instance.** Doing so
+     makes `monoid.hpp` include `optional.hpp` and so `apply.hpp`, which
+     fingertree, a consumer of `monoid.hpp` alone, has no use for. The
+     equivalence is pinned instead: `first_monoid<T>::combine` equals `alt`
+     over `optional<T>` and its `identity` equals `zero`, in
+     `alternative.test.cpp`, with the applicative's `zero` documented as the
+     identity `first_monoid` folds with.
+  4. **The shape of a disjunction is fixed**: at least two operands; every
+     operand but the last is a carrier of the one context; the last is a
+     carrier or an operand that cannot fail -- a bare value, or for
+     `expected` the uniform spelling at the empty grade, which holds a value
+     by construction and whose holding one is the operation's precondition.
+     An operand after one that cannot fail would never be consulted while
+     its type still entered the join, so it is a constraint that does not
+     match. A carrier of another context is never read as a bare value, so a
+     mistaken mixture is a constraint failure and not a silent annihilation
+     of the error channel.
+  Two readings the Decision left implicit are now fixed by the
+  implementation: on `expected`, when every operand fails and the
+  alternative has one slot, the leftmost witness is kept, which is what
+  `error_set_combine` does per type and what makes the fold associative; and
+  the void context takes part with the unit, `void` staying `void` when every
+  operand is a `void` expected, as the cores keep it. The tripwire did not
+  fire: the laws type-check without reading a value-side sum as a grade. The
+  goldens of sections 1 to 11 are untouched; the wording is regenerated for
+  the two instance headers and is unchanged in content, the instances being
+  `\omit`ted as Monad's are.
 
 ---
 

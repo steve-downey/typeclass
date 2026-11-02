@@ -53,12 +53,14 @@
 // the instance is ill-formed, no diagnostic required. beman/transpose.hpp
 // includes it.
 
+#include <beman/transpose/alternative.hpp>
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>
 #include <beman/transpose/error_set.hpp>
 #include <beman/transpose/grade.hpp>
 #include <beman/transpose/monad.hpp>
 
+#include <cstddef>
 #include <expected>
 #include <functional>
 #include <optional>
@@ -922,6 +924,314 @@ struct ExpectedMonadMap
 template <class VALUE_TYPE, class ERROR_TYPE>
 inline constexpr auto monad<std::expected<VALUE_TYPE, ERROR_TYPE>> =
     ExpectedMonadMap<VALUE_TYPE, ERROR_TYPE>{};
+
+// -- The Alternative instance ----------------------------------------------
+//
+// Evidence, not proposed: see alternative.hpp. The disjunction over expected
+// is the leftmost operand holding a value, at the join of the operands' value
+// types. When every operand fails, the failure carries every operand's
+// evidence at the join of their grades, combined as the accumulating object
+// combines it: the witnessed union for an error set, the leftmost witness
+// where the alternative has one slot. A bare last operand, or one at the
+// empty grade, cannot fail and makes the result total. There is no `zero`:
+// expected's failure state needs a witness, which is what `raise` supplies
+// (docs/transpose/decisions.md#failure-injection-spelling).
+
+namespace detail {
+
+/** Whether an operand of a disjunction over `expected` cannot fail: a bare
+ * value, or an `expected` at the empty grade -- the uniform spelling
+ * `fallible` writes and nothing else produces, which holds a value by
+ * construction. */
+//! \omit
+template <class OPERAND>
+inline constexpr bool expected_operand_infallible_v =
+    !is_expected_v<std::remove_cvref_t<OPERAND>> ||
+    std::is_same_v<grade_of_t<std::remove_cvref_t<OPERAND>>, error_set<>>;
+
+/** The shape of a disjunction over `expected`: every operand but the last is
+ * an `expected`, and the last is an `expected` or a bare value. */
+//! \omit
+template <class... OPERANDS>
+inline constexpr bool expected_disjunction_shape_v =
+    []<std::size_t... INDICES>(std::index_sequence<INDICES...>) {
+        return ((is_expected_v<std::remove_cvref_t<OPERANDS>> ||
+                 (INDICES + 1 == sizeof...(OPERANDS) &&
+                  infallible_operand<OPERANDS>)) &&
+                ...);
+    }(std::index_sequence_for<OPERANDS...>{});
+
+/** An operand's contribution with its own value category: the held value of
+ * an `expected`, the unit for a `void` one, the operand itself otherwise. */
+//! \omit
+template <class OPERAND>
+struct expected_disjunction_ref {
+    using type = bare_ref_t<OPERAND>;
+};
+
+//! \omit
+template <class OPERAND>
+    requires is_expected_v<std::remove_cvref_t<OPERAND>>
+struct expected_disjunction_ref<OPERAND> {
+    using type = expected_contained_t<OPERAND>;
+};
+
+//! \omit
+template <class OPERAND>
+using expected_disjunction_ref_t =
+    typename expected_disjunction_ref<OPERAND>::type;
+
+//! \omit
+template <class... OPERANDS>
+using expected_disjunction_join_t =
+    disjunction_join_t<carrier_value_t<OPERANDS>...>;
+
+/** The error alternative of the disjunction: `void` when some operand cannot
+ * fail; the declared alternative when every operand declares the same one,
+ * the lazy spelling the cores keep; the join of the operands' grades
+ * otherwise. */
+//! \omit
+template <bool TOTAL, class FIRST, class... REST>
+struct expected_disjunction_error {
+    using type = void;
+};
+
+//! \omit
+template <class FIRST, class... REST>
+struct expected_disjunction_error<false, FIRST, REST...> {
+    using type = std::conditional_t<
+        all_declare_v<typename std::remove_cvref_t<FIRST>::error_type, FIRST,
+                      REST...>,
+        typename std::remove_cvref_t<FIRST>::error_type,
+        mixed_grade_t<grade_of_t<std::remove_cvref_t<FIRST>>, FIRST, REST...>>;
+};
+
+/** Whether the disjunction cannot fail: some operand cannot. By the shape,
+ * that operand is the last. */
+//! \omit
+template <class... OPERANDS>
+inline constexpr bool expected_disjunction_total_v =
+    (expected_operand_infallible_v<OPERANDS> || ...);
+
+//! \omit
+template <class... OPERANDS>
+using expected_disjunction_error_t = typename expected_disjunction_error<
+    expected_disjunction_total_v<OPERANDS...>, OPERANDS...>::type;
+
+/** The result: the join itself when the disjunction is total; otherwise an
+ * `expected` of the join at the error alternative, `expected<void, E>` when
+ * every operand is a `void` expected -- `void` stays `void`, as it does for
+ * the cores. */
+//! \omit
+template <class ERROR, class JOIN, class... OPERANDS>
+struct expected_disjunction_result {
+    using type = std::expected<JOIN, ERROR>;
+};
+
+//! \omit
+template <class JOIN, class... OPERANDS>
+struct expected_disjunction_result<void, JOIN, OPERANDS...> {
+    using type = JOIN;
+};
+
+//! \omit
+template <class ERROR, class... OPERANDS>
+    requires(!std::is_void_v<ERROR>) &&
+            (is_void_expected_v<std::remove_cvref_t<OPERANDS>> && ...)
+struct expected_disjunction_result<ERROR, std::monostate, OPERANDS...> {
+    using type = std::expected<void, ERROR>;
+};
+
+//! \omit
+template <class... OPERANDS>
+using expected_alt_result_t = typename expected_disjunction_result<
+    expected_disjunction_error_t<OPERANDS...>,
+    expected_disjunction_join_t<OPERANDS...>, OPERANDS...>::type;
+
+/** The evidence a fallible disjunction accumulates while its operands fail,
+ * and nothing when it cannot fail. */
+//! \omit
+template <class ERROR>
+struct expected_disjunction_evidence {
+    using type = std::optional<ERROR>;
+};
+
+//! \omit
+template <>
+struct expected_disjunction_evidence<void> {
+    using type = std::monostate;
+};
+
+//! \omit
+template <class ERROR>
+using expected_disjunction_evidence_t =
+    typename expected_disjunction_evidence<ERROR>::type;
+
+/** Whether an operand's error can be recorded as `ERROR`, with the operand's
+ * own value category; vacuously for a bare operand, which has none. */
+//! \omit
+template <class ERROR, class OPERAND>
+concept expected_evidence_widens =
+    !is_expected_v<std::remove_cvref_t<OPERAND>> ||
+    std::constructible_from<ERROR, decltype(std::declval<OPERAND>().error())>;
+
+//! \omit
+template <class... OPERANDS>
+concept expected_disjunction_joinable =
+    (joins_into<expected_disjunction_join_t<OPERANDS...>,
+                expected_disjunction_ref_t<OPERANDS>> &&
+     ...) &&
+    (std::is_void_v<expected_disjunction_error_t<OPERANDS...>> ||
+     (expected_evidence_widens<expected_disjunction_error_t<OPERANDS...>,
+                               OPERANDS> &&
+      ...));
+
+//! \omit
+template <class ERROR, class OPERAND>
+inline constexpr bool expected_evidence_nothrow =
+    !is_expected_v<std::remove_cvref_t<OPERAND>> ||
+    std::is_nothrow_constructible_v<ERROR,
+                                    decltype(std::declval<OPERAND>().error())>;
+
+/** Whether the failure path is non-throwing: recording each operand's error
+ * as `ERROR`, combining two, moving the combination, and constructing
+ * `RESULT` from it. Vacuously for a disjunction that cannot fail. */
+//! \omit
+template <class ERROR, class RESULT, class... OPERANDS>
+inline constexpr bool expected_disjunction_failure_nothrow =
+    (expected_evidence_nothrow<ERROR, OPERANDS> && ...) &&
+    std::is_nothrow_move_constructible_v<ERROR> &&
+    std::is_nothrow_move_assignable_v<ERROR> &&
+    noexcept(combine_grade_evidence(std::declval<const ERROR &>(),
+                                    std::declval<const ERROR &>())) &&
+    std::is_nothrow_constructible_v<RESULT, std::unexpect_t, ERROR>;
+
+//! \omit
+template <class RESULT, class... OPERANDS>
+inline constexpr bool
+    expected_disjunction_failure_nothrow<void, RESULT, OPERANDS...> = true;
+
+/** Whether placing the join into the result is non-throwing. */
+//! \omit
+template <class RESULT, class JOIN>
+inline constexpr bool expected_alt_place_nothrow =
+    std::is_same_v<RESULT, JOIN> ? std::is_nothrow_move_constructible_v<JOIN>
+    : is_void_expected_v<RESULT>
+        ? true
+        : std::is_nothrow_constructible_v<RESULT, std::in_place_t, JOIN>;
+
+//! \omit
+template <class... OPERANDS>
+inline constexpr bool expected_alt_nothrow =
+    (noexcept(into_join<expected_disjunction_join_t<OPERANDS...>>(
+         std::declval<expected_disjunction_ref_t<OPERANDS>>())) &&
+     ...) &&
+    expected_alt_place_nothrow<expected_alt_result_t<OPERANDS...>,
+                               expected_disjunction_join_t<OPERANDS...>> &&
+    expected_disjunction_failure_nothrow<
+        expected_disjunction_error_t<OPERANDS...>,
+        expected_alt_result_t<OPERANDS...>, OPERANDS...>;
+
+/** Places a contribution: into the join, and the join into the `expected`
+ * when the result is one; a `void` expected is simply engaged. */
+//! \omit
+template <class RESULT, class JOIN, class REF>
+constexpr auto expected_alt_place(REF &&contribution) -> RESULT {
+    if constexpr (std::is_same_v<RESULT, JOIN>) {
+        return into_join<JOIN>(std::forward<REF>(contribution));
+    } else if constexpr (is_void_expected_v<RESULT>) {
+        return RESULT{};
+    } else {
+        return RESULT{std::in_place,
+                      into_join<JOIN>(std::forward<REF>(contribution))};
+    }
+}
+
+/** The leftmost operand holding a value; otherwise the accumulated evidence
+ * of every operand, once the last has failed. An operand that cannot fail is
+ * reached only last and is the result. */
+//! \omit
+template <class RESULT, class JOIN, class EVIDENCE, class FIRST, class... REST>
+constexpr auto expected_alt_select(EVIDENCE &evidence, FIRST &&first,
+                                   REST &&...rest) -> RESULT {
+    if constexpr (!is_expected_v<std::remove_cvref_t<FIRST>>) {
+        return expected_alt_place<RESULT, JOIN>(
+            bare_ref(std::forward<FIRST>(first)));
+    } else if constexpr (expected_operand_infallible_v<FIRST>) {
+        // At the empty grade the operand holds a value: the uniform
+        // spelling's contract, and this operation's precondition.
+        return expected_alt_place<RESULT, JOIN>(
+            expected_forward_contained(std::forward<FIRST>(first)));
+    } else {
+        if (first.has_value()) {
+            return expected_alt_place<RESULT, JOIN>(
+                expected_forward_contained(std::forward<FIRST>(first)));
+        }
+        if constexpr (!std::is_same_v<EVIDENCE, std::monostate>) {
+            using Error = typename EVIDENCE::value_type;
+            Error this_one(std::forward<FIRST>(first).error());
+            if (evidence.has_value()) {
+                evidence = combine_grade_evidence(*evidence, this_one);
+            } else {
+                evidence = std::move(this_one);
+            }
+        }
+        if constexpr (sizeof...(REST) == 0) {
+            return RESULT{std::unexpect, std::move(*evidence)};
+        } else {
+            return expected_alt_select<RESULT, JOIN>(
+                evidence, std::forward<REST>(rest)...);
+        }
+    }
+}
+
+} // namespace detail
+
+/// Alternative instance for std::expected. Alternative is not proposed by
+/// this paper, so this instance carries no wording.
+//! \omit
+template <class VALUE_TYPE, class ERROR_TYPE>
+struct expected_alternative_impl {
+    /** The leftmost operand holding a value, at the join of the operands'
+     * value types; when every operand fails, the failure carrying every
+     * operand's evidence at the join of their grades. Operands are deduced
+     * through forwarding references, as the cores' are. */
+    template <class FIRST, class... REST>
+        requires(sizeof...(REST) > 0) &&
+                detail::expected_disjunction_shape_v<FIRST, REST...> &&
+                (detail::mixes_with_model<
+                     grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
+                     FIRST> &&
+                 ... &&
+                 detail::mixes_with_model<
+                     grade_of_t<std::expected<VALUE_TYPE, ERROR_TYPE>>,
+                     REST>) &&
+                detail::expected_disjunction_joinable<FIRST, REST...>
+    [[nodiscard]] constexpr auto
+    alt(this auto &&, FIRST &&first,
+        REST &&...rest) noexcept(detail::expected_alt_nothrow<FIRST, REST...>)
+        -> detail::expected_alt_result_t<FIRST, REST...> {
+        detail::expected_disjunction_evidence_t<
+            detail::expected_disjunction_error_t<FIRST, REST...>>
+            evidence{};
+        return detail::expected_alt_select<
+            detail::expected_alt_result_t<FIRST, REST...>,
+            detail::expected_disjunction_join_t<FIRST, REST...>>(
+            evidence, std::forward<FIRST>(first), std::forward<REST>(rest)...);
+    }
+};
+
+//! \omit
+template <class VALUE_TYPE, class ERROR_TYPE>
+struct expected_alternative_map
+    : derive_alternative<expected_alternative_impl<VALUE_TYPE, ERROR_TYPE>> {
+    using expected_alternative_impl<VALUE_TYPE, ERROR_TYPE>::alt;
+};
+
+/** Alternative instance for `std::expected<VALUE_TYPE, ERROR_TYPE>`. */
+template <class VALUE_TYPE, class ERROR_TYPE>
+inline constexpr auto alternative<std::expected<VALUE_TYPE, ERROR_TYPE>> =
+    expected_alternative_map<VALUE_TYPE, ERROR_TYPE>{};
 
 // \rSec3[transpose.expected.applicative]{Applicative instance for expected}
 

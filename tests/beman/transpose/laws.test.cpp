@@ -5,6 +5,7 @@
 
 #include "test_support.hpp"
 
+#include <beman/transpose/alternative.hpp>
 #include <beman/transpose/array.hpp>
 #include <beman/transpose/error_set.hpp>
 #include <beman/transpose/expected.hpp>
@@ -605,6 +606,9 @@ static_assert(laws::check_applicative_laws<bt::monad<optional_context>,
                                            optional_sample>());
 static_assert(
     laws::check_monad_laws<bt::monad<optional_context>, optional_sample>());
+static_assert(laws::check_alternative_laws<bt::alternative<optional_context>,
+                                           bt::applicative<optional_context>,
+                                           optional_sample>());
 
 // The layered instance -- the full Functor spelled over the Monad object --
 // satisfies the functor laws too, at compile time.
@@ -671,6 +675,17 @@ void require_monad_laws() {
     REQUIRE(laws::monad_invoke_coherence<OBJECT, SAMPLE>());
 }
 
+/** Every alternative law, one REQUIRE each. */
+template <const auto &ALTERNATIVE, const auto &APPLICATIVE,
+          laws::instance_sample SAMPLE>
+void require_alternative_laws() {
+    REQUIRE(laws::alternative_left_identity<ALTERNATIVE, SAMPLE>());
+    REQUIRE(laws::alternative_right_identity<ALTERNATIVE, SAMPLE>());
+    REQUIRE(laws::alternative_associativity<ALTERNATIVE, SAMPLE>());
+    REQUIRE(laws::alternative_left_catch<ALTERNATIVE, APPLICATIVE, SAMPLE>());
+    REQUIRE(laws::alternative_annihilation<ALTERNATIVE, APPLICATIVE, SAMPLE>());
+}
+
 using expected_context = expected_sample::context;
 using array_context = array_sample::context;
 using zip_list_context = zip_list_sample::context;
@@ -698,6 +713,16 @@ TEST_CASE("laws: std::expected's accumulating object satisfies the "
     // docs/transpose/decisions.md#applicative-objects.
     using namespace instance_laws;
     require_applicative_laws<bt::accumulating_applicative<expected_context>,
+                             expected_sample>();
+}
+
+TEST_CASE("laws: std::expected's disjunction satisfies the alternative laws") {
+    // At runtime, as the expected basis is: its operations are not
+    // constexpr. The sample's two distinguishable failures are what make
+    // associativity pin the error side, not only the value side.
+    using namespace instance_laws;
+    require_alternative_laws<bt::alternative<expected_context>,
+                             bt::applicative<expected_context>,
                              expected_sample>();
 }
 

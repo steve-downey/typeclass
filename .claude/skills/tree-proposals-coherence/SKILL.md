@@ -56,10 +56,14 @@ separate checkouts.
   unproposed only because nothing currently proposed calls `bind`.
   Never frame the absence as rejection of the abstraction, and never
   let a paper go silent on it: D3200R0 carries "Why not Monad," and
-  the essay acknowledges the open slot.
+  the essay acknowledges the open slot. Alternative is deferred the
+  same way: its semantics are decided
+  ([alternative-disjunction-semantics](../../../docs/transpose/decisions.md#alternative-disjunction-semantics)),
+  `alternative.hpp` is its evidence (ruling 2026-11-01), and it is
+  unproposed only because nothing proposed calls `alt`.
 - **Repo surface ≠ paper surface.** A beman repo may ship more than its
-  paper proposes (beman.transpose ships `fold.hpp` and `monad.hpp`;
-  D3200R0 proposes neither), but every unproposed component must be
+  paper proposes (beman.transpose ships `fold.hpp`, `monad.hpp` and
+  `alternative.hpp`; D3200R0 proposes none of them), but every unproposed component must be
   explicitly labeled evidence — the role the fixpoint catalog plays for
   Paper D. Shipped-but-silent is the failure mode to catch in review.
 - Paper D's primary verbs take `fmap` explicitly (no mechanism
