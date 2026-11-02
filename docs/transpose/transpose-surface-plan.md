@@ -270,8 +270,9 @@ and
 [alternative-disjunction-semantics](decisions.md#alternative-disjunction-semantics).
 Status: DONE 2026-11-01 on branch `failure-side`. `raise<C>` and `zero<C>`
 shipped beside `pure<C>`; the disjunction semantics are decided and the
-Alternative typeclass is deferred until a client calls `alt`, so no laws were
-added to the harness. The tripwire did not fire.
+Alternative typeclass was deferred by the stage and then shipped as evidence
+on 2026-11-01 on branch `alternative`, with its laws in the harness; see the
+[decision's Log](decisions.md#alternative-disjunction-semantics). The tripwire did not fire.
 Assumes [value-side-grading](decisions.md#value-side-grading), decided no on
 2026-10-31: the disjunction's value side is a `std::variant` over the
 deduplicated operand types, or the common type, and is not read as a grade.

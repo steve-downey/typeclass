@@ -63,8 +63,9 @@ directory: it includes every header below. The rest live under
 - `traverse.hpp` — the `Traversable` customization base and the `traverse`
   and `transpose` operation objects
 - `apply.hpp`, `functor.hpp`, `fold.hpp`, `monoid.hpp`, `dual_monoid.hpp`,
-  `monad.hpp` — the bundled customization core (applicative / functor /
-  foldable / monoid / monad typeclass objects)
+  `monad.hpp`, `alternative.hpp` — the bundled customization core
+  (applicative / functor / foldable / monoid / monad / alternative typeclass
+  objects)
 - `sequence.hpp` — `Foldable`/`Traversable` instances for `std::vector`
 - `expected.hpp`, `array.hpp` — instances for `std::expected` and `std::array`
 - `grade.hpp`, `error_set.hpp` — the grade algebra `expected`'s instances use

@@ -150,8 +150,8 @@ Where it goes depends on who writes it
   `array.hpp`, `expected.hpp`, `optional.hpp`, `sequence.hpp` (for
   `<vector>`), `simd.hpp` and `string.hpp` stand in for the standard
   headers, and the obligation above applies to them. The typeclass headers
-  (`functor.hpp`, `apply.hpp`, `monad.hpp`, `monoid.hpp`, `fold.hpp`)
-  declare no instance for a standard type. The
+  (`functor.hpp`, `apply.hpp`, `monad.hpp`, `alternative.hpp`,
+  `monoid.hpp`, `fold.hpp`) declare no instance for a standard type. The
   umbrella `beman/transpose.hpp` includes all of them, so a program that includes
   it everywhere is safe by construction.
 
