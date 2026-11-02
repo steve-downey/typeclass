@@ -749,6 +749,21 @@ template <class HANDLER, class VALUE, class GRADE, class... HANDLED>
 inline constexpr bool recover_nothrow_v =
     recover_nothrow<HANDLER, VALUE, GRADE, HANDLED...>::value;
 
+/// The same type behind a member, so that a declaration can name it without
+/// instantiating it. `recover`'s trailing return type reaches `type` through
+/// `std::enable_if_t` on the grade being non-empty: on the empty grade the
+/// `enable_if_t` has no member and substitution fails before this template
+/// is instantiated. A compiler that substitutes the return type before it
+/// checks the requires-clause -- clang before 21, MSVC; GCC and later clang
+/// check the constraint first, per CWG2369 -- would otherwise compute the
+/// handler's result on the empty grade, where the handler need not be
+/// callable at all, and hard-error.
+//! \expos
+template <class HANDLER, class VALUE, class GRADE, class... HANDLED>
+struct recover_return {
+    using type = recover_return_t<HANDLER, VALUE, GRADE, HANDLED...>;
+};
+
 } // namespace detail
 
 // \rSec3[transpose.errset.recover]{recover}
@@ -780,9 +795,11 @@ recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
         HANDLER &&
             handler) noexcept(detail::recover_nothrow_v<HANDLER, VALUE,
                                                         error_set_of<ERRORS...>,
-                                                        HANDLED...>)
-    -> detail::recover_return_t<HANDLER, VALUE, error_set_of<ERRORS...>,
-                                HANDLED...> {
+                                                        HANDLED...>) ->
+    typename std::enable_if_t<
+        (sizeof...(ERRORS) > 0),
+        detail::recover_return<HANDLER, VALUE, error_set_of<ERRORS...>,
+                               HANDLED...>>::type {
     static_assert(sizeof...(HANDLED) > 0,
                   "recover needs at least one HANDLED type.");
     static_assert(

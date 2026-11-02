@@ -144,6 +144,15 @@ namespace std {
 
 [x+6]{.pnum} *Remarks*: `$recover-nothrow-v$<HANDLER, VALUE, GRADE, HANDLED...>` is `true` when invoking `HANDLER` on each handled alternative, copying the value and every witness that survives, and constructing the result are all non-throwing.
 
+```cpp
+namespace std {
+  template<class HANDLER, class VALUE, class GRADE, class... HANDLED>
+  struct $recover-return$ {
+    using type = $recover-return-t$<HANDLER, VALUE, GRADE, HANDLED...>;
+  }; // exposition only
+}
+```
+
 :::
 
 :::
