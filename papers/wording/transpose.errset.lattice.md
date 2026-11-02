@@ -145,6 +145,15 @@ namespace std {
 }
 ```
 
+```cpp
+namespace std {
+  template<class HANDLER, class VALUE, class GRADE, class... HANDLED>
+  struct $recover-return$ {
+    using type = $recover-return-t$<HANDLER, VALUE, GRADE, HANDLED...>;
+  }; // exposition only
+}
+```
+
 :::
 
 :::
