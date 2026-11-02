@@ -69,7 +69,16 @@ namespace std {
 ```cpp
 namespace std {
   template<class OPERAND>
-  struct $expected-contained$ {
+  struct $expected-contained$ {}; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class OPERAND>
+    requires $is-expected-v$<remove_cvref_t<OPERAND>> &&
+             (!$is-void-expected-v$<remove_cvref_t<OPERAND>>)
+  struct $expected-contained$<OPERAND> {
     using type = $contained-ref-t$<OPERAND>;
   }; // exposition only
 }

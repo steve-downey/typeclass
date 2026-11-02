@@ -155,9 +155,12 @@ TEST_CASE("the functor and monad bases on optional propagate the same way",
     STATIC_REQUIRE(!noexcept(bt::bind(a, throwing_lift{})));
     STATIC_REQUIRE(noexcept(bt::bind(a, nothrow_lift{})));
 
-    // join is bind with the identity continuation: one move of the inner
-    // optional.
-    STATIC_REQUIRE(noexcept(bt::join(std::optional<O>{a})));
+    // join is bind with the identity continuation, and bind reads its
+    // operand as a const lvalue: the inner optional is copied out, so join
+    // answers what the carrier's copy constructor answers. libstdc++ declares
+    // it non-throwing for optional<int>; libc++ did not until LLVM 23.
+    STATIC_REQUIRE(noexcept(bt::join(std::optional<O>{a})) ==
+                   std::is_nothrow_copy_constructible_v<O>);
 
     // The monad object's derived fmap and invoke route through bind with
     // continuations that embed with pure, so the carrier's constructor
