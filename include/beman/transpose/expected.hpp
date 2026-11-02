@@ -120,10 +120,24 @@ using carrier_value_t =
 /** The type the expected cores hand a callable for an operand of type
  * `OPERAND`: `contained_ref_t<OPERAND>` for a valued expected, and the unit
  * by value for a `void` one, which holds nothing a reference could name.
+ *
+ * A bare operand has no contained type, and the primary says so by having
+ * no `type`. The cores name this alias in their trailing return types, and
+ * a compiler that substitutes the return type before it checks the
+ * requires-clause -- clang before 21, MSVC; GCC and later clang check the
+ * constraint first, per CWG2369 -- reaches it for a core whose constraint
+ * rejects the call. With an empty primary that is a substitution failure
+ * and the core drops out, where dereferencing the bare operand would have
+ * been a hard error.
  */
 //! \expos
 template <class OPERAND>
-struct expected_contained {
+struct expected_contained {};
+
+template <class OPERAND>
+    requires is_expected_v<std::remove_cvref_t<OPERAND>> &&
+             (!is_void_expected_v<std::remove_cvref_t<OPERAND>>)
+struct expected_contained<OPERAND> {
     using type = contained_ref_t<OPERAND>;
 };
 
