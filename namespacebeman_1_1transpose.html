@@ -129,6 +129,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1applicative__value.html">applicative_value</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Trait that extracts the element type from an applicative container.  <a href="structbeman_1_1transpose_1_1applicative__value.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1applicative__value_3_01std_1_1expected_3_01void_00_01ERROR_01_4_01_4.html">applicative_value&lt; std::expected&lt; void, ERROR &gt; &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The element of <code>std::expected&lt;void, ERROR&gt;</code> is the unit.  <a href="structbeman_1_1transpose_1_1applicative__value_3_01std_1_1expected_3_01void_00_01ERROR_01_4_01_4.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html">applicative_value&lt; T, std::void_t&lt; typename std::remove_cvref_t&lt; T &gt;::value_type &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html">array_applicative_impl</a></td></tr>
@@ -481,9 +484,20 @@ Functions</h2></td></tr>
 <tr class="memitem:aa682973b139ad9fe763b141113a4618a"><td class="memTemplParams" colspan="2">template&lt;class... ERRORS&gt; </td></tr>
 <tr class="memitem:aa682973b139ad9fe763b141113a4618a"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#aa682973b139ad9fe763b141113a4618a">error_set_combine</a> (const <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt; ERRORS... &gt; &amp;lhs, const <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt; ERRORS... &gt; &amp;rhs) -&gt; <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt; ERRORS... &gt;</td></tr>
 <tr class="separator:aa682973b139ad9fe763b141113a4618a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af24b8a27d9342144187d013897e6d353"><td class="memTemplParams" colspan="2">template&lt;class... HANDLED, class VALUE , class... ERRORS, class HANDLER &gt; </td></tr>
-<tr class="memitem:af24b8a27d9342144187d013897e6d353"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#af24b8a27d9342144187d013897e6d353">recover</a> (const std::expected&lt; VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt; ERRORS... &gt; &gt; &amp;computation, HANDLER &amp;&amp;handler) -&gt; detail::recover_return_t&lt; HANDLER, VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt; ERRORS... &gt;, HANDLED... &gt;</td></tr>
-<tr class="separator:af24b8a27d9342144187d013897e6d353"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdb3dd44a9a9757c2f45f96ee9232b2d"><td class="memTemplParams" colspan="2">template&lt;class... HANDLED, class VALUE , class... ERRORS, class HANDLER &gt; <br />
+requires (sizeof...(ERRORS) &gt; 0)</td></tr>
+<tr class="memitem:afdb3dd44a9a9757c2f45f96ee9232b2d"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#afdb3dd44a9a9757c2f45f96ee9232b2d">recover</a> (const std::expected&lt; VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt; ERRORS... &gt; &gt; &amp;computation, HANDLER &amp;&amp;handler) -&gt; typename std::enable_if_t&lt;(sizeof...(ERRORS) &gt; 0), detail::recover_return&lt; HANDLER, VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt; ERRORS... &gt;, HANDLED... &gt; &gt;::type</td></tr>
+<tr class="separator:afdb3dd44a9a9757c2f45f96ee9232b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27fc4518f3302e05d47e491feea168c9"><td class="memTemplParams" colspan="2">template&lt;class... HANDLED, class VALUE , class HANDLER &gt; </td></tr>
+<tr class="memitem:a27fc4518f3302e05d47e491feea168c9"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a27fc4518f3302e05d47e491feea168c9">recover</a> (const std::expected&lt; VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt;&gt; &gt; &amp;computation, HANDLER &amp;&amp;) -&gt; std::expected&lt; VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt;&gt; &gt;</td></tr>
+<tr class="separator:a27fc4518f3302e05d47e491feea168c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9d86cdbc00bcd27a4ad53e903bc3c6b"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; <br />
+requires (!<a class="el" href="namespacebeman_1_1transpose.html#a8e88a987eaa791484826781501eef3a9">is_expected_v</a>&lt;std::remove_cvref_t&lt;VALUE&gt;&gt;)</td></tr>
+<tr class="memitem:ae9d86cdbc00bcd27a4ad53e903bc3c6b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#ae9d86cdbc00bcd27a4ad53e903bc3c6b">fallible</a> (VALUE &amp;&amp;value) -&gt; std::expected&lt; std::remove_cvref_t&lt; VALUE &gt;, <a class="el" href="namespacebeman_1_1transpose.html#a9ab46d42834566f3745cbad936006a12">error_set</a>&lt;&gt; &gt;</td></tr>
+<tr class="separator:ae9d86cdbc00bcd27a4ad53e903bc3c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae74f12bd219c1eaa7d68a40b888d3708"><td class="memTemplParams" colspan="2">template&lt;class VALUE , class ERROR &gt; </td></tr>
+<tr class="memitem:ae74f12bd219c1eaa7d68a40b888d3708"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#ae74f12bd219c1eaa7d68a40b888d3708">fallible</a> (std::expected&lt; VALUE, ERROR &gt; computation) -&gt; std::expected&lt; VALUE, ERROR &gt;</td></tr>
+<tr class="separator:ae74f12bd219c1eaa7d68a40b888d3708"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a5e670c9d07c65027aa6f9fc9c9cee7"><td class="memTemplParams" colspan="2">template&lt;class TARGET_GRADE , class CARRIER &gt; <br />
 requires grade_semilattice&lt;TARGET_GRADE&gt; &amp;&amp; (std::is_same_v&lt;<a class="el" href="namespacebeman_1_1transpose.html#afb36f4cfc565d3b179156a4d02b445b8">grade_of_t</a>&lt;std::remove_cvref_t&lt;CARRIER&gt;&gt;, <a class="el" href="structbeman_1_1transpose_1_1unit__grade.html">unit_grade</a>&gt; || <a class="el" href="namespacebeman_1_1transpose.html#a7e31e675c9c267d15a8fc5f5ae8c792b">grade_subsumes_v</a>&lt;<a class="el" href="namespacebeman_1_1transpose.html#afb36f4cfc565d3b179156a4d02b445b8">grade_of_t</a>&lt;std::remove_cvref_t&lt;CARRIER&gt;&gt;, TARGET_GRADE&gt;) &amp;&amp; std::constructible_from&lt; <a class="el" href="namespacebeman_1_1transpose.html#a992d04f499d7f764ece410aa4887c16a">rebind_grade_t</a>&lt;std::remove_cvref_t&lt;CARRIER&gt;, TARGET_GRADE&gt;, CARRIER&gt;</td></tr>
 <tr class="memitem:a0a5e670c9d07c65027aa6f9fc9c9cee7"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a0a5e670c9d07c65027aa6f9fc9c9cee7">grade_subsume</a> (CARRIER &amp;&amp;value) -&gt; <a class="el" href="namespacebeman_1_1transpose.html#a992d04f499d7f764ece410aa4887c16a">rebind_grade_t</a>&lt; std::remove_cvref_t&lt; CARRIER &gt;, TARGET_GRADE &gt;</td></tr>
@@ -961,13 +975,14 @@ template&lt;class... ERRORS&gt; </div>
 
 </div>
 </div>
-<a id="af24b8a27d9342144187d013897e6d353" name="af24b8a27d9342144187d013897e6d353"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af24b8a27d9342144187d013897e6d353">&#9670;&#160;</a></span>recover()</h2>
+<a id="afdb3dd44a9a9757c2f45f96ee9232b2d" name="afdb3dd44a9a9757c2f45f96ee9232b2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdb3dd44a9a9757c2f45f96ee9232b2d">&#9670;&#160;</a></span>recover() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class... HANDLED, class VALUE , class... ERRORS, class HANDLER &gt; </div>
+template&lt;class... HANDLED, class VALUE , class... ERRORS, class HANDLER &gt; <br />
+requires (sizeof...(ERRORS) &gt; 0)</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -987,8 +1002,105 @@ template&lt;class... HANDLED, class VALUE , class... ERRORS, class HANDLER &gt; 
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt; detail::recover_return_t&lt;HANDLER, VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt;ERRORS...&gt;,
-                                HANDLED...&gt; </td>
+          <td></td><td> -&gt; typename std::enable_if_t&lt;
+        (sizeof...(ERRORS) &gt; 0),
+        detail::recover_return&lt;HANDLER, VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt;ERRORS...&gt;,
+                               HANDLED...&gt;&gt;::type </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a27fc4518f3302e05d47e491feea168c9" name="a27fc4518f3302e05d47e491feea168c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27fc4518f3302e05d47e491feea168c9">&#9670;&#160;</a></span>recover() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class... HANDLED, class VALUE , class HANDLER &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto beman::transpose::recover </td>
+          <td>(</td>
+          <td class="paramtype">const std::expected&lt; VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt;&gt; &gt; &amp;&#160;</td>
+          <td class="paramname"><em>computation</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">HANDLER &amp;&amp;&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; std::expected&lt;VALUE, <a class="el" href="classbeman_1_1transpose_1_1error__set__of.html">error_set_of</a>&lt;&gt;&gt; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae9d86cdbc00bcd27a4ad53e903bc3c6b" name="ae9d86cdbc00bcd27a4ad53e903bc3c6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9d86cdbc00bcd27a4ad53e903bc3c6b">&#9670;&#160;</a></span>fallible() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class VALUE &gt; <br />
+requires (!<a class="el" href="namespacebeman_1_1transpose.html#a8e88a987eaa791484826781501eef3a9">is_expected_v</a>&lt;std::remove_cvref_t&lt;VALUE&gt;&gt;)</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto beman::transpose::fallible </td>
+          <td>(</td>
+          <td class="paramtype">VALUE &amp;&amp;&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td> -&gt; std::expected&lt;std::remove_cvref_t&lt;VALUE&gt;, <a class="el" href="namespacebeman_1_1transpose.html#a9ab46d42834566f3745cbad936006a12">error_set</a>&lt;&gt;&gt; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae74f12bd219c1eaa7d68a40b888d3708" name="ae74f12bd219c1eaa7d68a40b888d3708"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae74f12bd219c1eaa7d68a40b888d3708">&#9670;&#160;</a></span>fallible() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class VALUE , class ERROR &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto beman::transpose::fallible </td>
+          <td>(</td>
+          <td class="paramtype">std::expected&lt; VALUE, ERROR &gt;&#160;</td>
+          <td class="paramname"><em>computation</em></td><td>)</td>
+          <td> -&gt; std::expected&lt;VALUE, ERROR&gt; </td>
         </tr>
       </table>
   </td>
