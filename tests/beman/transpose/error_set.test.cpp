@@ -5,8 +5,10 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <expected>
 #include <optional>
 #include <type_traits>
+#include <utility>
 
 namespace bt = beman::transpose;
 
@@ -574,4 +576,82 @@ TEST_CASE("error_set: witness_count reports how many alternatives did raise") {
     }
     REQUIRE(combined.witness<err_alpha>().has_value());
     REQUIRE(combined.witness<err_beta>().has_value());
+}
+
+// =========================================================================
+// THE UNIFORM SPELLING AND CLOSURE AT THE EMPTY GRADE. The empty grade is
+// the bare value (docs/transpose/decisions.md#empty-grade-spelling); `fallible`
+// is the explicit spelling that reaches expected<T, error_set<>>
+// (docs/transpose/decisions.md#uniform-form-surface), and recover on it is
+// vacuous (docs/transpose/decisions.md#generic-closure-at-empty-grade).
+// =========================================================================
+
+namespace {
+
+/** A handler that is not callable with anything: if recover at the empty
+ * grade so much as asked whether it could invoke this, the test would not
+ * compile. */
+struct uncallable {};
+
+/** Generic code written once for every grade: recover from err_alpha and
+ * hand back whatever remains. Instantiated below at a real grade and at the
+ * empty grade through the uniform spelling. */
+template <class COMPUTATION>
+auto settle(COMPUTATION computation) {
+    return bt::recover<err_alpha>(bt::fallible(std::move(computation)),
+                                  [](const err_alpha &a) { return a.value; });
+}
+
+} // namespace
+
+TEST_CASE("fallible: the explicit spelling of a value at the empty grade") {
+    auto uniform = bt::fallible(7);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(uniform), std::expected<int, empty_set>>);
+    REQUIRE(uniform.has_value());
+    REQUIRE(*uniform == 7);
+
+    // Already in the carrier: identity, at whatever grade it carries.
+    auto graded = bt::fallible(std::expected<int, set_a>{3});
+    STATIC_REQUIRE(std::is_same_v<decltype(graded), std::expected<int, set_a>>);
+    auto plain = bt::fallible(std::expected<int, err_alpha>{3});
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(plain), std::expected<int, err_alpha>>);
+
+    // The spelling is the user's and only the user's: the framework's
+    // re-indexing at the empty grade is still the bare value.
+    STATIC_REQUIRE(std::is_same_v<bt::rebind_grade_t<int, empty_set>, int>);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(bt::grade_subsume<empty_set>(1)), int>);
+}
+
+TEST_CASE(
+    "recover: vacuous at the empty grade -- the handler is neither "
+    "invoked nor required to be callable, and the operand is the result") {
+    auto uniform = bt::fallible(7);
+    auto same = bt::recover<err_alpha>(uniform, uncallable{});
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(same), std::expected<int, empty_set>>);
+    REQUIRE(same == uniform);
+
+    // The handled set is annotated as always; only its membership check is
+    // waived, because there is no grade for it to be a member of.
+    auto several = bt::recover<err_alpha, err_beta>(uniform, uncallable{});
+    REQUIRE(*several == 7);
+}
+
+TEST_CASE("recover: generic code stays well-formed at the empty grade") {
+    // At a real grade: the handler consumes the alternative and the grade
+    // narrows to empty, which is spelled as the bare value.
+    auto handled =
+        settle(std::expected<int, set_a>{std::unexpect, err_alpha{5}});
+    STATIC_REQUIRE(std::is_same_v<decltype(handled), int>);
+    REQUIRE(handled == 5);
+
+    // At the empty grade, through the uniform spelling: the same generic
+    // function compiles, and does nothing.
+    auto untouched = settle(9);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(untouched), std::expected<int, empty_set>>);
+    REQUIRE(*untouched == 9);
 }

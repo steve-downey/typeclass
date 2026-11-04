@@ -18,8 +18,8 @@ namespace std {
                applicative_object_for<
                    APPLICATIVE,
                    remove_cvref_t<invoke_result_t<
-                       FUNCTION&, $traversal-argument-t$<vector_traversable_impl, VALUES>>>>
-    ;
+                       FUNCTION&,
+                       $traversal-argument-t$<vector_traversable_impl, VALUES>>>>;
   }; // exposition only
 }
 ```

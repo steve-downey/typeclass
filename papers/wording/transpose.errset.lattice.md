@@ -139,8 +139,18 @@ namespace std {
 ```cpp
 namespace std {
   template<class HANDLER, class VALUE, class GRADE, class... HANDLED>
-  using $recover-return-t$ = $rebind-grade-t$<
-      VALUE, recover_final_grade_t<HANDLER, VALUE, GRADE, HANDLED...>>; // exposition only
+  using $recover-return-t$ =
+      $rebind-grade-t$<VALUE, recover_final_grade_t<HANDLER, VALUE, GRADE,
+                                                  HANDLED...>>; // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class HANDLER, class VALUE, class GRADE, class... HANDLED>
+  struct $recover-return$ {
+    using type = $recover-return-t$<HANDLER, VALUE, GRADE, HANDLED...>;
+  }; // exposition only
 }
 ```
 

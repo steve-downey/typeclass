@@ -62,7 +62,8 @@ namespace std {
                           FIRST_ARGUMENT&& first_argument,
                           REST_ARGUMENTS&&... rest_arguments)
       requires requires(const Impl& impl) {
-        impl.invoke(forward<FUNCTION>(function), forward<FIRST_ARGUMENT>(first_argument),
+        impl.invoke(forward<FUNCTION>(function),
+                    forward<FIRST_ARGUMENT>(first_argument),
                     forward<REST_ARGUMENTS>(rest_arguments)...);
       } || $invocable-through-ap$<decltype(self), FUNCTION, FIRST_ARGUMENT,
                                 REST_ARGUMENTS...>;
@@ -101,7 +102,8 @@ namespace std {
                       forward<FIRST_ARGUMENT>(first_argument),
                       forward<SECOND_ARGUMENT>(second_argument));
       } || requires {
-        self.invoke(forward<FUNCTION>(function), forward<FIRST_ARGUMENT>(first_argument),
+        self.invoke(forward<FUNCTION>(function),
+                    forward<FIRST_ARGUMENT>(first_argument),
                     forward<SECOND_ARGUMENT>(second_argument));
       };
 

@@ -135,7 +135,8 @@ namespace std {
 ```cpp
 namespace std {
   template<class MODEL_GRADE>
-  struct $mixes-with-model-impl$<MODEL_GRADE, unit_grade> : true_type {}; // exposition only
+  struct $mixes-with-model-impl$<MODEL_GRADE, unit_grade> : true_type {
+  }; // exposition only
 }
 ```
 

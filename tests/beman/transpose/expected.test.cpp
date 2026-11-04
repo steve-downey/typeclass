@@ -18,6 +18,7 @@
 #include <string>
 #include <system_error>
 #include <type_traits>
+#include <variant>
 #include <vector>
 
 namespace bt = beman::transpose;
@@ -217,4 +218,161 @@ TEST_CASE("expected: for_each over the Identity traversable") {
     auto result = t.for_each(bt::test::Identity<int>{20}, positive);
     REQUIRE(result == std::expected<bt::test::Identity<int>, errc>{
                           bt::test::Identity<int>{40}});
+}
+
+// =========================================================================
+// THE UNIT. std::expected<void, E> is a context whose element is the unit,
+// std::monostate (docs/transpose/decisions.md#unit-payload-spelling). A
+// callable returning void yields expected<void, E> from every object; the
+// object over expected<void, E> maps pure(monostate) back to expected<void,
+// E>, so the element reading and pure round-trip. Stage unit-and-closure of
+// docs/transpose/transpose-surface-plan.md.
+// =========================================================================
+
+namespace {
+
+using exp_void = std::expected<void, errc>;
+
+/** The validation-pass shape: succeeds silently or reports why not. */
+auto check_positive(int x) -> exp_void {
+    if (x > 0) {
+        return exp_void{};
+    }
+    return exp_void{std::unexpect, errc::invalid_argument};
+}
+
+} // namespace
+
+TEST_CASE("expected: the element of expected<void, E> is the unit, and the "
+          "void context is a registered applicative and monad") {
+    STATIC_REQUIRE(
+        std::is_same_v<bt::applicative_value_t<exp_void>, std::monostate>);
+    STATIC_REQUIRE(bt::applicative_object<
+                   std::remove_cvref_t<decltype(bt::applicative<exp_void>)>,
+                   exp_void>);
+    STATIC_REQUIRE(bt::applicative_object<
+                   std::remove_cvref_t<
+                       decltype(bt::accumulating_applicative<exp_void>)>,
+                   exp_void>);
+    STATIC_REQUIRE(
+        bt::monad_object<std::remove_cvref_t<decltype(bt::monad<exp_void>)>,
+                         exp_void>);
+}
+
+TEST_CASE("expected: pure inverts the element reading of the void context") {
+    // On the void object, the unit embeds as expected<void, E> ...
+    auto unit = bt::applicative<exp_void>.pure(std::monostate{});
+    STATIC_REQUIRE(std::is_same_v<decltype(unit), exp_void>);
+    REQUIRE(unit.has_value());
+
+    // ... and on every other object, and for every other value, pure is what
+    // it always was. A user's expected<monostate, E> is not a void expected.
+    auto held = bt::applicative<exp_int>.pure(std::monostate{});
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(held), std::expected<std::monostate, errc>>);
+    auto other = bt::applicative<exp_void>.pure(7);
+    STATIC_REQUIRE(std::is_same_v<decltype(other), exp_int>);
+}
+
+TEST_CASE("expected: a void-returning callable yields expected<void, E>, "
+          "and is invoked exactly when every operand holds a value") {
+    const auto &app = bt::applicative<exp_int>;
+    int calls = 0;
+    auto effect = [&calls](int a, int b) { calls += a + b; };
+
+    auto ran = app.invoke(effect, exp_int{2}, exp_int{3});
+    STATIC_REQUIRE(std::is_same_v<decltype(ran), exp_void>);
+    REQUIRE(ran.has_value());
+    REQUIRE(calls == 5);
+
+    auto skipped = app.invoke(effect, exp_int{2}, fail(errc::invalid_argument));
+    REQUIRE_FALSE(skipped.has_value());
+    REQUIRE(skipped.error() == errc::invalid_argument);
+    REQUIRE(calls == 5);
+}
+
+TEST_CASE("expected: a void operand hands its callable the unit") {
+    const auto &app = bt::applicative<exp_void>;
+    auto count = [](std::monostate, int x) { return x + 1; };
+
+    auto both = app.invoke(count, check_positive(1), exp_int{41});
+    STATIC_REQUIRE(std::is_same_v<decltype(both), exp_int>);
+    REQUIRE(both == exp_int{42});
+
+    // The void operand's failure propagates like any other operand's.
+    auto failed = app.invoke(count, check_positive(-1), exp_int{41});
+    REQUIRE_FALSE(failed.has_value());
+    REQUIRE(failed.error() == errc::invalid_argument);
+
+    // Bare operands and the unit together: the second core.
+    auto bare = app.invoke(count, check_positive(1), 9);
+    REQUIRE(bare == exp_int{10});
+}
+
+TEST_CASE("expected: the void context mixes grades like any other") {
+    using exp_void_io = std::expected<void, std::io_errc>;
+    const auto &app = bt::applicative<exp_void>;
+    auto both = [](std::monostate, std::monostate) { return 1; };
+
+    auto joined = app.invoke(both, exp_void{}, exp_void_io{});
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(joined),
+                       std::expected<int, bt::error_set<errc, std::io_errc>>>);
+    REQUIRE(joined == decltype(joined){1});
+
+    auto silent = app.invoke([](std::monostate, std::monostate) {}, exp_void{},
+                             exp_void_io{});
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(silent),
+                       std::expected<void, bt::error_set<errc, std::io_errc>>>);
+    REQUIRE(silent.has_value());
+}
+
+TEST_CASE("expected: the accumulating object collects void operands' errors") {
+    const auto &accumulating = bt::accumulating_applicative<exp_void>;
+    using exp_void_io = std::expected<void, std::io_errc>;
+    auto io_fail = exp_void_io{std::unexpect, std::io_errc::stream};
+
+    auto both = accumulating.invoke([](std::monostate, std::monostate) {},
+                                    check_positive(-1), io_fail);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(both),
+                       std::expected<void, bt::error_set<errc, std::io_errc>>>);
+    REQUIRE_FALSE(both.has_value());
+    REQUIRE(both.error().witness_count() == 2);
+    REQUIRE(both.error().holds<errc>());
+    REQUIRE(both.error().holds<std::io_errc>());
+}
+
+TEST_CASE("expected: bind hands a void computation's continuation the unit, "
+          "and a continuation may return a void expected") {
+    auto from_unit =
+        bt::bind(exp_void{}, [](std::monostate) { return exp_int{42}; });
+    STATIC_REQUIRE(std::is_same_v<decltype(from_unit), exp_int>);
+    REQUIRE(from_unit == exp_int{42});
+
+    auto to_unit =
+        bt::bind(exp_int{3}, [](int x) { return check_positive(x); });
+    STATIC_REQUIRE(std::is_same_v<decltype(to_unit), exp_void>);
+    REQUIRE(to_unit.has_value());
+
+    auto failed_first =
+        bt::bind(exp_void{std::unexpect, errc::invalid_argument},
+                 [](std::monostate) { return exp_int{42}; });
+    REQUIRE_FALSE(failed_first.has_value());
+
+    // Sequencing into a different error alternative joins, void or not.
+    using exp_void_io = std::expected<void, std::io_errc>;
+    auto joined = bt::bind(exp_int{3}, [](int) { return exp_void_io{}; });
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(joined),
+                       std::expected<void, bt::error_set<errc, std::io_errc>>>);
+    REQUIRE(joined.has_value());
+}
+
+TEST_CASE("expected: void itself is still not a value a context holds") {
+    // The tripwire of stage unit-and-closure: the unit is a value; void is
+    // not, and nothing here admitted it.
+    STATIC_REQUIRE(!bt::detail::holdable_value<void>);
+    STATIC_REQUIRE(bt::detail::holdable_value<std::monostate>);
 }
