@@ -4427,7 +4427,30 @@ writes the variant and its continuations by hand repeatedly along a pipeline.
 **Question:** What generic operation enters the failure state of a graded
 context, as the dual of `pure`, and how does it relate to the `zero<C>()`
 planned for Alternative?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01.
+**Decision:** `raise<C>(e)`, an operation object parameterized on the
+context for the reason `pure<C>` is: it builds a context rather than
+consuming one, so no argument carries it. It dispatches to the applicative
+object's own `raise`. For the error-set model, the object over
+`expected<T, E>` raises at the join of its grade with the grade `e`'s type
+alone would carry, spelled lazily: raising the declared alternative yields
+`expected<T, E>` verbatim, a different alternative widens to an error set,
+and a raised error set contributes its members; the uniform spelling of the
+empty grade acquires its first alternative; the void context raises like any
+other; both `expected` objects share one `raise`. `zero<C>()` is the
+witness-free failure state and the identity of Alternative's disjunction,
+decided under the same rule and spelled alongside: `optional` has one,
+dispatching to the object's `zero`; `expected` has none, because its failure
+state needs a witness, which is what `raise` supplies. A context that cannot
+fail has no `raise`. Both absences are constraints that do not match.
+**Why:** `pure` without its dual leaves generic graded code unable to fail
+without naming the carrier, which is the one thing generic code cannot do.
+The grade reading is the one the cores already use, so `raise` adds no new
+rule to the algebra. Deciding `raise` and `zero` together keeps "builds a
+context, so names it" in one place, and keeps `zero` from being invented a
+second time when Alternative arrives.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.5). `pure<C>(v)` builds the success
@@ -4440,6 +4463,14 @@ planned for Alternative?
   `pure` is, with the grade of the result the singleton of `e`'s type joined
   into `C`'s grade; `zero<C>()` for Alternative is the same shape and the two
   are decided together under one rule ("builds a context, so names it").
+- 2026-11-01 — Shipped by stage
+  [failure-side](transpose-surface-plan.md#failure-side): `raise` on both
+  `expected` applicative objects with `raise_result` as the grade rule, `zero`
+  on the `optional` object, the `raise<C>` and `zero<C>` operation objects in
+  `apply.hpp` beside `pure<C>`, tests in `expected.test.cpp` and
+  `operation_objects.test.cpp`, and golden section 11 of
+  `baseline_deduction.test.cpp`. The goldens of sections 1 to 10 are
+  untouched.
 
 ---
 
@@ -4448,7 +4479,39 @@ planned for Alternative?
 **Question:** When Alternative arrives, what are the value-side and
 error-side semantics of its disjunction, and does an infallible operand make
 the disjunction total?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01; the typeclass itself deferred by the stage.
+**Decision:** The semantics, decided now so that the typeclass has nothing
+left to decide when a client asks for it. `alt(a, b, ...)` yields the
+leftmost operand that holds a value. *Value side:* when the operands' value
+types agree, that type; when they differ, `std::variant` of the distinct
+value types in operand order, deduplicated by identity, the same join
+`eliminate` computes, and not read as a grade
+([value-side-grading](#value-side-grading)). *Error side:* the disjunction
+fails only when every operand fails, and its error is then every operand's
+evidence combined, at the join of the operands' grades, exactly as the
+accumulating applicative combines; for `error_set` that is the witnessed
+union. *Annihilation:* an operand that cannot fail, a bare value or the
+uniform spelling of the empty grade, makes the disjunction total: the result
+is the bare value type, or the variant join of value types with no failure
+alternative. *Identity:* `zero<C>()` where `C` has one. *Laws:* `zero` is a
+two-sided identity of `alt`; `alt` is associative; left catch,
+`alt(pure(a), x) == pure(a)`; and the annihilation rule. The operator
+spelling is left to libfn; this library's verbs are named. The typeclass,
+`derive_alternative<Impl>` with `zero` and `alt` as basis and `first_monoid`
+re-expressed through the `optional` instance, is **deferred** until a
+client calls `alt`, on the same footing as Monad: decided, unshipped, and
+never framed as rejected.
+**Why:** libfn's `|` is a complete algebra and the duality with `&` is what
+a typeclass needs to state the laws; writing them down now costs a
+paragraph and spares the typeclass a second design pass. The error side as
+the accumulating union rather than a product type keeps every failure's
+evidence in the one carrier `error_set` already is, instead of inventing a
+product carrier for one verb. Deferring the typeclass follows the
+coordination rule that nothing ships silent: `alt` has no caller in the
+tree today, and a shipped-but-unproposed Alternative would need the
+evidence label Monad carries without Monad's proof-of-mechanism reason.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.6). `first_monoid` in `monoid.hpp`
@@ -4464,6 +4527,13 @@ the disjunction total?
   value types where they differ, the common type where they agree. The
   `empty`/`zero` naming note in `functor.hpp` is the standing decision on the
   identity's name.
+- 2026-11-01 — Decided by stage
+  [failure-side](transpose-surface-plan.md#failure-side) as above. The
+  "positional sum" of the 2026-10-30 entry is refined to the variant join in
+  operand order, deduplicated, matching
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination). `zero`
+  shipped; `alt` did not. The stage's tripwire did not fire: nothing here
+  reads a value-side sum as a grade.
 
 ---
 

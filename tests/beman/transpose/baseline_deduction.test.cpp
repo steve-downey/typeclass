@@ -482,6 +482,38 @@ static_assert(std::is_same_v<
               decltype(bt::grade_subsume<bt::error_set<>>(std::declval<int>())),
               int>);
 
+// =========================================================================
+// 11. Failure injection. Golden as of stage failure-side
+//     (docs/transpose/transpose-surface-plan.md#failure-side).
+//
+// raise is the dual of pure. Raising the declared alternative keeps the
+// carrier spelling; a different alternative joins; the uniform spelling of
+// the empty grade acquires its first alternative; optional has a zero and
+// expected does not.
+// =========================================================================
+
+static_assert(
+    std::is_same_v<decltype(bt::raise<exp_int>(std::declval<std::errc>())),
+                   exp_int>);
+static_assert(
+    std::is_same_v<decltype(bt::raise<exp_int>(std::declval<std::io_errc>())),
+                   std::expected<int, mixed_errors>>);
+static_assert(
+    std::is_same_v<decltype(bt::raise<std::expected<int, bt::error_set<>>>(
+                       std::declval<std::errc>())),
+                   std::expected<int, bt::error_set<std::errc>>>);
+static_assert(std::is_same_v<decltype(bt::zero<opt_int>()), opt_int>);
+// Availability is asked through NAMED CONCEPTS: a bare requires-expression at
+// block scope hard-errors on an invalid expression instead of yielding false.
+template <class CONTEXT>
+concept has_zero = requires { bt::zero<CONTEXT>(); };
+template <class CONTEXT, class ERROR>
+concept has_raise = requires(ERROR error) { bt::raise<CONTEXT>(error); };
+static_assert(has_zero<opt_int>);
+static_assert(!has_zero<exp_int>);
+static_assert(has_raise<exp_int, std::errc>);
+static_assert(!has_raise<opt_int, int>);
+
 } // namespace
 
 TEST_CASE("baseline-capture: golden deductions hold at this commit") {

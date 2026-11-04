@@ -268,6 +268,10 @@ must be answered there, not here as a side effect.
 Closes [failure-injection-spelling](decisions.md#failure-injection-spelling)
 and
 [alternative-disjunction-semantics](decisions.md#alternative-disjunction-semantics).
+Status: DONE 2026-11-01 on branch `failure-side`. `raise<C>` and `zero<C>`
+shipped beside `pure<C>`; the disjunction semantics are decided and the
+Alternative typeclass is deferred until a client calls `alt`, so no laws were
+added to the harness. The tripwire did not fire.
 Assumes [value-side-grading](decisions.md#value-side-grading), decided no on
 2026-10-31: the disjunction's value side is a `std::variant` over the
 deduplicated operand types, or the common type, and is not read as a grade.

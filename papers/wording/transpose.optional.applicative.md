@@ -12,22 +12,30 @@ constexpr auto pure(this auto&&, VALUE&& value) -> optional<remove_cvref_t<VALUE
 [x]{.pnum} *Returns*: An engaged `optional` holding `value`.
 
 ```cpp
+constexpr auto zero(this auto&&) -> optional<VALUE_TYPE>;
+```
+
+[x+1]{.pnum} *Returns*: A disengaged `optional<VALUE_TYPE>`.
+
+[x+2]{.pnum} *Remarks*: The failure state of `optional` carries no witness, so `optional` has a `zero`; it is the identity of the first-engaged disjunction that `first_monoid` already folds with.
+
+```cpp
 template<class FUNCTION, class FIRST, class... REST>
 constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest)
     -> optional<remove_cvref_t<
         invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>>>;
 ```
 
-[x+1]{.pnum} *Constraints*:
+[x+3]{.pnum} *Constraints*:
 
-- [x+1.#]{.pnum} `$is-optional-v$<FIRST>` is `true`,
-- [x+1.#]{.pnum} `($is-optional-v$<REST> && ...)` is `true`,
-- [x+1.#]{.pnum} `invocable<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>` is satisfied,
-- [x+1.#]{.pnum} `invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>` models `$optional-holdable-value$`.
+- [x+3.#]{.pnum} `$is-optional-v$<FIRST>` is `true`,
+- [x+3.#]{.pnum} `($is-optional-v$<REST> && ...)` is `true`,
+- [x+3.#]{.pnum} `invocable<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>` is satisfied,
+- [x+3.#]{.pnum} `invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>` models `$optional-holdable-value$`.
 
-[x+2]{.pnum} *Returns*: If every operand is engaged, an engaged `optional` holding the result of invoking `function` with the contained values, in the order written; otherwise a disengaged `optional`.
+[x+4]{.pnum} *Returns*: If every operand is engaged, an engaged `optional` holding the result of invoking `function` with the contained values, in the order written; otherwise a disengaged `optional`.
 
-[x+3]{.pnum} *Remarks*: `function` is invoked at most once. Each operand's held value is passed on with that operand's own value category, so a caller that hands over an rvalue operand has its value moved from rather than copied. This is what lets a traversal carry its accumulated result forward without duplicating it at every step.
+[x+5]{.pnum} *Remarks*: `function` is invoked at most once. Each operand's held value is passed on with that operand's own value category, so a caller that hands over an rvalue operand has its value moved from rather than copied. This is what lets a traversal carry its accumulated result forward without duplicating it at every step.
 
 :::
 

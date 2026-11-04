@@ -14,7 +14,9 @@
 #include <beman/transpose/error_set.hpp>
 
 #include <expected>
+#include <future>
 #include <ios>
+#include <optional>
 #include <string>
 #include <system_error>
 #include <type_traits>
@@ -375,4 +377,92 @@ TEST_CASE("expected: void itself is still not a value a context holds") {
     // not, and nothing here admitted it.
     STATIC_REQUIRE(!bt::detail::holdable_value<void>);
     STATIC_REQUIRE(bt::detail::holdable_value<std::monostate>);
+}
+
+// =========================================================================
+// RAISE. The dual of pure: the generic entry into the failure state, so that
+// graded code can fail without naming the carrier
+// (docs/transpose/decisions.md#failure-injection-spelling). Carrier spelling
+// stays lazy: raising the declared alternative leaves the spelling alone, and
+// a different alternative widens it into an error set. Stage failure-side of
+// docs/transpose/transpose-surface-plan.md.
+// =========================================================================
+
+TEST_CASE("expected: raise with the declared alternative keeps the spelling") {
+    const auto &app = bt::applicative<exp_int>;
+    auto failed = app.raise(errc::invalid_argument);
+    STATIC_REQUIRE(std::is_same_v<decltype(failed), exp_int>);
+    REQUIRE_FALSE(failed.has_value());
+    REQUIRE(failed.error() == errc::invalid_argument);
+
+    // The operation object names the context, as pure does.
+    auto raised = bt::raise<exp_int>(errc::result_out_of_range);
+    STATIC_REQUIRE(std::is_same_v<decltype(raised), exp_int>);
+    REQUIRE(raised.error() == errc::result_out_of_range);
+}
+
+TEST_CASE("expected: raise with a different alternative joins the grades") {
+    auto widened = bt::raise<exp_int>(std::io_errc::stream);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(widened),
+                       std::expected<int, bt::error_set<errc, std::io_errc>>>);
+    REQUIRE_FALSE(widened.has_value());
+    REQUIRE(widened.error().holds<std::io_errc>());
+    REQUIRE_FALSE(widened.error().holds<errc>());
+
+    // Onto a set: a member leaves the set alone, a newcomer joins it.
+    using exp_set = std::expected<int, bt::error_set<errc, std::io_errc>>;
+    auto member = bt::raise<exp_set>(errc::invalid_argument);
+    STATIC_REQUIRE(std::is_same_v<decltype(member), exp_set>);
+    auto newcomer = bt::raise<exp_set>(std::future_errc::broken_promise);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(newcomer),
+                       std::expected<int, bt::error_set<errc, std::io_errc,
+                                                        std::future_errc>>>);
+    REQUIRE(newcomer.error().holds<std::future_errc>());
+
+    // A whole set may be raised; its members join.
+    auto raised_set =
+        bt::raise<exp_int>(bt::error_set<std::io_errc>{std::io_errc::stream});
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(raised_set),
+                       std::expected<int, bt::error_set<errc, std::io_errc>>>);
+}
+
+TEST_CASE("expected: raise from the uniform spelling, the void context, and "
+          "the accumulating object") {
+    // The uniform spelling of the empty grade acquires its first alternative.
+    auto from_empty =
+        bt::raise<std::expected<int, bt::error_set<>>>(errc::invalid_argument);
+    STATIC_REQUIRE(std::is_same_v<decltype(from_empty),
+                                  std::expected<int, bt::error_set<errc>>>);
+
+    using exp_void = std::expected<void, errc>;
+    auto void_failed = bt::raise<exp_void>(errc::invalid_argument);
+    STATIC_REQUIRE(std::is_same_v<decltype(void_failed), exp_void>);
+    REQUIRE_FALSE(void_failed.has_value());
+
+    auto accumulated =
+        bt::accumulating_applicative<exp_int>.raise(std::io_errc::stream);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(accumulated),
+                       std::expected<int, bt::error_set<errc, std::io_errc>>>);
+    REQUIRE(accumulated.error().holds<std::io_errc>());
+}
+
+namespace {
+
+// Availability is asked through NAMED CONCEPTS: a bare requires-expression at
+// block scope hard-errors on an invalid expression instead of yielding false.
+template <class CONTEXT>
+concept has_zero = requires { bt::zero<CONTEXT>(); };
+template <class CONTEXT, class ERROR>
+concept has_raise = requires(ERROR error) { bt::raise<CONTEXT>(error); };
+} // namespace
+
+TEST_CASE("expected: there is no zero, because its failure state needs a "
+          "witness") {
+    STATIC_REQUIRE(!has_zero<exp_int>);
+    STATIC_REQUIRE(has_zero<std::optional<int>>);
+    STATIC_REQUIRE(has_raise<exp_int, errc>);
 }
