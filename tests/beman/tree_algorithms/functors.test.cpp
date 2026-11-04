@@ -10,6 +10,7 @@
 #include <utility>
 #include <variant>
 
+#include <beman/transpose/eliminate.hpp>
 #include <beman/transpose/functor.hpp>
 #include <beman/transpose/overloaded.hpp>
 
@@ -133,4 +134,30 @@ TEST_CASE("Functors - RefoldMatchesFoldOfUnfoldOnBothApis", "[tree_algorithms::f
         CHECK(refold<int, NatF>(weigh_algebra, countdown_coalgebra, n) == materialized);
         CHECK(refold<int, NatF>(weigh_algebra, countdown_coalgebra, fmap_nat_fn, n) == materialized);
     }
+}
+
+// The join-of-arms eliminator over a real layer: rebuilding NatF at a new
+// element type without naming the result type on either arm, which is what
+// the fmap primitive above has to spell by hand with std::visit
+// (docs/transpose/decisions.md#heterogeneous-arm-elimination).
+TEST_CASE("NatF - eliminate rebuilds a layer with heterogeneous arms", "[functors][eliminate]") {
+    const NatF<int> layer = Succ<int>{make_slot<int>(3)};
+    auto            mapped =
+        beman::transpose::eliminate(layer,
+                                    overloaded{
+                                        [](const Zero&) { return Zero{}; },
+                                        [](const Succ<int>& s) { return Succ<long>{make_slot<long>(*s.pred * 10L)}; },
+                                    });
+    STATIC_REQUIRE(std::is_same_v<decltype(mapped), NatF<long>>);
+    REQUIRE(std::holds_alternative<Succ<long>>(mapped));
+    REQUIRE(*std::get<Succ<long>>(mapped).pred == 30L);
+
+    const NatF<int> zero = Zero{};
+    auto            still_zero =
+        beman::transpose::eliminate(zero,
+                                    overloaded{
+                                        [](const Zero&) { return Zero{}; },
+                                        [](const Succ<int>& s) { return Succ<long>{make_slot<long>(*s.pred * 10L)}; },
+                                    });
+    REQUIRE(std::holds_alternative<Zero>(still_zero));
 }

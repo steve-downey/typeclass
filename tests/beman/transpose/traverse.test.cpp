@@ -3,16 +3,20 @@
 
 #include <beman/transpose/traverse.hpp>
 
+#include <beman/transpose/expected.hpp>
 #include <beman/transpose/sequence.hpp>
 
 #include "test_support.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <expected>
 #include <optional>
 #include <string>
+#include <system_error>
 #include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
 namespace bt = beman::transpose;
@@ -192,4 +196,44 @@ TEST_CASE("traverse: the derived Traversable operations are soft failures "
             std::optional<VI>{VI{1, 2}});
     REQUIRE(bt::traversable<VO>.transpose(VO{1, 2}) ==
             std::optional<VI>{VI{1, 2}});
+}
+
+// =========================================================================
+// A void-returning effect. f : T -> expected<void, E> is the most common
+// fallible function in real code; traversing with it yields the structure of
+// units, preserving shape as every traversal does
+// (docs/transpose/decisions.md#unit-payload-spelling).
+// =========================================================================
+
+TEST_CASE("traverse: a void-valued effect yields the structure of units") {
+    using exp_void = std::expected<void, std::errc>;
+    auto check = [](int x) -> exp_void {
+        if (x > 0) {
+            return exp_void{};
+        }
+        return exp_void{std::unexpect, std::errc::invalid_argument};
+    };
+
+    auto ok = bt::traverse(check, std::vector<int>{1, 2, 3});
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(ok),
+                       std::expected<std::vector<std::monostate>, std::errc>>);
+    REQUIRE(ok.has_value());
+    REQUIRE(ok->size() == 3);
+
+    auto bad = bt::traverse(check, std::vector<int>{1, -2, 3});
+    REQUIRE_FALSE(bad.has_value());
+    REQUIRE(bad.error() == std::errc::invalid_argument);
+
+    // The accumulating policy composes the same shape.
+    auto collected = bt::traverse(check, std::vector<int>{1, -2, 3},
+                                  bt::accumulating_applicative<exp_void>);
+    STATIC_REQUIRE(std::is_same_v<decltype(collected), decltype(ok)>);
+    REQUIRE_FALSE(collected.has_value());
+
+    // for_each is traverse with its arguments the other way round.
+    auto each = bt::traversable<std::vector<int>>.for_each(
+        std::vector<int>{4, 5}, check);
+    STATIC_REQUIRE(std::is_same_v<decltype(each), decltype(ok)>);
+    REQUIRE(each.has_value());
 }

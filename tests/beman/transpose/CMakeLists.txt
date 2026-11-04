@@ -6,6 +6,7 @@ set(transpose_tests
     demo_sender_golden
     monoid
     overloaded
+    eliminate
     dual_monoid
     error_set
     crtp_absorption
@@ -175,3 +176,14 @@ target_link_libraries(
     PRIVATE beman::transpose Catch2::Catch2WithMain
 )
 catch_discover_tests(beman.transpose.tests.detail.typeclass_base)
+
+add_executable(beman.transpose.tests.detail.canonical_set)
+target_sources(
+    beman.transpose.tests.detail.canonical_set
+    PRIVATE detail/canonical_set.test.cpp
+)
+target_link_libraries(
+    beman.transpose.tests.detail.canonical_set
+    PRIVATE beman::transpose Catch2::Catch2WithMain
+)
+catch_discover_tests(beman.transpose.tests.detail.canonical_set)

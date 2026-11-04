@@ -29,6 +29,8 @@ namespace std {
     error_set_of() = delete;
 
     template<class ERROR> static constexpr auto contains() noexcept -> bool;
+
+    friend auto operator==(const error_set_of&, const error_set_of&) -> bool = default;
   };
 }
 ```

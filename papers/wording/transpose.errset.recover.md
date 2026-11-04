@@ -10,13 +10,31 @@ constexpr auto recover(const expected<VALUE, error_set_of<ERRORS...>>& computati
                        HANDLER&& handler) -> $see below$;
 ```
 
-[x]{.pnum} *Mandates*: `HANDLED` is not empty; every type in `HANDLED` is one of the computation's alternatives; and for each such type `handler` returns either `VALUE` or a `std::expected<VALUE, error_set<...>>`.
+[x]{.pnum} *Constraints*: `sizeof...(ERRORS) > 0` is `true`.
 
-[x+1]{.pnum} *Effects*: For each type in `HANDLED` that the computation's error witnesses, invokes `handler` with that witness. A handler either recovers a value or raises an error set of its own. Witnesses for types outside `HANDLED`, and any a handler raises, survive into the result.
+[x+1]{.pnum} *Mandates*: `HANDLED` is not empty; every type in `HANDLED` is one of the computation's alternatives; and for each such type `handler` returns either `VALUE` or a `std::expected<VALUE, error_set<...>>`.
 
-[x+2]{.pnum} *Returns*: The computation at the narrowed grade: the alternatives it may raise, less those handled, plus any a handler raises. The result holds a value when every witness present was recovered, and otherwise the surviving witnesses.
+[x+2]{.pnum} *Effects*: For each type in `HANDLED` that the computation's error witnesses, invokes `handler` with that witness. A handler either recovers a value or raises an error set of its own. Witnesses for types outside `HANDLED`, and any a handler raises, survive into the result.
 
-[x+3]{.pnum} *Remarks*: The handled set is annotated rather than inferred: it is given as explicit template arguments and checked against the computation's grade. Recovering one alternative from a value that raised two leaves the other, which is still an error. If more than one handled type is witnessed and each independently recovers a value, the first in canonical order is the result, matching the tie-break of `combined_with`.
+[x+3]{.pnum} *Returns*: The computation at the narrowed grade: the alternatives it may raise, less those handled, plus any a handler raises. The result holds a value when every witness present was recovered, and otherwise the surviving witnesses.
+
+[x+4]{.pnum} *Remarks*: The handled set is annotated rather than inferred: it is given as explicit template arguments and checked against the computation's grade. Recovering one alternative from a value that raised two leaves the other, which is still an error. If more than one handled type is witnessed and each independently recovers a value, the first in canonical order is the result, matching the tie-break of `combined_with`.
+
+```cpp
+template<class... HANDLED, class VALUE, class HANDLER>
+constexpr auto recover(const expected<VALUE, error_set_of<>>& computation, HANDLER&&)
+    -> expected<VALUE, error_set_of<>>;
+```
+
+[x+5]{.pnum} *Constraints*: The computation's grade is the empty error set.
+
+[x+6]{.pnum} *Mandates*: `sizeof...(HANDLED) > 0` is `true`.
+
+[x+7]{.pnum} *Effects*: None. `handler` is not invoked, and no requirement is placed on it.
+
+[x+8]{.pnum} *Returns*: `computation`.
+
+[x+9]{.pnum} *Remarks*: At the empty grade no alternative can be witnessed, so there is nothing to recover from and nothing to check `HANDLED` against. This is what keeps a generic recovery step well-formed when an earlier stage has statically eliminated every failure.
 
 ```cpp
 namespace std {
@@ -33,101 +51,75 @@ namespace std {
 
 ```cpp
 namespace std {
-  struct error_set_model {};
-}
-```
-
-[x+4]{.pnum} *Remarks*: `error_set_model` names the model that the error-set grades belong to. It is what makes two grades comparable: grades of different models do not mix.
-
-```cpp
-namespace std {
-  template<class... ERRORS>
-  struct grade_model<error_set_of<ERRORS...>> {
-    using type = error_set_model;
-  };
+  template<class HANDLER, class... ARGS>
+  concept $witness-arm-for$ =
+      invocable<HANDLER&, ARGS...> &&
+      !is_void_v<invoke_result_t<HANDLER&, ARGS...>>; // exposition only
 }
 ```
 
 ```cpp
 namespace std {
-  template<class... LEFT, class... RIGHT>
-  struct grade_join<error_set_of<LEFT...>, error_set_of<RIGHT...>> {
-    using type = error_set_join_t<error_set_of<LEFT...>, error_set_of<RIGHT...>>;
-  };
+  template<class HANDLER, class ACC, class E>
+  struct $fold-arm-check$ {
+    static constexpr bool value = true;
+  }; // exposition only
+}
+```
+
+[x+10]{.pnum} A program that instantiates `fold_arm_check<HANDLER, ACC, E>` is ill-formed unless `$witness-arm-for$<HANDLER, ACC&&, const E&>` is satisfied and `is_invocable_r_v<ACC, HANDLER&, ACC&&, const E&>` is `true`.
+
+```cpp
+namespace std {
+  template<class HANDLER, class E>
+  struct $collapse-arm-check$ {
+    using type = remove_cvref_t<invoke_result_t<HANDLER&, const E&>>;
+  }; // exposition only
+}
+```
+
+[x+11]{.pnum} A program that instantiates `collapse_arm_check<HANDLER, E>` is ill-formed unless `$witness-arm-for$<HANDLER, const E&>` is satisfied.
+
+```cpp
+namespace std {
+  template<class HANDLER, class... ERRORS>
+  struct $common-arm-result$; // exposition only
 }
 ```
 
 ```cpp
 namespace std {
-  template<class... ERRORS>
-  struct grade_bottom<error_set_of<ERRORS...>> {
-    using type = error_set_bottom;
-  };
+  template<class HANDLER, class FIRST, class... REST>
+  struct $common-arm-result$<HANDLER, FIRST, REST...> {
+    using type = typename $collapse-arm-check$<HANDLER, FIRST>::type;
+  }; // exposition only
+}
+```
+
+[x+12]{.pnum} A program that instantiates `common_arm_result` is ill-formed unless `(is_same_v<type, typename $collapse-arm-check$<HANDLER, REST>::type> && ...)` is `true`.
+
+```cpp
+namespace std {
+  template<class TARGET, class HANDLER, class... ERRORS>
+  struct $collapse-target$ {
+    using type = TARGET;
+  }; // exposition only
 }
 ```
 
 ```cpp
 namespace std {
-  template<class... LEFT, class... RIGHT>
-  struct grade_subsumes<error_set_of<LEFT...>, error_set_of<RIGHT...>>
-      : bool_constant<
-            error_set_subsumes_v<error_set_of<LEFT...>, error_set_of<RIGHT...>>> {};
+  template<class HANDLER, class... ERRORS>
+  struct $collapse-target$<void, HANDLER, ERRORS...>
+      : $common-arm-result$<HANDLER, ERRORS...> {}; // exposition only
 }
 ```
 
 ```cpp
 namespace std {
-  template<class VALUE, class ERROR>
-  struct grade_of<expected<VALUE, ERROR>> {
-    using type = error_set<ERROR>;
-  };
-}
-```
-
-```cpp
-namespace std {
-  template<class VALUE, class... ERRORS>
-  struct grade_of<expected<VALUE, error_set_of<ERRORS...>>> {
-    using type = error_set_of<ERRORS...>;
-  };
-}
-```
-
-```cpp
-namespace std {
-  template<class VALUE, class ERROR, class HEAD, class... TAIL>
-  struct rebind_grade<expected<VALUE, ERROR>, error_set_of<HEAD, TAIL...>> {
-    using type = expected<VALUE, error_set_of<HEAD, TAIL...>>;
-  };
-}
-```
-
-```cpp
-namespace std {
-  template<class VALUE, class HEAD, class... TAIL>
-    requires(!$is-expected-v$<VALUE>)
-  struct rebind_grade<VALUE, error_set_of<HEAD, TAIL...>> {
-    using type = expected<VALUE, error_set_of<HEAD, TAIL...>>;
-  };
-}
-```
-
-```cpp
-namespace std {
-  template<class VALUE>
-    requires(!$is-expected-v$<VALUE>)
-  struct rebind_grade<VALUE, error_set_of<>> {
-    using type = VALUE;
-  };
-}
-```
-
-```cpp
-namespace std {
-  template<class VALUE, class ERROR>
-  struct rebind_grade<expected<VALUE, ERROR>, error_set_of<>> {
-    using type = VALUE;
-  };
+  template<class TARGET, class HANDLER, class... ERRORS>
+  using $collapse-target-t$ =
+      typename $collapse-target$<TARGET, HANDLER, ERRORS...>::type; // exposition only
 }
 ```
 

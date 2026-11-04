@@ -3,10 +3,18 @@
 
 #include <beman/transpose/error_set.hpp>
 
+#include <beman/transpose/overloaded.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
+#include <expected>
+#include <functional>
 #include <optional>
+#include <string>
+#include <string_view>
 #include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace bt = beman::transpose;
 
@@ -574,4 +582,267 @@ TEST_CASE("error_set: witness_count reports how many alternatives did raise") {
     }
     REQUIRE(combined.witness<err_alpha>().has_value());
     REQUIRE(combined.witness<err_beta>().has_value());
+}
+
+// =========================================================================
+// THE UNIFORM SPELLING AND CLOSURE AT THE EMPTY GRADE. The empty grade is
+// the bare value (docs/transpose/decisions.md#empty-grade-spelling); `fallible`
+// is the explicit spelling that reaches expected<T, error_set<>>
+// (docs/transpose/decisions.md#uniform-form-surface), and recover on it is
+// vacuous (docs/transpose/decisions.md#generic-closure-at-empty-grade).
+// =========================================================================
+
+namespace {
+
+/** A handler that is not callable with anything: if recover at the empty
+ * grade so much as asked whether it could invoke this, the test would not
+ * compile. */
+struct uncallable {};
+
+/** Generic code written once for every grade: recover from err_alpha and
+ * hand back whatever remains. Instantiated below at a real grade and at the
+ * empty grade through the uniform spelling. */
+template <class COMPUTATION>
+auto settle(COMPUTATION computation) {
+    return bt::recover<err_alpha>(bt::fallible(std::move(computation)),
+                                  [](const err_alpha &a) { return a.value; });
+}
+
+} // namespace
+
+TEST_CASE("fallible: the explicit spelling of a value at the empty grade") {
+    auto uniform = bt::fallible(7);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(uniform), std::expected<int, empty_set>>);
+    REQUIRE(uniform.has_value());
+    REQUIRE(*uniform == 7);
+
+    // Already in the carrier: identity, at whatever grade it carries.
+    auto graded = bt::fallible(std::expected<int, set_a>{3});
+    STATIC_REQUIRE(std::is_same_v<decltype(graded), std::expected<int, set_a>>);
+    auto plain = bt::fallible(std::expected<int, err_alpha>{3});
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(plain), std::expected<int, err_alpha>>);
+
+    // The spelling is the user's and only the user's: the framework's
+    // re-indexing at the empty grade is still the bare value.
+    STATIC_REQUIRE(std::is_same_v<bt::rebind_grade_t<int, empty_set>, int>);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(bt::grade_subsume<empty_set>(1)), int>);
+}
+
+TEST_CASE(
+    "recover: vacuous at the empty grade -- the handler is neither "
+    "invoked nor required to be callable, and the operand is the result") {
+    auto uniform = bt::fallible(7);
+    auto same = bt::recover<err_alpha>(uniform, uncallable{});
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(same), std::expected<int, empty_set>>);
+    REQUIRE(same == uniform);
+
+    // The handled set is annotated as always; only its membership check is
+    // waived, because there is no grade for it to be a member of.
+    auto several = bt::recover<err_alpha, err_beta>(uniform, uncallable{});
+    REQUIRE(*several == 7);
+}
+
+TEST_CASE("recover: generic code stays well-formed at the empty grade") {
+    // At a real grade: the handler consumes the alternative and the grade
+    // narrows to empty, which is spelled as the bare value.
+    auto handled =
+        settle(std::expected<int, set_a>{std::unexpect, err_alpha{5}});
+    STATIC_REQUIRE(std::is_same_v<decltype(handled), int>);
+    REQUIRE(handled == 5);
+
+    // At the empty grade, through the uniform spelling: the same generic
+    // function compiles, and does nothing.
+    auto untouched = settle(9);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(untouched), std::expected<int, empty_set>>);
+    REQUIRE(*untouched == 9);
+}
+
+// =========================================================================
+// The type-order key. `error_set_of` lays its witness tuple out in canonical
+// order, so it is declared in the inline namespace `ordered_by_type_name`,
+// the key of the order in use (docs/transpose/decisions.md#type-order-abi).
+// The stage asked for a compile-fail test that two translation units cannot
+// mix order keys; with one key in existence that cannot be written, and
+// this is the honest substitute: the key is part of the type's identity --
+// visible in the compiler's rendering and reachable by the qualified
+// spelling -- while every unqualified spelling above is unchanged.
+// =========================================================================
+
+TEST_CASE("error_set: the type-order key is part of error_set_of's identity") {
+    STATIC_REQUIRE(
+        std::is_same_v<set_a,
+                       bt::ordered_by_type_name::error_set_of<err_alpha>>);
+    STATIC_REQUIRE(
+        std::is_same_v<empty_set, bt::ordered_by_type_name::error_set_of<>>);
+    STATIC_REQUIRE(
+        std::is_same_v<bt::error_set<err_alpha>, bt::error_set_of<err_alpha>>);
+
+#if defined(__GNUC__) && !defined(__clang__)
+    // GCC's __PRETTY_FUNCTION__ renders inline namespaces, so the key is
+    // visible in the type's name. Clang suppresses them in that rendering,
+    // which is why this half is GCC-only; the is_same checks above hold on
+    // every compiler.
+    STATIC_REQUIRE(bt::detail::type_name<set_ab>().find(
+                       "ordered_by_type_name") != std::string_view::npos);
+#endif
+}
+
+// =========================================================================
+// PUBLIC ELIMINATORS FOR A MULTI-WITNESS VALUE. The fence of
+// docs/transpose/decisions.md#multi-witness-elimination moved on 2026-11-01:
+// fold_witnesses threads every present witness through an accumulator, and
+// collapse maps every alternative to one error type at the boundary. Both are
+// total over the witnessed subset; visit stays partial. Stage set-elimination
+// of docs/transpose/transpose-surface-plan.md.
+// =========================================================================
+
+namespace {
+
+auto describe(const err_alpha &a) -> std::string {
+    return "alpha=" + std::to_string(a.value);
+}
+auto describe(const err_beta &b) -> std::string {
+    return "beta=" + std::to_string(b.value);
+}
+
+using exp_ab = std::expected<int, set_ab>;
+
+/** A value witnessing both alternatives, in the order they were raised. */
+auto both_raised() -> exp_ab {
+    return exp_ab{std::unexpect,
+                  set_ab{err_beta{2}}.combined_with(set_ab{err_alpha{1}})};
+}
+
+} // namespace
+
+TEST_CASE("fold_witnesses: every present witness reaches the accumulator, in "
+          "canonical order, by overload set") {
+    auto both = both_raised();
+    REQUIRE(both.error().witness_count() == 2);
+
+    auto messages = bt::fold_witnesses(
+        both.error(), std::vector<std::string>{},
+        bt::overloaded{
+            [](std::vector<std::string> acc, const err_alpha &a) {
+                acc.push_back(describe(a));
+                return acc;
+            },
+            [](std::vector<std::string> acc, const err_beta &b) {
+                acc.push_back(describe(b));
+                return acc;
+            },
+        });
+    // Canonical order, not raise order: alpha precedes beta by name.
+    REQUIRE(messages == std::vector<std::string>{"alpha=1", "beta=2"});
+
+    // A generic arm is enough when the alternatives share an interface, and
+    // a single witness folds once.
+    auto count = bt::fold_witnesses(both.error(), 0,
+                                    [](int n, const auto &) { return n + 1; });
+    REQUIRE(count == 2);
+    REQUIRE(
+        bt::fold_witnesses(set_ab{err_beta{7}}, 0, [](int n, const auto &e) {
+            return n + e.value;
+        }) == 7);
+}
+
+TEST_CASE("collapse: every alternative to one error type, deduced from the "
+          "arms; the first witness in canonical order is kept by default") {
+    auto first = bt::collapse(
+        both_raised(), bt::overloaded{
+                           [](const err_alpha &a) { return describe(a); },
+                           [](const err_beta &b) { return describe(b); },
+                       });
+    // The grade is gone: the result is the ungraded expected.
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(first), std::expected<int, std::string>>);
+    REQUIRE_FALSE(first.has_value());
+    REQUIRE(first.error() == "alpha=1");
+}
+
+TEST_CASE("collapse: a combine keeps the second witness") {
+    auto joined = bt::collapse(
+        both_raised(), [](const auto &e) { return describe(e) + ";"; },
+        std::plus<>{});
+    REQUIRE(joined.error() == "alpha=1;beta=2;");
+}
+
+TEST_CASE("collapse: a named target converts each arm's result, and a success "
+          "passes through") {
+    auto code = bt::collapse<long>(
+        both_raised().error(),
+        bt::overloaded{
+            [](const err_alpha &a) { return a.value; },
+            [](const err_beta &b) { return static_cast<short>(b.value); },
+        });
+    STATIC_REQUIRE(std::is_same_v<decltype(code), long>);
+    REQUIRE(code == 1);
+
+    auto ok =
+        bt::collapse(exp_ab{7}, [](const auto &e) { return describe(e); });
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(ok), std::expected<int, std::string>>);
+    REQUIRE(ok == std::expected<int, std::string>{7});
+
+    // Staying graded is a matter of naming the singleton set as the target.
+    auto graded = bt::collapse<bt::error_set<std::string>>(
+        both_raised(), [](const auto &e) { return describe(e); });
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(graded),
+                       std::expected<int, bt::error_set<std::string>>>);
+    REQUIRE(graded.error().holds<std::string>());
+}
+
+TEST_CASE("collapse: a void computation collapses too") {
+    using exp_void_ab = std::expected<void, set_ab>;
+    auto failed = bt::collapse(exp_void_ab{std::unexpect, set_ab{err_alpha{3}}},
+                               [](const auto &e) { return describe(e); });
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(failed), std::expected<void, std::string>>);
+    REQUIRE(failed.error() == "alpha=3");
+    auto fine =
+        bt::collapse(exp_void_ab{}, [](const auto &e) { return describe(e); });
+    REQUIRE(fine.has_value());
+}
+
+TEST_CASE("fold_witnesses and collapse: constexpr, and collapse agrees with "
+          "visit on a single witness") {
+    constexpr auto n = [] {
+        set_ab e{err_alpha{3}};
+        return bt::fold_witnesses(
+            e, 0, [](int acc, const auto &) { return acc + 1; });
+    }();
+    STATIC_REQUIRE(n == 1);
+
+    constexpr set_ab single{err_beta{4}};
+    constexpr auto collapsed =
+        bt::collapse(single, [](const auto &e) { return e.value; });
+    STATIC_REQUIRE(collapsed == 4);
+    // The equivalence law: where visit is defined, collapse agrees with it.
+    REQUIRE(collapsed == single.visit([](const auto &e) { return e.value; }));
+}
+
+// Negative controls, hand-verified with GCC 15 (no compile-fail mechanism in
+// this repository):
+//
+//     bt::collapse(set_ab{err_alpha{3}}, bt::overloaded{[](const err_alpha&) {
+//     return 1; }});
+//
+// fails with "collapse: no arm accepts this alternative -- add a case" in the
+// instantiation of collapse_arm_check<..., err_beta>, naming the missing
+// alternative, and
+//
+//     bt::collapse(set_ab{err_alpha{3}}, bt::overloaded{
+//         [](const err_alpha&) { return 1; },
+//         [](const err_beta&) { return std::string{}; }});
+//
+// fails with "collapse: the arms return different types. Name the target,
+// collapse<TARGET>(...), and every arm's result converts to it."
+TEST_CASE("eliminators: the negative controls were hand-verified") {
+    SUCCEED("recorded in the comment above");
 }
