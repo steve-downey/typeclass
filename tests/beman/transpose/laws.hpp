@@ -579,6 +579,23 @@ template <const auto &LEFT, const auto &RIGHT, instance_sample SAMPLE>
 constexpr auto invoke_agrees() -> bool;
 
 template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto alternative_left_identity() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto alternative_right_identity() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto alternative_associativity() -> bool;
+
+template <const auto &ALTERNATIVE, const auto &APPLICATIVE,
+          instance_sample SAMPLE>
+constexpr auto alternative_left_catch() -> bool;
+
+template <const auto &ALTERNATIVE, const auto &APPLICATIVE,
+          instance_sample SAMPLE>
+constexpr auto alternative_annihilation() -> bool;
+
+template <const auto &OBJECT, instance_sample SAMPLE>
 consteval auto check_functor_laws() -> bool;
 
 template <const auto &OBJECT, instance_sample SAMPLE>
@@ -586,6 +603,10 @@ consteval auto check_applicative_laws() -> bool;
 
 template <const auto &OBJECT, instance_sample SAMPLE>
 consteval auto check_monad_laws() -> bool;
+
+template <const auto &ALTERNATIVE, const auto &APPLICATIVE,
+          instance_sample SAMPLE>
+consteval auto check_alternative_laws() -> bool;
 
 // -- The probe algebra, defined -------------------------------------------
 
@@ -990,6 +1011,96 @@ constexpr auto monad_invoke_coherence() -> bool {
     return true;
 }
 
+// -- Alternative laws -----------------------------------------------------
+//
+// The disjunction's laws as decided in
+// docs/transpose/decisions.md#alternative-disjunction-semantics: `zero` is a
+// two-sided identity where the object has one, `alt` is associative and its
+// n-ary form is the fold of its binary form, a pure left operand is the
+// result (left catch), and an operand that cannot fail makes the disjunction
+// total (annihilation). The last two name the Applicative object over the
+// same carrier, for its `pure`; the Alternative object has none of its own.
+
+/** left identity: `alt(zero, v) == v`, where the object has a `zero`.
+ * Vacuous otherwise: a disjunction without an identity has no identity law
+ * to break, and is admitted as a semigroup. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto alternative_left_identity() -> bool {
+    if constexpr (requires { OBJECT.zero(); }) {
+        for (const auto &context : SAMPLE::contexts()) {
+            if (!(OBJECT.alt(OBJECT.zero(), context) == context)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/** right identity: `alt(v, zero) == v`, where the object has a `zero`. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto alternative_right_identity() -> bool {
+    if constexpr (requires { OBJECT.zero(); }) {
+        for (const auto &context : SAMPLE::contexts()) {
+            if (!(OBJECT.alt(context, OBJECT.zero()) == context)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/** associativity: `alt(alt(u, v), w) == alt(u, alt(v, w))`, and the n-ary
+ * form is that fold: `alt(u, v, w) == alt(alt(u, v), w)`. Over a sample
+ * whose failures are distinguishable, this is also what pins the error side:
+ * which failing operand's evidence survives cannot depend on the grouping. */
+template <const auto &OBJECT, instance_sample SAMPLE>
+constexpr auto alternative_associativity() -> bool {
+    const auto contexts = SAMPLE::contexts();
+    for (const auto &u : contexts) {
+        for (const auto &v : contexts) {
+            for (const auto &w : contexts) {
+                if (!(OBJECT.alt(OBJECT.alt(u, v), w) ==
+                      OBJECT.alt(u, OBJECT.alt(v, w)))) {
+                    return false;
+                }
+                if (!(OBJECT.alt(u, v, w) == OBJECT.alt(OBJECT.alt(u, v), w))) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
+}
+
+/** left catch: `alt(pure(x), v) == pure(x)`. A value already in hand is the
+ * result whatever follows it. */
+template <const auto &ALTERNATIVE, const auto &APPLICATIVE,
+          instance_sample SAMPLE>
+constexpr auto alternative_left_catch() -> bool {
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(ALTERNATIVE.alt(APPLICATIVE.pure(probe_x), context) ==
+              APPLICATIVE.pure(probe_x))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/** annihilation: a bare last operand makes the disjunction total, and the
+ * value it yields is the one the disjunction with that operand lifted would
+ * hold: `pure(alt(v, x)) == alt(v, pure(x))`. */
+template <const auto &ALTERNATIVE, const auto &APPLICATIVE,
+          instance_sample SAMPLE>
+constexpr auto alternative_annihilation() -> bool {
+    for (const auto &context : SAMPLE::contexts()) {
+        if (!(APPLICATIVE.pure(ALTERNATIVE.alt(context, probe_x)) ==
+              ALTERNATIVE.alt(context, APPLICATIVE.pure(probe_x)))) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // -- Agreement between objects over one carrier ---------------------------
 
 /** `FUNCTOR_LIKE.fmap(f, v) == APPLICATIVE.invoke(f, v)`: a hand-written
@@ -1101,6 +1212,29 @@ consteval auto check_monad_laws() -> bool {
                   "monad invoke coherence: invoke(h, u, v) must equal "
                   "bind(u, a -> bind(v, b -> pure(h(a, b)))), and "
                   "invoke(f, u) must equal fmap(f, u).");
+    return true;
+}
+
+/** Checks the Alternative laws for `ALTERNATIVE` over SAMPLE, naming the
+ * Applicative object over the same carrier for the two laws that mention
+ * `pure`. */
+template <const auto &ALTERNATIVE, const auto &APPLICATIVE,
+          instance_sample SAMPLE>
+consteval auto check_alternative_laws() -> bool {
+    static_assert(alternative_left_identity<ALTERNATIVE, SAMPLE>(),
+                  "alternative left identity: alt(zero, v) must equal v.");
+    static_assert(alternative_right_identity<ALTERNATIVE, SAMPLE>(),
+                  "alternative right identity: alt(v, zero) must equal v.");
+    static_assert(alternative_associativity<ALTERNATIVE, SAMPLE>(),
+                  "alternative associativity: alt(alt(u, v), w) must equal "
+                  "alt(u, alt(v, w)), and alt(u, v, w) must equal "
+                  "alt(alt(u, v), w).");
+    static_assert(alternative_left_catch<ALTERNATIVE, APPLICATIVE, SAMPLE>(),
+                  "alternative left catch: alt(pure(x), v) must equal "
+                  "pure(x).");
+    static_assert(alternative_annihilation<ALTERNATIVE, APPLICATIVE, SAMPLE>(),
+                  "alternative annihilation: pure(alt(v, x)) must equal "
+                  "alt(v, pure(x)) for a bare x.");
     return true;
 }
 

@@ -270,8 +270,9 @@ and
 [alternative-disjunction-semantics](decisions.md#alternative-disjunction-semantics).
 Status: DONE 2026-11-01 on branch `failure-side`. `raise<C>` and `zero<C>`
 shipped beside `pure<C>`; the disjunction semantics are decided and the
-Alternative typeclass is deferred until a client calls `alt`, so no laws were
-added to the harness. The tripwire did not fire.
+Alternative typeclass was deferred by the stage and then shipped as evidence
+on 2026-11-01 on branch `alternative`, with its laws in the harness; see the
+[decision's Log](decisions.md#alternative-disjunction-semantics). The tripwire did not fire.
 Assumes [value-side-grading](decisions.md#value-side-grading), decided no on
 2026-10-31: the disjunction's value side is a `std::variant` over the
 deduplicated operand types, or the common type, and is not read as a grade.
@@ -325,6 +326,13 @@ deduced body → STOP; that is a basis that is not SFINAE-friendly, which
 `apply.hpp`'s invariant forbids, and the fix is upstream of this stage.
 
 ### Stage 8 — [surface-paper-revision](#surface-paper-revision) {#surface-paper-revision}
+Status: DONE 2026-11-01 on branch `surface-paper-revision`, except that the
+`noexcept` sweep's effect on the paper is the regenerated wording alone, which
+stage noexcept-sweep commits. Added to `papers/D3200R0.md`: `raise` and `zero`
+in the proposed operations and beside `pure`; a section on `overloaded` and
+`eliminate`; the eliminators, the unit, and the empty-grade closure in the
+grading rationale; the crossing rule in Compatibility; value-side grading and
+Alternative in the deliberate omissions.
 Deliverables: P3200 rationale for the unit and the `void` effect; the
 closure-at-∅ argument and the uniform spelling; the crossing rule as a
 sentence in the compatibility section; the eliminator, if shipped, beside

@@ -22,6 +22,7 @@ target_sources(
                 "${PROJECT_BINARY_DIR}/include"
             FILES
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/config.hpp
+                ${PROJECT_SOURCE_DIR}/include/beman/transpose/alternative.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/apply.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/array.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/eliminate.hpp
