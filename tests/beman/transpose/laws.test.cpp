@@ -818,3 +818,168 @@ static_assert(laws::check_applicative_laws<
               lawless_demo::lawless_sample>());
 
 #endif // BEMAN_TRANSPOSE_LAWS_DEMONSTRATE_LAWLESS
+
+// =========================================================================
+// CONTEXT CROSSINGS. docs/transpose/decisions.md#licensed-context-crossings.
+//
+// cross-model-mixing forbids combining graded operands of different models at
+// a mixing point, and stands. A CROSSING is a different operation: a
+// deliberate, named move of one value from one carrier into another. The rule
+// is about information, not lattices: a crossing is licensed when it loses
+// nothing, which is the case exactly when the source is at its model's
+// bottom, or on the failure path through a handler that supplies what the
+// target needs or consumes what the source has. Success values pass through
+// every licensed crossing unchanged.
+//
+// TEST-ONLY DEMONSTRATION. No operation ships; the functions below are what a
+// future `into<C>` would have to satisfy, written against the Boolean model's
+// Fallible rather than std::optional, so that optional-grade-model stays its
+// own question (the stage's tripwire).
+// =========================================================================
+
+namespace context_crossing {
+
+/** A handler that is callable with nothing: a crossing that asks for one has
+ * no lossless form. */
+struct uncallable {};
+
+// -- Boolean model -> error-set model ----------------------------------------
+
+/** ⊤ -> error set: the empty state carries no error, so the crossing is
+ * licensed only through a handler that supplies one. `E` is named: the
+ * target's grade is the crossing's to state, never inferred from the
+ * source, which has nothing to infer it from. */
+template <class E, class T, class SUPPLY>
+    requires std::invocable<SUPPLY &> &&
+             std::convertible_to<std::invoke_result_t<SUPPLY &>, E>
+constexpr auto into_expected(const Fallible<T, may_fail> &source,
+                             SUPPLY &&supply)
+    -> std::expected<T, bt::error_set<E>> {
+    if (source.has_value()) {
+        return std::expected<T, bt::error_set<E>>{std::in_place, *source};
+    }
+    return std::expected<T, bt::error_set<E>>{
+        std::unexpect, bt::error_set<E>{static_cast<E>(std::invoke(supply))}};
+}
+
+/** ⊥ -> error set: the source cannot be empty, so nothing is lost and no
+ * handler is asked for. The crossing is the success path alone. */
+template <class E, class T>
+constexpr auto into_expected(const Fallible<T, never_fails> &source)
+    -> std::expected<T, bt::error_set<E>> {
+    return std::expected<T, bt::error_set<E>>{std::in_place, *source};
+}
+
+// -- error-set model -> Boolean model ----------------------------------------
+
+/** error set -> ⊤: the error would be dropped, so the crossing is licensed
+ * only through a handler that consumes it. The handler returns nothing: the
+ * target's failure state has nothing to be supplied. */
+template <class T, class... ERRORS, class CONSUME>
+    requires std::invocable<CONSUME &, const bt::error_set_of<ERRORS...> &>
+constexpr auto
+into_fallible(const std::expected<T, bt::error_set_of<ERRORS...>> &source,
+              CONSUME &&consume) -> Fallible<T, may_fail> {
+    if (source.has_value()) {
+        return Fallible<T, may_fail>{*source};
+    }
+    std::invoke(consume, source.error());
+    return Fallible<T, may_fail>{};
+}
+
+/** The uniform spelling of the empty grade -> ⊥: both are the identity
+ * carrier of their model, so the crossing is lossless in both directions
+ * and asks for nothing. */
+template <class T>
+constexpr auto into_fallible(const std::expected<T, bt::error_set_of<>> &source)
+    -> Fallible<T, boolean_grade::never_fails> {
+    return Fallible<T, boolean_grade::never_fails>{*source};
+}
+
+/** Whether a crossing from SOURCE into the other model exists with no
+ * handler: true exactly when nothing can be lost. */
+template <class SOURCE>
+concept crosses_without_handler = requires(const SOURCE &source) {
+    into_fallible(source);
+} || requires(const SOURCE &source) { into_expected<int>(source); };
+
+using exp_c = std::expected<int, e_c>;
+using exp_empty = std::expected<int, bt::error_set<>>;
+
+// Lossless crossings need no handler ...
+static_assert(
+    crosses_without_handler<Fallible<int, boolean_grade::never_fails>>);
+static_assert(crosses_without_handler<exp_empty>);
+// ... and lossy ones are refused without one, in either direction.
+static_assert(!crosses_without_handler<Fallible<int, may_fail>>);
+static_assert(!crosses_without_handler<exp_c>);
+
+// The types a licensed crossing produces, pinned.
+static_assert(
+    std::is_same_v<decltype(into_expected<std::errc>(
+                       std::declval<const Fallible<int, may_fail> &>(),
+                       std::declval<std::errc (&)()>())),
+                   exp_c>);
+static_assert(
+    std::is_same_v<
+        decltype(into_expected<std::errc>(
+            std::declval<const Fallible<int, boolean_grade::never_fails> &>())),
+        exp_c>);
+static_assert(std::is_same_v<
+              decltype(into_fallible(std::declval<const exp_c &>(),
+                                     std::declval<void (&)(const e_c &)>())),
+              Fallible<int, may_fail>>);
+
+} // namespace context_crossing
+
+TEST_CASE("crossings: an empty Boolean value enters the error-set model only "
+          "through a handler that supplies the error") {
+    using context_crossing::into_expected;
+    Fallible<int, may_fail> present{7};
+    Fallible<int, may_fail> empty{};
+    int supplied = 0;
+    auto supply = [&supplied] {
+        ++supplied;
+        return std::errc::invalid_argument;
+    };
+
+    auto crossed = into_expected<std::errc>(present, supply);
+    REQUIRE(crossed == context_crossing::exp_c{7});
+    REQUIRE(supplied == 0); // the success path asks the handler for nothing
+
+    auto failed = into_expected<std::errc>(empty, supply);
+    REQUIRE_FALSE(failed.has_value());
+    REQUIRE(failed.error().holds<std::errc>());
+    REQUIRE(supplied == 1);
+}
+
+TEST_CASE("crossings: a value that cannot fail enters any fallible context "
+          "with no handler, and the identity carriers cross both ways") {
+    using context_crossing::into_expected;
+    using context_crossing::into_fallible;
+    Fallible<int, boolean_grade::never_fails> certain{3};
+    auto crossed = into_expected<std::errc>(certain);
+    REQUIRE(crossed == context_crossing::exp_c{3});
+
+    auto back = into_fallible(bt::fallible(9));
+    STATIC_REQUIRE(std::is_same_v<decltype(back),
+                                  Fallible<int, boolean_grade::never_fails>>);
+    REQUIRE(*back == 9);
+}
+
+TEST_CASE("crossings: an error-set value enters the Boolean model only "
+          "through a handler that consumes the error") {
+    using context_crossing::into_fallible;
+    int consumed = 0;
+    auto consume = [&consumed](const e_c &) { ++consumed; };
+
+    auto crossed = into_fallible(context_crossing::exp_c{5}, consume);
+    REQUIRE(crossed == Fallible<int, may_fail>{5});
+    REQUIRE(consumed == 0);
+
+    auto failed = into_fallible(
+        context_crossing::exp_c{std::unexpect, std::errc::invalid_argument},
+        consume);
+    REQUIRE_FALSE(failed.has_value());
+    REQUIRE(consumed == 1);
+}
