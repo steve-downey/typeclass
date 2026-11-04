@@ -93,6 +93,15 @@ deductions on previously-valid code are not tolerated.
   `expected` was registered ungraded first, then the later grade stages
   preserved its existing same-error carrier spelling while adding only the
   previously ill-formed mixed-error territory.
+- 2026-10-30 — Residue noted by the libfn comparison
+  ([review](review/libfn-comparison.md)). libfn grades only on opt-in: it
+  rejects `expected<T, E1>` bound to `expected<U, E2>` unless one side already
+  carries a `copack`, on the principle that the algebra never silently
+  reinterprets a plain type. This decision joins them implicitly. The accepted
+  residue is a user whose two plain error types were meant to unify by
+  conversion, and who now deduces an `error_set` where they expected a
+  diagnostic. Recorded, not reopened: the choice stands on the
+  previously-ill-formed argument above.
 
 ---
 
@@ -301,6 +310,10 @@ with one model is renamed, not generic.
   Nothing was patched: this stage's charter is to log what the second model exposes, not to smooth it.
 - 2026-08-30 — REPAIR, by stage [model-dispatched-mixing](transpose-grading-plan.md#model-dispatched-mixing).
   `grade_join_t` now drives expected mixing points and the Boolean model drives an actual mixed deduction, so the leak detector's positive result has been repaired rather than documented around.
+- 2026-10-30 — The canonical type-set machinery (`canonical_t`, the sort and
+  dedupe over `type_list`) lives in `error_set.hpp` as detail, under the
+  model, although it is the half a second model or any other canonical set
+  would reuse. Filed as [canonical-set-home](#canonical-set-home).
 
 ---
 
@@ -312,6 +325,14 @@ constructor, named function, or both?
 **Status:** OPEN
 **Log:**
 - 2026-08-28 — Raised during planning.
+- 2026-10-30 — The libfn comparison ([review](review/libfn-comparison.md))
+  supplies a requirement any answer must meet: generic code must stay
+  well-formed at the empty grade, which means the uniform spelling has to be
+  reachable from generic code, and the error-side operations on it have to be
+  vacuous rather than rejected. Filed as
+  [generic-closure-at-empty-grade](#generic-closure-at-empty-grade); the two
+  questions are closed together in stage
+  [unit-and-closure](transpose-surface-plan.md#unit-and-closure).
 
 ---
 
@@ -391,6 +412,10 @@ official grade registration?
   not usable" objection above is closed. The question remains open because
   shipping the Boolean model as `optional`'s grade registration is a public
   surface decision, not an implementation-blocker.
+- 2026-10-30 — A route to an answer that is not "register `optional` as
+  graded": libfn licenses moves between its contexts by the information
+  preserved, not by a shared lattice. Filed as
+  [licensed-context-crossings](#licensed-context-crossings).
 
 ---
 
@@ -585,13 +610,25 @@ one-of form and must be revised before the accumulating object can exist.
 
 **Question:** How is a multi-witness `error_set` value eliminated, now that
 `visit` is partial and defined only for the singleton case?
-**Status:** DECIDED 2026-08-29
+**Status:** DECIDED 2026-08-29, amended 2026-11-01
+**Decided by:** Steve Downey.
 **Decision:** `visit` stays the one-of eliminator — partial, precondition
 checked — and is **not** extended to multi-witness. Multi-witness elimination
-is a **static per-type fold over the handled set**, implemented as `recover`'s
-internal mechanism and **not** shipped as a public verb. The impoverished-API
-fence holds until a second client outside `recover` demonstrates the need —
-the same YAGNI posture as [datum-entry-point](#datum-entry-point).
+is a **static per-type fold over the handled set**. Until 2026-11-01 that fold
+was `recover`'s internal mechanism only, fenced until a second client outside
+`recover` demonstrated the need. The fence moved on 2026-11-01: two public
+verbs ship from the compiled sketch in
+[error-set-eliminators-sketch.md](error-set-eliminators-sketch.md), named
+`fold_witnesses(errors, init, handler)` and
+`collapse<TARGET>(errors_or_expected, handler[, combine])`. `collapse`'s
+combine defaults to the left-biased pick of `combined_with`; `collapse` on the
+`std::expected` returns the ungraded `std::expected<VALUE, TARGET>`, and a
+caller who wants to stay graded names `collapse<error_set<TARGET>>`. The
+elimination vocabulary is then `visit`, `recover`, `collapse`,
+`fold_witnesses`, and nothing else; the join-of-arms result type of
+[heterogeneous-arm-elimination](#heterogeneous-arm-elimination) is not part of
+it. Whether `recover` is re-expressed through `fold_witnesses` is left to
+stage [set-elimination](transpose-surface-plan.md#set-elimination).
 **Why:** No runtime visitation verb is required, because the handled set {H}
 is a compile-time type-set. Elimination is a static fold over the grade with
 runtime presence filtering: for each E in H, if a witness is present, feed it
@@ -617,6 +654,109 @@ verb is not a gap awaiting a verb; it is the fence line.
   answer is forced, and under the fresh-agent-per-stage cadence an agent would
   otherwise hit this wall in its first hour and spend a stop-and-report cycle
   on a question that was never open.
+- 2026-10-30 — Challenged by the libfn comparison
+  ([review](review/libfn-comparison.md)). The second client this fence waits
+  for arrived in libfn's own history: an exhaustive overload-set elimination
+  over a canonical sum is the most used operation in that library, and an
+  exhaustive `transform_error` is how its users collapse a grade to one error
+  type. The witnessed-subset representation makes the eliminator a fold rather
+  than a visit, which is the mechanism `recover` already uses internally. Not
+  reopened here. The ruling is stage
+  [set-elimination](transpose-surface-plan.md#set-elimination) of the surface
+  plan, taken together with
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination), which wants
+  the same join-of-arms result type.
+- 2026-10-31 — The challenge expanded at Steve's request, so that stage
+  [set-elimination](transpose-surface-plan.md#set-elimination) rules on
+  named sub-questions. The fence is **not** moved by this entry.
+  *What the fence guards.* The decision's premise was that a public
+  eliminator would have exactly one caller, `recover`. The challenge is not
+  that `recover` is the wrong mechanism. It is that two further callers
+  exist and today write the fold by hand. (a) *The boundary collapse:*
+  mapping every alternative of a grade to one error type at the edge of a
+  graded region, libfn's exhaustive `transform_error`. Today this is
+  expressible only by bending `recover`: handle every alternative with a
+  handler that returns `std::expected<VALUE, error_set<Common>>` and spells
+  `std::unexpected` by hand, so that the grade becomes `{Common}`. The
+  capability exists without a spelling, and it goes through the
+  value-or-raise return shape of a verb whose name says the opposite of what
+  is happening. (b) *The report:* doing something with every present
+  witness, as the consumer-story test in `accumulating_object.test.cpp` and
+  `graded_gadgets_example.cpp` both do, where the code reads `witness<E>()`
+  once per alternative and must be edited whenever the grade grows. The
+  fence says this is the whole story for a multi-witness value. Neither
+  client is `recover`, and the second is already in the tree.
+  *Two joins, not one.* libfn's `apply` solves one problem: the result type
+  is the join of the arms, so the arms may be heterogeneous. Its copack is
+  one-of, so it never meets a second problem that the witnessed-subset
+  amendment under [accumulation-evidence](#accumulation-evidence) creates
+  here: a value may hold several witnesses, so an eliminator applied per
+  witness yields several results at runtime and must say how they combine.
+  The type-level join of arms and the value-level combination of results
+  are different operations, and a total eliminator over `error_set` needs
+  the second whether or not it has the first. That is the strongest
+  argument the fence has, and the 2026-10-30 entry did not state it.
+  *The sub-questions a ruling must answer.*
+  1. *Multiplicity.* When two witnesses are present and each arm returns a
+     result, what is the result of the elimination? The options: a required
+     combine on the result (a semigroup, or the left-biased pick `recover`
+     already uses, matching `combined_with`); a fold with an explicit
+     accumulator and initial value, so that the user names the combine; or a
+     per-witness effect with no result, the `for_each` shape. A silent pick
+     drops the second result, which is the lie the `visit` precondition
+     exists to refuse. A fold is honest, and it is what both clients become
+     when written out.
+  2. *Heterogeneous arms under multiplicity.* If the arms disagree and the
+     result is a sum, two witnesses give two values of possibly different
+     alternatives, and no combine exists for that in general. The honest
+     answers are to require the arms to agree wherever multiplicity is
+     possible, or to make the fold's accumulator the one place a sum meets a
+     sum.
+  3. *Exhaustiveness.* Checked against the grade, with the `overloaded`
+     catch-all's diagnostic naming the unhandled alternative. This is the
+     per-type form of the check `std::visit` gives per variant and is not in
+     doubt.
+  4. *Relation to `recover`.* Whether `recover` is re-expressed through the
+     public fold, one mechanism as
+     [functor-monad-grounding](#functor-monad-grounding) prefers, or left as
+     is with the fold beside it. Re-expression is a refactor with no
+     observable change provided the tie-break is preserved.
+  *Likely shape if the fence moves.* Two verbs rather than one, because the
+  clients differ. A `fold` over present witnesses, taking an initial
+  accumulator and an overload set of `(Acc, E) -> Acc` arms exhaustive
+  against the grade, for the report. A `collapse` to a single error type,
+  whose arms all return `E2` and whose multiplicity rule is the left-biased
+  pick `combined_with` uses, for the boundary. `visit` stays partial and
+  unchanged. Neither verb needs the join-of-arms result type: `fold`'s arms
+  return the accumulator and `collapse`'s return `E2`. The
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination) mechanism
+  is a third thing, over one-of sums, and is the `std::visit` result-type
+  problem and nothing else. The 2026-10-30 entry's claim that it and the
+  `error_set` eliminator want the same result type is withdrawn.
+  *Likely shape if the fence holds.* The consumer story stays as written.
+  The boundary collapse is documented as the `recover`-with-raise idiom and
+  given a test of its own, since nothing pins it today. The hand-written
+  per-witness read is accepted as the cost of the witnessed-subset
+  representation and said so in the paper.
+  *What would move it.* Either client written a third time in this tree, or
+  the boundary-collapse idiom proving unteachable in the paper's
+  implementation-experience section. The ruling is Steve's and is taken in
+  stage set-elimination.
+- 2026-11-01 — Steve asked to see the two verbs before ruling, since the
+  library's job is to provide the forms so programmers write less. Sketched,
+  compiled against the current `error_set.hpp`, and run:
+  [error-set-eliminators-sketch.md](error-set-eliminators-sketch.md). The
+  forms are `fold_witnesses(errors, init, handler)` and
+  `collapse<TARGET>(errors_or_expected, handler[, combine])`, with the points
+  the ruling must settle listed there: the name beside the Foldable family in
+  `fold.hpp`, whether `collapse` may default its combine to keep-first, and
+  that `collapse` on the `std::expected` leaves the grade. Still not a ruling.
+- 2026-11-01 — Answered by Steve: the fence moves, and yes on the sketch's
+  three points as written (the names `fold_witnesses` and `collapse` beside
+  the Foldable family; `collapse` keeps its keep-first default; `collapse` on
+  the `std::expected` leaves the grade). The library's job is to provide the
+  forms so that programmers write less. Decision text amended above; the
+  original 2026-08-29 Why stands as the record of why the fence existed.
 
 ---
 
@@ -801,6 +941,11 @@ A product of grade models is a new semantic feature with no current client, the 
   the same-model check. Fixed by making "bare" mean semantic ungraded
   (`grade_of_t<T> == unit_grade`, spelled through `graded_context`) while
   preserving declared-error matching for the unmixed expected spelling.
+- 2026-10-30 — This decision forbids mixing at a mixing point. It says
+  nothing about a deliberate, named move of one value from one model's
+  carrier into another's. That question is
+  [licensed-context-crossings](#licensed-context-crossings), which must not
+  weaken this one.
 
 ---
 
@@ -3794,3 +3939,362 @@ source for [transpose.alg.transpose]; both moved to `traverse.hpp`, after
 is unchanged.
 **Log:**
 - 2026-10-19 — Applied to all three packages.
+---
+
+## unit-payload-spelling
+
+**Question:** How does a context with no value participate: `expected<void,
+E>` as a context, a `void`-returning function handed to `traverse`, and the
+result of traversing with such a function?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.1). Today `holdable_value` refuses a
+  `void` result and `applicative_value_t<std::expected<void, E>>` is `void`, so
+  `pure` cannot be probed and the context is unusable. The validation-pass and
+  IO shape, `f : T -> expected<void, E>`, is the most common fallible function
+  in real code, and a reviewer will write it in their first example.
+  libfn's rules, for reference: `void` stays `void` on a plain side and enters
+  a sum or product as the nullary product `pack<>`, which is the unit.
+  *Proposed resolution:* name a unit type (own, or `std::monostate`); let the
+  element type of a `void`-valued context be that unit; let `traverse` with a
+  `void`-returning effect either yield the structure of units, or add the
+  `traverse_`/`for_` shape that yields `C<unit>` and drops the structure. The
+  second form is the one callers actually want, and it is what makes
+  `for_each` with an effectful function meaningful. Which of the two, or both,
+  is the open part.
+
+---
+
+## generic-closure-at-empty-grade
+
+**Question:** Must generic code over graded contexts stay well-formed at the
+empty grade, and how, given that ∅ is spelled as the bare value
+([empty-grade-spelling](#empty-grade-spelling))?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.2). libfn's load-bearing
+  principle: `or_else` on `expected<T, copack<>>` is vacuously well-formed and
+  asks nothing of its handler, not even that it be callable, so a recovery
+  step written generically does not become ill-formed because an upstream
+  stage statically proved failure impossible. Bare `T` as ∅ is the right call
+  for an open boundary and is not in question here; its cost is that
+  `recover<...>` on the ∅ fiber is ill-formed, because there is no `expected`
+  to recover. *Proposed resolution:* the uniform spelling
+  ([uniform-form-surface](#uniform-form-surface)) is made reachable from
+  generic code, and `recover` and any later error-side operation are vacuous
+  on it: the handler is neither invoked nor instantiated, and the result is
+  the operand. The framework still never materializes the uniform form on a
+  user's behalf; the sentinel of empty-grade-spelling is untouched.
+
+---
+
+## licensed-context-crossings
+
+**Question:** Which moves of a value between contexts of different grade
+models, or between a graded context and an ungraded one, are licensed, and by
+what rule?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.3).
+  [cross-model-mixing](#cross-model-mixing) forbids mixing at a mixing point
+  and stands. This asks a different question: a deliberate, named move of one
+  value from one carrier to another. libfn's rule is about information, not
+  lattices. An infallible context may enter any fallible one on the success
+  path, because nothing is lost. Two fallible contexts may bridge only on the
+  failure path, through a handler that names the target and supplies what the
+  target needs (an error for an `optional`'s empty state, or nothing for an
+  `expected`'s error). This is the answer
+  [optional-grade-model](#optional-grade-model) is circling: `optional` and
+  `expected` do not share a lattice, but a crossing from the two-point model
+  into the error-set model is lossless in one direction and needs a witness in
+  the other. *Proposed resolution:* a decision stating the rule, a test-only
+  demonstration of the `optional` to `expected` lift under it, and no new
+  operation until a client needs one.
+
+---
+
+## heterogeneous-arm-elimination
+
+**Question:** Does the library provide an overload-set elimination whose
+result type is the join of the arms' result types, so that a visitor over a
+sum may have heterogeneous arms without the user naming the union?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.4 and §4). `std::visit` requires
+  every arm to return one type, which is the pain point libfn's `apply`,
+  `apply_r<copack_for<...>>` and copack `transform` exist to remove. In this
+  tree the pressure is a fold algebra over a variant-shaped layer in
+  `tree_algorithms`, where the arms return different types and the user
+  unifies by hand. The same join-of-arms result type is what a total
+  eliminator for `error_set` needs (see the 2026-10-30 entry under
+  [multi-witness-elimination](#multi-witness-elimination)). *Proposed
+  resolution:* one mechanism beside `overloaded`, not in the grade algebra,
+  whose result is the canonical set of the arms' results when they differ and
+  the common type when they agree; `apply_type`'s idea of passing the
+  injection tag to the arm is taken with it. Whether that canonical set is
+  `error_set` or a sum of the same shape with a different name is answered by
+  [value-side-grading](#value-side-grading) and
+  [canonical-set-home](#canonical-set-home).
+- 2026-10-31 — Refined by the expanded challenge under
+  [multi-witness-elimination](#multi-witness-elimination): the `error_set`
+  eliminators sketched there return an accumulator or a single error type,
+  so they do not need the join-of-arms result type after all. This slug is
+  the `std::visit` problem alone, over `std::variant` and the variant-shaped
+  layer in `tree_algorithms`, and its result type is the deduplicated set of
+  the arms' results per the shape note under
+  [value-side-grading](#value-side-grading). The two slugs still share stage
+  [set-elimination](transpose-surface-plan.md#set-elimination) because they
+  share the exhaustiveness check and the `overloaded` diagnostic, not a
+  result type.
+
+---
+
+## value-side-grading
+
+**Question:** Is a grade ever carried on the value side of a context, as
+libfn carries a canonical sum on its success side? Concretely: does any
+operation in the library *read* a sum on the value side as a grade, by
+computing it with `grade_of`, re-indexing it with `rebind_grade`, joining it
+across `bind` or `invoke`, or lifting `fmap` through it one alternative at a
+time? A `std::variant` sitting in the `T` of `std::expected<T, E>` is a value
+and raises none of this. The question is whether the algebra ever treats it
+as more than a value.
+A ruling has to answer four sub-questions, in this order:
+1. *Production.* Which operations, if any, produce a value-side sum where no
+   input carried one? The candidates are the disjunction of
+   [alternative-disjunction-semantics](#alternative-disjunction-semantics)
+   over operands with different value types, and the eliminator of
+   [heterogeneous-arm-elimination](#heterogeneous-arm-elimination) when its
+   arms disagree. `traverse`, `invoke`, `bind` and `fmap` produce one result
+   type per structure and are not candidates.
+2. *Shape.* When such a sum is produced, is it a canonical set of types,
+   deduplicated and in canonical order, or a positional sum that keeps
+   repeated types in the order written? And is it spelled `std::variant`,
+   `error_set`, or a third type?
+3. *Reading.* Having produced it, does any later operation read it as a
+   grade? This is the question proper. Grading means the algebra tracks the
+   sum through what follows: `bind` taking one continuation per alternative
+   and joining their results, `fmap` distributing over the alternatives,
+   `invoke` expanding a conjunction into a sum of products. A sum no
+   operation reads this way is a `T`.
+4. *Identity.* If the value side is graded, what is its identity carrier,
+   the analogue of libfn's `just`? [empty-grade-spelling](#empty-grade-spelling)
+   spells the empty error grade as bare `T`; a graded value side needs its
+   own spelling, and a context infallible on both sides is a bare value.
+**Status:** DECIDED 2026-10-31
+**Decided by:** Steve Downey.
+**Decision:** No, for now. No operation reads a value-side sum as a grade.
+Where an operation yields one of several value types, the disjunction of
+[alternative-disjunction-semantics](#alternative-disjunction-semantics) and
+the eliminator of
+[heterogeneous-arm-elimination](#heterogeneous-arm-elimination), the result
+is a `std::variant` over the deduplicated types, or the common type when they
+agree, and from then on it is an ordinary value: `fmap` receives the whole
+variant, `bind` takes one continuation, nothing joins or distributes. A user
+who wants a classifier-shaped success writes the sum type by hand.
+**Why:** Steve is unconvinced that joining per-alternative continuations
+automatically is worth more than a hand-written sum type, and finds combining
+unrelated functions into one dispatch under-motivated. The considerations in
+the log stand as the fuller argument: the boundary handles errors alike, so a
+set fits there and not on the value side; deduplication loses provenance for
+values; distribution grows the result type that shape preservation exists to
+hold fixed. "For now" is the reopening condition in the log: a client that
+writes the variant and its continuations by hand repeatedly along a pipeline.
+**Log:**
+- 2026-10-30 — Raised in discussion of the libfn comparison
+  ([review](review/libfn-comparison.md) §4), with the Tolstoy framing: all
+  happy families are alike, each unhappy family is unhappy in its own way. The
+  argument for grading the value side is that a classifier's success is one
+  of several kinds, each wanting its own continuation. The argument against:
+  errors are handled alike at a boundary while values meet continuations that
+  differ per kind, so the sum multiplies at every branch; idempotence is right
+  for errors and often wrong for values, which carry positional meaning
+  (libfn restricts value sums to distinct tag types for this reason, and keeps
+  its product positional); and distribution expands a conjunction into a sum
+  of products nobody asked for. *Proposed resolution:* no. `traverse` and
+  `invoke` produce one result type per structure, which is the right contract
+  for a shape-preserving library. The heterogeneous-arms problem is an
+  eliminator problem, taken up by
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination); the
+  disjunction case waits for
+  [alternative-disjunction-semantics](#alternative-disjunction-semantics),
+  where a positional sum of the two operand types is the honest answer.
+- 2026-10-31 — Expanded at Steve's request into the four sub-questions above
+  and the considerations here, so that stage
+  [failure-side](transpose-surface-plan.md#failure-side) rules on a stated
+  question rather than a slogan.
+  *The case for grading the value side,* as libfn makes it. A classifier's
+  success is one of several kinds: a parser or decoder returns a tagged
+  result, and dispatch on the tag is the next step. With a graded value side
+  the continuation is written per alternative and the result types join
+  without the user naming the union; a recovery may move into a different
+  type; the carrier is lawful over a sum because the sum is in the algebra.
+  These are real conveniences and libfn's tests exercise every one.
+  *The case against,* in three parts. First, the asymmetry the Tolstoy line
+  names. Errors are handled alike at a boundary: logged, reported, mapped to
+  one code, or recovered from. The handler for an error set rarely cares
+  which alternative it has beyond selecting an arm, so membership is all the
+  boundary asks of the type, and a set is the right abstraction. Values meet
+  continuations that differ per kind and whose results feed further
+  continuations, so a value sum is not the context of a computation but its
+  result, and the type that describes a result is the user's. Second,
+  idempotence. A canonical set collapses two alternatives of one type into
+  one. For errors that is right: two sources that may each raise `errc`
+  give a grade that may raise `errc`. For values it loses provenance when
+  two alternatives share a type but mean different things. libfn avoids
+  this by requiring distinct tag types in a value copack, which is to say
+  the user supplies the distinct types a `std::variant` would have carried
+  anyway. The 2026-10-30 entry's "positional meaning" objection applies to
+  products, where position is the whole content, and is withdrawn for sums;
+  see the note on shape below. Third, distribution. The conjunction of a
+  graded value side with anything else is a sum of products, and libfn
+  implements the Cartesian expansion. No client of this library wants it,
+  and it is exactly the growth in result type that a shape-preserving
+  `traverse` exists not to have.
+  *On shape,* answering sub-question 2 independently of 3. When the
+  eliminator's arms return `int`, `int` and `std::string`, the useful
+  result is "an `int` or a `std::string`", not a three-way positional sum
+  with two indistinguishable `int` slots. The join of arms therefore
+  deduplicates, and arms that all agree collapse to the common type, as
+  `std::visit` already demands. The same holds for the disjunction of two
+  `optional<int>`. Deduplication is a property of the type computation and
+  does not by itself make the value side graded. The stage
+  [set-elimination](transpose-surface-plan.md#set-elimination) tripwire,
+  which had drawn the line at deduplication, was rewritten on 2026-10-31 to
+  draw it at reading.
+  *What would move the proposed answer.* A client in this tree, or a user
+  pattern documented against the library, whose shape-preserving operation
+  naturally yields one-of-several and who today writes the `std::variant`
+  and its per-alternative continuation by hand repeatedly along a pipeline,
+  not once at an elimination site. The `tree_algorithms` fold layers are
+  elimination sites and do not qualify. A parser or decoder client would.
+  None exists at the time of writing.
+  *What a ruling of no must still state,* so the stages that depend on it
+  are not left guessing. The value-side result of a heterogeneous
+  disjunction is `std::variant` over the deduplicated operand value types,
+  or the common type when they agree. The eliminator's join of arms is the
+  same computation. Neither is read by `grade_of`, `rebind_grade`,
+  `mixes_with_model` or any operation object, and `fmap` over such a result
+  receives the whole `std::variant`. [canonical-set-home](#canonical-set-home)
+  then owns one deduplicating type-list computation shared by the error set
+  and by these two value-side uses: shared machinery, not shared meaning.
+  *Proposed resolution:* unchanged, no.
+- 2026-10-31 — Answered by Steve: no, at least for now. Stage
+  [failure-side](transpose-surface-plan.md#failure-side) no longer rules on
+  this; it assumes it.
+
+---
+
+## failure-injection-spelling
+
+**Question:** What generic operation enters the failure state of a graded
+context, as the dual of `pure`, and how does it relate to the `zero<C>()`
+planned for Alternative?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.5). `pure<C>(v)` builds the success
+  side generically and `grade_subsume` widens, but nothing generic injects an
+  error: a caller writes `std::expected{std::unexpect, error_set<...>{e}}` by
+  hand, which names the carrier and so is not generic. libfn spells this as
+  `fail` (value to error, within the existing grade) and `unexpected{...}` at
+  the carrier. The MonadError name is `throwError`. *Proposed resolution:* a
+  `raise<C>(e)` operation object, parameterized on the context for the reason
+  `pure` is, with the grade of the result the singleton of `e`'s type joined
+  into `C`'s grade; `zero<C>()` for Alternative is the same shape and the two
+  are decided together under one rule ("builds a context, so names it").
+
+---
+
+## alternative-disjunction-semantics
+
+**Question:** When Alternative arrives, what are the value-side and
+error-side semantics of its disjunction, and does an infallible operand make
+the disjunction total?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.6). `first_monoid` in `monoid.hpp`
+  is the Alternative monoid for `optional`, already present without the
+  typeclass. libfn's `|` is a complete algebra: values sum into a canonical
+  set, errors multiply into a product reached only when every operand failed,
+  the leftmost success wins, and an infallible operand annihilates the error
+  channel so the whole disjunction folds into the identity cluster. Its
+  duality with `&` (values multiply, errors sum) is what a typeclass needs to
+  state the laws. *Proposed resolution:* take the algebra and leave the
+  operator spelling; for the value side, follow
+  [value-side-grading](#value-side-grading): a positional sum of the operand
+  value types where they differ, the common type where they agree. The
+  `empty`/`zero` naming note in `functor.hpp` is the standing decision on the
+  identity's name.
+
+---
+
+## canonical-set-home
+
+**Question:** Where does the canonical type-set machinery live: inside the
+`error_set` model, or beside the grade framework where a second model or a
+value-side sum can reuse it?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.7). `canonical_t`, `type_list`,
+  the sort, the dedupe and the name-based order are `detail` in
+  `error_set.hpp`. [grade-generality](#grade-generality) wants the framework
+  free of error vocabulary, and the set is the half with no error vocabulary
+  in it. libfn uses one `copack` for error grades, value-side joins and its
+  identity carrier, which is the evidence that the set is the reusable datum.
+  *Proposed resolution:* move the set machinery to a header of its own beside
+  `grade.hpp` (`detail/canonical_set.hpp` or a public `type_set.hpp`, the
+  publicity being the open part), with `error_set` as its first client, and
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination) its second.
+  This is also where [type-order-abi](#type-order-abi) lands, since the order
+  is the set's.
+
+---
+
+## operation-noexcept
+
+**Question:** Do the typeclass operations carry a computed `noexcept`
+specification, and is a result that must not be dropped marked
+`[[nodiscard]]`?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.9). No header under
+  `include/beman/transpose/` carries a `noexcept` outside `error_set.hpp`'s
+  observers. libfn computes it on every verb and tests that the pipeline
+  propagates the verb's own answer rather than promising `noexcept` and
+  terminating when a callback throws. Low conceptual weight; LEWG asks for it
+  on every proposal. *Proposed resolution:* conditional `noexcept` on the
+  basis operations of every registered instance and on the derived operations
+  of the CRTP bases, computed from the callable and the carrier's own
+  constructors, with the deduced-return members using the probe type the
+  constraint already names; `[[nodiscard]]` on every operation object and
+  derived member that returns a context. The wording generator must carry
+  both through.
+
+---
+
+## type-order-abi
+
+**Question:** How does the reference implementation guard against the
+canonical order changing under it, when the interim name-based order gives
+way to P2830 reflection-based ordering?
+**Status:** OPEN 2026-10-30
+**Log:**
+- 2026-10-30 — Raised by the libfn comparison
+  ([review](review/libfn-comparison.md) §3.10). libfn found that its interim
+  name ordering and `std::type_order` disagree, so a `copack`'s layout differs
+  by mode, and placed each mode in its own inline ABI namespace so that two
+  translation units in different modes fail to link instead of violating ODR
+  silently. `error_set_of` stores its witnesses as a tuple in canonical order,
+  so the same hazard arrives the day the order changes. The standard has one
+  order, so the paper is unaffected; this is a reference-implementation
+  concern and a rationale sentence. *Proposed resolution:* an inline namespace
+  on the order-dependent types, keyed on which order is in use, adopted before
+  a P2830 path exists so the day it does is a non-event.
