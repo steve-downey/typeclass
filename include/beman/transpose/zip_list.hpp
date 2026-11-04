@@ -45,16 +45,18 @@ struct zip_list {
     std::optional<T> repeated{};
 
     /** Construct an infinite zip_list repeating @p value at every position. */
-    static auto repeat(T value) -> zip_list {
+    static auto
+    repeat(T value) noexcept(std::is_nothrow_move_constructible_v<T>)
+        -> zip_list {
         return zip_list{{}, std::move(value)};
     }
 
     /** True when this zip_list represents an infinite repetition. */
-    auto is_repeating() const -> bool { return repeated.has_value(); }
+    auto is_repeating() const noexcept -> bool { return repeated.has_value(); }
 
     /** Number of elements in the finite representation; 0 for infinite lists.
      */
-    auto finite_size() const -> std::size_t { return data.size(); }
+    auto finite_size() const noexcept -> std::size_t { return data.size(); }
 
     /** Equality: two infinite lists are equal iff they repeat the same value;
      * two finite lists use element-wise comparison; mixed always false.
@@ -71,7 +73,7 @@ struct zip_list {
 namespace detail {
 
 template <class T>
-auto zip_list_finite_length(const zip_list<T> &list)
+auto zip_list_finite_length(const zip_list<T> &list) noexcept
     -> std::optional<std::size_t> {
     if (list.is_repeating()) {
         return std::nullopt;
@@ -80,7 +82,7 @@ auto zip_list_finite_length(const zip_list<T> &list)
 }
 
 template <class T>
-auto zip_list_value_at(const zip_list<T> &list, std::size_t index)
+auto zip_list_value_at(const zip_list<T> &list, std::size_t index) noexcept
     -> const T & {
     if (list.is_repeating()) {
         return *list.repeated;
@@ -104,8 +106,13 @@ auto zip_list_value_at(const zip_list<T> &list, std::size_t index)
  * materialized for a caller that was not offering to give anything up.
  */
 template <class LIST>
-constexpr auto forward_zip_list_value_at(LIST &&list, std::size_t index)
-    -> decltype(auto) {
+constexpr auto
+forward_zip_list_value_at(LIST &&list, std::size_t index) noexcept(
+    std::is_lvalue_reference_v<LIST> ||
+    (std::is_nothrow_copy_constructible_v<
+         typename std::remove_cvref_t<LIST>::value_type> &&
+     std::is_nothrow_move_constructible_v<
+         typename std::remove_cvref_t<LIST>::value_type>)) -> decltype(auto) {
     if constexpr (std::is_lvalue_reference_v<LIST>) {
         return zip_list_value_at(list, index);
     } else {
@@ -134,7 +141,7 @@ inline constexpr bool is_zip_list_v =
     is_zip_list<std::remove_cvref_t<T>>::value;
 
 template <class FIRST, class... REST>
-auto zip_list_result_size(const FIRST &first, const REST &...rest)
+auto zip_list_result_size(const FIRST &first, const REST &...rest) noexcept
     -> std::optional<std::size_t> {
     auto count = zip_list_finite_length(first);
     ((count = count
@@ -158,9 +165,13 @@ auto zip_list_result_size(const FIRST &first, const REST &...rest)
  */
 template <class T>
 struct ZipListApplicativeImpl {
-    /** Lift a value into an infinite zip_list repeating that value. */
+    /** Lift a value into an infinite zip_list repeating that value. The
+     * value is constructed from the argument and then moved into the
+     * repetition, so this is noexcept exactly when both are. */
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value) {
+    [[nodiscard]] auto pure(this auto &&, VALUE &&value) noexcept(
+        std::is_nothrow_constructible_v<std::remove_cvref_t<VALUE>, VALUE> &&
+        std::is_nothrow_move_constructible_v<std::remove_cvref_t<VALUE>>) {
         using U = std::remove_cvref_t<VALUE>;
         return zip_list<U>::repeat(U(std::forward<VALUE>(value)));
     }
@@ -180,6 +191,9 @@ struct ZipListApplicativeImpl {
      * copy, so a callable that cannot be copied from the argument given fails
      * softly. So do a callable that cannot take one element of each operand,
      * and one whose result a zip_list cannot hold.
+     *
+     * No exception specification: a finite result is collected into a
+     * vector, which allocates.
      */
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_zip_list_v<FIRST> &&
@@ -193,8 +207,8 @@ struct ZipListApplicativeImpl {
                      std::remove_cvref_t<FUNCTION> &,
                      detail::zip_list_value_ref_t<FIRST>,
                      detail::zip_list_value_ref_t<REST>...>>
-    auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
-                REST &&...rest) {
+    [[nodiscard]] auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
+                              REST &&...rest) {
         // The callable is moved into a local `callable` and then invoked as
         // an lvalue once per lane, so that -- not `FUNCTION` -- is the
         // category to detect in. Operands are deduced through forwarding

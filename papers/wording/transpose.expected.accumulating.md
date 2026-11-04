@@ -6,14 +6,18 @@
 
 ```cpp
 template<class VALUE>
-auto pure(this auto&&, VALUE&& value) -> $expected-pure-t$<VALUE_TYPE, VALUE, ERROR_TYPE>;
+[[nodiscard]] auto pure(this auto&&, VALUE&& value) noexcept(
+    $expected-pure-nothrow$<VALUE_TYPE, VALUE, ERROR_TYPE>)
+    -> $expected-pure-t$<VALUE_TYPE, VALUE, ERROR_TYPE>;
 ```
 
 [x]{.pnum} *Returns*: An `expected` holding `value`.
 
 ```cpp
 template<class ERROR>
-auto raise(this auto&&, ERROR&& error) -> $raise-result-t$<VALUE_TYPE, ERROR_TYPE, ERROR>;
+[[nodiscard]] auto raise(this auto&&, ERROR&& error) noexcept(
+    $raise-nothrow$<VALUE_TYPE, ERROR_TYPE, ERROR>)
+    -> $raise-result-t$<VALUE_TYPE, ERROR_TYPE, ERROR>;
 ```
 
 [x+1]{.pnum} *Constraints*: As for the short-circuit object's `raise`.
@@ -22,7 +26,16 @@ auto raise(this auto&&, ERROR&& error) -> $raise-result-t$<VALUE_TYPE, ERROR_TYP
 
 ```cpp
 template<class FUNCTION, class... CARRIERS>
-auto invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands)
+[[nodiscard]] auto
+invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands) noexcept(
+    $invokes-nothrow-into$<
+        $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>,
+                          ERROR_TYPE>,
+        FUNCTION&, $expected-contained-t$<CARRIERS>...> &&
+    $expected-accumulate-nothrow$<
+        $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>,
+                          ERROR_TYPE>,
+        CARRIERS...>)
     -> $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>,
                          ERROR_TYPE>;
 ```
@@ -35,7 +48,18 @@ auto invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands)
 
 ```cpp
 template<class FUNCTION, class... CARRIERS>
-auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
+[[nodiscard]] auto
+invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands) noexcept(
+    $invokes-nothrow-into$<
+        $expected-result-t$<
+            invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
+            ERROR_TYPE>,
+        FUNCTION&, const $carrier-value-t$<CARRIERS>&...> &&
+    $expected-accumulate-nothrow$<
+        $expected-result-t$<
+            invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
+            ERROR_TYPE>,
+        CARRIERS...>)
     -> $expected-result-t$<
         invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>;
 ```
@@ -46,7 +70,24 @@ auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
 
 ```cpp
 template<class FUNCTION, class... CARRIERS>
-auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
+[[nodiscard]] auto
+invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands) noexcept(
+    $invokes-nothrow-into$<
+        $mixed-result-t$<
+            $grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
+            $expected-result-t$<
+                invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
+                ERROR_TYPE>,
+            CARRIERS...>,
+        FUNCTION&, const $carrier-value-t$<CARRIERS>&...> &&
+    $expected-accumulate-nothrow$<
+        $mixed-result-t$<
+            $grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
+            $expected-result-t$<
+                invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
+                ERROR_TYPE>,
+            CARRIERS...>,
+        CARRIERS...>)
     -> $mixed-result-t$<
         $grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
         $expected-result-t$<

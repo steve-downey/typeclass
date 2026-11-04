@@ -46,13 +46,14 @@ namespace beman::transpose {
 //! \omit
 template <class VALUE_TYPE>
 struct VectorFunctorImpl {
-    // Constrained for the reason the optional instance's is.
+    // Constrained for the reason the optional instance's is. No exception
+    // specification: the result is a vector, which allocates.
     template <class F>
         requires std::invocable<F &, const VALUE_TYPE &> &&
                  detail::holdable_value<
                      std::invoke_result_t<F &, const VALUE_TYPE &>>
-    constexpr auto fmap(this auto &&, F &&function,
-                        const std::vector<VALUE_TYPE> &values) {
+    [[nodiscard]] constexpr auto fmap(this auto &&, F &&function,
+                                      const std::vector<VALUE_TYPE> &values) {
         // `F &`, unlike the optional instance above: that one forwards the
         // callable into a single std::invoke, this one invokes a captured
         // lvalue once per element.
@@ -87,8 +88,11 @@ template <class VALUE_TYPE>
 struct Monoid<std::vector<VALUE_TYPE>> {
     using value_type = std::vector<VALUE_TYPE>;
 
-    constexpr auto identity() const -> std::vector<VALUE_TYPE> { return {}; }
+    constexpr auto identity() const noexcept -> std::vector<VALUE_TYPE> {
+        return {};
+    }
 
+    // No exception specification: concatenation allocates.
     constexpr auto combine(std::vector<VALUE_TYPE> lhs,
                            const std::vector<VALUE_TYPE> &rhs) const
         -> std::vector<VALUE_TYPE> {
@@ -106,6 +110,29 @@ template <class VALUE_TYPE>
 struct VectorFoldableImpl {
     using element_type = VALUE_TYPE;
 
+    // The fold's exception specification: the identity, each application of
+    // the function and its combination into the accumulator, the assignment
+    // of the combination back, and the move of the result out.
+    //! \omit
+    template <class FUNCTION, class MONOID>
+    static constexpr bool fold_map_nothrow =
+        noexcept(std::declval<const MONOID &>().identity()) &&
+        noexcept(std::declval<const MONOID &>().combine(
+            std::declval<std::remove_cvref_t<
+                std::invoke_result_t<FUNCTION &, const VALUE_TYPE &>>>(),
+            std::invoke(std::declval<FUNCTION &>(),
+                        std::declval<const VALUE_TYPE &>()))) &&
+        std::is_nothrow_assignable_v<
+            std::remove_cvref_t<
+                std::invoke_result_t<FUNCTION &, const VALUE_TYPE &>> &,
+            decltype(std::declval<const MONOID &>().combine(
+                std::declval<std::remove_cvref_t<
+                    std::invoke_result_t<FUNCTION &, const VALUE_TYPE &>>>(),
+                std::invoke(std::declval<FUNCTION &>(),
+                            std::declval<const VALUE_TYPE &>())))> &&
+        std::is_nothrow_move_constructible_v<std::remove_cvref_t<
+            std::invoke_result_t<FUNCTION &, const VALUE_TYPE &>>>;
+
     // The trailing return type is the Impl-keeps-its-basis-SFINAE-friendly
     // invariant apply.hpp records, applied to the fold basis: computed only
     // in the body, the result type would be established by instantiating
@@ -117,9 +144,10 @@ struct VectorFoldableImpl {
     template <class FUNCTION, class MONOID>
         requires monoid_object<MONOID, std::remove_cvref_t<std::invoke_result_t<
                                            FUNCTION &, const VALUE_TYPE &>>>
-    constexpr auto fold_map(this auto &&, FUNCTION &&function,
-                            const std::vector<VALUE_TYPE> &values,
-                            MONOID monoid)
+    [[nodiscard]] constexpr auto
+    fold_map(this auto &&, FUNCTION &&function,
+             const std::vector<VALUE_TYPE> &values,
+             MONOID monoid) noexcept(fold_map_nothrow<FUNCTION, MONOID>)
         -> std::remove_cvref_t<
             std::invoke_result_t<FUNCTION &, const VALUE_TYPE &>> {
         using Result = std::remove_cvref_t<
@@ -133,7 +161,8 @@ struct VectorFoldableImpl {
     }
 
     //! \omit
-    constexpr auto length(this auto &&, const std::vector<VALUE_TYPE> &values)
+    [[nodiscard]] constexpr auto
+    length(this auto &&, const std::vector<VALUE_TYPE> &values) noexcept
         -> std::size_t {
         return values.size();
     }
@@ -169,10 +198,16 @@ struct vector_traversable_impl {
     /// object has been selected.
     static constexpr bool consumes_rvalue_structure = true;
 
+    /// No exception specification: the traversal collects into a vector,
+    /// which allocates, so it is potentially throwing whatever `function`
+    /// and `applicative` promise. The absence is the specification, as it is
+    /// for the standard containers' own allocating operations
+    /// (docs/transpose/decisions.md#operation-noexcept).
     // \ref{transpose.range.traverse}, traversable instance for vector
     template <class APPLICATIVE, class FUNCTION, class VALUES>
-    constexpr auto traverse(this auto &&, const APPLICATIVE &applicative,
-                            FUNCTION &&function, VALUES &&values)
+    [[nodiscard]] constexpr auto traverse(this auto &&,
+                                          const APPLICATIVE &applicative,
+                                          FUNCTION &&function, VALUES &&values)
         requires std::same_as<std::remove_cvref_t<VALUES>,
                               std::vector<VALUE_TYPE>> &&
                  std::invocable<FUNCTION &,
@@ -284,7 +319,7 @@ inline constexpr vector_append_t<ELEMENT> vector_append{};
 //! but not copied; such a `values` is left in a valid but unspecified state.
 template <class VALUE_TYPE>
 template <class APPLICATIVE, class FUNCTION, class VALUES>
-constexpr auto vector_traversable_impl<VALUE_TYPE>::traverse(
+[[nodiscard]] constexpr auto vector_traversable_impl<VALUE_TYPE>::traverse(
     this auto &&, const APPLICATIVE &applicative, FUNCTION &&function,
     VALUES &&values)
     requires std::same_as<std::remove_cvref_t<VALUES>,

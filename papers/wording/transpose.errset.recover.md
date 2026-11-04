@@ -6,8 +6,11 @@
 
 ```cpp
 template<class... HANDLED, class VALUE, class... ERRORS, class HANDLER>
-constexpr auto recover(const expected<VALUE, error_set_of<ERRORS...>>& computation,
-                       HANDLER&& handler) -> $see below$;
+[[nodiscard]] constexpr auto recover(
+    const expected<VALUE, error_set_of<ERRORS...>>& computation,
+    HANDLER&& handler) noexcept($recover-nothrow-v$<HANDLER, VALUE,
+                                                  error_set_of<ERRORS...>, HANDLED...>)
+    -> $see below$;
 ```
 
 [x]{.pnum} *Constraints*: `sizeof...(ERRORS) > 0` is `true`.
@@ -18,11 +21,14 @@ constexpr auto recover(const expected<VALUE, error_set_of<ERRORS...>>& computati
 
 [x+3]{.pnum} *Returns*: The computation at the narrowed grade: the alternatives it may raise, less those handled, plus any a handler raises. The result holds a value when every witness present was recovered, and otherwise the surviving witnesses.
 
-[x+4]{.pnum} *Remarks*: The handled set is annotated rather than inferred: it is given as explicit template arguments and checked against the computation's grade. Recovering one alternative from a value that raised two leaves the other, which is still an error. If more than one handled type is witnessed and each independently recovers a value, the first in canonical order is the result, matching the tie-break of `combined_with`.
+[x+4]{.pnum} *Remarks*: The handled set is annotated rather than inferred: it is given as explicit template arguments and checked against the computation's grade. Recovering one alternative from a value that raised two leaves the other, which is still an error. If more than one handled type is witnessed and each independently recovers a value, the first in canonical order is the result, matching the tie-break of `combined_with`. The exception specification is `$recover-nothrow-v$<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...>`.
 
 ```cpp
 template<class... HANDLED, class VALUE, class HANDLER>
-constexpr auto recover(const expected<VALUE, error_set_of<>>& computation, HANDLER&&)
+[[nodiscard]] constexpr auto recover(
+    const expected<VALUE, error_set_of<>>& computation,
+    HANDLER&&) noexcept(is_nothrow_copy_constructible_v<expected<VALUE,
+                                                                 error_set_of<>>>)
     -> expected<VALUE, error_set_of<>>;
 ```
 
@@ -34,7 +40,7 @@ constexpr auto recover(const expected<VALUE, error_set_of<>>& computation, HANDL
 
 [x+8]{.pnum} *Returns*: `computation`.
 
-[x+9]{.pnum} *Remarks*: At the empty grade no alternative can be witnessed, so there is nothing to recover from and nothing to check `HANDLED` against. This is what keeps a generic recovery step well-formed when an earlier stage has statically eliminated every failure.
+[x+9]{.pnum} *Remarks*: At the empty grade no alternative can be witnessed, so there is nothing to recover from and nothing to check `HANDLED` against. This is what keeps a generic recovery step well-formed when an earlier stage has statically eliminated every failure. The exception specification is that of copying `computation`.
 
 ```cpp
 namespace std {
@@ -122,6 +128,24 @@ namespace std {
       typename $collapse-target$<TARGET, HANDLER, ERRORS...>::type; // exposition only
 }
 ```
+
+```cpp
+namespace std {
+  template<class TARGET, class HANDLER, class COMBINE, class... ERRORS>
+  inline constexpr bool $collapse-nothrow$ =
+      (is_nothrow_invocable_r_v<$collapse-target-t$<TARGET, HANDLER, ERRORS...>, HANDLER&,
+                                const ERRORS&> &&
+       ...) &&
+      is_nothrow_invocable_r_v<$collapse-target-t$<TARGET, HANDLER, ERRORS...>, COMBINE&,
+                               $collapse-target-t$<TARGET, HANDLER, ERRORS...>,
+                               $collapse-target-t$<TARGET, HANDLER, ERRORS...>> &&
+      is_nothrow_move_constructible_v<$collapse-target-t$<TARGET, HANDLER, ERRORS...>> &&
+      is_nothrow_move_assignable_v<
+          $collapse-target-t$<TARGET, HANDLER, ERRORS...>>; // exposition only
+}
+```
+
+[x+13]{.pnum} *Remarks*: `$collapse-nothrow$<TARGET, HANDLER, COMBINE, ERRORS...>` is `true` when invoking `HANDLER` on each alternative and converting its result to the target, combining two results with `COMBINE`, and moving a result into place are all non-throwing.
 
 :::
 

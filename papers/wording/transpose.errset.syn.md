@@ -35,12 +35,16 @@ namespace std {
     // @[transpose.errset.cons]{- .sref}@, constructors
     template<class ERROR>
       requires($error-set-has-v$<remove_cvref_t<ERROR>, ERRORS...>)
-    constexpr error_set_of(ERROR&& error);
+    constexpr error_set_of(ERROR&& error) noexcept(
+        is_nothrow_constructible_v<remove_cvref_t<ERROR>, ERROR> &&
+        (is_nothrow_move_constructible_v<ERRORS> && ...));
     template<class... NARROWER>
       requires(sizeof...(NARROWER) > 0) &&
               (!is_same_v<error_set_of<NARROWER...>, error_set_of<ERRORS...>>) &&
               ($error-set-has-v$<NARROWER, ERRORS...> && ...)
-    constexpr error_set_of(const error_set_of<NARROWER...>& narrower);
+    constexpr error_set_of(const error_set_of<NARROWER...>& narrower) noexcept(
+        (is_nothrow_copy_constructible_v<NARROWER> && ...) &&
+        (is_nothrow_move_constructible_v<ERRORS> && ...));
     // @[transpose.errset.obs]{- .sref}@, observers
     template<class ERROR>
       requires($error-set-has-v$<ERROR, ERRORS...>)
@@ -48,17 +52,20 @@ namespace std {
 
     template<class ERROR>
       requires($error-set-has-v$<ERROR, ERRORS...>)
-    constexpr auto witness() const -> const optional<ERROR>&;
+    constexpr auto witness() const noexcept -> const optional<ERROR>&;
 
     constexpr auto witness_count() const noexcept -> size_t;
 
     template<class HANDLER>
-    constexpr auto visit(HANDLER&& handler) const -> decltype(auto);
+    constexpr auto visit(HANDLER&& handler) const
+        noexcept((is_nothrow_copy_constructible_v<ERRORS> && ...) &&
+                 (is_nothrow_invocable_v<HANDLER, ERRORS> && ...)) -> decltype(auto);
 
     // @[transpose.errset.ops]{- .sref}@, operations
     friend auto operator==(const error_set_of&, const error_set_of&) -> bool = default;
 
-    constexpr auto combined_with(const error_set_of& other) const -> error_set_of;
+    [[nodiscard]] constexpr auto combined_with(const error_set_of& other) const
+        noexcept((is_nothrow_copy_constructible_v<ERRORS> && ...)) -> error_set_of;
 
   private:
     tuple<optional<ERRORS>...> $d-witnesses$; // exposition only

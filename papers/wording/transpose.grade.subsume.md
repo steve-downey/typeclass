@@ -6,7 +6,9 @@
 
 ```cpp
 template<class TARGET_GRADE, class CARRIER>
-constexpr auto grade_subsume(CARRIER&& value)
+[[nodiscard]] constexpr auto grade_subsume(CARRIER&& value) noexcept(
+    is_nothrow_constructible_v<$rebind-grade-t$<remove_cvref_t<CARRIER>, TARGET_GRADE>,
+                               CARRIER>)
     -> $rebind-grade-t$<remove_cvref_t<CARRIER>, TARGET_GRADE>;
 ```
 
@@ -20,7 +22,7 @@ return $rebind-grade-t$<remove_cvref_t<CARRIER>, TARGET_GRADE>(forward<CARRIER>(
 
 [x+2]{.pnum} *Returns*: `value`'s carrier re-indexed at `TARGET_GRADE`, holding the same computation.
 
-[x+3]{.pnum} *Remarks*: The coercion is the carrier's own converting constructor. No separate machinery is needed: because the order is read off the join, the inclusion between two grades is unique, so there is exactly one coercion and the carrier already provides it. The source grade may be `unit_grade`; the target must be a model grade.
+[x+3]{.pnum} *Remarks*: The coercion is the carrier's own converting constructor. No separate machinery is needed: because the order is read off the join, the inclusion between two grades is unique, so there is exactly one coercion and the carrier already provides it. The source grade may be `unit_grade`; the target must be a model grade. The exception specification is that of the coercion: the re-indexed carrier's construction from `value`.
 
 :::
 

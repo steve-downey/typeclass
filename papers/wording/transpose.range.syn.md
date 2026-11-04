@@ -8,10 +8,9 @@ namespace std {
 
     static constexpr bool consumes_rvalue_structure = true;
 
-    // @[transpose.range.traverse]{- .sref}@, traversable instance for vector
     template<class APPLICATIVE, class FUNCTION, class VALUES>
-    constexpr auto traverse(this auto&&, const APPLICATIVE& applicative,
-                            FUNCTION&& function, VALUES&& values)
+    [[nodiscard]] constexpr auto traverse(this auto&&, const APPLICATIVE& applicative,
+                                          FUNCTION&& function, VALUES&& values)
       requires same_as<remove_cvref_t<VALUES>, vector<VALUE_TYPE>> &&
                invocable<FUNCTION&,
                          $traversal-argument-t$<vector_traversable_impl, VALUES>> &&

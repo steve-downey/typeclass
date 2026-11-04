@@ -129,7 +129,8 @@ struct error_set_from_list<type_list<ERRORS...>> {
  * touch it.
  */
 template <class ERROR, class INJECTED>
-constexpr auto witness_slot(INJECTED &&error) -> std::optional<ERROR> {
+constexpr auto witness_slot(INJECTED &&error) noexcept(
+    std::is_nothrow_constructible_v<ERROR, INJECTED>) -> std::optional<ERROR> {
     if constexpr (std::is_same_v<ERROR, std::remove_cvref_t<INJECTED>>) {
         return std::optional<ERROR>(std::forward<INJECTED>(error));
     } else {
@@ -142,8 +143,8 @@ constexpr auto witness_slot(INJECTED &&error) -> std::optional<ERROR> {
  * empty otherwise. This is the value-level half of the ⊆ conversion --
  * copying over whichever witnesses the narrower value actually carries. */
 template <class ERROR, class... NARROWER>
-constexpr auto widen_slot(const error_set_of<NARROWER...> &narrower)
-    -> std::optional<ERROR> {
+constexpr auto widen_slot(const error_set_of<NARROWER...> &narrower) noexcept(
+    std::is_nothrow_copy_constructible_v<ERROR>) -> std::optional<ERROR> {
     if constexpr (error_set_of<NARROWER...>::template contains<ERROR>()) {
         return narrower.template witness<ERROR>();
     } else {
@@ -215,15 +216,20 @@ class error_set_of {
     // \ref{transpose.errset.cons}, constructors
     template <class ERROR>
         requires(error_set_has_v<std::remove_cvref_t<ERROR>, ERRORS...>)
-    constexpr error_set_of(ERROR &&error); /// NOLINT(*-explicit-constructor)
+    constexpr error_set_of(ERROR &&error) noexcept(
+        std::is_nothrow_constructible_v<std::remove_cvref_t<ERROR>, ERROR> &&
+        (std::is_nothrow_move_constructible_v<ERRORS> &&
+         ...)); /// NOLINT(*-explicit-constructor)
 
     template <class... NARROWER>
         requires(sizeof...(NARROWER) > 0) &&
                 (!std::is_same_v<error_set_of<NARROWER...>,
                                  error_set_of<ERRORS...>>) &&
                 (error_set_has_v<NARROWER, ERRORS...> && ...)
-    constexpr error_set_of(
-        const error_set_of<NARROWER...> &narrower); /// NOLINT(*-explicit-*)
+    constexpr error_set_of(const error_set_of<NARROWER...> &narrower) noexcept(
+        (std::is_nothrow_copy_constructible_v<NARROWER> && ...) &&
+        (std::is_nothrow_move_constructible_v<ERRORS> &&
+         ...)); /// NOLINT(*-explicit-*)
 
     // \ref{transpose.errset.obs}, observers
     template <class ERROR>
@@ -232,12 +238,15 @@ class error_set_of {
 
     template <class ERROR>
         requires(error_set_has_v<ERROR, ERRORS...>)
-    constexpr auto witness() const -> const std::optional<ERROR> &;
+    constexpr auto witness() const noexcept -> const std::optional<ERROR> &;
 
     constexpr auto witness_count() const noexcept -> std::size_t;
 
     template <class HANDLER>
-    constexpr auto visit(HANDLER &&handler) const -> decltype(auto);
+    constexpr auto visit(HANDLER &&handler) const
+        noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...) &&
+                 (std::is_nothrow_invocable_v<HANDLER, ERRORS> && ...))
+            -> decltype(auto);
 
     // \ref{transpose.errset.ops}, operations
     //! \returns `true` if and only if both operands witness the same set of
@@ -250,8 +259,9 @@ class error_set_of {
     friend auto operator==(const error_set_of &, const error_set_of &)
         -> bool = default;
 
-    constexpr auto combined_with(const error_set_of &other) const
-        -> error_set_of;
+    [[nodiscard]] constexpr auto combined_with(const error_set_of &other) const
+        noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...))
+            -> error_set_of;
 
   private:
     //! \omit
@@ -263,7 +273,8 @@ class error_set_of {
     template <std::size_t... IDX>
     constexpr auto combine_witnesses(const error_set_of &other,
                                      std::index_sequence<IDX...>) const
-        -> std::tuple<std::optional<ERRORS>...> {
+        noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...))
+            -> std::tuple<std::optional<ERRORS>...> {
         return std::tuple<std::optional<ERRORS>...>{
             (std::get<IDX>(d_witnesses).has_value()
                  ? std::get<IDX>(d_witnesses)
@@ -305,10 +316,14 @@ class error_set_of {
 //! \remarks This is the injection of an error value into the set it belongs
 //! to. It is not explicit: a raised error is usable as the set that may raise
 //! it.
+//! The exception specification is that of constructing the witness from
+//! `error` and placing it in its slot.
 template <class... ERRORS>
 template <class ERROR>
     requires(error_set_has_v<std::remove_cvref_t<ERROR>, ERRORS...>)
-constexpr error_set_of<ERRORS...>::error_set_of(ERROR &&error)
+constexpr error_set_of<ERRORS...>::error_set_of(ERROR &&error) noexcept(
+    std::is_nothrow_constructible_v<std::remove_cvref_t<ERROR>, ERROR> &&
+    (std::is_nothrow_move_constructible_v<ERRORS> && ...))
     : d_witnesses(detail::witness_slot<ERRORS>(std::forward<ERROR>(error))...) {
 }
 
@@ -320,6 +335,8 @@ constexpr error_set_of<ERRORS...>::error_set_of(ERROR &&error)
 //! conversion there is: there is none in the other direction, and none
 //! between incomparable sets. There is deliberately no conversion from the
 //! empty set, which is uninhabited, so no value ever needs one.
+//! The exception specification is that of copying each of `narrower`'s
+//! witnesses into its slot.
 template <class... ERRORS>
 template <class... NARROWER>
     requires(sizeof...(NARROWER) > 0) &&
@@ -327,7 +344,11 @@ template <class... NARROWER>
                              error_set_of<ERRORS...>>) &&
             (error_set_has_v<NARROWER, ERRORS...> && ...)
 constexpr error_set_of<ERRORS...>::error_set_of(
-    const error_set_of<NARROWER...> &narrower)
+    const error_set_of<NARROWER...>
+        &narrower) noexcept((std::is_nothrow_copy_constructible_v<NARROWER> &&
+                             ...) &&
+                            (std::is_nothrow_move_constructible_v<ERRORS> &&
+                             ...))
     : d_witnesses(detail::widen_slot<ERRORS>(narrower)...) {}
 
 // \rSec3[transpose.errset.obs]{Observers}
@@ -357,7 +378,7 @@ constexpr auto error_set_of<ERRORS...>::holds() const noexcept -> bool {
 template <class... ERRORS>
 template <class ERROR>
     requires(error_set_has_v<ERROR, ERRORS...>)
-constexpr auto error_set_of<ERRORS...>::witness() const
+constexpr auto error_set_of<ERRORS...>::witness() const noexcept
     -> const std::optional<ERROR> & {
     return std::get<std::optional<ERROR>>(d_witnesses);
 }
@@ -383,11 +404,16 @@ constexpr auto error_set_of<ERRORS...>::witness_count() const noexcept
 //! than one witness, which only accumulating composition produces, has no
 //! single value to hand back, and answering with the leftmost would turn a
 //! dropped error into a quiet wrong answer. For such a value, use `witness`
-//! per alternative, guarded by `holds` or `witness_count`.
+//! per alternative, guarded by `holds` or `witness_count`. The exception
+//! specification is that of copying the witness out and invoking `handler`
+//! on it as an rvalue, for every alternative; a violated precondition stops
+//! the program and does not throw.
 template <class... ERRORS>
 template <class HANDLER>
 constexpr auto error_set_of<ERRORS...>::visit(HANDLER &&handler) const
-    -> decltype(auto) {
+    noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...) &&
+             (std::is_nothrow_invocable_v<HANDLER, ERRORS> && ...))
+        -> decltype(auto) {
     return std::visit(std::forward<HANDLER>(handler), to_variant());
 }
 
@@ -397,11 +423,13 @@ constexpr auto error_set_of<ERRORS...>::visit(HANDLER &&handler) const
 //! operand witnesses.
 //! \remarks Combination is left-biased per alternative: where both operands
 //! witness the same error type, `*this`'s witness is kept. This is the
-//! evidence-combining step of accumulating composition.
+//! evidence-combining step of accumulating composition. The exception
+//! specification is that of copying every witness.
 template <class... ERRORS>
-constexpr auto
+[[nodiscard]] constexpr auto
 error_set_of<ERRORS...>::combined_with(const error_set_of &other) const
-    -> error_set_of<ERRORS...> {
+    noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...))
+        -> error_set_of<ERRORS...> {
     return error_set_of(
         combine_witnesses(other, std::index_sequence_for<ERRORS...>{}));
 }
@@ -498,17 +526,22 @@ inline constexpr bool
 //! above is a commutative union and needs no semigroup; this value-level
 //! combination is what the accumulating applicative object uses.
 template <class... ERRORS>
-constexpr auto error_set_combine(const error_set_of<ERRORS...> &lhs,
-                                 const error_set_of<ERRORS...> &rhs)
+[[nodiscard]] constexpr auto
+error_set_combine(const error_set_of<ERRORS...> &lhs,
+                  const error_set_of<ERRORS...>
+                      &rhs) noexcept(noexcept(lhs.combined_with(rhs)))
     -> error_set_of<ERRORS...> {
     return lhs.combined_with(rhs);
 }
 
 namespace detail {
 
+//! \expos
 template <class... ERRORS>
-constexpr auto combine_grade_evidence(const error_set_of<ERRORS...> &lhs,
-                                      const error_set_of<ERRORS...> &rhs)
+constexpr auto
+combine_grade_evidence(const error_set_of<ERRORS...> &lhs,
+                       const error_set_of<ERRORS...>
+                           &rhs) noexcept(noexcept(error_set_combine(lhs, rhs)))
     -> error_set_of<ERRORS...> {
     return error_set_combine(lhs, rhs);
 }
@@ -678,6 +711,44 @@ using recover_return_t =
     rebind_grade_t<VALUE,
                    recover_final_grade_t<HANDLER, VALUE, GRADE, HANDLED...>>;
 
+/// Whether `recover` is non-throwing. The computation copies: the value out
+/// of a successful computation and into the result, each surviving witness
+/// into the narrowed set, and a recovered value out of a handler's result.
+/// It moves a recovered value into place and the narrowed set as it
+/// accumulates. Every handler is invoked on a `const` lvalue witness.
+//! \expos
+template <class HANDLER, class VALUE, class GRADE, class... HANDLED>
+struct recover_nothrow;
+
+template <class HANDLER, class VALUE, class... ERRORS, class... HANDLED>
+struct recover_nothrow<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...> {
+    using final_grade =
+        recover_final_grade_t<HANDLER, VALUE, error_set_of<ERRORS...>,
+                              HANDLED...>;
+    using returned =
+        recover_return_t<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...>;
+    static constexpr bool value =
+        (std::is_nothrow_invocable_v<HANDLER &, const HANDLED &> && ...) &&
+        (std::is_nothrow_copy_constructible_v<ERRORS> && ...) &&
+        std::is_nothrow_copy_constructible_v<final_grade> &&
+        std::is_nothrow_move_constructible_v<final_grade> &&
+        std::is_nothrow_copy_constructible_v<VALUE> &&
+        std::is_nothrow_move_constructible_v<VALUE> &&
+        std::is_nothrow_constructible_v<returned, const VALUE &> &&
+        (std::is_same_v<returned, VALUE> ||
+         std::is_nothrow_constructible_v<returned, std::unexpect_t,
+                                         const final_grade &>);
+};
+
+//! \expos
+//! \remarks `$recover-nothrow-v$<HANDLER, VALUE, GRADE, HANDLED...>` is `true`
+//! when invoking `HANDLER` on each handled alternative, copying the value
+//! and every witness that survives, and constructing the result are all
+//! non-throwing.
+template <class HANDLER, class VALUE, class GRADE, class... HANDLED>
+inline constexpr bool recover_nothrow_v =
+    recover_nothrow<HANDLER, VALUE, GRADE, HANDLED...>::value;
+
 /// The same type behind a member, so that a declaration can name it without
 /// instantiating it. `recover`'s trailing return type reaches `type` through
 /// `std::enable_if_t` on the grade being non-empty: on the empty grade the
@@ -714,12 +785,17 @@ struct recover_return {
 //! grade. Recovering one alternative from a value that raised two leaves the
 //! other, which is still an error. If more than one handled type is
 //! witnessed and each independently recovers a value, the first in canonical
-//! order is the result, matching the tie-break of `combined_with`.
+//! order is the result, matching the tie-break of `combined_with`. The
+//! exception specification is `$recover-nothrow-v$<HANDLER, VALUE,
+//! error_set_of<ERRORS...>, HANDLED...>`.
 template <class... HANDLED, class VALUE, class... ERRORS, class HANDLER>
     requires(sizeof...(ERRORS) > 0)
-constexpr auto
+[[nodiscard]] constexpr auto
 recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
-        HANDLER &&handler) ->
+        HANDLER &&
+            handler) noexcept(detail::recover_nothrow_v<HANDLER, VALUE,
+                                                        error_set_of<ERRORS...>,
+                                                        HANDLED...>) ->
     typename std::enable_if_t<
         (sizeof...(ERRORS) > 0),
         detail::recover_return<HANDLER, VALUE, error_set_of<ERRORS...>,
@@ -797,10 +873,15 @@ recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
 //! \remarks At the empty grade no alternative can be witnessed, so there is
 //! nothing to recover from and nothing to check `HANDLED` against. This is
 //! what keeps a generic recovery step well-formed when an earlier stage has
-//! statically eliminated every failure.
+//! statically eliminated every failure. The exception specification is that
+//! of copying `computation`.
 template <class... HANDLED, class VALUE, class HANDLER>
-constexpr auto recover(const std::expected<VALUE, error_set_of<>> &computation,
-                       HANDLER &&) -> std::expected<VALUE, error_set_of<>> {
+[[nodiscard]] constexpr auto
+recover(const std::expected<VALUE, error_set_of<>> &computation,
+        HANDLER &&) noexcept(std::
+                                 is_nothrow_copy_constructible_v<
+                                     std::expected<VALUE, error_set_of<>>>)
+    -> std::expected<VALUE, error_set_of<>> {
     static_assert(sizeof...(HANDLED) > 0,
                   "recover needs at least one HANDLED type.");
     return computation;
@@ -898,6 +979,26 @@ template <class TARGET, class HANDLER, class... ERRORS>
 using collapse_target_t =
     typename collapse_target<TARGET, HANDLER, ERRORS...>::type;
 
+//! \expos
+//! \remarks `$collapse-nothrow$<TARGET, HANDLER, COMBINE, ERRORS...>` is
+//! `true` when invoking `HANDLER` on each alternative and converting its
+//! result to the target, combining two results with `COMBINE`, and moving a
+//! result into place are all non-throwing.
+template <class TARGET, class HANDLER, class COMBINE, class... ERRORS>
+inline constexpr bool collapse_nothrow =
+    (std::is_nothrow_invocable_r_v<
+         collapse_target_t<TARGET, HANDLER, ERRORS...>, HANDLER &,
+         const ERRORS &> &&
+     ...) &&
+    std::is_nothrow_invocable_r_v<
+        collapse_target_t<TARGET, HANDLER, ERRORS...>, COMBINE &,
+        collapse_target_t<TARGET, HANDLER, ERRORS...>,
+        collapse_target_t<TARGET, HANDLER, ERRORS...>> &&
+    std::is_nothrow_move_constructible_v<
+        collapse_target_t<TARGET, HANDLER, ERRORS...>> &&
+    std::is_nothrow_move_assignable_v<
+        collapse_target_t<TARGET, HANDLER, ERRORS...>>;
+
 } // namespace detail
 
 // \rSec3[transpose.errset.fold]{fold_witnesses}
@@ -910,10 +1011,18 @@ using collapse_target_t =
 //! \returns The final accumulator.
 //! \remarks Multiplicity is the caller's stated business: the accumulator is
 //! where two witnesses meet, and nothing is dropped unless an arm drops it.
-//! An alternative no arm accepts is ill-formed; the diagnostic names it.
+//! An alternative no arm accepts is ill-formed; the diagnostic names it. The
+//! exception specification is that of each arm's invocation and conversion
+//! to `ACC`, and of moving the accumulator.
 template <class ACC, class HANDLER, class... ERRORS>
-constexpr auto fold_witnesses(const error_set_of<ERRORS...> &errors, ACC init,
-                              HANDLER &&handler) -> ACC {
+[[nodiscard]] constexpr auto fold_witnesses(
+    const error_set_of<ERRORS...> &errors, ACC init,
+    HANDLER &&
+        handler) noexcept((std::is_nothrow_invocable_r_v<ACC, HANDLER &, ACC &&,
+                                                         const ERRORS &> &&
+                           ...) &&
+                          std::is_nothrow_move_constructible_v<ACC> &&
+                          std::is_nothrow_move_assignable_v<ACC>) -> ACC {
     static_assert((detail::fold_arm_check<HANDLER, ACC, ERRORS>::value && ...));
     ACC acc = std::move(init);
     auto step = [&]<class E>(std::type_identity<E>) {
@@ -935,7 +1044,8 @@ struct keep_first {
     // \ref{transpose.errset.collapse}, the default combine
     //! \returns `first`.
     template <class T>
-    constexpr auto operator()(T first, const T &) const -> T {
+    [[nodiscard]] constexpr auto operator()(T first, const T &) const
+        noexcept(std::is_nothrow_move_constructible_v<T>) -> T {
         return first;
     }
 };
@@ -951,12 +1061,16 @@ struct keep_first {
 //! error type leaves. The set is non-empty by invariant, so there is always
 //! a result. Pass a combine when a second witness must not be dropped; the
 //! default is the left-biased pick of `combined_with`, which is the silent
-//! drop `visit`'s precondition refuses, made explicit by the name.
+//! drop `visit`'s precondition refuses, made explicit by the name. The
+//! exception specification is `$collapse-nothrow$<TARGET, HANDLER, COMBINE,
+//! ERRORS...>`.
 template <class TARGET = void, class HANDLER, class COMBINE = keep_first,
           class... ERRORS>
     requires(sizeof...(ERRORS) > 0)
-constexpr auto collapse(const error_set_of<ERRORS...> &errors,
-                        HANDLER &&handler, COMBINE combine = {})
+[[nodiscard]] constexpr auto collapse(
+    const error_set_of<ERRORS...> &errors, HANDLER &&handler,
+    COMBINE combine = {}) noexcept(detail::collapse_nothrow<TARGET, HANDLER,
+                                                            COMBINE, ERRORS...>)
     -> detail::collapse_target_t<TARGET, HANDLER, ERRORS...> {
     using Result = detail::collapse_target_t<TARGET, HANDLER, ERRORS...>;
     std::optional<Result> acc;
@@ -979,13 +1093,19 @@ constexpr auto collapse(const error_set_of<ERRORS...> &errors,
 //! \remarks The result is the ungraded `expected<VALUE, T>`: the grade is
 //! gone. A caller who wants to stay graded names `collapse<error_set<T>>`,
 //! and the singleton set converts from `T` through the injecting
-//! constructor.
+//! constructor. The exception specification is that of `collapse` on the
+//! error, and of copying `computation`'s value into the result.
 template <class TARGET = void, class VALUE, class... ERRORS, class HANDLER,
           class COMBINE = keep_first>
     requires(sizeof...(ERRORS) > 0)
-constexpr auto
+[[nodiscard]] constexpr auto
 collapse(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
-         HANDLER &&handler, COMBINE combine = {})
+         HANDLER &&handler,
+         COMBINE combine =
+             {}) noexcept(detail::collapse_nothrow<TARGET, HANDLER, COMBINE,
+                                                   ERRORS...> &&
+                          (std::is_void_v<VALUE> ||
+                           std::is_nothrow_copy_constructible_v<VALUE>))
     -> std::expected<VALUE,
                      detail::collapse_target_t<TARGET, HANDLER, ERRORS...>> {
     using Result = detail::collapse_target_t<TARGET, HANDLER, ERRORS...>;
@@ -1015,10 +1135,12 @@ collapse(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
 //! \remarks This is the explicit spelling of a value at the empty grade: a
 //! computation that cannot fail, written in the fallible carrier so that the
 //! error-side operations apply to it, vacuously. The bare value remains the
-//! spelling of the empty grade everywhere the user does not write this.
+//! spelling of the empty grade everywhere the user does not write this. The
+//! exception specification is that of constructing the value from `value`.
 template <class VALUE>
     requires(!is_expected_v<std::remove_cvref_t<VALUE>>)
-constexpr auto fallible(VALUE &&value)
+[[nodiscard]] constexpr auto fallible(VALUE &&value) noexcept(
+    std::is_nothrow_constructible_v<std::remove_cvref_t<VALUE>, VALUE>)
     -> std::expected<std::remove_cvref_t<VALUE>, error_set<>> {
     return std::expected<std::remove_cvref_t<VALUE>, error_set<>>{
         std::in_place, std::forward<VALUE>(value)};
@@ -1027,9 +1149,12 @@ constexpr auto fallible(VALUE &&value)
 //! \returns `computation`.
 //! \remarks An `expected` is already in the carrier, at whatever grade it
 //! carries; `fallible` is the identity on it, so generic code can apply it to
-//! an operand that may or may not already be fallible.
+//! an operand that may or may not already be fallible. The exception
+//! specification is that of moving `computation`.
 template <class VALUE, class ERROR>
-constexpr auto fallible(std::expected<VALUE, ERROR> computation)
+[[nodiscard]] constexpr auto
+fallible(std::expected<VALUE, ERROR> computation) noexcept(
+    std::is_nothrow_move_constructible_v<std::expected<VALUE, ERROR>>)
     -> std::expected<VALUE, ERROR> {
     return computation;
 }

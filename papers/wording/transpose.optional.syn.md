@@ -33,21 +33,40 @@ namespace std {
 
 ```cpp
 namespace std {
+  template<class FUNCTION, class FIRST, class... REST>
+  inline constexpr bool $optional-invoke-nothrow$ = $invokes-nothrow-into$<
+      optional<remove_cvref_t<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>,
+                                              $contained-ref-t$<REST>...>>>,
+      FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>; // exposition only
+}
+```
+
+::: wording
+
+[x]{.pnum} *Remarks*: `$optional-invoke-nothrow$<FUNCTION, FIRST, REST...>` is `true` when invoking `FUNCTION` on the values the operands hold, each in its operand's value category, and constructing an `optional` from the result are both non-throwing.
+
+:::
+
+```cpp
+namespace std {
   template<class VALUE_TYPE>
   struct $optional-applicative-impl$ {
     // @[transpose.optional.applicative]{- .sref}@, applicative instance for optional
     template<class VALUE>
-    constexpr auto pure(this auto&&, VALUE&& value) -> optional<remove_cvref_t<VALUE>>;
+    [[nodiscard]] constexpr auto pure(this auto&&, VALUE&& value) noexcept(
+        is_nothrow_constructible_v<optional<remove_cvref_t<VALUE>>, VALUE>)
+        -> optional<remove_cvref_t<VALUE>>;
 
-    constexpr auto zero(this auto&&) -> optional<VALUE_TYPE>;
+    [[nodiscard]] constexpr auto zero(this auto&&) noexcept -> optional<VALUE_TYPE>;
 
     template<class FUNCTION, class FIRST, class... REST>
       requires $is-optional-v$<FIRST> && ($is-optional-v$<REST> && ...) &&
                invocable<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...> &&
                $optional-holdable-value$<invoke_result_t<
                    FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>>
-    constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first,
-                          REST&&... rest)
+    [[nodiscard]] constexpr auto invoke(
+        this auto&&, FUNCTION&& function, FIRST&& first,
+        REST&&... rest) noexcept($optional-invoke-nothrow$<FUNCTION, FIRST, REST...>)
         -> optional<remove_cvref_t<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>,
                                                    $contained-ref-t$<REST>...>>>;
   }; // exposition only

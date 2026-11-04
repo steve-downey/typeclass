@@ -43,7 +43,7 @@ namespace detail {
 //! \omit
 struct discard_first_eval_t {
     template <class FIRST, class SECOND>
-    constexpr auto operator()(const FIRST &, SECOND &&second) const
+    constexpr auto operator()(const FIRST &, SECOND &&second) const noexcept
         -> SECOND && {
         return std::forward<SECOND>(second);
     }
@@ -52,7 +52,8 @@ struct discard_first_eval_t {
 //! \omit
 struct discard_second_eval_t {
     template <class FIRST, class SECOND>
-    constexpr auto operator()(FIRST &&first, const SECOND &) const -> FIRST && {
+    constexpr auto operator()(FIRST &&first, const SECOND &) const noexcept
+        -> FIRST && {
         return std::forward<FIRST>(first);
     }
 };
@@ -79,6 +80,166 @@ inline constexpr detail::discard_first_eval_t discard_first_eval{};
 //! own `invoke`-based derivation would be.
 inline constexpr detail::discard_second_eval_t discard_second_eval{};
 
+namespace detail {
+
+// The exception specifications of the derived operations
+// (docs/transpose/decisions.md#operation-noexcept). Each derived operation
+// takes one of two routes -- Impl's own operation where Impl has one that
+// accepts the arguments, the derivation otherwise -- and its exception
+// specification is the specification of the route taken. Each trait below
+// probes Impl through impl_ref_t<IMPL, SELF>, the reference the body
+// addresses Impl by, with the arguments in the categories the body forwards
+// them in, so the route the specification names is the route the body takes.
+// The derived route promises only what the calls it makes promise.
+
+//! \expos
+//! \remarks `$applicative-invoke-nothrow$<IMPL, SELF, FUNCTION, ARGUMENTS...>`
+//! is `true` when the route `derive_applicative<IMPL>::invoke` takes for
+//! these arguments is non-throwing: `IMPL`'s own `invoke` where it accepts
+//! them, and otherwise the embedding of the function with `pure` followed by
+//! one `ap` per argument.
+template <class IMPL, class SELF, class FUNCTION, class... ARGUMENTS>
+inline constexpr bool applicative_invoke_nothrow =
+    requires(impl_ref_t<IMPL, SELF> impl) {
+        impl.invoke(std::declval<FUNCTION>(), std::declval<ARGUMENTS>()...);
+    } ? requires(impl_ref_t<IMPL, SELF> impl) {
+        {
+            impl.invoke(std::declval<FUNCTION>(), std::declval<ARGUMENTS>()...)
+        } noexcept;
+    } : nothrow_invocable_through_ap<SELF, FUNCTION, ARGUMENTS...>;
+
+//! \expos
+//! \remarks `$applicative-ap-nothrow$<IMPL, SELF, FUNCTION_IN_CONTEXT,
+//! ARGUMENT_IN_CONTEXT>` is `true` when the route
+//! `derive_applicative<IMPL>::ap` takes is non-throwing: `IMPL`'s own `ap`
+//! where it accepts the arguments, and otherwise `IMPL`'s `invoke` applied to
+//! `applicative_eval` and the arguments.
+template <class IMPL, class SELF, class FUNCTION_IN_CONTEXT,
+          class ARGUMENT_IN_CONTEXT>
+inline constexpr bool applicative_ap_nothrow =
+    requires(impl_ref_t<IMPL, SELF> impl) {
+        impl.ap(std::declval<FUNCTION_IN_CONTEXT>(),
+                std::declval<ARGUMENT_IN_CONTEXT>());
+    } ? requires(impl_ref_t<IMPL, SELF> impl) {
+        {
+            impl.ap(std::declval<FUNCTION_IN_CONTEXT>(),
+                    std::declval<ARGUMENT_IN_CONTEXT>())
+        } noexcept;
+    } : requires(impl_ref_t<IMPL, SELF> impl) {
+        {
+            impl.invoke(applicative_eval, std::declval<FUNCTION_IN_CONTEXT>(),
+                        std::declval<ARGUMENT_IN_CONTEXT>())
+        } noexcept;
+    };
+
+//! \expos
+//! \remarks `$applicative-map-nothrow$<IMPL, SELF, FUNCTION, ARGUMENT>` is
+//! `true` when the route `derive_applicative<IMPL>::map` takes is
+//! non-throwing: `IMPL`'s own `map` where it accepts the arguments, and
+//! otherwise the object's own `invoke` applied to them.
+template <class IMPL, class SELF, class FUNCTION, class ARGUMENT>
+inline constexpr bool applicative_map_nothrow =
+    requires(impl_ref_t<IMPL, SELF> impl) {
+        impl.map(std::declval<FUNCTION>(), std::declval<ARGUMENT>());
+    } ? requires(impl_ref_t<IMPL, SELF> impl) {
+        {
+            impl.map(std::declval<FUNCTION>(), std::declval<ARGUMENT>())
+        } noexcept;
+    } : requires(SELF &self) {
+        {
+            self.invoke(std::declval<FUNCTION>(), std::declval<ARGUMENT>())
+        } noexcept;
+    };
+
+//! \expos
+//! \remarks `$applicative-lift-nothrow$<IMPL, SELF, VALUE>` is `true` when
+//! the route `derive_applicative<IMPL>::lift` takes is non-throwing: `IMPL`'s
+//! own `lift` where it accepts `VALUE`, and otherwise the object's own
+//! `pure`.
+template <class IMPL, class SELF, class VALUE>
+inline constexpr bool applicative_lift_nothrow =
+    requires(impl_ref_t<IMPL, SELF> impl) {
+        impl.lift(std::declval<VALUE>());
+    } ? requires(impl_ref_t<IMPL, SELF> impl) {
+        { impl.lift(std::declval<VALUE>()) } noexcept;
+    } : requires(SELF &self) {
+        { self.pure(std::declval<VALUE>()) } noexcept;
+    };
+
+//! \expos
+//! \remarks `$applicative-zip-with-nothrow$<IMPL, SELF, FUNCTION,
+//! FIRST_ARGUMENT, SECOND_ARGUMENT>` is `true` when the route
+//! `derive_applicative<IMPL>::zip_with` takes is non-throwing: `IMPL`'s own
+//! `zip_with` where it accepts the arguments, and otherwise the object's own
+//! `invoke` applied to them.
+template <class IMPL, class SELF, class FUNCTION, class FIRST_ARGUMENT,
+          class SECOND_ARGUMENT>
+inline constexpr bool applicative_zip_with_nothrow =
+    requires(impl_ref_t<IMPL, SELF> impl) {
+        impl.zip_with(std::declval<FUNCTION>(), std::declval<FIRST_ARGUMENT>(),
+                      std::declval<SECOND_ARGUMENT>());
+    } ? requires(impl_ref_t<IMPL, SELF> impl) {
+        {
+            impl.zip_with(std::declval<FUNCTION>(),
+                          std::declval<FIRST_ARGUMENT>(),
+                          std::declval<SECOND_ARGUMENT>())
+        } noexcept;
+    } : requires(SELF &self) {
+        {
+            self.invoke(std::declval<FUNCTION>(),
+                        std::declval<FIRST_ARGUMENT>(),
+                        std::declval<SECOND_ARGUMENT>())
+        } noexcept;
+    };
+
+//! \expos
+//! \remarks `$applicative-discard-first-nothrow$<IMPL, SELF, FIRST_ARGUMENT,
+//! SECOND_ARGUMENT>` is `true` when the route
+//! `derive_applicative<IMPL>::discard_first` takes is non-throwing: `IMPL`'s
+//! own `discard_first` where it accepts the arguments, and otherwise the
+//! object's own `invoke` applied to `discard_first_eval` and them.
+template <class IMPL, class SELF, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
+inline constexpr bool applicative_discard_first_nothrow =
+    requires(impl_ref_t<IMPL, SELF> impl) {
+        impl.discard_first(std::declval<FIRST_ARGUMENT>(),
+                           std::declval<SECOND_ARGUMENT>());
+    } ? requires(impl_ref_t<IMPL, SELF> impl) {
+        {
+            impl.discard_first(std::declval<FIRST_ARGUMENT>(),
+                               std::declval<SECOND_ARGUMENT>())
+        } noexcept;
+    } : requires(SELF &self) {
+        {
+            self.invoke(discard_first_eval, std::declval<FIRST_ARGUMENT>(),
+                        std::declval<SECOND_ARGUMENT>())
+        } noexcept;
+    };
+
+//! \expos
+//! \remarks `$applicative-discard-second-nothrow$<IMPL, SELF, FIRST_ARGUMENT,
+//! SECOND_ARGUMENT>` is `true` when the route
+//! `derive_applicative<IMPL>::discard_second` takes is non-throwing: `IMPL`'s
+//! own `discard_second` where it accepts the arguments, and otherwise the
+//! object's own `invoke` applied to `discard_second_eval` and them.
+template <class IMPL, class SELF, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
+inline constexpr bool applicative_discard_second_nothrow =
+    requires(impl_ref_t<IMPL, SELF> impl) {
+        impl.discard_second(std::declval<FIRST_ARGUMENT>(),
+                            std::declval<SECOND_ARGUMENT>());
+    } ? requires(impl_ref_t<IMPL, SELF> impl) {
+        {
+            impl.discard_second(std::declval<FIRST_ARGUMENT>(),
+                                std::declval<SECOND_ARGUMENT>())
+        } noexcept;
+    } : requires(SELF &self) {
+        {
+            self.invoke(discard_second_eval, std::declval<FIRST_ARGUMENT>(),
+                        std::declval<SECOND_ARGUMENT>())
+        } noexcept;
+    };
+
+} // namespace detail
+
 /// Applicative pattern invariants:
 /// - Dual BASIS, single INTERFACE. An instance opts in with pure + invoke
 ///   or pure + ap -- both are perfectly cromulent bases, and the base class
@@ -100,6 +261,11 @@ inline constexpr detail::discard_second_eval_t discard_second_eval{};
 ///   std::invoke_result_t (or an explicit requires clause), never a bare
 ///   auto return with the result type computed only in the body, so that
 ///   availability probes fail cleanly instead of hard-erroring.
+/// - Every operation carries a computed exception specification: an Impl's
+///   basis from the callable's invocation and the carrier's constructors, a
+///   derived operation from the route it takes. A SFINAE-friendly basis is
+///   what makes the latter computable without instantiating a body
+///   (docs/transpose/decisions.md#operation-noexcept).
 /// - Derived operations (map/lift/zip_with/discard_*) live on that object.
 /// - Dispatch happens through a provided object or
 ///   applicative<Concrete>.
@@ -148,9 +314,15 @@ struct derive_applicative : protected Impl {
 
     // \ref{transpose.applicative.basis}, basis operations
     template <class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
-    constexpr auto invoke(this auto &&self, FUNCTION &&function,
-                          FIRST_ARGUMENT &&first_argument,
-                          REST_ARGUMENTS &&...rest_arguments)
+    [[nodiscard]] constexpr auto
+    invoke(this auto &&self, FUNCTION &&function,
+           FIRST_ARGUMENT &&first_argument,
+           REST_ARGUMENTS
+               &&...rest_arguments) noexcept(detail::
+                                                 applicative_invoke_nothrow<
+                                                     Impl, decltype(self),
+                                                     FUNCTION, FIRST_ARGUMENT,
+                                                     REST_ARGUMENTS...>)
         requires requires(const Impl &impl) {
             impl.invoke(std::forward<FUNCTION>(function),
                         std::forward<FIRST_ARGUMENT>(first_argument),
@@ -159,8 +331,13 @@ struct derive_applicative : protected Impl {
                                           FIRST_ARGUMENT, REST_ARGUMENTS...>;
 
     template <class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
-    constexpr auto ap(this auto &&self, FUNCTION_IN_CONTEXT &&function,
-                      ARGUMENT_IN_CONTEXT &&argument)
+    [[nodiscard]] constexpr auto
+    ap(this auto &&self, FUNCTION_IN_CONTEXT &&function,
+       ARGUMENT_IN_CONTEXT
+           &&argument) noexcept(detail::
+                                    applicative_ap_nothrow<Impl, decltype(self),
+                                                           FUNCTION_IN_CONTEXT,
+                                                           ARGUMENT_IN_CONTEXT>)
         requires requires(const Impl &impl) {
             impl.ap(std::forward<FUNCTION_IN_CONTEXT>(function),
                     std::forward<ARGUMENT_IN_CONTEXT>(argument));
@@ -172,8 +349,10 @@ struct derive_applicative : protected Impl {
 
     // \ref{transpose.applicative.derived}, derived operations
     template <class FUNCTION, class ARGUMENT>
-    constexpr auto map(this auto &&self, FUNCTION &&function,
-                       ARGUMENT &&argument)
+    [[nodiscard]] constexpr auto
+    map(this auto &&self, FUNCTION &&function, ARGUMENT &&argument) noexcept(
+        detail::applicative_map_nothrow<Impl, decltype(self), FUNCTION,
+                                        ARGUMENT>)
         requires requires(const Impl &impl) {
             impl.map(std::forward<FUNCTION>(function),
                      std::forward<ARGUMENT>(argument));
@@ -183,15 +362,20 @@ struct derive_applicative : protected Impl {
         };
 
     template <class VALUE>
-    constexpr auto lift(this auto &&self, VALUE &&value)
+    [[nodiscard]] constexpr auto lift(this auto &&self, VALUE &&value) noexcept(
+        detail::applicative_lift_nothrow<Impl, decltype(self), VALUE>)
         requires requires(const Impl &impl) {
             impl.lift(std::forward<VALUE>(value));
         } || requires { self.pure(std::forward<VALUE>(value)); };
 
     template <class FUNCTION, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-    constexpr auto zip_with(this auto &&self, FUNCTION &&function,
-                            FIRST_ARGUMENT &&first_argument,
-                            SECOND_ARGUMENT &&second_argument)
+    [[nodiscard]] constexpr auto zip_with(
+        this auto &&self, FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
+        SECOND_ARGUMENT &&
+            second_argument) noexcept(detail::
+                                          applicative_zip_with_nothrow<
+                                              Impl, decltype(self), FUNCTION,
+                                              FIRST_ARGUMENT, SECOND_ARGUMENT>)
         requires requires(const Impl &impl) {
             impl.zip_with(std::forward<FUNCTION>(function),
                           std::forward<FIRST_ARGUMENT>(first_argument),
@@ -203,9 +387,13 @@ struct derive_applicative : protected Impl {
         };
 
     template <class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-    constexpr auto discard_first(this auto &&self,
-                                 FIRST_ARGUMENT &&first_argument,
-                                 SECOND_ARGUMENT &&second_argument)
+    [[nodiscard]] constexpr auto discard_first(
+        this auto &&self, FIRST_ARGUMENT &&first_argument,
+        SECOND_ARGUMENT &&
+            second_argument) noexcept(detail::
+                                          applicative_discard_first_nothrow<
+                                              Impl, decltype(self),
+                                              FIRST_ARGUMENT, SECOND_ARGUMENT>)
         requires requires(const Impl &impl) {
             impl.discard_first(std::forward<FIRST_ARGUMENT>(first_argument),
                                std::forward<SECOND_ARGUMENT>(second_argument));
@@ -216,9 +404,13 @@ struct derive_applicative : protected Impl {
         };
 
     template <class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-    constexpr auto discard_second(this auto &&self,
-                                  FIRST_ARGUMENT &&first_argument,
-                                  SECOND_ARGUMENT &&second_argument)
+    [[nodiscard]] constexpr auto discard_second(
+        this auto &&self, FIRST_ARGUMENT &&first_argument,
+        SECOND_ARGUMENT &&
+            second_argument) noexcept(detail::
+                                          applicative_discard_second_nothrow<
+                                              Impl, decltype(self),
+                                              FIRST_ARGUMENT, SECOND_ARGUMENT>)
         requires requires(const Impl &impl) {
             impl.discard_second(std::forward<FIRST_ARGUMENT>(first_argument),
                                 std::forward<SECOND_ARGUMENT>(second_argument));
@@ -230,7 +422,9 @@ struct derive_applicative : protected Impl {
 
     // \ref{transpose.applicative.grade}, grade re-indexing
     template <class TARGET_GRADE, class CARRIER>
-    constexpr auto subsume(this auto &&, CARRIER &&value)
+    [[nodiscard]] constexpr auto
+    subsume(this auto &&, CARRIER &&value) noexcept(
+        noexcept(grade_subsume<TARGET_GRADE>(std::forward<CARRIER>(value))))
         requires requires {
             grade_subsume<TARGET_GRADE>(std::forward<CARRIER>(value));
         };
@@ -238,10 +432,21 @@ struct derive_applicative : protected Impl {
     // \ref{transpose.applicative.delegate}, delegated application
     template <class APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
               class... REST_ARGUMENTS>
-    constexpr auto
-    invoke_with(this auto &&, const APPLICATIVE_MAP &applicative_map,
-                FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
-                REST_ARGUMENTS &&...rest_arguments)
+    [[nodiscard]] constexpr auto invoke_with(
+        this auto &&, const APPLICATIVE_MAP &applicative_map,
+        FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
+        REST_ARGUMENTS
+            &&...rest_arguments) noexcept(noexcept(applicative_map
+                                                       .invoke(
+                                                           std::forward<
+                                                               FUNCTION>(
+                                                               function),
+                                                           std::forward<
+                                                               FIRST_ARGUMENT>(
+                                                               first_argument),
+                                                           std::forward<
+                                                               REST_ARGUMENTS>(
+                                                               rest_arguments)...)))
         requires requires {
             applicative_map.invoke(
                 std::forward<FUNCTION>(function),
@@ -251,9 +456,20 @@ struct derive_applicative : protected Impl {
 
     template <const auto &APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
               class... REST_ARGUMENTS>
-    constexpr auto invoke_with(this auto &&, FUNCTION &&function,
-                               FIRST_ARGUMENT &&first_argument,
-                               REST_ARGUMENTS &&...rest_arguments)
+    [[nodiscard]] constexpr auto invoke_with(
+        this auto &&, FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
+        REST_ARGUMENTS
+            &&...rest_arguments) noexcept(noexcept(APPLICATIVE_MAP
+                                                       .invoke(
+                                                           std::forward<
+                                                               FUNCTION>(
+                                                               function),
+                                                           std::forward<
+                                                               FIRST_ARGUMENT>(
+                                                               first_argument),
+                                                           std::forward<
+                                                               REST_ARGUMENTS>(
+                                                               rest_arguments)...)))
         requires requires {
             APPLICATIVE_MAP.invoke(
                 std::forward<FUNCTION>(function),
@@ -264,21 +480,29 @@ struct derive_applicative : protected Impl {
   private:
     //! \omit
     template <class SELF>
-    static constexpr decltype(auto) impl_of(SELF &&self) {
+    static constexpr decltype(auto) impl_of(SELF &&self) noexcept {
         return static_cast<impl_ref_t<Impl, SELF>>(self);
     }
 
     //! \omit
     template <class ACCUMULATED>
-    constexpr auto ap_chain(this auto &&, ACCUMULATED &&accumulated) {
+    constexpr auto ap_chain(this auto &&, ACCUMULATED &&accumulated) noexcept(
+        std::is_nothrow_move_constructible_v<
+            std::remove_cvref_t<ACCUMULATED>>) {
         return std::forward<ACCUMULATED>(accumulated);
     }
 
     //! \omit
     template <class ACCUMULATED, class NEXT_ARGUMENT, class... REST_ARGUMENTS>
-    constexpr auto ap_chain(this auto &&self, ACCUMULATED &&accumulated,
-                            NEXT_ARGUMENT &&next_argument,
-                            REST_ARGUMENTS &&...rest_arguments) {
+    constexpr auto ap_chain(
+        this auto &&self, ACCUMULATED &&accumulated,
+        NEXT_ARGUMENT &&next_argument,
+        REST_ARGUMENTS
+            &&...rest_arguments) noexcept(detail::
+                                              ap_chain_nothrow<
+                                                  decltype(self), ACCUMULATED,
+                                                  NEXT_ARGUMENT,
+                                                  REST_ARGUMENTS...>::value) {
         auto next = self.ap(std::forward<ACCUMULATED>(accumulated),
                             std::forward<NEXT_ARGUMENT>(next_argument));
         if constexpr (sizeof...(REST_ARGUMENTS) == 0) {
@@ -344,9 +568,13 @@ struct invoke_fn {
             TC.invoke(std::declval<FUNCTION>(), std::declval<FIRST_ARGUMENT>(),
                       std::declval<REST_ARGUMENTS>()...);
         }
-    constexpr auto operator()(FUNCTION &&function,
-                              FIRST_ARGUMENT &&first_argument,
-                              REST_ARGUMENTS &&...rest_arguments) const {
+    [[nodiscard]] constexpr auto
+    operator()(FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
+               REST_ARGUMENTS &&...rest_arguments) const
+        noexcept(noexcept(
+            TC.invoke(std::forward<FUNCTION>(function),
+                      std::forward<FIRST_ARGUMENT>(first_argument),
+                      std::forward<REST_ARGUMENTS>(rest_arguments)...))) {
         return TC.invoke(std::forward<FUNCTION>(function),
                          std::forward<FIRST_ARGUMENT>(first_argument),
                          std::forward<REST_ARGUMENTS>(rest_arguments)...);
@@ -370,8 +598,11 @@ struct ap_fn {
             TC.ap(std::declval<FUNCTION_IN_CONTEXT>(),
                   std::declval<ARGUMENT_IN_CONTEXT>());
         }
-    constexpr auto operator()(FUNCTION_IN_CONTEXT &&function,
-                              ARGUMENT_IN_CONTEXT &&argument) const {
+    [[nodiscard]] constexpr auto
+    operator()(FUNCTION_IN_CONTEXT &&function,
+               ARGUMENT_IN_CONTEXT &&argument) const
+        noexcept(noexcept(TC.ap(std::forward<FUNCTION_IN_CONTEXT>(function),
+                                std::forward<ARGUMENT_IN_CONTEXT>(argument)))) {
         return TC.ap(std::forward<FUNCTION_IN_CONTEXT>(function),
                      std::forward<ARGUMENT_IN_CONTEXT>(argument));
     }
@@ -392,7 +623,8 @@ struct pure_fn {
     /** Embeds a plain value into the applicative context. */
     template <class VALUE>
         requires requires { TC.pure(std::declval<VALUE>()); }
-    constexpr auto operator()(VALUE &&value) const {
+    [[nodiscard]] constexpr auto operator()(VALUE &&value) const
+        noexcept(noexcept(TC.pure(std::forward<VALUE>(value)))) {
         return TC.pure(std::forward<VALUE>(value));
     }
 };
@@ -409,7 +641,8 @@ struct raise_fn {
     /** Enters the failure state of the context with `error` as its witness. */
     template <class ERROR>
         requires requires { TC.raise(std::declval<ERROR>()); }
-    constexpr auto operator()(ERROR &&error) const {
+    [[nodiscard]] constexpr auto operator()(ERROR &&error) const
+        noexcept(noexcept(TC.raise(std::forward<ERROR>(error)))) {
         return TC.raise(std::forward<ERROR>(error));
     }
 };
@@ -423,7 +656,8 @@ template <class CONTEXT,
           const auto &TC = applicative<std::remove_cvref_t<CONTEXT>>>
 struct zero_fn {
     /** The context in its witness-free failure state. */
-    constexpr auto operator()() const
+    [[nodiscard]] constexpr auto operator()() const
+        noexcept(noexcept(TC.zero()))
         requires requires { TC.zero(); }
     {
         return TC.zero();
@@ -441,9 +675,13 @@ struct zip_with_fn {
                         std::declval<FIRST_ARGUMENT>(),
                         std::declval<SECOND_ARGUMENT>());
         }
-    constexpr auto operator()(FUNCTION &&function,
-                              FIRST_ARGUMENT &&first_argument,
-                              SECOND_ARGUMENT &&second_argument) const {
+    [[nodiscard]] constexpr auto
+    operator()(FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
+               SECOND_ARGUMENT &&second_argument) const
+        noexcept(noexcept(
+            TC.zip_with(std::forward<FUNCTION>(function),
+                        std::forward<FIRST_ARGUMENT>(first_argument),
+                        std::forward<SECOND_ARGUMENT>(second_argument)))) {
         return TC.zip_with(std::forward<FUNCTION>(function),
                            std::forward<FIRST_ARGUMENT>(first_argument),
                            std::forward<SECOND_ARGUMENT>(second_argument));
@@ -460,8 +698,12 @@ struct discard_first_fn {
             TC.discard_first(std::declval<FIRST_ARGUMENT>(),
                              std::declval<SECOND_ARGUMENT>());
         }
-    constexpr auto operator()(FIRST_ARGUMENT &&first_argument,
-                              SECOND_ARGUMENT &&second_argument) const {
+    [[nodiscard]] constexpr auto
+    operator()(FIRST_ARGUMENT &&first_argument,
+               SECOND_ARGUMENT &&second_argument) const
+        noexcept(noexcept(
+            TC.discard_first(std::forward<FIRST_ARGUMENT>(first_argument),
+                             std::forward<SECOND_ARGUMENT>(second_argument)))) {
         return TC.discard_first(std::forward<FIRST_ARGUMENT>(first_argument),
                                 std::forward<SECOND_ARGUMENT>(second_argument));
     }
@@ -477,8 +719,12 @@ struct discard_second_fn {
             TC.discard_second(std::declval<FIRST_ARGUMENT>(),
                               std::declval<SECOND_ARGUMENT>());
         }
-    constexpr auto operator()(FIRST_ARGUMENT &&first_argument,
-                              SECOND_ARGUMENT &&second_argument) const {
+    [[nodiscard]] constexpr auto
+    operator()(FIRST_ARGUMENT &&first_argument,
+               SECOND_ARGUMENT &&second_argument) const
+        noexcept(noexcept(TC.discard_second(
+            std::forward<FIRST_ARGUMENT>(first_argument),
+            std::forward<SECOND_ARGUMENT>(second_argument)))) {
         return TC.discard_second(
             std::forward<FIRST_ARGUMENT>(first_argument),
             std::forward<SECOND_ARGUMENT>(second_argument));
@@ -555,10 +801,14 @@ concept applicative_object =
 //! `function` accepts.
 template <class Impl>
 template <class FUNCTION, class FIRST_ARGUMENT, class... REST_ARGUMENTS>
-constexpr auto
-derive_applicative<Impl>::invoke(this auto &&self, FUNCTION &&function,
-                                 FIRST_ARGUMENT &&first_argument,
-                                 REST_ARGUMENTS &&...rest_arguments)
+[[nodiscard]] constexpr auto derive_applicative<Impl>::invoke(
+    this auto &&self, FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
+    REST_ARGUMENTS
+        &&...rest_arguments) noexcept(detail::
+                                          applicative_invoke_nothrow<
+                                              Impl, decltype(self), FUNCTION,
+                                              FIRST_ARGUMENT,
+                                              REST_ARGUMENTS...>)
     requires requires(const Impl &impl) {
         impl.invoke(std::forward<FUNCTION>(function),
                     std::forward<FIRST_ARGUMENT>(first_argument),
@@ -613,9 +863,12 @@ derive_applicative<Impl>::invoke(this auto &&self, FUNCTION &&function,
 //! directly, so no derivation cycle with `invoke` arises.
 template <class Impl>
 template <class FUNCTION_IN_CONTEXT, class ARGUMENT_IN_CONTEXT>
-constexpr auto derive_applicative<Impl>::ap(this auto &&self,
-                                            FUNCTION_IN_CONTEXT &&function,
-                                            ARGUMENT_IN_CONTEXT &&argument)
+[[nodiscard]] constexpr auto derive_applicative<Impl>::ap(
+    this auto &&self, FUNCTION_IN_CONTEXT &&function,
+    ARGUMENT_IN_CONTEXT &&
+        argument) noexcept(detail::applicative_ap_nothrow<Impl, decltype(self),
+                                                          FUNCTION_IN_CONTEXT,
+                                                          ARGUMENT_IN_CONTEXT>)
     requires requires(const Impl &impl) {
         impl.ap(std::forward<FUNCTION_IN_CONTEXT>(function),
                 std::forward<ARGUMENT_IN_CONTEXT>(argument));
@@ -652,9 +905,11 @@ constexpr auto derive_applicative<Impl>::ap(this auto &&self,
 //! `function` to the value held by `argument`.
 template <class Impl>
 template <class FUNCTION, class ARGUMENT>
-constexpr auto derive_applicative<Impl>::map(this auto &&self,
-                                             FUNCTION &&function,
-                                             ARGUMENT &&argument)
+[[nodiscard]] constexpr auto derive_applicative<Impl>::map(
+    this auto &&self, FUNCTION &&function,
+    ARGUMENT &&
+        argument) noexcept(detail::applicative_map_nothrow<Impl, decltype(self),
+                                                           FUNCTION, ARGUMENT>)
     requires requires(const Impl &impl) {
         impl.map(std::forward<FUNCTION>(function),
                  std::forward<ARGUMENT>(argument));
@@ -683,7 +938,9 @@ constexpr auto derive_applicative<Impl>::map(this auto &&self,
 //! \returns The single value in context holding `value`.
 template <class Impl>
 template <class VALUE>
-constexpr auto derive_applicative<Impl>::lift(this auto &&self, VALUE &&value)
+[[nodiscard]] constexpr auto
+derive_applicative<Impl>::lift(this auto &&self, VALUE &&value) noexcept(
+    detail::applicative_lift_nothrow<Impl, decltype(self), VALUE>)
     requires requires(const Impl &impl) {
         impl.lift(std::forward<VALUE>(value));
     } || requires { self.pure(std::forward<VALUE>(value)); }
@@ -707,10 +964,13 @@ constexpr auto derive_applicative<Impl>::lift(this auto &&self, VALUE &&value)
 //! `function` to the values held by `first_argument` and `second_argument`.
 template <class Impl>
 template <class FUNCTION, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-constexpr auto
-derive_applicative<Impl>::zip_with(this auto &&self, FUNCTION &&function,
-                                   FIRST_ARGUMENT &&first_argument,
-                                   SECOND_ARGUMENT &&second_argument)
+[[nodiscard]] constexpr auto derive_applicative<Impl>::zip_with(
+    this auto &&self, FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
+    SECOND_ARGUMENT
+        &&second_argument) noexcept(detail::
+                                        applicative_zip_with_nothrow<
+                                            Impl, decltype(self), FUNCTION,
+                                            FIRST_ARGUMENT, SECOND_ARGUMENT>)
     requires requires(const Impl &impl) {
         impl.zip_with(std::forward<FUNCTION>(function),
                       std::forward<FIRST_ARGUMENT>(first_argument),
@@ -752,10 +1012,13 @@ derive_applicative<Impl>::zip_with(this auto &&self, FUNCTION &&function,
 //! `second_argument` holds.
 template <class Impl>
 template <class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-constexpr auto
-derive_applicative<Impl>::discard_first(this auto &&self,
-                                        FIRST_ARGUMENT &&first_argument,
-                                        SECOND_ARGUMENT &&second_argument)
+[[nodiscard]] constexpr auto derive_applicative<Impl>::discard_first(
+    this auto &&self, FIRST_ARGUMENT &&first_argument,
+    SECOND_ARGUMENT
+        &&second_argument) noexcept(detail::
+                                        applicative_discard_first_nothrow<
+                                            Impl, decltype(self),
+                                            FIRST_ARGUMENT, SECOND_ARGUMENT>)
     requires requires(const Impl &impl) {
         impl.discard_first(std::forward<FIRST_ARGUMENT>(first_argument),
                            std::forward<SECOND_ARGUMENT>(second_argument));
@@ -794,10 +1057,13 @@ derive_applicative<Impl>::discard_first(this auto &&self,
 //! `first_argument` holds.
 template <class Impl>
 template <class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-constexpr auto
-derive_applicative<Impl>::discard_second(this auto &&self,
-                                         FIRST_ARGUMENT &&first_argument,
-                                         SECOND_ARGUMENT &&second_argument)
+[[nodiscard]] constexpr auto derive_applicative<Impl>::discard_second(
+    this auto &&self, FIRST_ARGUMENT &&first_argument,
+    SECOND_ARGUMENT
+        &&second_argument) noexcept(detail::
+                                        applicative_discard_second_nothrow<
+                                            Impl, decltype(self),
+                                            FIRST_ARGUMENT, SECOND_ARGUMENT>)
     requires requires(const Impl &impl) {
         impl.discard_second(std::forward<FIRST_ARGUMENT>(first_argument),
                             std::forward<SECOND_ARGUMENT>(second_argument));
@@ -832,7 +1098,9 @@ derive_applicative<Impl>::discard_second(this auto &&self,
 //! participation is therefore never something an instance declares.
 template <class Impl>
 template <class TARGET_GRADE, class CARRIER>
-constexpr auto derive_applicative<Impl>::subsume(this auto &&, CARRIER &&value)
+[[nodiscard]] constexpr auto
+derive_applicative<Impl>::subsume(this auto &&, CARRIER &&value) noexcept(
+    noexcept(grade_subsume<TARGET_GRADE>(std::forward<CARRIER>(value))))
     requires requires {
         grade_subsume<TARGET_GRADE>(std::forward<CARRIER>(value));
     }
@@ -849,9 +1117,20 @@ constexpr auto derive_applicative<Impl>::subsume(this auto &&, CARRIER &&value)
 template <class Impl>
 template <class APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
           class... REST_ARGUMENTS>
-constexpr auto derive_applicative<Impl>::invoke_with(
+[[nodiscard]] constexpr auto derive_applicative<Impl>::invoke_with(
     this auto &&, const APPLICATIVE_MAP &applicative_map, FUNCTION &&function,
-    FIRST_ARGUMENT &&first_argument, REST_ARGUMENTS &&...rest_arguments)
+    FIRST_ARGUMENT &&first_argument,
+    REST_ARGUMENTS
+        &&...rest_arguments) noexcept(noexcept(applicative_map
+                                                   .invoke(
+                                                       std::forward<FUNCTION>(
+                                                           function),
+                                                       std::forward<
+                                                           FIRST_ARGUMENT>(
+                                                           first_argument),
+                                                       std::forward<
+                                                           REST_ARGUMENTS>(
+                                                           rest_arguments)...)))
     requires requires {
         applicative_map.invoke(std::forward<FUNCTION>(function),
                                std::forward<FIRST_ARGUMENT>(first_argument),
@@ -871,10 +1150,19 @@ constexpr auto derive_applicative<Impl>::invoke_with(
 template <class Impl>
 template <const auto &APPLICATIVE_MAP, class FUNCTION, class FIRST_ARGUMENT,
           class... REST_ARGUMENTS>
-constexpr auto
-derive_applicative<Impl>::invoke_with(this auto &&, FUNCTION &&function,
-                                      FIRST_ARGUMENT &&first_argument,
-                                      REST_ARGUMENTS &&...rest_arguments)
+[[nodiscard]] constexpr auto derive_applicative<Impl>::invoke_with(
+    this auto &&, FUNCTION &&function, FIRST_ARGUMENT &&first_argument,
+    REST_ARGUMENTS
+        &&...rest_arguments) noexcept(noexcept(APPLICATIVE_MAP
+                                                   .invoke(
+                                                       std::forward<FUNCTION>(
+                                                           function),
+                                                       std::forward<
+                                                           FIRST_ARGUMENT>(
+                                                           first_argument),
+                                                       std::forward<
+                                                           REST_ARGUMENTS>(
+                                                           rest_arguments)...)))
     requires requires {
         APPLICATIVE_MAP.invoke(std::forward<FUNCTION>(function),
                                std::forward<FIRST_ARGUMENT>(first_argument),
@@ -901,7 +1189,9 @@ derive_applicative<Impl>::invoke_with(this auto &&, FUNCTION &&function,
 //! \remarks The name `invoke` denotes an operation object: it is not found by
 //! argument-dependent lookup, and no explicit template argument list may be
 //! given in a call to it. The context is deduced from the first in-context
-//! argument; every operand shares it.
+//! argument; every operand shares it. The exception specification is
+//! equivalent to `noexcept(applicative<C>.invoke(function, first_argument,
+//! rest_arguments...))`.
 inline constexpr invoke_fn invoke{};
 
 //! \seebelow
@@ -913,7 +1203,8 @@ inline constexpr invoke_fn invoke{};
 //! \remarks The name `ap` denotes an operation object: it is not found by
 //! argument-dependent lookup, and no explicit template argument list may be
 //! given in a call to it. The context is deduced from the argument in context,
-//! not from the callable in context.
+//! not from the callable in context. The exception specification is
+//! equivalent to `noexcept(applicative<C>.ap(function, argument))`.
 inline constexpr ap_fn ap{};
 
 //! \seebelow
@@ -926,7 +1217,8 @@ inline constexpr ap_fn ap{};
 //! context. None is found by argument-dependent lookup, and `CONTEXT` is the
 //! only template argument a call gives. The context is named rather than
 //! deduced: `pure` builds a context instead of consuming one, so no argument
-//! carries it.
+//! carries it. The exception specification is equivalent to
+//! `noexcept(applicative<C>.pure(value))`.
 template <class CONTEXT>
 inline constexpr pure_fn<CONTEXT> pure{};
 
@@ -942,7 +1234,9 @@ inline constexpr pure_fn<CONTEXT> pure{};
 //! context is named for the reason `pure`'s is: the operation builds a
 //! context rather than consuming one. The grade of the result is the
 //! object's business; for the error-set model it is the join of the context's
-//! grade with the grade `error`'s type alone would carry, spelled lazily.
+//! grade with the grade `error`'s type alone would carry, spelled lazily. The
+//! exception specification is equivalent to
+//! `noexcept(applicative<C>.raise(error))`.
 template <class CONTEXT>
 inline constexpr raise_fn<CONTEXT> raise{};
 
@@ -956,6 +1250,8 @@ inline constexpr raise_fn<CONTEXT> raise{};
 //! disjunction an Alternative object would supply, and is spelled now so that
 //! `raise` and `zero` are decided under one rule. `std::expected` has no
 //! `zero`: its failure state needs a witness, which is what `raise` supplies.
+//! The exception specification is equivalent to
+//! `noexcept(applicative<C>.zero())`.
 template <class CONTEXT>
 inline constexpr zero_fn<CONTEXT> zero{};
 
@@ -968,7 +1264,9 @@ inline constexpr zero_fn<CONTEXT> zero{};
 //! second_argument)`, with each argument forwarded in its own value category.
 //! \remarks The name `zip_with` denotes an operation object: it is not found by
 //! argument-dependent lookup, and no explicit template argument list may be
-//! given in a call to it.
+//! given in a call to it. The exception specification is equivalent to
+//! `noexcept(applicative<C>.zip_with(function, first_argument,
+//! second_argument))`.
 inline constexpr zip_with_fn zip_with{};
 
 //! \seebelow
@@ -980,7 +1278,8 @@ inline constexpr zip_with_fn zip_with{};
 //! second_argument)`, with each argument forwarded in its own value category.
 //! \remarks The name `discard_first` denotes an operation object: it is not
 //! found by argument-dependent lookup, and no explicit template argument list
-//! may be given in a call to it.
+//! may be given in a call to it. The exception specification is equivalent to
+//! `noexcept(applicative<C>.discard_first(first_argument, second_argument))`.
 inline constexpr discard_first_fn discard_first{};
 
 //! \seebelow
@@ -992,7 +1291,8 @@ inline constexpr discard_first_fn discard_first{};
 //! second_argument)`, with each argument forwarded in its own value category.
 //! \remarks The name `discard_second` denotes an operation object: it is not
 //! found by argument-dependent lookup, and no explicit template argument list
-//! may be given in a call to it.
+//! may be given in a call to it. The exception specification is equivalent to
+//! `noexcept(applicative<C>.discard_second(first_argument, second_argument))`.
 inline constexpr discard_second_fn discard_second{};
 
 } // namespace beman::transpose
