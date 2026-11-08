@@ -6,7 +6,7 @@
 
 ```cpp
 template<class LEFT, class RIGHT>
-struct error_set_join;
+  struct error_set_join;
 ```
 
 [x]{.pnum} *Remarks*: `error_set_join<LEFT, RIGHT>::type` is the union of two error sets. Canonicalization reduces the union to pack concatenation.
@@ -27,16 +27,16 @@ using error_set_bottom = error_set<>;
 [x+1]{.pnum} *Remarks*: `error_set_bottom` is the identity of join: the empty set.
 
 ```cpp
-template<class LEFT, class RIGHT> inline constexpr bool error_set_subsumes_v = false;
+template<class LEFT, class RIGHT>
+  inline constexpr bool error_set_subsumes_v = false;
 ```
 
 [x+2]{.pnum} *Remarks*: `error_set_subsumes_v<LEFT, RIGHT>` is `true` when every alternative of `LEFT` is an alternative of `RIGHT`. By order-from-join this holds exactly when the join of `LEFT` and `RIGHT` is `RIGHT`, so the only implicit widenings are subset inclusions: an error set can widen to a superset and never the other way.
 
 ```cpp
 template<class... ERRORS>
-constexpr auto error_set_combine(const error_set_of<ERRORS...>& lhs,
-                                 const error_set_of<ERRORS...>& rhs)
-    -> error_set_of<ERRORS...>;
+  constexpr auto error_set_combine(const error_set_of<ERRORS...>& lhs, const error_set_of<ERRORS...>& rhs)
+      -> error_set_of<ERRORS...>;
 ```
 
 [x+3]{.pnum} *Effects*: Equivalent to:

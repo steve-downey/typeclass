@@ -5,7 +5,8 @@
 ## Observers [transpose.errset.obs]{- .sref} {-}
 
 ```cpp
-template<class ERROR> static constexpr auto contains() noexcept -> bool;
+template<class ERROR>
+  static constexpr auto contains() noexcept -> bool;
 ```
 
 [x]{.pnum} *Returns*: `true` if and only if `ERROR` is one of the alternatives.
@@ -13,7 +14,8 @@ template<class ERROR> static constexpr auto contains() noexcept -> bool;
 [x+1]{.pnum} *Remarks*: This is a type-level question -- what the computation *may* raise -- not a question about the value.
 
 ```cpp
-template<class ERROR> constexpr auto holds() const noexcept -> bool;
+template<class ERROR>
+  constexpr auto holds() const noexcept -> bool;
 ```
 
 [x+2]{.pnum} *Constraints*: `ERROR` is one of the alternatives.
@@ -23,7 +25,8 @@ template<class ERROR> constexpr auto holds() const noexcept -> bool;
 [x+4]{.pnum} *Remarks*: This is a value-level question -- what was actually raised.
 
 ```cpp
-template<class ERROR> constexpr auto witness() const -> const optional<ERROR>&;
+template<class ERROR>
+  constexpr auto witness() const -> const optional<ERROR>&;
 ```
 
 [x+5]{.pnum} *Constraints*: `ERROR` is one of the alternatives.
@@ -39,7 +42,8 @@ constexpr auto witness_count() const noexcept -> size_t;
 [x+8]{.pnum} *Remarks*: Always at least one, by the class invariant. Short-circuiting composition produces exactly one; accumulating composition may produce more. It is an observer rather than an implementation detail so that a caller can check `visit`'s precondition instead of tripping it.
 
 ```cpp
-template<class HANDLER> constexpr auto visit(HANDLER&& handler) const -> decltype(auto);
+template<class HANDLER>
+  constexpr auto visit(HANDLER&& handler) const -> decltype(auto);
 ```
 
 [x+9]{.pnum} *Preconditions*: `witness_count()` is 1.

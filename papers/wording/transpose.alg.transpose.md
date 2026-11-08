@@ -8,7 +8,7 @@
 inline constexpr $unspecified$ transpose;
 ```
 
-[x]{.pnum} *Constraints*: For a call `transpose(value)`, `traversable` names a traversable object for `value`'s type, and `applicative` names an applicative object for that structure's element type.
+[x]{.pnum} *Constraints*: For a call `transpose(value)`, `traversable` names a traversable object for `value`'s type, and `applicative` names an applicative object for that structure's element type. That traversable object's `transpose(value)` is valid with `value` forwarded.
 
 [x+1]{.pnum} *Effects*: Equivalent to traversing `value` with the identity function: a structure of contextual values, `structure<context<T>>`, becomes a single contextual value of the structure, `context<structure<T>>`, preserving shape. The applicative object is inferred from the structure's element type.
 

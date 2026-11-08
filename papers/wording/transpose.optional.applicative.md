@@ -6,16 +6,15 @@
 
 ```cpp
 template<class VALUE>
-constexpr auto pure(this auto&&, VALUE&& value) -> optional<remove_cvref_t<VALUE>>;
+  constexpr auto pure(this auto&&, VALUE&& value) -> optional<remove_cvref_t<VALUE>>;
 ```
 
 [x]{.pnum} *Returns*: An engaged `optional` holding `value`.
 
 ```cpp
 template<class FUNCTION, class FIRST, class... REST>
-constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest)
-    -> optional<remove_cvref_t<
-        invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>>>;
+  constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest)
+      -> optional<remove_cvref_t<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>>>;
 ```
 
 [x+1]{.pnum} *Constraints*:

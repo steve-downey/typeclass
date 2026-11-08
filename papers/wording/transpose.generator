@@ -1,3 +1,4 @@
-specgen 0.6.0 (git 667a6adab561323985115f89defef0594f4b2d0a)
+specgen 0.15.0 (git a8fde339e1dab5f95979fffaf535a023465e3d66)
 clang args: -std=c++2c
--I/home/sdowney/src/steve-downey/typeclass/main/include
+-I/home/sdowney/src/steve-downey/typeclass/tree-coherence-conformance/include
+--gcc-toolchain=/home/sdowney/install/gcc-16

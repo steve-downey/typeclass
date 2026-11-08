@@ -6,7 +6,7 @@
 
 ```cpp
 template<class T, class F>
-constexpr auto for_each(this auto&& self, T&& value, F&& function);
+  constexpr auto for_each(this auto&& self, T&& value, F&& function);
 ```
 
 [x]{.pnum} *Constraints*: Let `C` be the context `function` returns for an argument of type `$traversal-argument-t$<decltype(self), T>`. `self.traverse` accepts the object `applicative<C>` names, `function`, and `value`.
@@ -20,7 +20,8 @@ constexpr auto for_each(this auto&& self, T&& value, F&& function);
 [x+4]{.pnum} *Remarks*: Elements are visited in the structure's iteration order. If `self` declares consumption and `value` is a non-`const`, non-`volatile` rvalue, `function` receives rvalue elements; otherwise it receives `const` lvalue elements.
 
 ```cpp
-template<class T> constexpr auto transpose(this auto&& self, T&& value);
+template<class T>
+  constexpr auto transpose(this auto&& self, T&& value);
 ```
 
 [x+5]{.pnum} *Constraints*: `element_type` is a context for which `applicative` names an applicative object, and `self.traverse` accepts that object, an identity function, and `value`.
