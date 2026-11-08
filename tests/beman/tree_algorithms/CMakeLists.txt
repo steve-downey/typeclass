@@ -23,6 +23,7 @@ foreach(
         expression
         functors
         conformance
+        tree_typeclasses
         binary_tree
         fold_map
         fringe_tree

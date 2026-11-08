@@ -184,3 +184,34 @@ as required by [operation-object-wording](../transpose/decisions.md#operation-ob
 Checking only the inferred Applicative or element metadata is insufficient
 when a representation rejects a particular result. This enforces the existing
 contract; it adds no lookup mechanism or superclass requirement.
+
+## Stage 4 declaration details
+
+`tree_typeclasses.hpp` is the consumer header for payload Functor, Foldable,
+and Traversable on BinaryTree, BinaryTreeFix, FringeTree, and RoseTreeFix,
+and for Foldable on Expr's integer constants. The library umbrella includes
+it. Fix metadata and registrations live here and recognize only the declared
+binary/rose layer families; Fix itself stays mechanism-free. No general
+payload construction is inferred for Expr, Nat, or arbitrary Fix families.
+
+The lookup tier adds `fold_map(function, tree, monoid)`, delegating to its
+existing explicit-result structural fold. It preserves the named mapper and
+passed monoid by reference during the synchronous fold. The existing
+projections/layer maps copy payloads, and their carrier folds copy and assign
+results: this bridge requires copy-constructible payloads and copyable result
+carriers. Payload Functor and Traversable instead read source payloads by
+const reference and support fresh move-only results. They own shape metadata
+and reuse transpose's vector sequencing, including native collection and
+changing carriers. Binary sparse slots, fringe Empty/Leaf/Branch topology,
+and rose child order survive reconstruction.
+
+The independently ported transpose example BinaryTree retains its separate
+type and Applicative example. Tests pin agreement of payload/effect order
+with the library adapter. Expr's example-local length implementation uses
+the shared Foldable; its integer-only optional transformation remains an
+explicit example operation rather than a generic Traversable registration.
+
+These are consumer-side evidence APIs, consistent with the extraction
+compatibility checklist. They change neither structural verb signatures nor
+the proposed paper surface. Evidence repositories retain their independent
+implementations; extraction remains one-way.

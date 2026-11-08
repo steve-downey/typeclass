@@ -22,7 +22,10 @@ chunk-traversal migration is included in stage 2. Stage 3 configured
 reconstruction, payload Functors and concatenation monoids are complete on
 `tree-coherence-reconstruction`; see the
 [reconstruction implementation note](coherence-reconstruction.md).
-Stages 4–6 remain outstanding.
+Stage 4 payload adapters and the monoid-object fold bridge are complete on
+`tree-coherence-payload-adapters`; see the
+[payload implementation note](coherence-payload-adapters.md).
+Stages 5–6 remain outstanding.
 
 ## Target contracts
 

@@ -46,6 +46,10 @@ int result = fold_fix<int>(eval_algebra, tree);
 int sum = fold_map<int>(std::identity{}, std::plus{}, 0, tree);
 ```
 
+The [payload typeclass guide](typeclass-support.md) describes mapping, folding,
+and effectful traversal for the supported binary, fringe, and rose trees,
+including the distinction from structural child-position Functors.
+
 Full runnable examples can be found in [`examples/`](../../examples/tree_algorithms/):
 
 * [`fixpoint_tree_example.cpp`](../../examples/tree_algorithms/fixpoint_tree_example.cpp) — a

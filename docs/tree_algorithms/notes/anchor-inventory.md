@@ -50,7 +50,7 @@ e4beac7f (fold_map lookup), 8f25579d (ExprLayerFoldMap), and
 | 3959d7ab-f1fa-4fd7-b2b9-886a1f7610a2 | examples/tree_algorithms/fixpoint_tree_example.cpp | expression type system | article L69 |
 | 02640f07-f080-4eec-bd90-b414fabd4b7b | examples/tree_algorithms/fixpoint_tree_example.cpp | smart constructors | article L91 |
 | 2526ec45-2e52-4b56-aab0-1034b078a459 | examples/tree_algorithms/fixpoint_tree_example.cpp | main + one-layer eval + local fold | article L110 (region includes working local fold; trim decision at wiring time) |
-| a66c0122-f24d-4858-a802-cf76f87969e9 | examples/tree_algorithms/expression_algorithms.cpp | example-local Foldable/Traversable maps | follow-up article (spare) |
+| a66c0122-f24d-4858-a802-cf76f87969e9 | examples/tree_algorithms/expression_algorithms.cpp | integer-only optional transformation and lookup; Foldable comes from the shared adapter | follow-up article (spare) |
 | 868a8228-44a7-4761-8822-28b622d6b9a0 | examples/tree_algorithms/expression_algorithms.cpp | validate_impl | algorithm-object story |
 | 7226de56-d7ce-44c6-9e99-849da548d3e4 | examples/tree_algorithms/expression_algorithms.cpp | transform_if_large_impl | algorithm-object story |
 | fba6bbba-6cd8-4f4f-ba18-b584cf672a79 | examples/tree_algorithms/binary_tree_adapt.cpp | to_fix + shape algebra + fold + from_fix | article TODO(3a) L714 |
@@ -105,3 +105,13 @@ Binary, fringe, and rose layers also declare the payload copy requirement.
 UUIDs are unchanged. The fold_fix/unfold_fix/refold and fold_map algorithm signatures
 and the paper synopsis are unchanged; only stale missing-instance diagnostics
 in the lookup fold_map regions changed spelling.
+
+## Payload adapter amendment (2026-11-08)
+
+The expression algorithm example uses the shared constant Foldable and retains
+its optional<int> transformation as a restricted example operation. Its UUIDs
+are unchanged; the inventory describes the narrower role of a66c0122 above.
+The new consumer monoid-object overload in fold_map_lookup.hpp is outside the
+existing anchored regions. Proposed structural signatures, their anchors, and
+the hand-mirrored paper synopsis are unchanged. Payload adapters are evidence
+in tree_typeclasses.hpp, not an extension of the proposed algorithm family.
