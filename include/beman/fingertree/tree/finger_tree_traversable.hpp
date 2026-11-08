@@ -4,18 +4,17 @@
 
 // Traversable constraint for FingerTree:
 // - Materialization: traverse materializes via flatten() into a vector.
-// - Preservation: monoid measure semantics are preserved through the traversal.
 // - Reconstruction: results are rebuilt via FingerTree<U>::from_sequence(),
-//   re-applying the default UnitMeasure to the result type.
+//   applying the default UnitMeasure, monoid, and allocator to the result type.
 // - Applicative semantics: traversals run left-to-right independent of tree
 //   structure.
 //
-// Rationale matches finger_tree_traversable.hpp: traversal is not a primary
-// performance path, so O(n) materialization is acceptable. Wrappers that need
-// structure-preserving traversal can override.
+// Traversal is not a primary performance path, so O(n) materialization is
+// acceptable. Wrappers that need structure-preserving traversal can override.
 
 #include <beman/fingertree/tree/finger_tree.hpp>
 #include <beman/transpose/apply.hpp>
+#include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
 #include <concepts>
@@ -45,18 +44,10 @@ struct FingerTreeTraversableImpl {
         using Context = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
         using U       = beman::transpose::applicative_value_t<Context>;
 
-        auto accumulated = applicative.pure(std::vector<U>{});
-
-        for (const auto& value : tree.flatten()) {
-            auto lifted = std::invoke(function, value);
-            accumulated = applicative.invoke(
-                [](std::vector<U> values, U element) {
-                    values.push_back(std::move(element));
-                    return values;
-                },
-                std::move(accumulated),
-                std::move(lifted));
-        }
+        // Keep the persistent input's const-reference element convention.
+        const auto values = tree.flatten();
+        auto       accumulated =
+            beman::transpose::traversable<std::vector<T>>.traverse(applicative, std::forward<F>(function), values);
 
         return applicative.invoke(
             [](std::vector<U> values) {

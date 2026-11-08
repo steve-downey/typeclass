@@ -9,15 +9,18 @@
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/fold.hpp>
 #include <beman/transpose/monoid.hpp>
+#include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
 #include <cassert>
 #include <concepts>
+#include <cstddef>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <type_traits>
 #include <utility>
+#include <vector>
 
 namespace example {
 
@@ -254,6 +257,9 @@ struct BinaryTreeApplicativeMap
 /** Traversable typeclass instance for BinaryTree<T>.
  * traverse maps each node value into an applicative context and rebuilds a
  * BinaryTree inside that context, preserving the original tree's shape.
+ * Values and effects are visited in-order, once per node. Sequencing uses
+ * O(n) auxiliary node/shape storage; reconstruction owns its shape metadata
+ * so deferred effects can outlive the source tree.
  * @tparam T element type of the tree being traversed
  */
 template <class T>
@@ -275,84 +281,67 @@ struct BinaryTreeTraversableImpl {
     // diagnose: the return type is deduced, so a callable this overload
     // cannot invoke would otherwise reach the body.
     template <class APPLICATIVE, class F>
-        requires std::invocable<F &, const T &>
-    auto traverse(this auto &&self, const APPLICATIVE &applicative,
-                  F &&function, const BinaryTree<T> &tree) {
-        auto value_context =
-            std::invoke(std::forward<F>(function), tree.value());
-        using Context = std::remove_cvref_t<decltype(value_context)>;
+        requires std::invocable<F &, const T &> &&
+                 beman::transpose::applicative_object_for<
+                     APPLICATIVE,
+                     std::remove_cvref_t<std::invoke_result_t<F &, const T &>>>
+    auto traverse(this auto &&, const APPLICATIVE &applicative, F &&function,
+                  const BinaryTree<T> &tree) {
+        using Context =
+            std::remove_cvref_t<std::invoke_result_t<F &, const T &>>;
         using U = beman::transpose::applicative_value_t<Context>;
-        using TreeContext = decltype(applicative.invoke(
-            [](auto &&value) {
-                using V = std::remove_cvref_t<decltype(value)>;
-                return BinaryTree<V>::leaf(
-                    std::forward<decltype(value)>(value));
-            },
-            value_context));
 
-        if (!tree.has_left() && !tree.has_right()) {
-            return applicative.invoke(
-                [](auto &&value) {
-                    using V = std::remove_cvref_t<decltype(value)>;
-                    return BinaryTree<V>::leaf(
-                        std::forward<decltype(value)>(value));
-                },
-                value_context);
-        }
-
-        std::optional<TreeContext> left_tree_context;
-        if (tree.has_left()) {
-            left_tree_context.emplace(
-                self.traverse(applicative, function, tree.left()));
-        }
-
-        std::optional<TreeContext> right_tree_context;
-        if (tree.has_right()) {
-            right_tree_context.emplace(
-                self.traverse(applicative, function, tree.right()));
-        }
-
-        auto to_child_ptr = [&](const auto &child_tree_context) {
-            return applicative.invoke(
-                [](auto &&subtree) {
-                    using SubTree = std::remove_cvref_t<decltype(subtree)>;
-                    return std::make_shared<SubTree>(
-                        std::forward<decltype(subtree)>(subtree));
-                },
-                child_tree_context);
+        struct Shape {
+            std::optional<std::size_t> left;
+            std::optional<std::size_t> right;
         };
-
-        auto empty_child_like = [&](const auto &child_tree_context) {
-            return applicative.invoke(
-                [](const auto &) { return std::shared_ptr<BinaryTree<U>>{}; },
-                child_tree_context);
+        std::vector<Shape> shape;
+        std::vector<const BinaryTree<T> *> nodes;
+        auto record = [&](auto &&self,
+                          const BinaryTree<T> &node) -> std::size_t {
+            std::optional<std::size_t> left;
+            if (node.has_left())
+                left = self(self, node.left());
+            const auto position = nodes.size();
+            nodes.push_back(&node);
+            shape.push_back({left, {}});
+            if (node.has_right()) {
+                const auto right = self(self, node.right());
+                shape[position].right = right;
+            }
+            return position;
         };
+        const auto root = record(record, tree);
 
-        auto left_context = [&]() {
-            if (left_tree_context.has_value()) {
-                return to_child_ptr(*left_tree_context);
-            }
-
-            return empty_child_like(*right_tree_context);
-        }();
-
-        auto right_context = [&]() {
-            if (right_tree_context.has_value()) {
-                return to_child_ptr(*right_tree_context);
-            }
-
-            return empty_child_like(*left_tree_context);
-        }();
-
+        // One whole-tree sequencing pass admits native runtime collection,
+        // including policies whose pure and composed carriers differ.
+        const auto &ordered_nodes = nodes;
+        auto accumulated =
+            beman::transpose::traversable<std::vector<const BinaryTree<T> *>>.traverse(
+                applicative,
+                [&](const BinaryTree<T> *node) {
+                    return std::invoke(function, node->value());
+                },
+                ordered_nodes);
         return applicative.invoke(
-            [](auto &&value, auto &&left, auto &&right) {
-                using V = std::remove_cvref_t<decltype(value)>;
-                return BinaryTree<V>::from_children_ptrs(
-                    std::forward<decltype(value)>(value),
-                    std::forward<decltype(left)>(left),
-                    std::forward<decltype(right)>(right));
+            [shape = std::move(shape), root](std::vector<U> values) {
+                using ResultTree = BinaryTree<U>;
+                auto rebuild = [&](auto &&self,
+                                   std::size_t position) -> ResultTree {
+                    std::shared_ptr<ResultTree> left, right;
+                    if (shape[position].left)
+                        left = ResultTree::make_ptr(
+                            self(self, *shape[position].left));
+                    if (shape[position].right)
+                        right = ResultTree::make_ptr(
+                            self(self, *shape[position].right));
+                    return ResultTree::from_children_ptrs(
+                        std::move(values[position]), std::move(left),
+                        std::move(right));
+                };
+                return rebuild(rebuild, root);
             },
-            value_context, left_context, right_context);
+            std::move(accumulated));
     }
 };
 

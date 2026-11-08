@@ -9,6 +9,11 @@ them and explicit boundaries where an interface does not apply. Repair the
 observed correctness failures first. Then complete the typeclass and
 structural adapters without changing the independence of the three proposals.
 
+Stage 1 is complete on `tree-coherence-correctness`; it does
+not depend on the proposed API decisions. See the
+[correctness implementation note](coherence-correctness.md) for changes,
+validation, and remaining scope. Stages 0 and 2–6 remain outstanding.
+
 ## Target contracts
 
 - Transpose remains the only home of typeclass lookup, CRTP derivations,
