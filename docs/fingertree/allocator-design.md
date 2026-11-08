@@ -71,22 +71,18 @@ adds no storage.
 
 ### 2. Which allocations use the custom allocator
 
-**Yes** — `Elem<T,Monoid>` (leaf and node objects, 64 bytes each) and `Deep` (digit
-+ spine + measure, ~168 bytes each). These are the user-data nodes and the vast
-majority of the allocation cost.
+All `Elem<T, Monoid>` leaf and internal nodes, `Deep` nodes, spine
+shells, their control blocks, and the factory's temporary element-pointer
+vectors use the selected allocator. Spine shells bypass `uses_allocator`
+construction: their elements may be Node2/Node3 handles, so flattening them
+through the public allocator-extended constructor would change the structure.
+The shell and its control block are both allocated from the selected resource.
 
-**No** — the `FingerTree` spine shells (a 24-byte variant holding a `DeepPtr`).
-These are internal artifacts that hold no user data. They do not need to come
-from the same resource for the Lakos property to hold on the user-visible data
-graph.
-
-The exception is deliberate. Using `allocate_shared<const FingerTree>` for the
-shell would trigger the `std::uses_allocator` construction protocol, which calls
-the allocator-extended constructor. That constructor enforces coherency by
-rebuilding a tree from its leaf values --- but a spine shell may contain Node3
-objects, not leaf values, so flattening and rebuilding would produce a
-structurally wrong tree (leaves where nodes should be). `make_shared` avoids the
-protocol entirely.
+Functor and Traversable use ordinary temporary vectors for fresh values or
+source positions. These temporaries are not retained by the result tree.
+Every result node is built under the allocator owned by the reconstruction
+builder. Deferred builders own that allocator snapshot; the external resource
+must still outlive the resulting nodes.
 
 ### 3. Coherency enforcement at the public API surface
 
@@ -102,8 +98,15 @@ structural sharing is safe and fast. If they differ, the foreign subtree is
 | move `operator=` | O(1), move `d_repr` | O(N) rebuild |
 | Extended ctor `FingerTree(FingerTree&&, alloc)` | O(1), share | O(N) rebuild |
 
-The cost is accepted on purpose. Silent mixing is an unacceptable correctness
-risk; the rebuild is bounded and predictable. We take the predictable cost.
+Assignment also carries the incoming monoid instance. An unequal-resource
+assignment rebuilds under the destination allocator and incoming monoid, so
+cached tags agree with the stored instance.
+
+Native append additionally requires compatible measure laws and monoid state
+on operands whose cached nodes are shared. An allocator match does not prove
+measure compatibility. The explicit configured concatenation Monoid rebuilds
+both operands under its selected configuration; see the
+[typeclass guide](typeclass-support.md#concatenation-monoids).
 
 ### 4. Detecting allocator equality
 
@@ -125,11 +128,11 @@ runtime check compiles away --- zero overhead on the default path. For
 
 ```cpp
 FingerTree(FingerTree other, ALLOCATOR alloc)
-    : d_alloc(std::move(alloc)) {
+    : d_alloc(std::move(alloc)), d_monoid(other.d_monoid) {
     if (alloc_equal(d_alloc, other.d_alloc))
         d_repr = std::move(other.d_repr);
     else
-        *this = from_sequence(other.flatten(), d_alloc);
+        *this = from_sequence(other.flatten(), d_alloc, d_monoid);
 }
 ```
 
@@ -160,11 +163,13 @@ behavior per the standard, not a limitation to fix.
 
 ```cpp
 auto append(const FingerTree& right) const -> FingerTree {
-    if (!alloc_equal(d_alloc, right.d_alloc)) {
-        auto rebuilt = from_sequence(right.flatten(), d_alloc);
-        return app3(d_alloc, *this, {}, rebuilt);
+    if constexpr (!std::allocator_traits<ALLOCATOR>::is_always_equal::value) {
+        if (!alloc_equal(d_alloc, right.d_alloc)) {
+            auto rebuilt = from_sequence(right.flatten(), d_alloc, d_monoid);
+            return app3(d_alloc, d_monoid, *this, {}, rebuilt);
+        }
     }
-    return app3(d_alloc, *this, {}, right);
+    return app3(d_alloc, d_monoid, *this, {}, right);
 }
 ```
 
@@ -242,3 +247,19 @@ Structural sharing across two `pmr::FingerTree` instances backed by **different*
 resources is always safe: `append` detects the mismatch and rebuilds; assignment
 and the extended constructor do the same. The result is always coherent with the
 left-hand operand's resource.
+
+## Configured mapping and traversal
+
+`finger_tree_rebind` provides one owned reconstruction builder for Functor
+and Traversable. Same-payload mapping retains the concrete tree type,
+allocator and monoid; UnitMeasure and the declared wrapper families retain
+those configurations across supported type changes. Reconstruction recomputes
+all measures. The rvalue-vector factory moves fresh payloads into leaves,
+measuring each owned value before moving it into immutable storage. The
+const-vector factory retains its copying semantics.
+
+The wrappers accept configured backing trees and expose const backing access
+and const-reference payload walks. Interval reconstruction snapshots endpoint
+pairs independently of the effects. The [typeclass support guide](typeclass-support.md)
+describes supported rebindings, explicit custom declarations, and Rope's
+chunk-vector route.

@@ -18,7 +18,11 @@ validation, and remaining scope. Stage 0 is recorded in the
 [contract note](coherence-contracts.md). Stage 2 primitive constraints and
 object conformance are complete on `tree-coherence-conformance`; see the
 [conformance implementation note](coherence-conformance.md). Rope's explicit
-chunk-traversal migration is included in stage 2. Stages 3–6 remain outstanding.
+chunk-traversal migration is included in stage 2. Stage 3 configured
+reconstruction, payload Functors and concatenation monoids are complete on
+`tree-coherence-reconstruction`; see the
+[reconstruction implementation note](coherence-reconstruction.md).
+Stages 4–6 remain outstanding.
 
 ## Target contracts
 

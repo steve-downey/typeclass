@@ -438,3 +438,71 @@ TEST_CASE("typeclass: a missing instance is detectable before the call") {
         bt::has_instance_v<decltype(bt::foldable<Unregistered>)>);
     STATIC_REQUIRE_FALSE(bt::has_instance_v<decltype(bt::monad<Unregistered>)>);
 }
+
+namespace operation_test {
+// A representation with a deliberately restricted result family. Its
+// element metadata alone cannot establish availability of a traversal.
+template <class T>
+struct Restricted {
+    using value_type = T;
+    T value;
+};
+template <class T>
+struct RestrictedImpl {
+    using element_type = T;
+    template <class APPLICATIVE, class F>
+    constexpr auto traverse(this auto &&, const APPLICATIVE &applicative,
+                            F &&function, const Restricted<T> &source)
+        requires bt::applicative_object_for<
+                     APPLICATIVE, std::remove_cvref_t<
+                                      std::invoke_result_t<F &, const T &>>> &&
+                 std::same_as<bt::applicative_value_t<std::remove_cvref_t<
+                                  std::invoke_result_t<F &, const T &>>>,
+                              T>
+    {
+        return applicative.invoke(
+            [](T value) { return Restricted<T>{std::move(value)}; },
+            std::invoke(function, source.value));
+    }
+};
+template <class T>
+struct RestrictedMap : bt::derive_traversable<RestrictedImpl<T>> {};
+struct IntLift {
+    constexpr auto operator()(const int &n) const -> std::optional<int> {
+        return n * 10 + 1;
+    }
+};
+struct StringLift {
+    auto operator()(const int &n) const -> std::optional<std::string> {
+        return std::to_string(n);
+    }
+};
+} // namespace operation_test
+
+namespace beman::transpose {
+template <class T>
+inline constexpr auto traversable<operation_test::Restricted<T>> =
+    operation_test::RestrictedMap<T>{};
+} // namespace beman::transpose
+
+static_assert(bt::traverse(operation_test::IntLift{},
+                           operation_test::Restricted<int>{2})
+                  ->value == 21);
+static_assert(
+    !std::is_invocable_v<decltype(bt::traverse), operation_test::StringLift,
+                         const operation_test::Restricted<int> &>);
+static_assert(!std::is_invocable_v<
+              decltype(bt::transpose),
+              const operation_test::Restricted<std::optional<int>> &>);
+
+TEST_CASE("typeclass: traversal operations respect a selected instance's "
+          "result restrictions") {
+    using Tree = operation_test::Restricted<int>;
+    using Policy = std::remove_cvref_t<
+        decltype(bt::applicative<std::optional<std::string>>)>;
+    STATIC_REQUIRE(
+        !std::is_invocable_v<decltype(bt::traverse), operation_test::StringLift,
+                             const Tree &, Policy>);
+    const Tree source{2};
+    CHECK(bt::traverse(operation_test::IntLift{}, source)->value == 21);
+}

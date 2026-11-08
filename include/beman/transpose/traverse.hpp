@@ -597,7 +597,11 @@ struct traverse_fn {
     template <class F, class T,
               class POLICY = std::remove_cvref_t<
                   decltype(applicative<traverse_context_t<F, T>>)>>
-        requires applicative_object_for<POLICY, traverse_context_t<F, T>>
+        requires applicative_object_for<POLICY, traverse_context_t<F, T>> &&
+                 requires(POLICY &policy) {
+                     traversable<std::remove_cvref_t<T>>.traverse(
+                         policy, std::declval<F>(), std::declval<T>());
+                 }
     constexpr auto operator()(F &&function, T &&value,
                               POLICY policy = POLICY{}) const {
         const auto &map = traversable<std::remove_cvref_t<T>>;
@@ -619,6 +623,8 @@ struct traverse_fn {
 //! `decltype((function))` and `T` be `decltype((value))`. The type of
 //! `policy` satisfies `applicative_object_for` for the context that applying
 //! `function` to an argument of type `$traverse-element-t$<T>` yields.
+//! The selected traversable object's `traverse(policy, function, value)`
+//! is valid with `function` and `value` forwarded.
 //! `policy` may be omitted; see below.
 //! \effects Applies `function` to each element of `value`, presenting that
 //! element through `$traverse-element-t$<T>`, and composes the resulting
@@ -658,7 +664,9 @@ inline constexpr traverse_fn traverse{};
 //! \omit
 struct transpose_fn {
     template <class T>
-        requires transposable_structure<T>
+        requires transposable_structure<T> && requires {
+            traversable<std::remove_cvref_t<T>>.transpose(std::declval<T>());
+        }
     constexpr auto operator()(T &&value) const {
         const auto &map = traversable<std::remove_cvref_t<T>>;
         return map.transpose(std::forward<T>(value));
@@ -670,7 +678,8 @@ struct transpose_fn {
 //! \seebelow
 //! \constraints For a call `transpose(value)`, `traversable` names a
 //! traversable object for `value`'s type, and `applicative` names an
-//! applicative object for that structure's element type.
+//! applicative object for that structure's element type. That traversable
+//! object's `transpose(value)` is valid with `value` forwarded.
 //! \effects Equivalent to traversing `value` with the identity function: a
 //! structure of contextual values, `structure<context<T>>`, becomes a single
 //! contextual value of the structure, `context<structure<T>>`, preserving
