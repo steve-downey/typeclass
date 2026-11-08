@@ -1,7 +1,23 @@
 # STATUS — cross-repo work board
 
-Updated: 2026-07-17. One line per open item; details live in the owning
-repo's document (linked). Order within each repo is execution order.
+Updated: 2026-11-08. The per-repository entries below retain their historical
+status; the current coherence work is tracked separately here.
+
+## Current coherence work
+
+The [coherence plan](coherence-plan.md) follows the
+[2026-11-08 review](review/2026-11-08-coherence/README.md). All stages are
+planned; the interface recommendations are proposed, not ratified decisions.
+
+1. Record the element, reconstruction, Rope, and integration contracts.
+2. Repair monoid-state propagation, duplicate tree effects, and native collection.
+3. Align constraints, callable categories, metadata, and deep concepts.
+4. Preserve reconstruction state and move fresh result values.
+5. Complete the applicable payload typeclass adapters for library trees.
+6. Add optional structural fingertree integration.
+7. Close the cross-component validation, packaging, and documentation gates.
+
+Implementation stages and their dependencies are specified in the plan.
 
 ## Decisions needed from Steve (unblock markers: [S-n])
 
