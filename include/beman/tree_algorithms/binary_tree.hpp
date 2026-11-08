@@ -23,6 +23,7 @@ import beman.tree_algorithms;
     #include <cassert>
 
     #if !BEMAN_TREE_ALGORITHMS_USE_MODULES()
+        #include <concepts>
         #include <functional>
         #include <memory>
         #include <type_traits>
@@ -179,8 +180,15 @@ using BinaryTreeFix = Fix<BinaryTreeLayer<T>::template F>;
 template <typename T, typename A>
 struct BinaryTreeFFunctorImpl {
     template <typename Fn>
-    constexpr auto fmap(this auto&&, Fn&& fn, const BinaryTreeF<T, A>& layer) {
-        using B = std::remove_cvref_t<std::invoke_result_t<Fn, const A&> >;
+    constexpr auto fmap(this auto&&, Fn&& fn, const BinaryTreeF<T, A>& layer)
+        requires std::invocable<Fn&, const A&> &&
+                 transpose::detail::holdable_value<std::invoke_result_t<Fn&, const A&> > &&
+                 std::constructible_from<std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> >,
+                                         std::invoke_result_t<Fn&, const A&> > &&
+                 std::move_constructible<std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> > > &&
+                 std::copy_constructible<T>
+    {
+        using B = std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> >;
         return BinaryTreeF<T, B>{
             layer.value,
             layer.left ? make_slot<B>(std::invoke(fn, *layer.left)) : child_slot_t<B>{},
@@ -199,6 +207,12 @@ struct BinaryTreeFFunctorMap : transpose::derive_functor<BinaryTreeFFunctorImpl<
 } // namespace beman::tree_algorithms
 
 namespace beman::transpose {
+
+// The structural Functor maps child positions, not the stored payload.
+template <class T, class A>
+struct applicative_value<beman::tree_algorithms::BinaryTreeF<T, A> > {
+    using type = A;
+};
 
 /** Registers BinaryTreeFFunctorMap as the Functor instance for
  * BinaryTreeF<T, A>. */

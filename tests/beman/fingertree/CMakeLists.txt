@@ -15,6 +15,7 @@ foreach(
     IN
     ITEMS
         finger_tree
+        conformance
         finger_tree_iterator
         finger_tree_pmr
         finger_tree_foldable

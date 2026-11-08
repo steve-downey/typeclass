@@ -21,6 +21,7 @@ import beman.tree_algorithms;
 
     #if !BEMAN_TREE_ALGORITHMS_USE_MODULES()
         #include <cstddef>
+        #include <concepts>
         #include <functional>
         #include <memory>
         #include <optional>
@@ -277,8 +278,15 @@ using FringeTreeF = std::variant<FringeEmpty, FringeLeaf<T>, FringeBranch<A> >;
 template <typename T, typename A>
 struct FringeTreeFFunctorImpl {
     template <typename Fn>
-    constexpr auto fmap(this auto&&, Fn&& fn, const FringeTreeF<T, A>& layer) {
-        using B = std::remove_cvref_t<std::invoke_result_t<Fn, const A&> >;
+    constexpr auto fmap(this auto&&, Fn&& fn, const FringeTreeF<T, A>& layer)
+        requires std::invocable<Fn&, const A&> &&
+                 transpose::detail::holdable_value<std::invoke_result_t<Fn&, const A&> > &&
+                 std::constructible_from<std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> >,
+                                         std::invoke_result_t<Fn&, const A&> > &&
+                 std::move_constructible<std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> > > &&
+                 std::copy_constructible<T>
+    {
+        using B = std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> >;
         return std::visit(transpose::overloaded{
                               [](const FringeEmpty&) -> FringeTreeF<T, B> { return FringeEmpty{}; },
                               [](const FringeLeaf<T>& l) -> FringeTreeF<T, B> { return FringeLeaf<T>{l.value}; },
@@ -300,6 +308,12 @@ struct FringeTreeFFunctorMap : transpose::derive_functor<FringeTreeFFunctorImpl<
 } // namespace beman::tree_algorithms
 
 namespace beman::transpose {
+
+// The structural Functor maps child positions, not the stored payload.
+template <class T, class A>
+struct applicative_value<beman::tree_algorithms::FringeTreeF<T, A> > {
+    using type = A;
+};
 
 /** Registers FringeTreeFFunctorMap as the Functor instance for
  * FringeTreeF<T, A>. */

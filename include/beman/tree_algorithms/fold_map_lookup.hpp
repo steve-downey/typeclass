@@ -63,7 +63,7 @@ constexpr auto layer_fold_map(const MapFn& map_fn, const Combine& combine, const
     -> Result {
     static_assert(transpose::has_instance_v<decltype(layer_fold<std::remove_cvref_t<Layer> >)>,
                   "no layer-fold instance: specialize "
-                  "beman::tree_algorithms::layer_fold_typeclass for this layer type, or use "
+                  "beman::tree_algorithms::layer_fold for this layer type, or use "
                   "the explicit forms in fold_map.hpp");
     return layer_fold<std::remove_cvref_t<Layer> >(map_fn, combine, identity, layer);
 }
@@ -93,7 +93,7 @@ constexpr auto fold_map(const MapFn& map_fn, const Combine& combine, const Resul
     -> Result {
     static_assert(transpose::has_instance_v<decltype(project<Tree>)>,
                   "no projection instance: specialize "
-                  "beman::tree_algorithms::project_typeclass for this tree type, or use the "
+                  "beman::tree_algorithms::project for this tree type, or use the "
                   "explicit forms in fold_map.hpp");
     auto algebra = [&](const auto& layer) -> Result { return layer_fold_map(map_fn, combine, identity, layer); };
     auto fmap_fn = [](auto&& fn, const auto& layer) { return layer_fmap(std::forward<decltype(fn)>(fn), layer); };

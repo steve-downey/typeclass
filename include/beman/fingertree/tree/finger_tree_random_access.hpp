@@ -51,6 +51,8 @@ class FingerTreeRandomAccess {
     Tree d_tree;
 
   public:
+    using value_type = T;
+
     /** Constructs an empty sequence. */
     FingerTreeRandomAccess() : d_tree(Tree{}) {}
 
@@ -143,7 +145,11 @@ struct FingerTreeRandomAccessFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                             function,
                   const beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>& sequence,
-                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>> {
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>>
+        requires std::invocable<F&, const T&> &&
+                 beman::transpose::monoid_object<RESULT_MONOID,
+                                                 std::remove_cvref_t<std::invoke_result_t<F&, const T&>>>
+    {
         using Result = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
         return std::ranges::fold_left(
             sequence.to_vector(), Result(monoid.identity()), [&](Result acc, const auto& value) {

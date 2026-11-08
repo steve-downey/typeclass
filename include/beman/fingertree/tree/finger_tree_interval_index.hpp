@@ -62,6 +62,8 @@ class FingerTreeIntervalIndex {
     explicit FingerTreeIntervalIndex(Tree tree) : d_tree(std::move(tree)) {}
 
   public:
+    using value_type = PAYLOAD_TYPE;
+
     FingerTreeIntervalIndex() : d_tree(Tree{}) {}
 
     static auto from_intervals(std::vector<Entry> entries) -> FingerTreeIntervalIndex {
@@ -110,7 +112,11 @@ struct FingerTreeIntervalIndexFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                                         function,
                   const beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>& index,
-                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>> {
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>
+        requires std::invocable<F&, const PAYLOAD_TYPE&> &&
+                 beman::transpose::monoid_object<RESULT_MONOID,
+                                                 std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>>
+    {
         using Result = std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>;
         return std::ranges::fold_left(index.entries(), Result(monoid.identity()), [&](Result acc, const auto& value) {
             return monoid.combine(std::move(acc), std::invoke(function, value.d_payload));

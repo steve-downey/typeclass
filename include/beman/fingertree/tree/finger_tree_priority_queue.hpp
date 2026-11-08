@@ -95,6 +95,8 @@ class FingerTreePriorityQueue {
     explicit FingerTreePriorityQueue(Tree tree) : d_tree(std::move(tree)) {}
 
   public:
+    using value_type = T;
+
     FingerTreePriorityQueue() : d_tree(Tree{}) {}
 
     static auto from_values(std::vector<T> values) -> FingerTreePriorityQueue {
@@ -162,7 +164,11 @@ struct FingerTreePriorityQueueFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                              function,
                   const beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>& queue,
-                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>> {
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>>
+        requires std::invocable<F&, const T&> &&
+                 beman::transpose::monoid_object<RESULT_MONOID,
+                                                 std::remove_cvref_t<std::invoke_result_t<F&, const T&>>>
+    {
         using Result = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
         return std::ranges::fold_left(
             queue.to_vector(), Result(monoid.identity()), [&](Result acc, const auto& value) {
