@@ -321,11 +321,8 @@ template <class Tree>
     requires tree_algorithms::detail::payload_tree<Tree>
 inline constexpr auto functor<Tree> = tree_algorithms::detail::PayloadFunctorMap<Tree>{};
 template <class Tree>
-    requires tree_algorithms::detail::payload_tree<Tree>
+    requires tree_algorithms::detail::payload_tree<Tree> || std::same_as<Tree, tree_algorithms::Expr>
 inline constexpr auto foldable<Tree> = tree_algorithms::detail::PayloadFoldableMap<Tree>{};
-template <>
-inline constexpr auto foldable<tree_algorithms::Expr> =
-    tree_algorithms::detail::PayloadFoldableMap<tree_algorithms::Expr>{};
 template <class Tree>
     requires tree_algorithms::detail::payload_tree<Tree>
 inline constexpr auto traversable<Tree> = tree_algorithms::detail::PayloadTraversableMap<Tree>{};

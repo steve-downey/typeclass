@@ -55,10 +55,35 @@ backporting or importing their machinery.
   and exported targets.
 - A C++26 smoke test including both library umbrellas passes on GCC and
   Clang, comparing payload mapping and monoidal folds across their trees.
-- Changed C++ files pass clang-format-21. Wording hashes and whitespace
+- Changed C++ files pass clang-format 22.1.8. Wording hashes and whitespace
   checks pass; this stage changes no transpose source or generated fragment.
 
-Benchmarks, opt-in P2300 evidence, and module configurations were not exercised.
+The CI follow-up also exercises the GCC 16 C++23 module build. Its payload
+suite passes all 35 cases (413 assertions), and its binary-tree suite passes
+all 9 cases (57 assertions). Benchmarks and opt-in P2300 evidence remain
+outside this phase's local validation.
+
+## CI follow-up
+
+Textual transpose and example headers precede imports in the payload tests.
+The binary-tree tests explicitly include the payload consumer and check both
+its complete-tree instance and the separate child-position layer instances,
+matching the module's umbrella surface.
+
+The first module build exposed two GCC issues. Naming the explicit object
+parameter of transpose's `for_each` avoids a compiler crash when GCC merges
+its dependent constraint from a textual header and a module. Its category
+selection and delegated call are unchanged, and the existing explicit `T`
+and `F` template arguments retain their positions. P3200 wording was
+regenerated with specgen 0.15.0. Expr shares the constrained Foldable
+registration with the other supported trees, rather than using a full
+variable-template specialization whose definition GCC omitted when linking
+module consumers. This adds no construction interface for Expr.
+
+Binary shape recording completes recursive right-subtree work before
+indexing its vector, so no access can span reallocation; this also addresses
+the MSVC constant-evaluation failure without weakening the constexpr tests.
+The stack uses the formatter pinned by CI, clang-format 22.1.8.
 
 ## Remaining scope
 

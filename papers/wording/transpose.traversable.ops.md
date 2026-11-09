@@ -5,8 +5,8 @@
 ## Traversal operations [transpose.traversable.ops]{- .sref} {-}
 
 ```cpp
-template<class T, class F>
-  constexpr auto for_each(this auto&& self, T&& value, F&& function);
+template<class T, class F, class SELF>
+  constexpr auto for_each(this SELF&& self, T&& value, F&& function);
 ```
 
 [x]{.pnum} *Constraints*: Let `C` be the context `function` returns for an argument of type `$traversal-argument-t$<decltype(self), T>`. `self.traverse` accepts the object `applicative<C>` names, `function`, and `value`.

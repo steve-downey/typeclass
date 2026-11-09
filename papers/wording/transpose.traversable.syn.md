@@ -61,12 +61,12 @@ namespace std {
         $consuming-traversable-object$<Impl>;
 
     // @[transpose.traversable.ops]{- .sref}@, traversal operations
-    template<class T, class F>
-    constexpr auto for_each(this auto&& self, T&& value, F&& function)
+    template<class T, class F, class SELF>
+    constexpr auto for_each(this SELF&& self, T&& value, F&& function)
       requires requires {
         self.traverse(
-            applicative<remove_cvref_t<
-                invoke_result_t<F&, $traversal-argument-t$<decltype(self), T>>>>,
+            applicative<
+                remove_cvref_t<invoke_result_t<F&, $traversal-argument-t$<SELF, T>>>>,
             forward<F>(function), forward<T>(value));
       };
 

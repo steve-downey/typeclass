@@ -144,13 +144,12 @@ struct derive_traversable : protected Impl {
         consuming_traversable_object<Impl>;
 
     // \ref{transpose.traversable.ops}, traversal operations
-    template <class T, class F>
-    constexpr auto for_each(this auto &&self, T &&value, F &&function)
+    template <class T, class F, class SELF>
+    constexpr auto for_each(this SELF &&self, T &&value, F &&function)
         requires requires {
-            self.traverse(
-                applicative<std::remove_cvref_t<std::invoke_result_t<
-                    F &, detail::traversal_argument_t<decltype(self), T>>>>,
-                std::forward<F>(function), std::forward<T>(value));
+            self.traverse(applicative<std::remove_cvref_t<std::invoke_result_t<
+                              F &, detail::traversal_argument_t<SELF, T>>>>,
+                          std::forward<F>(function), std::forward<T>(value));
         };
 
     template <class T>
@@ -470,18 +469,17 @@ concept traversable_object =
 //! `function` receives rvalue elements; otherwise it receives `const` lvalue
 //! elements.
 template <class Impl>
-template <class T, class F>
-constexpr auto derive_traversable<Impl>::for_each(this auto &&self, T &&value,
+template <class T, class F, class SELF>
+constexpr auto derive_traversable<Impl>::for_each(this SELF &&self, T &&value,
                                                   F &&function)
     requires requires {
-        self.traverse(
-            applicative<std::remove_cvref_t<std::invoke_result_t<
-                F &, detail::traversal_argument_t<decltype(self), T>>>>,
-            std::forward<F>(function), std::forward<T>(value));
+        self.traverse(applicative<std::remove_cvref_t<std::invoke_result_t<
+                          F &, detail::traversal_argument_t<SELF, T>>>>,
+                      std::forward<F>(function), std::forward<T>(value));
     }
 {
-    using Context = std::remove_cvref_t<std::invoke_result_t<
-        F &, detail::traversal_argument_t<decltype(self), T>>>;
+    using Context = std::remove_cvref_t<
+        std::invoke_result_t<F &, detail::traversal_argument_t<SELF, T>>>;
     const auto &applicative_map = applicative<Context>;
     return self.traverse(applicative_map, std::forward<F>(function),
                          std::forward<T>(value));
