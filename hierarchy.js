@@ -12,8 +12,15 @@ var hierarchy =
     [ "beman::transpose::any_of_fn", "structbeman_1_1transpose_1_1any__of__fn.html", null ],
     [ "beman::transpose::ap_fn", "structbeman_1_1transpose_1_1ap__fn.html", null ],
     [ "beman::transpose::applicative_value< T, class >", "structbeman_1_1transpose_1_1applicative__value.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::BinaryTreeF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1BinaryTreeF_3_01T_00_01A_01_4_01_4.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::ExprF< A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1ExprF_3_01A_01_4_01_4.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::FringeTreeF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::NatF< A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1NatF_3_01A_01_4_01_4.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::RoseF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1RoseF_3_01T_00_01A_01_4_01_4.html", null ],
     [ "beman::transpose::applicative_value< std::expected< void, ERROR > >", "structbeman_1_1transpose_1_1applicative__value_3_01std_1_1expected_3_01void_00_01ERROR_01_4_01_4.html", null ],
     [ "beman::transpose::applicative_value< T, std::void_t< typename std::remove_cvref_t< T >::value_type > >", "structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html", null ],
+    [ "beman::transpose::applicative_value< tree_algorithms::Expr >", "structbeman_1_1transpose_1_1applicative__value_3_01tree__algorithms_1_1Expr_01_4.html", null ],
+    [ "beman::transpose::applicative_value< tree_algorithms::Fix< F > >", "structbeman_1_1transpose_1_1applicative__value_3_01tree__algorithms_1_1Fix_3_01F_01_4_01_4.html", null ],
     [ "beman::transpose::array_applicative_impl< T, N >", "structbeman_1_1transpose_1_1array__applicative__impl.html", [
       [ "beman::transpose::derive_applicative< array_applicative_impl< T, N > >", "structbeman_1_1transpose_1_1derive__applicative.html", [
         [ "beman::transpose::array_applicative_map< T, N >", "structbeman_1_1transpose_1_1array__applicative__map.html", null ]
@@ -69,6 +76,15 @@ var hierarchy =
     ] ],
     [ "beman::tree_algorithms::ExprLayerFoldMap", "structbeman_1_1tree__algorithms_1_1ExprLayerFoldMap.html", null ],
     [ "beman::transpose::find_first_fn", "structbeman_1_1transpose_1_1find__first__fn.html", null ],
+    [ "beman::fingertree::finger_tree_concat_monoid< TREE >", "classbeman_1_1fingertree_1_1finger__tree__concat__monoid.html", null ],
+    [ "beman::fingertree::finger_tree_rebind< SourceTree, U >", "structbeman_1_1fingertree_1_1finger__tree__rebind.html", null ],
+    [ "beman::fingertree::finger_tree_rebind< tree::FingerTree< T, M, P, A >, T >", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTree_3_01T_00_01M_00_01P_00_01A_01_4_00_01T_01_4.html", null ],
+    [ "beman::fingertree::finger_tree_rebind< tree::FingerTree< T, M, tree::UnitMeasure< T, TAG >, A >, U >", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTree_3_01T_00_01M_00_01tree_978d2fdfcb0ea1cc3761c79f81b862db.html", null ],
+    [ "beman::fingertree::finger_tree_rebind< tree::FingerTree< T, tree::PriorityMonoid< T >, tree::PriorityMeasure< T >, A >, U >", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTree_3_01T_00_01tree_1_1Prio65f93616525bb0b96296f6b0c3551888.html", null ],
+    [ "beman::fingertree::finger_tree_rebind< tree::FingerTree< tree::Interval< T >, tree::IntervalMonoid, tree::IntervalMeasure< T >, A >, tree::Interval< U > >", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTree_3_01tree_1_1Interval_3_e075050b64bdee78225648e927a25e0f.html", null ],
+    [ "beman::fingertree::finger_tree_rebind< tree::FingerTreeIntervalIndex< T, Tree >, U >", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreeIntervalIndex_3_01T_00_01Tree_01_4_00_01U_01_4.html", null ],
+    [ "beman::fingertree::finger_tree_rebind< tree::FingerTreePriorityQueue< T, Tree >, U >", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreePriorityQueue_3_01T_00_01Tree_01_4_00_01U_01_4.html", null ],
+    [ "beman::fingertree::finger_tree_rebind< tree::FingerTreeRandomAccess< T, Tree >, U >", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreeRandomAccess_3_01T_00_01Tree_01_4_00_01U_01_4.html", null ],
     [ "beman::fingertree::tree::FingerTree< T, MONOID, MEASURE_POLICY, ALLOCATOR >", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html", null ],
     [ "beman::fingertree::tree::FingerTree< Interval< PAYLOAD_TYPE >, IntervalMonoid, IntervalMeasure< PAYLOAD_TYPE > >", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html", null ],
     [ "beman::fingertree::tree::FingerTree< std::string, beman::transpose::sum_monoid< std::size_t >, RopeChunkMeasure >", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html", null ],
@@ -80,6 +96,12 @@ var hierarchy =
         [ "beman::fingertree::FingerTreeFoldableMap< T, MONOID, MEASURE_POLICY, ALLOCATOR >", "structbeman_1_1fingertree_1_1FingerTreeFoldableMap.html", null ]
       ] ]
     ] ],
+    [ "beman::fingertree::FingerTreeFunctorImpl< STRUCTURE >", "structbeman_1_1fingertree_1_1FingerTreeFunctorImpl.html", null ],
+    [ "FingerTreeFunctorImpl", null, [
+      [ "beman::transpose::derive_functor< FingerTreeFunctorImpl< STRUCTURE > >", "structbeman_1_1transpose_1_1derive__functor.html", [
+        [ "beman::fingertree::FingerTreeFunctorMap< STRUCTURE >", "structbeman_1_1fingertree_1_1FingerTreeFunctorMap.html", null ]
+      ] ]
+    ] ],
     [ "beman::fingertree::tree::FingerTreeIntervalIndex< PAYLOAD_TYPE, Tree >", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html", null ],
     [ "beman::fingertree::FingerTreeIntervalIndexFoldableImpl< PAYLOAD_TYPE, Tree >", "structbeman_1_1fingertree_1_1FingerTreeIntervalIndexFoldableImpl.html", null ],
     [ "FingerTreeIntervalIndexFoldableImpl", null, [
@@ -87,7 +109,6 @@ var hierarchy =
         [ "beman::fingertree::FingerTreeIntervalIndexFoldableMap< PAYLOAD_TYPE, Tree >", "structbeman_1_1fingertree_1_1FingerTreeIntervalIndexFoldableMap.html", null ]
       ] ]
     ] ],
-    [ "beman::fingertree::FingerTreeIntervalIndexTraversableImpl< PAYLOAD_TYPE, Tree >", "structbeman_1_1fingertree_1_1FingerTreeIntervalIndexTraversableImpl.html", null ],
     [ "FingerTreeIntervalIndexTraversableImpl", null, [
       [ "beman::transpose::derive_traversable< FingerTreeIntervalIndexTraversableImpl< PAYLOAD_TYPE, Tree > >", "structbeman_1_1transpose_1_1derive__traversable.html", [
         [ "beman::fingertree::FingerTreeIntervalIndexTraversableMap< PAYLOAD_TYPE, Tree >", "structbeman_1_1fingertree_1_1FingerTreeIntervalIndexTraversableMap.html", null ]
@@ -101,7 +122,6 @@ var hierarchy =
         [ "beman::fingertree::FingerTreePriorityQueueFoldableMap< T, Tree >", "structbeman_1_1fingertree_1_1FingerTreePriorityQueueFoldableMap.html", null ]
       ] ]
     ] ],
-    [ "beman::fingertree::FingerTreePriorityQueueTraversableImpl< T, Tree >", "structbeman_1_1fingertree_1_1FingerTreePriorityQueueTraversableImpl.html", null ],
     [ "FingerTreePriorityQueueTraversableImpl", null, [
       [ "beman::transpose::derive_traversable< FingerTreePriorityQueueTraversableImpl< T, Tree > >", "structbeman_1_1transpose_1_1derive__traversable.html", [
         [ "beman::fingertree::FingerTreePriorityQueueTraversableMap< T, Tree >", "structbeman_1_1fingertree_1_1FingerTreePriorityQueueTraversableMap.html", null ]
@@ -114,7 +134,6 @@ var hierarchy =
         [ "beman::fingertree::FingerTreeRandomAccessFoldableMap< T, Tree >", "structbeman_1_1fingertree_1_1FingerTreeRandomAccessFoldableMap.html", null ]
       ] ]
     ] ],
-    [ "beman::fingertree::FingerTreeRandomAccessTraversableImpl< T, Tree >", "structbeman_1_1fingertree_1_1FingerTreeRandomAccessTraversableImpl.html", null ],
     [ "FingerTreeRandomAccessTraversableImpl", null, [
       [ "beman::transpose::derive_traversable< FingerTreeRandomAccessTraversableImpl< T, Tree > >", "structbeman_1_1transpose_1_1derive__traversable.html", [
         [ "beman::fingertree::FingerTreeRandomAccessTraversableMap< T, Tree >", "structbeman_1_1fingertree_1_1FingerTreeRandomAccessTraversableMap.html", null ]
@@ -127,13 +146,7 @@ var hierarchy =
         [ "beman::fingertree::FingerTreeRopeFoldableMap< Tree >", "structbeman_1_1fingertree_1_1FingerTreeRopeFoldableMap.html", null ]
       ] ]
     ] ],
-    [ "beman::fingertree::FingerTreeRopeTraversableImpl< Tree >", "structbeman_1_1fingertree_1_1FingerTreeRopeTraversableImpl.html", null ],
-    [ "FingerTreeRopeTraversableImpl", null, [
-      [ "beman::transpose::derive_traversable< FingerTreeRopeTraversableImpl< Tree > >", "structbeman_1_1transpose_1_1derive__traversable.html", [
-        [ "beman::fingertree::FingerTreeRopeTraversableMap< Tree >", "structbeman_1_1fingertree_1_1FingerTreeRopeTraversableMap.html", null ]
-      ] ]
-    ] ],
-    [ "beman::fingertree::FingerTreeTraversableImpl< T, MONOID, MEASURE_POLICY, ALLOCATOR >", "structbeman_1_1fingertree_1_1FingerTreeTraversableImpl.html", null ],
+    [ "beman::fingertree::FingerTreeSequenceTraversableImpl< STRUCTURE >", "structbeman_1_1fingertree_1_1FingerTreeSequenceTraversableImpl.html", null ],
     [ "FingerTreeTraversableImpl", null, [
       [ "beman::transpose::derive_traversable< FingerTreeTraversableImpl< T, MONOID, MEASURE_POLICY, ALLOCATOR > >", "structbeman_1_1transpose_1_1derive__traversable.html", [
         [ "beman::fingertree::FingerTreeTraversableMap< T, MONOID, MEASURE_POLICY, ALLOCATOR >", "structbeman_1_1fingertree_1_1FingerTreeTraversableMap.html", null ]
@@ -189,6 +202,7 @@ var hierarchy =
     [ "beman::transpose::min_monoid< T >", "structbeman_1_1transpose_1_1min__monoid.html", null ],
     [ "beman::transpose::Monoid< VALUE_TYPE >", "structbeman_1_1transpose_1_1Monoid.html", null ],
     [ "beman::transpose::Monoid< applicative_value_t< CONTEXT > >", "structbeman_1_1transpose_1_1Monoid.html", null ],
+    [ "beman::transpose::Monoid< beman::fingertree::tree::FingerTree< T > >", "structbeman_1_1transpose_1_1Monoid_3_01beman_1_1fingertree_1_1tree_1_1FingerTree_3_01T_01_4_01_4.html", null ],
     [ "beman::transpose::Monoid< std::string >", "structbeman_1_1transpose_1_1Monoid_3_01std_1_1string_01_4.html", null ],
     [ "beman::transpose::Monoid< std::vector< VALUE_TYPE > >", "structbeman_1_1transpose_1_1Monoid_3_01std_1_1vector_3_01VALUE__TYPE_01_4_01_4.html", null ],
     [ "beman::tree_algorithms::Mul< A >", "structbeman_1_1tree__algorithms_1_1Mul.html", null ],
@@ -216,6 +230,15 @@ var hierarchy =
       [ "beman::transpose::derive_monad< OptionalMonadImpl< VALUE_TYPE > >", "structbeman_1_1transpose_1_1derive__monad.html", [
         [ "beman::transpose::OptionalMonadMap< VALUE_TYPE >", "structbeman_1_1transpose_1_1OptionalMonadMap.html", null ]
       ] ]
+    ] ],
+    [ "PayloadFoldableImpl", null, [
+      [ "beman::transpose::derive_foldable< PayloadFoldableImpl< Tree > >", "structbeman_1_1transpose_1_1derive__foldable.html", null ]
+    ] ],
+    [ "PayloadFunctorImpl", null, [
+      [ "beman::transpose::derive_functor< PayloadFunctorImpl< Tree > >", "structbeman_1_1transpose_1_1derive__functor.html", null ]
+    ] ],
+    [ "PayloadTraversableImpl", null, [
+      [ "beman::transpose::derive_traversable< PayloadTraversableImpl< Tree > >", "structbeman_1_1transpose_1_1derive__traversable.html", null ]
     ] ],
     [ "beman::fingertree::tree::PriorityMeasure< T >", "structbeman_1_1fingertree_1_1tree_1_1PriorityMeasure.html", null ],
     [ "beman::transpose::product_monoid< T >", "structbeman_1_1transpose_1_1product__monoid.html", null ],

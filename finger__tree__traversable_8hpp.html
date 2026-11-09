@@ -93,16 +93,18 @@ $(document).ready(function(){initNavTree('finger__tree__traversable_8hpp.html','
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">finger_tree_traversable.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="finger__tree_8hpp_source.html">beman/fingertree/tree/finger_tree.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="finger__tree__rebind_8hpp_source.html">beman/fingertree/tree/finger_tree_rebind.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="apply_8hpp_source.html">beman/transpose/apply.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="sequence_8hpp_source.html">beman/transpose/sequence.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="traverse_8hpp_source.html">beman/transpose/traverse.hpp</a>&gt;</code><br />
 <code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
@@ -111,8 +113,8 @@ $(document).ready(function(){initNavTree('finger__tree__traversable_8hpp.html','
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeTraversableImpl.html">beman::fingertree::FingerTreeTraversableImpl&lt; T, MONOID, MEASURE_POLICY, ALLOCATOR &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversable typeclass implementation for FingerTree; materialises via flatten() then reconstructs with from_sequence(); O(n).  <a href="structbeman_1_1fingertree_1_1FingerTreeTraversableImpl.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeSequenceTraversableImpl.html">beman::fingertree::FingerTreeSequenceTraversableImpl&lt; STRUCTURE &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reference-reading traversal shared by the sequence and its wrappers.  <a href="structbeman_1_1fingertree_1_1FingerTreeSequenceTraversableImpl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeTraversableMap.html">beman::fingertree::FingerTreeTraversableMap&lt; T, MONOID, MEASURE_POLICY, ALLOCATOR &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversable typeclass map entry for FingerTree.  <a href="structbeman_1_1fingertree_1_1FingerTreeTraversableMap.html#details">More...</a><br /></td></tr>
@@ -127,6 +129,12 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespacebeman_1_1transpose"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html">beman::transpose</a></td></tr>
 <tr class="memdesc:namespacebeman_1_1transpose"><td class="mdescLeft">&#160;</td><td class="mdescRight">The grade algebra: framework vocabulary only. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:aec1102c94b029935bb5096182a6ebfa6"><td class="memTemplParams" colspan="2">template&lt;class T , class MONOID , class MEASURE_POLICY , class ALLOCATOR &gt; </td></tr>
+<tr class="memitem:aec1102c94b029935bb5096182a6ebfa6"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1fingertree.html#aec1102c94b029935bb5096182a6ebfa6">beman::fingertree::FingerTreeTraversableImpl</a> = FingerTreeSequenceTraversableImpl&lt; tree::FingerTree&lt; T, MONOID, MEASURE_POLICY, ALLOCATOR &gt; &gt;</td></tr>
+<tr class="separator:aec1102c94b029935bb5096182a6ebfa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

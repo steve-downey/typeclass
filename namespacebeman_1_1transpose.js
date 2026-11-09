@@ -8,8 +8,15 @@ var namespacebeman_1_1transpose =
     [ "any_of_fn", "structbeman_1_1transpose_1_1any__of__fn.html", "structbeman_1_1transpose_1_1any__of__fn" ],
     [ "ap_fn", "structbeman_1_1transpose_1_1ap__fn.html", "structbeman_1_1transpose_1_1ap__fn" ],
     [ "applicative_value", "structbeman_1_1transpose_1_1applicative__value.html", null ],
+    [ "applicative_value< beman::tree_algorithms::BinaryTreeF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1BinaryTreeF_3_01T_00_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1BinaryTreeF_3_01T_00_01A_01_4_01_4" ],
+    [ "applicative_value< beman::tree_algorithms::ExprF< A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1ExprF_3_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1ExprF_3_01A_01_4_01_4" ],
+    [ "applicative_value< beman::tree_algorithms::FringeTreeF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4" ],
+    [ "applicative_value< beman::tree_algorithms::NatF< A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1NatF_3_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1NatF_3_01A_01_4_01_4" ],
+    [ "applicative_value< beman::tree_algorithms::RoseF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1RoseF_3_01T_00_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1RoseF_3_01T_00_01A_01_4_01_4" ],
     [ "applicative_value< std::expected< void, ERROR > >", "structbeman_1_1transpose_1_1applicative__value_3_01std_1_1expected_3_01void_00_01ERROR_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01std_1_1expected_3_01void_00_01ERROR_01_4_01_4" ],
     [ "applicative_value< T, std::void_t< typename std::remove_cvref_t< T >::value_type > >", "structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html", "structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c" ],
+    [ "applicative_value< tree_algorithms::Expr >", "structbeman_1_1transpose_1_1applicative__value_3_01tree__algorithms_1_1Expr_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01tree__algorithms_1_1Expr_01_4" ],
+    [ "applicative_value< tree_algorithms::Fix< F > >", "structbeman_1_1transpose_1_1applicative__value_3_01tree__algorithms_1_1Fix_3_01F_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01tree__algorithms_1_1Fix_3_01F_01_4_01_4" ],
     [ "array_applicative_impl", "structbeman_1_1transpose_1_1array__applicative__impl.html", "structbeman_1_1transpose_1_1array__applicative__impl" ],
     [ "array_applicative_map", "structbeman_1_1transpose_1_1array__applicative__map.html", null ],
     [ "bind_fn", "structbeman_1_1transpose_1_1bind__fn.html", "structbeman_1_1transpose_1_1bind__fn" ],
@@ -58,6 +65,7 @@ var namespacebeman_1_1transpose =
     [ "max_monoid", "structbeman_1_1transpose_1_1max__monoid.html", "structbeman_1_1transpose_1_1max__monoid" ],
     [ "min_monoid", "structbeman_1_1transpose_1_1min__monoid.html", "structbeman_1_1transpose_1_1min__monoid" ],
     [ "Monoid", "structbeman_1_1transpose_1_1Monoid.html", null ],
+    [ "Monoid< beman::fingertree::tree::FingerTree< T > >", "structbeman_1_1transpose_1_1Monoid_3_01beman_1_1fingertree_1_1tree_1_1FingerTree_3_01T_01_4_01_4.html", "structbeman_1_1transpose_1_1Monoid_3_01beman_1_1fingertree_1_1tree_1_1FingerTree_3_01T_01_4_01_4" ],
     [ "Monoid< std::string >", "structbeman_1_1transpose_1_1Monoid_3_01std_1_1string_01_4.html", "structbeman_1_1transpose_1_1Monoid_3_01std_1_1string_01_4" ],
     [ "Monoid< std::vector< VALUE_TYPE > >", "structbeman_1_1transpose_1_1Monoid_3_01std_1_1vector_3_01VALUE__TYPE_01_4_01_4.html", "structbeman_1_1transpose_1_1Monoid_3_01std_1_1vector_3_01VALUE__TYPE_01_4_01_4" ],
     [ "optional_applicative_impl", "structbeman_1_1transpose_1_1optional__applicative__impl.html", "structbeman_1_1transpose_1_1optional__applicative__impl" ],
@@ -182,5 +190,8 @@ var namespacebeman_1_1transpose =
     [ "traversable", "namespacebeman_1_1transpose.html#a49e0c8561d2d876ceaf3ee5b49e5c995", null ],
     [ "traverse", "namespacebeman_1_1transpose.html#adca9192380d7c029a8d882576a9c7031", null ],
     [ "transpose", "namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d", null ],
-    [ "applicative< zip_list< T > >", "namespacebeman_1_1transpose.html#a991f0acec452db9587f59701c13e1abc", null ]
+    [ "applicative< zip_list< T > >", "namespacebeman_1_1transpose.html#a991f0acec452db9587f59701c13e1abc", null ],
+    [ "functor< Tree >", "namespacebeman_1_1transpose.html#a60e30cfe7430724066735381e3bd1d64", null ],
+    [ "foldable< Tree >", "namespacebeman_1_1transpose.html#afa88a395f712daed934f2818e31d51b7", null ],
+    [ "traversable< Tree >", "namespacebeman_1_1transpose.html#a96cfe5ff2da9734089be194f64721f49", null ]
 ];

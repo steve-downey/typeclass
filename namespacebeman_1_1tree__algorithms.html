@@ -311,6 +311,11 @@ Functions</h2></td></tr>
 <tr class="memitem:a43b5715d3be406ddee5feb9bb8d68e15"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1tree__algorithms.html#a43b5715d3be406ddee5feb9bb8d68e15">fold_map</a> (const MapFn &amp;map_fn, const Combine &amp;combine, const Result &amp;identity, const Tree &amp;tree) -&gt; Result</td></tr>
 <tr class="memdesc:a43b5715d3be406ddee5feb9bb8d68e15"><td class="mdescLeft">&#160;</td><td class="mdescRight">Elementwise fold over a tree in its own representation, resolving the projection (keyed on the tree type), the layer fold, and the layer fmap through typeclass lookup.  <br /></td></tr>
 <tr class="separator:a43b5715d3be406ddee5feb9bb8d68e15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a609c5b11a872ed9757b31d6d4c39753f"><td class="memTemplParams" colspan="2">template&lt;class F , class Tree , class Monoid &gt; <br />
+requires detail::registered_fold_source&lt;Tree&gt; &amp;&amp; std::copy_constructible&lt;<a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">transpose::applicative_value_t</a>&lt;Tree&gt; &gt; &amp;&amp; std::invocable&lt;F&amp;, const <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">transpose::applicative_value_t</a>&lt;Tree&gt;&amp;&gt; &amp;&amp; std::copyable&lt; std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">transpose::applicative_value_t</a>&lt;Tree&gt;&amp;&gt; &gt; &gt; &amp;&amp; transpose::monoid_object&lt; Monoid, std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">transpose::applicative_value_t</a>&lt;Tree&gt;&amp;&gt; &gt; &gt;</td></tr>
+<tr class="memitem:a609c5b11a872ed9757b31d6d4c39753f"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1tree__algorithms.html#a609c5b11a872ed9757b31d6d4c39753f">fold_map</a> (F &amp;&amp;function, const Tree &amp;tree, const Monoid &amp;monoid)</td></tr>
+<tr class="memdesc:a609c5b11a872ed9757b31d6d4c39753f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Monoid-object bridge to the structural fold.  <br /></td></tr>
+<tr class="separator:a609c5b11a872ed9757b31d6d4c39753f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0561a17e031b98dafc8044bb4acc4bc5"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a0561a17e031b98dafc8044bb4acc4bc5"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1tree__algorithms.html#a0561a17e031b98dafc8044bb4acc4bc5">view_l</a> (const <a class="el" href="classbeman_1_1tree__algorithms_1_1FringeTree.html">FringeTree</a>&lt; T &gt; &amp;tree) -&gt; std::optional&lt; <a class="el" href="structbeman_1_1tree__algorithms_1_1FringeView.html">FringeView</a>&lt; T &gt; &gt;</td></tr>
 <tr class="memdesc:a0561a17e031b98dafc8044bb4acc4bc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Decompose at the left end: the first element and the rest.  <br /></td></tr>
@@ -922,7 +927,7 @@ template&lt;template&lt; typename &gt; class F&gt; </div>
 </div>
 </div>
 <a id="ac4ed3daf56e096d7fc06995a3c70f916" name="ac4ed3daf56e096d7fc06995a3c70f916"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4ed3daf56e096d7fc06995a3c70f916">&#9670;&#160;</a></span>fold_map() <span class="overload">[1/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4ed3daf56e096d7fc06995a3c70f916">&#9670;&#160;</a></span>fold_map() <span class="overload">[1/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1003,7 +1008,7 @@ template&lt;typename Result , template&lt; typename &gt; class F, typename MapFn
 </div>
 </div>
 <a id="a284f54348e25009966698d704eda73b1" name="a284f54348e25009966698d704eda73b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a284f54348e25009966698d704eda73b1">&#9670;&#160;</a></span>fold_map() <span class="overload">[2/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a284f54348e25009966698d704eda73b1">&#9670;&#160;</a></span>fold_map() <span class="overload">[2/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1127,7 +1132,7 @@ template&lt;class MapFn , class Combine , class Result , class Layer &gt; </div>
 </div>
 </div>
 <a id="a80759ffb40598220726e9a76de818a34" name="a80759ffb40598220726e9a76de818a34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a80759ffb40598220726e9a76de818a34">&#9670;&#160;</a></span>fold_map() <span class="overload">[3/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a80759ffb40598220726e9a76de818a34">&#9670;&#160;</a></span>fold_map() <span class="overload">[3/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1185,7 +1190,7 @@ template&lt;typename Result , template&lt; typename &gt; class F, typename MapFn
 </div>
 </div>
 <a id="a43b5715d3be406ddee5feb9bb8d68e15" name="a43b5715d3be406ddee5feb9bb8d68e15"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43b5715d3be406ddee5feb9bb8d68e15">&#9670;&#160;</a></span>fold_map() <span class="overload">[4/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a43b5715d3be406ddee5feb9bb8d68e15">&#9670;&#160;</a></span>fold_map() <span class="overload">[4/5]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1239,6 +1244,54 @@ template&lt;typename Result , typename MapFn , typename Combine , typename Tree 
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a609c5b11a872ed9757b31d6d4c39753f" name="a609c5b11a872ed9757b31d6d4c39753f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a609c5b11a872ed9757b31d6d4c39753f">&#9670;&#160;</a></span>fold_map() <span class="overload">[5/5]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class F , class Tree , class Monoid &gt; <br />
+requires detail::registered_fold_source&lt;Tree&gt; &amp;&amp; std::copy_constructible&lt;<a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">transpose::applicative_value_t</a>&lt;Tree&gt; &gt; &amp;&amp; std::invocable&lt;F&amp;, const <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">transpose::applicative_value_t</a>&lt;Tree&gt;&amp;&gt; &amp;&amp; std::copyable&lt; std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">transpose::applicative_value_t</a>&lt;Tree&gt;&amp;&gt; &gt; &gt; &amp;&amp; transpose::monoid_object&lt; Monoid, std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">transpose::applicative_value_t</a>&lt;Tree&gt;&amp;&gt; &gt; &gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto beman::tree_algorithms::fold_map </td>
+          <td>(</td>
+          <td class="paramtype">F &amp;&amp;&#160;</td>
+          <td class="paramname"><em>function</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Tree &amp;&#160;</td>
+          <td class="paramname"><em>tree</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const Monoid &amp;&#160;</td>
+          <td class="paramname"><em>monoid</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Monoid-object bridge to the structural fold. </p>
+<p>This consumer overload retains the passed callable and monoid, including their state. Existing projections and layer maps copy payloads; the carrier must be copyable. </p>
 
 </div>
 </div>
@@ -2060,7 +2113,7 @@ template&lt;typename T , typename A &gt; </div>
 <div class="line">                      },</div>
 <div class="line">                      expr);</div>
 <div class="line">}</div>
-<div class="ttc" id="astructbeman_1_1tree__algorithms_1_1Add_html"><div class="ttname"><a href="structbeman_1_1tree__algorithms_1_1Add.html">beman::tree_algorithms::Add</a></div><div class="ttdoc">Addition node alternative; left and right sub-expressions in child slots — boxed at the knot,...</div><div class="ttdef"><b>Definition:</b> expression.hpp:55</div></div>
+<div class="ttc" id="astructbeman_1_1tree__algorithms_1_1Add_html"><div class="ttname"><a href="structbeman_1_1tree__algorithms_1_1Add.html">beman::tree_algorithms::Add</a></div><div class="ttdoc">Addition node alternative; left and right sub-expressions in child slots — boxed at the knot,...</div><div class="ttdef"><b>Definition:</b> expression.hpp:56</div></div>
 </div><!-- fragment -->
 <p>Evaluation algebra: reduces one already-evaluated ExprF layer to an int. </p>
 <p>Not recursive; fold_fix supplies the recursion. </p>

@@ -4,6 +4,7 @@ var rose__tree_8hpp =
     [ "beman::tree_algorithms::RoseLayer< T >", "structbeman_1_1tree__algorithms_1_1RoseLayer.html", "structbeman_1_1tree__algorithms_1_1RoseLayer" ],
     [ "beman::tree_algorithms::RoseFFunctorImpl< T, A >", "structbeman_1_1tree__algorithms_1_1RoseFFunctorImpl.html", "structbeman_1_1tree__algorithms_1_1RoseFFunctorImpl" ],
     [ "beman::tree_algorithms::RoseFFunctorMap< T, A >", "structbeman_1_1tree__algorithms_1_1RoseFFunctorMap.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::RoseF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1RoseF_3_01T_00_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1RoseF_3_01T_00_01A_01_4_01_4" ],
     [ "beman::tree_algorithms::RoseLayerFoldMap", "structbeman_1_1tree__algorithms_1_1RoseLayerFoldMap.html", "structbeman_1_1tree__algorithms_1_1RoseLayerFoldMap" ],
     [ "RoseTreeFix", "rose__tree_8hpp.html#a828b038d63a3b9d7748362477064488c", null ],
     [ "rose", "rose__tree_8hpp.html#ac9d4fd64e6eabd3060eea9d5453268c6", null ],

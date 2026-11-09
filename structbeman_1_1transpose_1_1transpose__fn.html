@@ -105,22 +105,22 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1transpose_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae457452cadab08e7b16a2995cbb249aa"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
-requires transposable_structure&lt;T&gt;</td></tr>
-<tr class="memitem:ae457452cadab08e7b16a2995cbb249aa"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1transpose__fn.html#ae457452cadab08e7b16a2995cbb249aa">operator()</a> (T &amp;&amp;value) const</td></tr>
-<tr class="separator:ae457452cadab08e7b16a2995cbb249aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23ab0d27d2ed177b294b581ff7e42e1e"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
+requires transposable_structure&lt;T&gt; &amp;&amp; requires { <a class="el" href="namespacebeman_1_1transpose.html#a49e0c8561d2d876ceaf3ee5b49e5c995">traversable</a>&lt;std::remove_cvref_t&lt;T&gt;&gt;.<a class="el" href="namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d">transpose</a>(std::declval&lt;T&gt;()); }</td></tr>
+<tr class="memitem:a23ab0d27d2ed177b294b581ff7e42e1e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1transpose__fn.html#a23ab0d27d2ed177b294b581ff7e42e1e">operator()</a> (T &amp;&amp;value) const</td></tr>
+<tr class="separator:a23ab0d27d2ed177b294b581ff7e42e1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The type of the <code>transpose</code> operation object; see <code><a class="el" href="structbeman_1_1transpose_1_1traverse__fn.html" title="The type of the traverse operation object.">traverse_fn</a></code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae457452cadab08e7b16a2995cbb249aa" name="ae457452cadab08e7b16a2995cbb249aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae457452cadab08e7b16a2995cbb249aa">&#9670;&#160;</a></span>operator()()</h2>
+<a id="a23ab0d27d2ed177b294b581ff7e42e1e" name="a23ab0d27d2ed177b294b581ff7e42e1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23ab0d27d2ed177b294b581ff7e42e1e">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class T &gt; <br />
-requires transposable_structure&lt;T&gt;</div>
+requires transposable_structure&lt;T&gt; &amp;&amp; requires { <a class="el" href="namespacebeman_1_1transpose.html#a49e0c8561d2d876ceaf3ee5b49e5c995">traversable</a>&lt;std::remove_cvref_t&lt;T&gt;&gt;.<a class="el" href="namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d">transpose</a>(std::declval&lt;T&gt;()); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

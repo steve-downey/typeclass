@@ -1,0 +1,4 @@
+var structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4 =
+[
+    [ "type", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4.html#ac4f56ef8ea567f5a83b39ac018c4eeab", null ]
+];

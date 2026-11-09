@@ -98,12 +98,14 @@ $(document).ready(function(){initNavTree('finger__tree__interval__index_8hpp.htm
   <div class="headertitle"><div class="title">finger_tree_interval_index.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="finger__tree_8hpp_source.html">beman/fingertree/tree/finger_tree.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="finger__tree__functor_8hpp_source.html">beman/fingertree/tree/finger_tree_functor.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="finger__tree__traversable_8hpp_source.html">beman/fingertree/tree/finger_tree_traversable.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="apply_8hpp_source.html">beman/transpose/apply.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="fold_8hpp_source.html">beman/transpose/fold.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="monoid_8hpp_source.html">beman/transpose/monoid.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="sequence_8hpp_source.html">beman/transpose/sequence.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="traverse_8hpp_source.html">beman/transpose/traverse.hpp</a>&gt;</code><br />
+<code>#include &lt;cassert&gt;</code><br />
 <code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
@@ -123,11 +125,13 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html">beman::fingertree::tree::FingerTreeIntervalIndex&lt; PAYLOAD_TYPE, Tree &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent interval index supporting stabbing and overlap queries.  <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTree_3_01tree_1_1Interval_3_e075050b64bdee78225648e927a25e0f.html">beman::fingertree::finger_tree_rebind&lt; tree::FingerTree&lt; tree::Interval&lt; T &gt;, tree::IntervalMonoid, tree::IntervalMeasure&lt; T &gt;, A &gt;, tree::Interval&lt; U &gt; &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreeIntervalIndex_3_01T_00_01Tree_01_4_00_01U_01_4.html">beman::fingertree::finger_tree_rebind&lt; tree::FingerTreeIntervalIndex&lt; T, Tree &gt;, U &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeIntervalIndexFoldableImpl.html">beman::fingertree::FingerTreeIntervalIndexFoldableImpl&lt; PAYLOAD_TYPE, Tree &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeIntervalIndexFoldableMap.html">beman::fingertree::FingerTreeIntervalIndexFoldableMap&lt; PAYLOAD_TYPE, Tree &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeIntervalIndexTraversableImpl.html">beman::fingertree::FingerTreeIntervalIndexTraversableImpl&lt; PAYLOAD_TYPE, Tree &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeIntervalIndexTraversableMap.html">beman::fingertree::FingerTreeIntervalIndexTraversableMap&lt; PAYLOAD_TYPE, Tree &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,6 +153,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a12f1f6a893632d8bcac70083fbde6003"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a12f1f6a893632d8bcac70083fbde6003">beman::fingertree::tree::IntervalMonoid</a> = <a class="el" href="structbeman_1_1transpose_1_1max__monoid.html">beman::transpose::max_monoid</a>&lt; std::size_t &gt;</td></tr>
 <tr class="memdesc:a12f1f6a893632d8bcac70083fbde6003"><td class="mdescLeft">&#160;</td><td class="mdescRight">The monoid instance the interval index measures under.  <br /></td></tr>
 <tr class="separator:a12f1f6a893632d8bcac70083fbde6003"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf78d756bad3a79403df07aa2cc32b44"><td class="memTemplParams" colspan="2">template&lt;class PAYLOAD_TYPE , class Tree &gt; </td></tr>
+<tr class="memitem:aaf78d756bad3a79403df07aa2cc32b44"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1fingertree.html#aaf78d756bad3a79403df07aa2cc32b44">beman::fingertree::FingerTreeIntervalIndexTraversableImpl</a> = FingerTreeSequenceTraversableImpl&lt; tree::FingerTreeIntervalIndex&lt; PAYLOAD_TYPE, Tree &gt; &gt;</td></tr>
+<tr class="separator:aaf78d756bad3a79403df07aa2cc32b44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

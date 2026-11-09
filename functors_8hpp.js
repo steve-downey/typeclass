@@ -4,6 +4,7 @@ var functors_8hpp =
     [ "beman::tree_algorithms::Succ< A >", "structbeman_1_1tree__algorithms_1_1Succ.html", "structbeman_1_1tree__algorithms_1_1Succ" ],
     [ "beman::tree_algorithms::NatFFunctorImpl< A >", "structbeman_1_1tree__algorithms_1_1NatFFunctorImpl.html", "structbeman_1_1tree__algorithms_1_1NatFFunctorImpl" ],
     [ "beman::tree_algorithms::NatFFunctorMap< A >", "structbeman_1_1tree__algorithms_1_1NatFFunctorMap.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::NatF< A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1NatF_3_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1NatF_3_01A_01_4_01_4" ],
     [ "NatF", "functors_8hpp.html#a223b4f8d9c137ad9ce56482a6585b3aa", null ],
     [ "Nat", "functors_8hpp.html#a5a838e4078052023bfb9b73903052c2e", null ],
     [ "make_zero", "functors_8hpp.html#ab8afe3d8ac744ad4680957e89769883f", null ],

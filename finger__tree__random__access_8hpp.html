@@ -93,11 +93,13 @@ $(document).ready(function(){initNavTree('finger__tree__random__access_8hpp.html
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">finger_tree_random_access.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="finger__tree_8hpp_source.html">beman/fingertree/tree/finger_tree.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="finger__tree__functor_8hpp_source.html">beman/fingertree/tree/finger_tree_functor.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="finger__tree__traversable_8hpp_source.html">beman/fingertree/tree/finger_tree_traversable.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="apply_8hpp_source.html">beman/transpose/apply.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="fold_8hpp_source.html">beman/transpose/fold.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="sequence_8hpp_source.html">beman/transpose/sequence.hpp</a>&gt;</code><br />
@@ -118,13 +120,12 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html">beman::fingertree::tree::FingerTreeRandomAccess&lt; T, Tree &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent random-access sequence backed by a finger tree.  <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreeRandomAccess_3_01T_00_01Tree_01_4_00_01U_01_4.html">beman::fingertree::finger_tree_rebind&lt; tree::FingerTreeRandomAccess&lt; T, Tree &gt;, U &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeRandomAccessFoldableImpl.html">beman::fingertree::FingerTreeRandomAccessFoldableImpl&lt; T, Tree &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foldable typeclass implementation for FingerTreeRandomAccess&lt;T, Tree&gt;.  <a href="structbeman_1_1fingertree_1_1FingerTreeRandomAccessFoldableImpl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeRandomAccessFoldableMap.html">beman::fingertree::FingerTreeRandomAccessFoldableMap&lt; T, Tree &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeRandomAccessTraversableImpl.html">beman::fingertree::FingerTreeRandomAccessTraversableImpl&lt; T, Tree &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversable typeclass implementation for FingerTreeRandomAccess&lt;T, Tree&gt;.  <a href="structbeman_1_1fingertree_1_1FingerTreeRandomAccessTraversableImpl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeRandomAccessTraversableMap.html">beman::fingertree::FingerTreeRandomAccessTraversableMap&lt; T, Tree &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,6 +141,13 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespacebeman_1_1transpose"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html">beman::transpose</a></td></tr>
 <tr class="memdesc:namespacebeman_1_1transpose"><td class="mdescLeft">&#160;</td><td class="mdescRight">The grade algebra: framework vocabulary only. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:ad8040b1ae12f25302baa754304f38327"><td class="memTemplParams" colspan="2">template&lt;class T , class Tree &gt; </td></tr>
+<tr class="memitem:ad8040b1ae12f25302baa754304f38327"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1fingertree.html#ad8040b1ae12f25302baa754304f38327">beman::fingertree::FingerTreeRandomAccessTraversableImpl</a> = FingerTreeSequenceTraversableImpl&lt; tree::FingerTreeRandomAccess&lt; T, Tree &gt; &gt;</td></tr>
+<tr class="memdesc:ad8040b1ae12f25302baa754304f38327"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversable retains configuration through the declared backing-family rebind.  <br /></td></tr>
+<tr class="separator:ad8040b1ae12f25302baa754304f38327"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

@@ -92,6 +92,7 @@ $(document).ready(function(){initNavTree('classbeman_1_1fingertree_1_1tree_1_1Fi
 
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope-members.html">List of all members</a>  </div>
@@ -104,6 +105,11 @@ $(document).ready(function(){initNavTree('classbeman_1_1fingertree_1_1tree_1_1Fi
 
 <p><code>#include &lt;<a class="el" href="finger__tree__rope_8hpp_source.html">beman/fingertree/tree/finger_tree_rope.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a11e0c141fed19a383d8f4d24fa358175"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope.html#a11e0c141fed19a383d8f4d24fa358175">value_type</a> = std::string</td></tr>
+<tr class="separator:a11e0c141fed19a383d8f4d24fa358175"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a34c6b012e14aa572474b3a62815857e4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope.html#a34c6b012e14aa572474b3a62815857e4">FingerTreeRope</a> ()</td></tr>
@@ -148,13 +154,31 @@ class beman::fingertree::tree::FingerTreeRope&lt; Tree &gt;</div><p>Persistent t
   </table>
   </dd>
 </dl>
+<p>Foldable presents string chunks. For effectful transformations, traverse <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope.html#ad7b7e8f9d55a8791198673ed2cad7432" title="Returns internal chunk vector in sequence order; O(n).">chunks()</a> explicitly and rebuild string results with <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope.html#a46510317ed8f4950cb79e9e730812c07" title="Builds a rope from a vector of pre-formed string chunks; O(n chunks).">from_chunks()</a>. Rope does not register a generic Traversable for arbitrary result types.</p>
 <p>Complexity:</p><ul>
 <li>from_text: O(n / chunk_size)</li>
 <li>size_bytes: O(1)</li>
 <li>to_string / chunks: O(n)</li>
 <li>insert / erase / replace: O(log n) </li>
 </ul>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a11e0c141fed19a383d8f4d24fa358175" name="a11e0c141fed19a383d8f4d24fa358175"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11e0c141fed19a383d8f4d24fa358175">&#9670;&#160;</a></span>value_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Tree  = FingerTree&lt;std::string, beman::transpose::sum_monoid&lt;std::size_t&gt;, RopeChunkMeasure&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope.html">beman::fingertree::tree::FingerTreeRope</a>&lt; Tree &gt;::value_type =  std::string</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a34c6b012e14aa572474b3a62815857e4" name="a34c6b012e14aa572474b3a62815857e4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a34c6b012e14aa572474b3a62815857e4">&#9670;&#160;</a></span>FingerTreeRope()</h2>
 

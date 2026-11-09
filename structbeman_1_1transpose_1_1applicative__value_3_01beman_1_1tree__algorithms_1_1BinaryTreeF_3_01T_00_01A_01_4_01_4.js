@@ -1,0 +1,4 @@
+var structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1BinaryTreeF_3_01T_00_01A_01_4_01_4 =
+[
+    [ "type", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1BinaryTreeF_3_01T_00_01A_01_4_01_4.html#a0e0403c956063f5273ec4b681c810c4f", null ]
+];

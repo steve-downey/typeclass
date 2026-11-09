@@ -92,6 +92,7 @@ $(document).ready(function(){initNavTree('classbeman_1_1fingertree_1_1tree_1_1Fi
 
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess-members.html">List of all members</a>  </div>
@@ -104,8 +105,20 @@ $(document).ready(function(){initNavTree('classbeman_1_1fingertree_1_1tree_1_1Fi
 
 <p><code>#include &lt;<a class="el" href="finger__tree__random__access_8hpp_source.html">beman/fingertree/tree/finger_tree_random_access.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a540bebae015e52e4fb979e8a3acf2130"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a540bebae015e52e4fb979e8a3acf2130">value_type</a> = T</td></tr>
+<tr class="separator:a540bebae015e52e4fb979e8a3acf2130"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a5c6488ecf2e391585a6c084011462bd7"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a5c6488ecf2e391585a6c084011462bd7">backing_tree</a> () const noexcept -&gt; const Tree &amp;</td></tr>
+<tr class="memdesc:a5c6488ecf2e391585a6c084011462bd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read-only access to the configured backing representation.  <br /></td></tr>
+<tr class="separator:a5c6488ecf2e391585a6c084011462bd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71812b9c9e87f95080b660c6924401b6"><td class="memTemplParams" colspan="2">template&lt;class F &gt; <br />
+requires std::invocable&lt;F&amp;, const T&amp;&gt;</td></tr>
+<tr class="memitem:a71812b9c9e87f95080b660c6924401b6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a71812b9c9e87f95080b660c6924401b6">for_each</a> (F &amp;&amp;function) const</td></tr>
+<tr class="separator:a71812b9c9e87f95080b660c6924401b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d3a0e6f66e8a5b9206d94c9bb769457"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a5d3a0e6f66e8a5b9206d94c9bb769457">FingerTreeRandomAccess</a> ()</td></tr>
 <tr class="memdesc:a5d3a0e6f66e8a5b9206d94c9bb769457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty sequence.  <br /></td></tr>
 <tr class="separator:a5d3a0e6f66e8a5b9206d94c9bb769457"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -162,7 +175,24 @@ class beman::fingertree::tree::FingerTreeRandomAccess&lt; T, Tree &gt;</div><p>P
 <li>size / empty: O(1)</li>
 <li>to_vector: O(n) </li>
 </ul>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a540bebae015e52e4fb979e8a3acf2130" name="a540bebae015e52e4fb979e8a3acf2130"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a540bebae015e52e4fb979e8a3acf2130">&#9670;&#160;</a></span>value_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Tree  = FingerTree&lt;T, beman::transpose::sum_monoid&lt;std::size_t&gt;, UnitMeasure&lt;T, std::size_t&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html">beman::fingertree::tree::FingerTreeRandomAccess</a>&lt; T, Tree &gt;::value_type =  T</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5d3a0e6f66e8a5b9206d94c9bb769457" name="a5d3a0e6f66e8a5b9206d94c9bb769457"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5d3a0e6f66e8a5b9206d94c9bb769457">&#9670;&#160;</a></span>FingerTreeRandomAccess() <span class="overload">[1/2]</span></h2>
 
@@ -223,6 +253,66 @@ template&lt;typename T , typename Tree  = FingerTree&lt;T, beman::transpose::sum
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a5c6488ecf2e391585a6c084011462bd7" name="a5c6488ecf2e391585a6c084011462bd7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c6488ecf2e391585a6c084011462bd7">&#9670;&#160;</a></span>backing_tree()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Tree  = FingerTree&lt;T, beman::transpose::sum_monoid&lt;std::size_t&gt;, UnitMeasure&lt;T, std::size_t&gt;&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html">beman::fingertree::tree::FingerTreeRandomAccess</a>&lt; T, Tree &gt;::backing_tree </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; const Tree&amp; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read-only access to the configured backing representation. </p>
+
+</div>
+</div>
+<a id="a71812b9c9e87f95080b660c6924401b6" name="a71812b9c9e87f95080b660c6924401b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71812b9c9e87f95080b660c6924401b6">&#9670;&#160;</a></span>for_each()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Tree  = FingerTree&lt;T, beman::transpose::sum_monoid&lt;std::size_t&gt;, UnitMeasure&lt;T, std::size_t&gt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;class F &gt; <br />
+requires std::invocable&lt;F&amp;, const T&amp;&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html">beman::fingertree::tree::FingerTreeRandomAccess</a>&lt; T, Tree &gt;::for_each </td>
+          <td>(</td>
+          <td class="paramtype">F &amp;&amp;&#160;</td>
+          <td class="paramname"><em>function</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac2ec15349e7a00eb360a7e05ba2d664a" name="ac2ec15349e7a00eb360a7e05ba2d664a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac2ec15349e7a00eb360a7e05ba2d664a">&#9670;&#160;</a></span>from_sequence()</h2>
 

@@ -92,6 +92,7 @@ $(document).ready(function(){initNavTree('classbeman_1_1fingertree_1_1tree_1_1Fi
 
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex-members.html">List of all members</a>  </div>
@@ -104,8 +105,22 @@ $(document).ready(function(){initNavTree('classbeman_1_1fingertree_1_1tree_1_1Fi
 
 <p><code>#include &lt;<a class="el" href="finger__tree__interval__index_8hpp_source.html">beman/fingertree/tree/finger_tree_interval_index.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a6b4f8d63510a3737c69e7672c19f3a05"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html#a6b4f8d63510a3737c69e7672c19f3a05">value_type</a> = PAYLOAD_TYPE</td></tr>
+<tr class="separator:a6b4f8d63510a3737c69e7672c19f3a05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:aec8316e859c060c6d83a34750ec99482"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html#aec8316e859c060c6d83a34750ec99482">FingerTreeIntervalIndex</a> (Tree tree)</td></tr>
+<tr class="separator:aec8316e859c060c6d83a34750ec99482"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60c62fc2450a2badc3a468881e7aff28"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html#a60c62fc2450a2badc3a468881e7aff28">backing_tree</a> () const noexcept -&gt; const Tree &amp;</td></tr>
+<tr class="memdesc:a60c62fc2450a2badc3a468881e7aff28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read-only access to the configured backing representation.  <br /></td></tr>
+<tr class="separator:a60c62fc2450a2badc3a468881e7aff28"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45802d346cbf69a84ccb5685a3da3d51"><td class="memTemplParams" colspan="2">template&lt;class F &gt; <br />
+requires std::invocable&lt;F&amp;, const PAYLOAD_TYPE&amp;&gt;</td></tr>
+<tr class="memitem:a45802d346cbf69a84ccb5685a3da3d51"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html#a45802d346cbf69a84ccb5685a3da3d51">for_each</a> (F &amp;&amp;function) const</td></tr>
+<tr class="separator:a45802d346cbf69a84ccb5685a3da3d51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0547f0e5bbe3685a380c6347fd789aa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html#ac0547f0e5bbe3685a380c6347fd789aa">FingerTreeIntervalIndex</a> ()</td></tr>
 <tr class="separator:ac0547f0e5bbe3685a380c6347fd789aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9800b4bc7a54f0897bb97e450d2f678e"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html#a9800b4bc7a54f0897bb97e450d2f678e">insert</a> (<a class="el" href="structbeman_1_1fingertree_1_1tree_1_1Interval.html">Entry</a> entry) const -&gt; <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html">FingerTreeIntervalIndex</a></td></tr>
@@ -138,9 +153,54 @@ class beman::fingertree::tree::FingerTreeIntervalIndex&lt; PAYLOAD_TYPE, Tree &g
 <li>query_overlap: O(log n + k) where k is the number of results</li>
 <li>entries: O(n) </li>
 </ul>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a6b4f8d63510a3737c69e7672c19f3a05" name="a6b4f8d63510a3737c69e7672c19f3a05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b4f8d63510a3737c69e7672c19f3a05">&#9670;&#160;</a></span>value_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename PAYLOAD_TYPE , typename Tree  = FingerTree&lt;Interval&lt;PAYLOAD_TYPE&gt;, IntervalMonoid, IntervalMeasure&lt;PAYLOAD_TYPE&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html">beman::fingertree::tree::FingerTreeIntervalIndex</a>&lt; PAYLOAD_TYPE, Tree &gt;::value_type =  PAYLOAD_TYPE</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aec8316e859c060c6d83a34750ec99482" name="aec8316e859c060c6d83a34750ec99482"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec8316e859c060c6d83a34750ec99482">&#9670;&#160;</a></span>FingerTreeIntervalIndex() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename PAYLOAD_TYPE , typename Tree  = FingerTree&lt;Interval&lt;PAYLOAD_TYPE&gt;, IntervalMonoid, IntervalMeasure&lt;PAYLOAD_TYPE&gt;&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html">beman::fingertree::tree::FingerTreeIntervalIndex</a>&lt; PAYLOAD_TYPE, Tree &gt;::FingerTreeIntervalIndex </td>
+          <td>(</td>
+          <td class="paramtype">Tree&#160;</td>
+          <td class="paramname"><em>tree</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ac0547f0e5bbe3685a380c6347fd789aa" name="ac0547f0e5bbe3685a380c6347fd789aa"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0547f0e5bbe3685a380c6347fd789aa">&#9670;&#160;</a></span>FingerTreeIntervalIndex()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0547f0e5bbe3685a380c6347fd789aa">&#9670;&#160;</a></span>FingerTreeIntervalIndex() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,6 +227,66 @@ template&lt;typename PAYLOAD_TYPE , typename Tree  = FingerTree&lt;Interval&lt;P
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a60c62fc2450a2badc3a468881e7aff28" name="a60c62fc2450a2badc3a468881e7aff28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60c62fc2450a2badc3a468881e7aff28">&#9670;&#160;</a></span>backing_tree()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename PAYLOAD_TYPE , typename Tree  = FingerTree&lt;Interval&lt;PAYLOAD_TYPE&gt;, IntervalMonoid, IntervalMeasure&lt;PAYLOAD_TYPE&gt;&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html">beman::fingertree::tree::FingerTreeIntervalIndex</a>&lt; PAYLOAD_TYPE, Tree &gt;::backing_tree </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; const Tree&amp; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read-only access to the configured backing representation. </p>
+
+</div>
+</div>
+<a id="a45802d346cbf69a84ccb5685a3da3d51" name="a45802d346cbf69a84ccb5685a3da3d51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45802d346cbf69a84ccb5685a3da3d51">&#9670;&#160;</a></span>for_each()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename PAYLOAD_TYPE , typename Tree  = FingerTree&lt;Interval&lt;PAYLOAD_TYPE&gt;, IntervalMonoid, IntervalMeasure&lt;PAYLOAD_TYPE&gt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;class F &gt; <br />
+requires std::invocable&lt;F&amp;, const PAYLOAD_TYPE&amp;&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html">beman::fingertree::tree::FingerTreeIntervalIndex</a>&lt; PAYLOAD_TYPE, Tree &gt;::for_each </td>
+          <td>(</td>
+          <td class="paramtype">F &amp;&amp;&#160;</td>
+          <td class="paramname"><em>function</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aede35e1b061127f2f138248dd506e5a6" name="aede35e1b061127f2f138248dd506e5a6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aede35e1b061127f2f138248dd506e5a6">&#9670;&#160;</a></span>from_intervals()</h2>
 

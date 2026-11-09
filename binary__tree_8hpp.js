@@ -5,6 +5,7 @@ var binary__tree_8hpp =
     [ "beman::tree_algorithms::BinaryTreeLayer< T >", "structbeman_1_1tree__algorithms_1_1BinaryTreeLayer.html", "structbeman_1_1tree__algorithms_1_1BinaryTreeLayer" ],
     [ "beman::tree_algorithms::BinaryTreeFFunctorImpl< T, A >", "structbeman_1_1tree__algorithms_1_1BinaryTreeFFunctorImpl.html", "structbeman_1_1tree__algorithms_1_1BinaryTreeFFunctorImpl" ],
     [ "beman::tree_algorithms::BinaryTreeFFunctorMap< T, A >", "structbeman_1_1tree__algorithms_1_1BinaryTreeFFunctorMap.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::BinaryTreeF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1BinaryTreeF_3_01T_00_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1BinaryTreeF_3_01T_00_01A_01_4_01_4" ],
     [ "beman::tree_algorithms::BinaryTreeLayerFoldMap", "structbeman_1_1tree__algorithms_1_1BinaryTreeLayerFoldMap.html", "structbeman_1_1tree__algorithms_1_1BinaryTreeLayerFoldMap" ],
     [ "beman::tree_algorithms::BinaryTreeProjectFn", "structbeman_1_1tree__algorithms_1_1BinaryTreeProjectFn.html", "structbeman_1_1tree__algorithms_1_1BinaryTreeProjectFn" ],
     [ "beman::tree_algorithms::binary_tree_element< BinaryTreeF< T, A > >", "structbeman_1_1tree__algorithms_1_1binary__tree__element_3_01BinaryTreeF_3_01T_00_01A_01_4_01_4.html", "structbeman_1_1tree__algorithms_1_1binary__tree__element_3_01BinaryTreeF_3_01T_00_01A_01_4_01_4" ],

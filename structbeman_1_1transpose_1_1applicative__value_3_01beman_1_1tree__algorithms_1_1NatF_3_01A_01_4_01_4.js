@@ -1,0 +1,4 @@
+var structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1NatF_3_01A_01_4_01_4 =
+[
+    [ "type", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1NatF_3_01A_01_4_01_4.html#a72012b2c8df54de54997e7bfb6e23d72", null ]
+];

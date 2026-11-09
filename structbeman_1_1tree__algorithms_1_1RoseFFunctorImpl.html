@@ -105,23 +105,25 @@ $(document).ready(function(){initNavTree('structbeman_1_1tree__algorithms_1_1Ros
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2ec7c17558ce8be9800cb0e0a3bd8a50"><td class="memTemplParams" colspan="2">template&lt;typename Fn &gt; </td></tr>
-<tr class="memitem:a2ec7c17558ce8be9800cb0e0a3bd8a50"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1RoseFFunctorImpl.html#a2ec7c17558ce8be9800cb0e0a3bd8a50">fmap</a> (this auto &amp;&amp;, Fn &amp;&amp;fn, const <a class="el" href="structbeman_1_1tree__algorithms_1_1RoseF.html">RoseF</a>&lt; T, A &gt; &amp;layer)</td></tr>
-<tr class="separator:a2ec7c17558ce8be9800cb0e0a3bd8a50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a985f5ed00b132370a2f207f3e26bd60c"><td class="memTemplParams" colspan="2">template&lt;typename Fn &gt; <br />
+requires std::invocable&lt;Fn&amp;, const A&amp;&gt; &amp;&amp; transpose::detail::holdable_value&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt;, std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::move_constructible&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &gt; &amp;&amp; std::copy_constructible&lt;T&gt;</td></tr>
+<tr class="memitem:a985f5ed00b132370a2f207f3e26bd60c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1RoseFFunctorImpl.html#a985f5ed00b132370a2f207f3e26bd60c">fmap</a> (this auto &amp;&amp;, Fn &amp;&amp;fn, const <a class="el" href="structbeman_1_1tree__algorithms_1_1RoseF.html">RoseF</a>&lt; T, A &gt; &amp;layer)</td></tr>
+<tr class="separator:a985f5ed00b132370a2f207f3e26bd60c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T, typename A&gt;<br />
 struct beman::tree_algorithms::RoseFFunctorImpl&lt; T, A &gt;</div><p>Functor primitive for RoseF&lt;T, A&gt;: applies <code>fn</code> to every child position, left to right; the node value copies across untouched. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2ec7c17558ce8be9800cb0e0a3bd8a50" name="a2ec7c17558ce8be9800cb0e0a3bd8a50"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ec7c17558ce8be9800cb0e0a3bd8a50">&#9670;&#160;</a></span>fmap()</h2>
+<a id="a985f5ed00b132370a2f207f3e26bd60c" name="a985f5ed00b132370a2f207f3e26bd60c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a985f5ed00b132370a2f207f3e26bd60c">&#9670;&#160;</a></span>fmap()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T , typename A &gt; </div>
 <div class="memtemplate">
-template&lt;typename Fn &gt; </div>
+template&lt;typename Fn &gt; <br />
+requires std::invocable&lt;Fn&amp;, const A&amp;&gt; &amp;&amp; transpose::detail::holdable_value&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt;, std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::move_constructible&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &gt; &amp;&amp; std::copy_constructible&lt;T&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

@@ -92,6 +92,7 @@ $(document).ready(function(){initNavTree('classbeman_1_1fingertree_1_1tree_1_1Fi
 
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue-members.html">List of all members</a>  </div>
@@ -104,8 +105,22 @@ $(document).ready(function(){initNavTree('classbeman_1_1fingertree_1_1tree_1_1Fi
 
 <p><code>#include &lt;<a class="el" href="finger__tree__priority__queue_8hpp_source.html">beman/fingertree/tree/finger_tree_priority_queue.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:aa36943d20fe0afb46dabbf80c43ad82f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#aa36943d20fe0afb46dabbf80c43ad82f">value_type</a> = T</td></tr>
+<tr class="separator:aa36943d20fe0afb46dabbf80c43ad82f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a54a9c13fbfb1162b21a230fd80e0e914"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a54a9c13fbfb1162b21a230fd80e0e914">FingerTreePriorityQueue</a> (Tree tree)</td></tr>
+<tr class="separator:a54a9c13fbfb1162b21a230fd80e0e914"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c09c07702cd4e4b4aca8fb212964350"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a2c09c07702cd4e4b4aca8fb212964350">backing_tree</a> () const noexcept -&gt; const Tree &amp;</td></tr>
+<tr class="memdesc:a2c09c07702cd4e4b4aca8fb212964350"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read-only access to the configured backing representation.  <br /></td></tr>
+<tr class="separator:a2c09c07702cd4e4b4aca8fb212964350"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae6806f2ac018b442315ae121e97f60d"><td class="memTemplParams" colspan="2">template&lt;class F &gt; <br />
+requires std::invocable&lt;F&amp;, const T&amp;&gt;</td></tr>
+<tr class="memitem:aae6806f2ac018b442315ae121e97f60d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#aae6806f2ac018b442315ae121e97f60d">for_each</a> (F &amp;&amp;function) const</td></tr>
+<tr class="separator:aae6806f2ac018b442315ae121e97f60d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cae63f11b1ca5d31b2b66cdb861029a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a2cae63f11b1ca5d31b2b66cdb861029a">FingerTreePriorityQueue</a> ()</td></tr>
 <tr class="separator:a2cae63f11b1ca5d31b2b66cdb861029a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a431f890aee586374925362fb44c11880"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a431f890aee586374925362fb44c11880">empty</a> () const -&gt; bool</td></tr>
@@ -148,9 +163,54 @@ class beman::fingertree::tree::FingerTreePriorityQueue&lt; T, Tree &gt;</div><p>
 <li>size: O(1) — the count is the first component of the measure</li>
 <li>to_vector: O(n) </li>
 </ul>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="aa36943d20fe0afb46dabbf80c43ad82f" name="aa36943d20fe0afb46dabbf80c43ad82f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa36943d20fe0afb46dabbf80c43ad82f">&#9670;&#160;</a></span>value_type</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Tree  = FingerTree&lt;T, PriorityMonoid&lt;T&gt;, PriorityMeasure&lt;T&gt;&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">beman::fingertree::tree::FingerTreePriorityQueue</a>&lt; T, Tree &gt;::value_type =  T</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a54a9c13fbfb1162b21a230fd80e0e914" name="a54a9c13fbfb1162b21a230fd80e0e914"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54a9c13fbfb1162b21a230fd80e0e914">&#9670;&#160;</a></span>FingerTreePriorityQueue() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Tree  = FingerTree&lt;T, PriorityMonoid&lt;T&gt;, PriorityMeasure&lt;T&gt;&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">beman::fingertree::tree::FingerTreePriorityQueue</a>&lt; T, Tree &gt;::FingerTreePriorityQueue </td>
+          <td>(</td>
+          <td class="paramtype">Tree&#160;</td>
+          <td class="paramname"><em>tree</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a2cae63f11b1ca5d31b2b66cdb861029a" name="a2cae63f11b1ca5d31b2b66cdb861029a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2cae63f11b1ca5d31b2b66cdb861029a">&#9670;&#160;</a></span>FingerTreePriorityQueue()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2cae63f11b1ca5d31b2b66cdb861029a">&#9670;&#160;</a></span>FingerTreePriorityQueue() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -177,6 +237,66 @@ template&lt;typename T , typename Tree  = FingerTree&lt;T, PriorityMonoid&lt;T&g
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a2c09c07702cd4e4b4aca8fb212964350" name="a2c09c07702cd4e4b4aca8fb212964350"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c09c07702cd4e4b4aca8fb212964350">&#9670;&#160;</a></span>backing_tree()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Tree  = FingerTree&lt;T, PriorityMonoid&lt;T&gt;, PriorityMeasure&lt;T&gt;&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">beman::fingertree::tree::FingerTreePriorityQueue</a>&lt; T, Tree &gt;::backing_tree </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const -&gt; const Tree&amp; </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Read-only access to the configured backing representation. </p>
+
+</div>
+</div>
+<a id="aae6806f2ac018b442315ae121e97f60d" name="aae6806f2ac018b442315ae121e97f60d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae6806f2ac018b442315ae121e97f60d">&#9670;&#160;</a></span>for_each()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename Tree  = FingerTree&lt;T, PriorityMonoid&lt;T&gt;, PriorityMeasure&lt;T&gt;&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;class F &gt; <br />
+requires std::invocable&lt;F&amp;, const T&amp;&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">beman::fingertree::tree::FingerTreePriorityQueue</a>&lt; T, Tree &gt;::for_each </td>
+          <td>(</td>
+          <td class="paramtype">F &amp;&amp;&#160;</td>
+          <td class="paramname"><em>function</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a1b594aa3fcd6cff26afe2913a4402298" name="a1b594aa3fcd6cff26afe2913a4402298"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1b594aa3fcd6cff26afe2913a4402298">&#9670;&#160;</a></span>from_values()</h2>
 

@@ -1,7 +1,10 @@
 var classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess =
 [
+    [ "value_type", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a540bebae015e52e4fb979e8a3acf2130", null ],
     [ "FingerTreeRandomAccess", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a5d3a0e6f66e8a5b9206d94c9bb769457", null ],
     [ "FingerTreeRandomAccess", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a634787eae47afc8fbd88c647796867eb", null ],
+    [ "backing_tree", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a5c6488ecf2e391585a6c084011462bd7", null ],
+    [ "for_each", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a71812b9c9e87f95080b660c6924401b6", null ],
     [ "from_sequence", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#ac2ec15349e7a00eb360a7e05ba2d664a", null ],
     [ "size", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a2bb402ea16415527348500a27482bf03", null ],
     [ "empty", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#a2731400e90dd94d4068287977652e193", null ],

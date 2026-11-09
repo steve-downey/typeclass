@@ -7,6 +7,7 @@ var fringe__tree_8hpp =
     [ "beman::tree_algorithms::FringeBranch< A >", "structbeman_1_1tree__algorithms_1_1FringeBranch.html", "structbeman_1_1tree__algorithms_1_1FringeBranch" ],
     [ "beman::tree_algorithms::FringeTreeFFunctorImpl< T, A >", "structbeman_1_1tree__algorithms_1_1FringeTreeFFunctorImpl.html", "structbeman_1_1tree__algorithms_1_1FringeTreeFFunctorImpl" ],
     [ "beman::tree_algorithms::FringeTreeFFunctorMap< T, A >", "structbeman_1_1tree__algorithms_1_1FringeTreeFFunctorMap.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::FringeTreeF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4" ],
     [ "beman::tree_algorithms::FringeTreeProjectFn", "structbeman_1_1tree__algorithms_1_1FringeTreeProjectFn.html", "structbeman_1_1tree__algorithms_1_1FringeTreeProjectFn" ],
     [ "beman::tree_algorithms::FringeTreeEmbedFn", "structbeman_1_1tree__algorithms_1_1FringeTreeEmbedFn.html", "structbeman_1_1tree__algorithms_1_1FringeTreeEmbedFn" ],
     [ "beman::tree_algorithms::FringeTreeLayerFoldMap", "structbeman_1_1tree__algorithms_1_1FringeTreeLayerFoldMap.html", "structbeman_1_1tree__algorithms_1_1FringeTreeLayerFoldMap" ],

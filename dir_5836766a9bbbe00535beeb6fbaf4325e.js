@@ -13,5 +13,6 @@ var dir_5836766a9bbbe00535beeb6fbaf4325e =
     [ "recursion_schemes.hpp", "recursion__schemes_8hpp.html", "recursion__schemes_8hpp" ],
     [ "recursion_schemes_lookup.hpp", "recursion__schemes__lookup_8hpp.html", "recursion__schemes__lookup_8hpp" ],
     [ "rose_tree.hpp", "rose__tree_8hpp.html", "rose__tree_8hpp" ],
-    [ "todo.hpp", "todo_8hpp.html", null ]
+    [ "todo.hpp", "todo_8hpp.html", null ],
+    [ "tree_typeclasses.hpp", "tree__typeclasses_8hpp.html", "tree__typeclasses_8hpp" ]
 ];

@@ -246,8 +246,10 @@ Public Member Functions</h2></td></tr>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:af07d2628cfac2e0e34f0ffbddb567f6e"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#af07d2628cfac2e0e34f0ffbddb567f6e">leaf</a> (T <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a068d6f948f2721b5cc605a3e7aa4f1ad">value</a>) -&gt; <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a></td></tr>
 <tr class="separator:af07d2628cfac2e0e34f0ffbddb567f6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe67455cd65fa4ed8a114253c6783404"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#abe67455cd65fa4ed8a114253c6783404">from_sequence</a> (const std::vector&lt; T &gt; &amp;values, const ALLOCATOR &amp;alloc=ALLOCATOR{}, const MONOID &amp;monoid=MONOID{}) -&gt; <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a></td></tr>
-<tr class="separator:abe67455cd65fa4ed8a114253c6783404"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1db6d75c1dd64ddf485b514fc801e79"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#af1db6d75c1dd64ddf485b514fc801e79">from_sequence</a> (const std::vector&lt; T &gt; &amp;values, const ALLOCATOR &amp;alloc=ALLOCATOR{}, const MONOID &amp;monoid=MONOID{}) -&gt; <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a></td></tr>
+<tr class="separator:af1db6d75c1dd64ddf485b514fc801e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf27650d4dd29e5ca2db127443ee68c6"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#abf27650d4dd29e5ca2db127443ee68c6">from_sequence</a> (std::vector&lt; T &gt; &amp;&amp;values, const ALLOCATOR &amp;alloc=ALLOCATOR{}, const MONOID &amp;monoid=MONOID{}) -&gt; <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a></td></tr>
+<tr class="separator:abf27650d4dd29e5ca2db127443ee68c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8ce43009015682a013cc84c9c528489"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#aa8ce43009015682a013cc84c9c528489">concat</a> (const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a> &amp;left, const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a> &amp;right) -&gt; <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a></td></tr>
 <tr class="separator:aa8ce43009015682a013cc84c9c528489"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -1540,8 +1542,8 @@ template&lt;typename F &gt; </div>
 
 </div>
 </div>
-<a id="abe67455cd65fa4ed8a114253c6783404" name="abe67455cd65fa4ed8a114253c6783404"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe67455cd65fa4ed8a114253c6783404">&#9670;&#160;</a></span>from_sequence()</h2>
+<a id="af1db6d75c1dd64ddf485b514fc801e79" name="af1db6d75c1dd64ddf485b514fc801e79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af1db6d75c1dd64ddf485b514fc801e79">&#9670;&#160;</a></span>from_sequence() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1572,7 +1574,53 @@ template&lt;typename T , typename MONOID  = beman::transpose::sum_monoid&lt;std:
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt; <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a> </td>
+          <td></td><td> -&gt; <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a>
+        </td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abf27650d4dd29e5ca2db127443ee68c6" name="abf27650d4dd29e5ca2db127443ee68c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf27650d4dd29e5ca2db127443ee68c6">&#9670;&#160;</a></span>from_sequence() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename MONOID  = beman::transpose::sum_monoid&lt;std::size_t&gt;, typename MEASURE_POLICY  = UnitMeasure&lt;T, ft::tag_t&lt;MONOID&gt;&gt;, typename ALLOCATOR  = std::allocator&lt;std::byte&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static auto <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">beman::fingertree::tree::FingerTree</a>&lt; T, MONOID, MEASURE_POLICY, ALLOCATOR &gt;::from_sequence </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; T &gt; &amp;&amp;&#160;</td>
+          <td class="paramname"><em>values</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ALLOCATOR &amp;&#160;</td>
+          <td class="paramname"><em>alloc</em> = <code>ALLOCATOR{}</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const MONOID &amp;&#160;</td>
+          <td class="paramname"><em>monoid</em> = <code>MONOID{}</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> -&gt; <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a>
+        </td>
         </tr>
       </table>
   </td>

@@ -105,23 +105,25 @@ $(document).ready(function(){initNavTree('structbeman_1_1tree__algorithms_1_1Fri
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6ed34a4d37436ffaa58806a638c204a6"><td class="memTemplParams" colspan="2">template&lt;typename Fn &gt; </td></tr>
-<tr class="memitem:a6ed34a4d37436ffaa58806a638c204a6"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1FringeTreeFFunctorImpl.html#a6ed34a4d37436ffaa58806a638c204a6">fmap</a> (this auto &amp;&amp;, Fn &amp;&amp;fn, const <a class="el" href="namespacebeman_1_1tree__algorithms.html#a67e3c8210985fe31f5bb225a5e976d4a">FringeTreeF</a>&lt; T, A &gt; &amp;layer)</td></tr>
-<tr class="separator:a6ed34a4d37436ffaa58806a638c204a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60cda1cb1cd665463abc7e26487de956"><td class="memTemplParams" colspan="2">template&lt;typename Fn &gt; <br />
+requires std::invocable&lt;Fn&amp;, const A&amp;&gt; &amp;&amp; transpose::detail::holdable_value&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt;, std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::move_constructible&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &gt; &amp;&amp; std::copy_constructible&lt;T&gt;</td></tr>
+<tr class="memitem:a60cda1cb1cd665463abc7e26487de956"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1FringeTreeFFunctorImpl.html#a60cda1cb1cd665463abc7e26487de956">fmap</a> (this auto &amp;&amp;, Fn &amp;&amp;fn, const <a class="el" href="namespacebeman_1_1tree__algorithms.html#a67e3c8210985fe31f5bb225a5e976d4a">FringeTreeF</a>&lt; T, A &gt; &amp;layer)</td></tr>
+<tr class="separator:a60cda1cb1cd665463abc7e26487de956"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T, typename A&gt;<br />
 struct beman::tree_algorithms::FringeTreeFFunctorImpl&lt; T, A &gt;</div><p>Functor primitive for FringeTreeF&lt;T, A&gt;: applies <code>fn</code> to each child handle of a branch, left before right; empty and leaf layers pass through with the element untouched. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a6ed34a4d37436ffaa58806a638c204a6" name="a6ed34a4d37436ffaa58806a638c204a6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ed34a4d37436ffaa58806a638c204a6">&#9670;&#160;</a></span>fmap()</h2>
+<a id="a60cda1cb1cd665463abc7e26487de956" name="a60cda1cb1cd665463abc7e26487de956"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60cda1cb1cd665463abc7e26487de956">&#9670;&#160;</a></span>fmap()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T , typename A &gt; </div>
 <div class="memtemplate">
-template&lt;typename Fn &gt; </div>
+template&lt;typename Fn &gt; <br />
+requires std::invocable&lt;Fn&amp;, const A&amp;&gt; &amp;&amp; transpose::detail::holdable_value&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt;, std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::move_constructible&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &gt; &amp;&amp; std::copy_constructible&lt;T&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

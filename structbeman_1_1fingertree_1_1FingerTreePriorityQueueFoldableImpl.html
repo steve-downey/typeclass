@@ -108,9 +108,10 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4ee0258898244cd4f3939e0c956b203e"><td class="memTemplParams" colspan="2">template&lt;class F , class RESULT_MONOID &gt; </td></tr>
-<tr class="memitem:a4ee0258898244cd4f3939e0c956b203e"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreePriorityQueueFoldableImpl.html#a4ee0258898244cd4f3939e0c956b203e">fold_map</a> (this auto &amp;&amp;, F &amp;&amp;function, const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">beman::fingertree::tree::FingerTreePriorityQueue</a>&lt; T, Tree &gt; &amp;queue, RESULT_MONOID monoid) -&gt; std::remove_cvref_t&lt; std::invoke_result_t&lt; F &amp;, const T &amp; &gt; &gt;</td></tr>
-<tr class="separator:a4ee0258898244cd4f3939e0c956b203e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0d6ac16d000d27f944a68f37df47276"><td class="memTemplParams" colspan="2">template&lt;class F , class RESULT_MONOID &gt; <br />
+requires std::invocable&lt;F&amp;, const T&amp;&gt; &amp;&amp; <a class="el" href="conceptbeman_1_1transpose_1_1monoid__object.html">beman::transpose::monoid_object</a>&lt;RESULT_MONOID, std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const T&amp;&gt;&gt;&gt;</td></tr>
+<tr class="memitem:ac0d6ac16d000d27f944a68f37df47276"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreePriorityQueueFoldableImpl.html#ac0d6ac16d000d27f944a68f37df47276">fold_map</a> (this auto &amp;&amp;, F &amp;&amp;function, const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">beman::fingertree::tree::FingerTreePriorityQueue</a>&lt; T, Tree &gt; &amp;queue, RESULT_MONOID monoid) -&gt; std::remove_cvref_t&lt; std::invoke_result_t&lt; F &amp;, const T &amp; &gt; &gt;</td></tr>
+<tr class="separator:ac0d6ac16d000d27f944a68f37df47276"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a0be0de2407c8ca4b1102c3a062aebd28" name="a0be0de2407c8ca4b1102c3a062aebd28"></a>
@@ -130,15 +131,16 @@ template&lt;class T , class Tree &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4ee0258898244cd4f3939e0c956b203e" name="a4ee0258898244cd4f3939e0c956b203e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ee0258898244cd4f3939e0c956b203e">&#9670;&#160;</a></span>fold_map()</h2>
+<a id="ac0d6ac16d000d27f944a68f37df47276" name="ac0d6ac16d000d27f944a68f37df47276"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0d6ac16d000d27f944a68f37df47276">&#9670;&#160;</a></span>fold_map()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class T , class Tree &gt; </div>
 <div class="memtemplate">
-template&lt;class F , class RESULT_MONOID &gt; </div>
+template&lt;class F , class RESULT_MONOID &gt; <br />
+requires std::invocable&lt;F&amp;, const T&amp;&gt; &amp;&amp; <a class="el" href="conceptbeman_1_1transpose_1_1monoid__object.html">beman::transpose::monoid_object</a>&lt;RESULT_MONOID, std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const T&amp;&gt;&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -170,7 +172,8 @@ template&lt;class F , class RESULT_MONOID &gt; </div>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt; std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const T&amp;&gt;&gt; </td>
+          <td></td><td> -&gt; std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const T&amp;&gt;&gt;
+        </td>
         </tr>
       </table>
   </td>

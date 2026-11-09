@@ -105,23 +105,25 @@ $(document).ready(function(){initNavTree('structbeman_1_1tree__algorithms_1_1Nat
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a09d7f9475b75dc08c4f40bb586d993bd"><td class="memTemplParams" colspan="2">template&lt;typename Fn &gt; </td></tr>
-<tr class="memitem:a09d7f9475b75dc08c4f40bb586d993bd"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1NatFFunctorImpl.html#a09d7f9475b75dc08c4f40bb586d993bd">fmap</a> (this auto &amp;&amp;, Fn &amp;&amp;fn, const <a class="el" href="namespacebeman_1_1tree__algorithms.html#a223b4f8d9c137ad9ce56482a6585b3aa">NatF</a>&lt; A &gt; &amp;layer)</td></tr>
-<tr class="separator:a09d7f9475b75dc08c4f40bb586d993bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bf0ab5637945943659be3b1b5faf2d8"><td class="memTemplParams" colspan="2">template&lt;typename Fn &gt; <br />
+requires std::invocable&lt;Fn&amp;, const A&amp;&gt; &amp;&amp; transpose::detail::holdable_value&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt;, std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::move_constructible&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &gt;</td></tr>
+<tr class="memitem:a6bf0ab5637945943659be3b1b5faf2d8"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1NatFFunctorImpl.html#a6bf0ab5637945943659be3b1b5faf2d8">fmap</a> (this auto &amp;&amp;, Fn &amp;&amp;fn, const <a class="el" href="namespacebeman_1_1tree__algorithms.html#a223b4f8d9c137ad9ce56482a6585b3aa">NatF</a>&lt; A &gt; &amp;layer)</td></tr>
+<tr class="separator:a6bf0ab5637945943659be3b1b5faf2d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename A&gt;<br />
 struct beman::tree_algorithms::NatFFunctorImpl&lt; A &gt;</div><p>Functor primitive for NatF: applies <code>fn</code> to the predecessor of a <a class="el" href="structbeman_1_1tree__algorithms_1_1Succ.html" title="Successor alternative: holds the predecessor in a child slot — boxed at the knot, inline at complete ...">Succ</a> layer; <a class="el" href="structbeman_1_1tree__algorithms_1_1Zero.html" title="Zero alternative: no recursive positions.">Zero</a> has no recursive positions. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a09d7f9475b75dc08c4f40bb586d993bd" name="a09d7f9475b75dc08c4f40bb586d993bd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09d7f9475b75dc08c4f40bb586d993bd">&#9670;&#160;</a></span>fmap()</h2>
+<a id="a6bf0ab5637945943659be3b1b5faf2d8" name="a6bf0ab5637945943659be3b1b5faf2d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bf0ab5637945943659be3b1b5faf2d8">&#9670;&#160;</a></span>fmap()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename A &gt; </div>
 <div class="memtemplate">
-template&lt;typename Fn &gt; </div>
+template&lt;typename Fn &gt; <br />
+requires std::invocable&lt;Fn&amp;, const A&amp;&gt; &amp;&amp; transpose::detail::holdable_value&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt;, std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::move_constructible&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

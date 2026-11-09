@@ -108,6 +108,7 @@ $(document).ready(function(){initNavTree('binary__tree_8hpp.html',''); initResiz
 <code>#include &lt;<a class="el" href="functor_8hpp_source.html">beman/transpose/functor.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="recursion__schemes__lookup_8hpp_source.html">beman/tree_algorithms/recursion_schemes_lookup.hpp</a>&gt;</code><br />
 <code>#include &lt;cassert&gt;</code><br />
+<code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
@@ -131,6 +132,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1BinaryTreeFFunctorMap.html">beman::tree_algorithms::BinaryTreeFFunctorMap&lt; T, A &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor map for BinaryTreeF&lt;T, A&gt;: the fmap primitive plus the derived operations from the Functor CRTP base.  <a href="structbeman_1_1tree__algorithms_1_1BinaryTreeFFunctorMap.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1BinaryTreeF_3_01T_00_01A_01_4_01_4.html">beman::transpose::applicative_value&lt; beman::tree_algorithms::BinaryTreeF&lt; T, A &gt; &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1BinaryTreeLayerFoldMap.html">beman::tree_algorithms::BinaryTreeLayerFoldMap</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Folds one <a class="el" href="structbeman_1_1tree__algorithms_1_1BinaryTreeF.html" title="One layer of a value-at-every-node binary tree: a value plus nullable children in child slots.">BinaryTreeF</a> layer elementwise, in order: the left child's already-folded result, then the mapped node value, then the right child's result.  <a href="structbeman_1_1tree__algorithms_1_1BinaryTreeLayerFoldMap.html#details">More...</a><br /></td></tr>

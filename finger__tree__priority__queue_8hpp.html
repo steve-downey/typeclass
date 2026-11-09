@@ -98,7 +98,8 @@ $(document).ready(function(){initNavTree('finger__tree__priority__queue_8hpp.htm
   <div class="headertitle"><div class="title">finger_tree_priority_queue.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;<a class="el" href="finger__tree_8hpp_source.html">beman/fingertree/tree/finger_tree.hpp</a>&gt;</code><br />
+<div class="textblock"><code>#include &lt;<a class="el" href="finger__tree__functor_8hpp_source.html">beman/fingertree/tree/finger_tree_functor.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="finger__tree__traversable_8hpp_source.html">beman/fingertree/tree/finger_tree_traversable.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="apply_8hpp_source.html">beman/transpose/apply.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="fold_8hpp_source.html">beman/transpose/fold.hpp</a>&gt;</code><br />
 <code>#include &lt;<a class="el" href="monoid_8hpp_source.html">beman/transpose/monoid.hpp</a>&gt;</code><br />
@@ -129,11 +130,13 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">beman::fingertree::tree::FingerTreePriorityQueue&lt; T, Tree &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent double-ended priority queue backed by a finger tree.  <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTree_3_01T_00_01tree_1_1Prio65f93616525bb0b96296f6b0c3551888.html">beman::fingertree::finger_tree_rebind&lt; tree::FingerTree&lt; T, tree::PriorityMonoid&lt; T &gt;, tree::PriorityMeasure&lt; T &gt;, A &gt;, U &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreePriorityQueue_3_01T_00_01Tree_01_4_00_01U_01_4.html">beman::fingertree::finger_tree_rebind&lt; tree::FingerTreePriorityQueue&lt; T, Tree &gt;, U &gt;</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreePriorityQueueFoldableImpl.html">beman::fingertree::FingerTreePriorityQueueFoldableImpl&lt; T, Tree &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreePriorityQueueFoldableMap.html">beman::fingertree::FingerTreePriorityQueueFoldableMap&lt; T, Tree &gt;</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreePriorityQueueTraversableImpl.html">beman::fingertree::FingerTreePriorityQueueTraversableImpl&lt; T, Tree &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreePriorityQueueTraversableMap.html">beman::fingertree::FingerTreePriorityQueueTraversableMap&lt; T, Tree &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,6 +162,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a88266cfee49c4a04bbfe53eb7f543c4a"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a88266cfee49c4a04bbfe53eb7f543c4a"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a88266cfee49c4a04bbfe53eb7f543c4a">beman::fingertree::tree::PriorityMonoid</a> = <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html">beman::transpose::tuple_monoid</a>&lt; <a class="el" href="structbeman_1_1transpose_1_1sum__monoid.html">beman::transpose::sum_monoid</a>&lt; std::size_t &gt;, optional_min_monoid&lt; T &gt;, optional_max_monoid&lt; T &gt; &gt;</td></tr>
 <tr class="separator:a88266cfee49c4a04bbfe53eb7f543c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3f042f0e6e78868178fc0a2fd4704a0"><td class="memTemplParams" colspan="2">template&lt;class T , class Tree &gt; </td></tr>
+<tr class="memitem:ac3f042f0e6e78868178fc0a2fd4704a0"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1fingertree.html#ac3f042f0e6e78868178fc0a2fd4704a0">beman::fingertree::FingerTreePriorityQueueTraversableImpl</a> = FingerTreeSequenceTraversableImpl&lt; tree::FingerTreePriorityQueue&lt; T, Tree &gt; &gt;</td></tr>
+<tr class="separator:ac3f042f0e6e78868178fc0a2fd4704a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 </div><!-- doc-content -->

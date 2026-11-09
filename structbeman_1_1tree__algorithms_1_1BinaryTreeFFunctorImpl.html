@@ -105,24 +105,26 @@ $(document).ready(function(){initNavTree('structbeman_1_1tree__algorithms_1_1Bin
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a12fe683a745aae233436ec50658ba400"><td class="memTemplParams" colspan="2">template&lt;typename Fn &gt; </td></tr>
-<tr class="memitem:a12fe683a745aae233436ec50658ba400"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1BinaryTreeFFunctorImpl.html#a12fe683a745aae233436ec50658ba400">fmap</a> (this auto &amp;&amp;, Fn &amp;&amp;fn, const <a class="el" href="structbeman_1_1tree__algorithms_1_1BinaryTreeF.html">BinaryTreeF</a>&lt; T, A &gt; &amp;layer)</td></tr>
-<tr class="separator:a12fe683a745aae233436ec50658ba400"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1acfc6c343e1b78f1ff7739e8339732b"><td class="memTemplParams" colspan="2">template&lt;typename Fn &gt; <br />
+requires std::invocable&lt;Fn&amp;, const A&amp;&gt; &amp;&amp; transpose::detail::holdable_value&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt;, std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::move_constructible&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &gt; &amp;&amp; std::copy_constructible&lt;T&gt;</td></tr>
+<tr class="memitem:a1acfc6c343e1b78f1ff7739e8339732b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1tree__algorithms_1_1BinaryTreeFFunctorImpl.html#a1acfc6c343e1b78f1ff7739e8339732b">fmap</a> (this auto &amp;&amp;, Fn &amp;&amp;fn, const <a class="el" href="structbeman_1_1tree__algorithms_1_1BinaryTreeF.html">BinaryTreeF</a>&lt; T, A &gt; &amp;layer)</td></tr>
+<tr class="separator:a1acfc6c343e1b78f1ff7739e8339732b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T, typename A&gt;<br />
 struct beman::tree_algorithms::BinaryTreeFFunctorImpl&lt; T, A &gt;</div><p>Functor primitive for BinaryTreeF&lt;T, A&gt;: applies <code>fn</code> to each engaged child, left before right; absent (disengaged) children stay absent. </p>
 <p>The node value copies across untouched. make_slot picks the result layer's storage: inline for complete B, boxed only if B is itself the knot. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a12fe683a745aae233436ec50658ba400" name="a12fe683a745aae233436ec50658ba400"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12fe683a745aae233436ec50658ba400">&#9670;&#160;</a></span>fmap()</h2>
+<a id="a1acfc6c343e1b78f1ff7739e8339732b" name="a1acfc6c343e1b78f1ff7739e8339732b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1acfc6c343e1b78f1ff7739e8339732b">&#9670;&#160;</a></span>fmap()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename T , typename A &gt; </div>
 <div class="memtemplate">
-template&lt;typename Fn &gt; </div>
+template&lt;typename Fn &gt; <br />
+requires std::invocable&lt;Fn&amp;, const A&amp;&gt; &amp;&amp; transpose::detail::holdable_value&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::constructible_from&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt;, std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &amp;&amp; std::move_constructible&lt;std::remove_cvref_t&lt;std::invoke_result_t&lt;Fn&amp;, const A&amp;&gt; &gt; &gt; &amp;&amp; std::copy_constructible&lt;T&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">

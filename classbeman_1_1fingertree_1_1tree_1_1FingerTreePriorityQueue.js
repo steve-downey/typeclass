@@ -1,6 +1,10 @@
 var classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue =
 [
+    [ "value_type", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#aa36943d20fe0afb46dabbf80c43ad82f", null ],
+    [ "FingerTreePriorityQueue", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a54a9c13fbfb1162b21a230fd80e0e914", null ],
     [ "FingerTreePriorityQueue", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a2cae63f11b1ca5d31b2b66cdb861029a", null ],
+    [ "backing_tree", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a2c09c07702cd4e4b4aca8fb212964350", null ],
+    [ "for_each", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#aae6806f2ac018b442315ae121e97f60d", null ],
     [ "from_values", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a1b594aa3fcd6cff26afe2913a4402298", null ],
     [ "empty", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a431f890aee586374925362fb44c11880", null ],
     [ "size", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a98adb770ddb857c91fa4483ae93346e9", null ],

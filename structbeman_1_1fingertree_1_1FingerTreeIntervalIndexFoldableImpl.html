@@ -108,9 +108,10 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a568e0bd0d7c222ec95b42672898b7bea"><td class="memTemplParams" colspan="2">template&lt;class F , class RESULT_MONOID &gt; </td></tr>
-<tr class="memitem:a568e0bd0d7c222ec95b42672898b7bea"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeIntervalIndexFoldableImpl.html#a568e0bd0d7c222ec95b42672898b7bea">fold_map</a> (this auto &amp;&amp;, F &amp;&amp;function, const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html">beman::fingertree::tree::FingerTreeIntervalIndex</a>&lt; PAYLOAD_TYPE, Tree &gt; &amp;index, RESULT_MONOID monoid) -&gt; std::remove_cvref_t&lt; std::invoke_result_t&lt; F &amp;, const PAYLOAD_TYPE &amp; &gt; &gt;</td></tr>
-<tr class="separator:a568e0bd0d7c222ec95b42672898b7bea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9392c43af083cfc8804370cbaf0df83"><td class="memTemplParams" colspan="2">template&lt;class F , class RESULT_MONOID &gt; <br />
+requires std::invocable&lt;F&amp;, const PAYLOAD_TYPE&amp;&gt; &amp;&amp; <a class="el" href="conceptbeman_1_1transpose_1_1monoid__object.html">beman::transpose::monoid_object</a>&lt;RESULT_MONOID, std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const PAYLOAD_TYPE&amp;&gt;&gt;&gt;</td></tr>
+<tr class="memitem:af9392c43af083cfc8804370cbaf0df83"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1FingerTreeIntervalIndexFoldableImpl.html#af9392c43af083cfc8804370cbaf0df83">fold_map</a> (this auto &amp;&amp;, F &amp;&amp;function, const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html">beman::fingertree::tree::FingerTreeIntervalIndex</a>&lt; PAYLOAD_TYPE, Tree &gt; &amp;index, RESULT_MONOID monoid) -&gt; std::remove_cvref_t&lt; std::invoke_result_t&lt; F &amp;, const PAYLOAD_TYPE &amp; &gt; &gt;</td></tr>
+<tr class="separator:af9392c43af083cfc8804370cbaf0df83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a07530961a7cf022659310bc73ba835cd" name="a07530961a7cf022659310bc73ba835cd"></a>
@@ -130,15 +131,16 @@ template&lt;class PAYLOAD_TYPE , class Tree &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a568e0bd0d7c222ec95b42672898b7bea" name="a568e0bd0d7c222ec95b42672898b7bea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a568e0bd0d7c222ec95b42672898b7bea">&#9670;&#160;</a></span>fold_map()</h2>
+<a id="af9392c43af083cfc8804370cbaf0df83" name="af9392c43af083cfc8804370cbaf0df83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af9392c43af083cfc8804370cbaf0df83">&#9670;&#160;</a></span>fold_map()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class PAYLOAD_TYPE , class Tree &gt; </div>
 <div class="memtemplate">
-template&lt;class F , class RESULT_MONOID &gt; </div>
+template&lt;class F , class RESULT_MONOID &gt; <br />
+requires std::invocable&lt;F&amp;, const PAYLOAD_TYPE&amp;&gt; &amp;&amp; <a class="el" href="conceptbeman_1_1transpose_1_1monoid__object.html">beman::transpose::monoid_object</a>&lt;RESULT_MONOID, std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const PAYLOAD_TYPE&amp;&gt;&gt;&gt;</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -170,7 +172,8 @@ template&lt;class F , class RESULT_MONOID &gt; </div>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt; std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const PAYLOAD_TYPE&amp;&gt;&gt; </td>
+          <td></td><td> -&gt; std::remove_cvref_t&lt;std::invoke_result_t&lt;F&amp;, const PAYLOAD_TYPE&amp;&gt;&gt;
+        </td>
         </tr>
       </table>
   </td>

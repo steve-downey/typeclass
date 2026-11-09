@@ -1,0 +1,6 @@
+var structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreePriorityQueue_3_01T_00_01Tree_01_4_00_01U_01_4 =
+[
+    [ "source_type", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreePriorityQueue_3_01T_00_01Tree_01_4_00_01U_01_4.html#a1825e83ba90b840320d59be6d53d8d31", null ],
+    [ "type", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreePriorityQueue_3_01T_00_01Tree_01_4_00_01U_01_4.html#affead19635b9238486aa88e7b0d490f8", null ],
+    [ "make_builder", "structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreePriorityQueue_3_01T_00_01Tree_01_4_00_01U_01_4.html#a0c29d21988e8a607f795464f0c5a1b44", null ]
+];

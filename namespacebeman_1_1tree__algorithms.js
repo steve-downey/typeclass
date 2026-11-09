@@ -63,6 +63,7 @@ var namespacebeman_1_1tree__algorithms =
     [ "layer_fold_map", "namespacebeman_1_1tree__algorithms.html#af111e89945fda34e5d9ddf3c32ad5dc6", null ],
     [ "fold_map", "namespacebeman_1_1tree__algorithms.html#a80759ffb40598220726e9a76de818a34", null ],
     [ "fold_map", "namespacebeman_1_1tree__algorithms.html#a43b5715d3be406ddee5feb9bb8d68e15", null ],
+    [ "fold_map", "namespacebeman_1_1tree__algorithms.html#a609c5b11a872ed9757b31d6d4c39753f", null ],
     [ "view_l", "namespacebeman_1_1tree__algorithms.html#a0561a17e031b98dafc8044bb4acc4bc5", null ],
     [ "view_r", "namespacebeman_1_1tree__algorithms.html#a3b668e7946579fed5341b5a6e4ba1951", null ],
     [ "make_zero", "namespacebeman_1_1tree__algorithms.html#ab8afe3d8ac744ad4680957e89769883f", null ],

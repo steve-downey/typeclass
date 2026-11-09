@@ -5,6 +5,7 @@ var expression_8hpp =
     [ "beman::tree_algorithms::Mul< A >", "structbeman_1_1tree__algorithms_1_1Mul.html", "structbeman_1_1tree__algorithms_1_1Mul" ],
     [ "beman::tree_algorithms::ExprFFunctorImpl< A >", "structbeman_1_1tree__algorithms_1_1ExprFFunctorImpl.html", "structbeman_1_1tree__algorithms_1_1ExprFFunctorImpl" ],
     [ "beman::tree_algorithms::ExprFFunctorMap< A >", "structbeman_1_1tree__algorithms_1_1ExprFFunctorMap.html", null ],
+    [ "beman::transpose::applicative_value< beman::tree_algorithms::ExprF< A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1ExprF_3_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1ExprF_3_01A_01_4_01_4" ],
     [ "beman::tree_algorithms::ExprLayerFoldMap", "structbeman_1_1tree__algorithms_1_1ExprLayerFoldMap.html", "structbeman_1_1tree__algorithms_1_1ExprLayerFoldMap" ],
     [ "ExprF", "expression_8hpp.html#aaa8a50cf4aff3eaee17722bc9c97fb86", null ],
     [ "Expr", "expression_8hpp.html#aad13607be1f7ecf9827858a02b1c2764", null ],
