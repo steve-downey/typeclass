@@ -147,9 +147,9 @@ void check_wrappers() {
         check_collection<POLICY>(ft::FingerTreePriorityQueue<int>::from_values(values), values, [](const auto& t) {
             return t.to_vector();
         });
-        const auto chunks = ft::FingerTreeRope<>::from_chunks(empty ? std::vector<std::string>{}
-                                                                    : std::vector<std::string>{"1", "2", "3"})
-                                .chunks();
+        const auto chunks  = ft::FingerTreeRope<>::from_chunks(empty ? std::vector<std::string>{}
+                                                                     : std::vector<std::string>{"1", "2", "3"})
+                                 .chunks();
         POLICY::collects   = 0;
         auto chunk_effects = beman::transpose::traversable<std::vector<std::string>>.traverse(
             POLICY{},
