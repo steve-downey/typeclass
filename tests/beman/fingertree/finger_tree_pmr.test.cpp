@@ -353,6 +353,36 @@ TEST_CASE("pmr::FingerTree - Elem and Deep allocs stay within resource, "
     }
 }
 
+TEST_CASE("pmr::FingerTree - operator== makes no allocation") {
+    std::pmr::monotonic_buffer_resource mr;
+    using Alloc = std::pmr::polymorphic_allocator<std::byte>;
+    using FTI   = beman::fingertree::tree::pmr::FingerTree<int>;
+    // A custom measure takes the walk without the O(1) size check.
+    using FTW = beman::fingertree::tree::FingerTree<int, ModularSum, Weight, Alloc>;
+
+    std::vector<int> values(5000);
+    for (int i = 0; i < 5000; ++i)
+        values[static_cast<std::size_t>(i)] = i;
+    auto changed   = values;
+    changed.back() = -1;
+
+    const auto a = FTI::from_sequence(values, &mr);
+    FTI        b(&mr);
+    for (int v : values)
+        b = b.snoc(v);
+    const auto c = FTI::from_sequence(changed, &mr);
+    const auto w = FTW::from_sequence(values, Alloc{&mr}, ModularSum{7});
+    const auto x = FTW::from_sequence(changed, Alloc{&mr}, ModularSum{7});
+
+    GlobalAllocGuard g;
+    CHECK(a == b);
+    CHECK(!(a == c));
+    CHECK(w == w);
+    CHECK(!(w == x));
+    if constexpr (!BEMAN_FINGERTREE_TEST_UNDER_TSAN)
+        CHECK(g.new_since() == 0U);
+}
+
 TEST_CASE("pmr::FingerTree - allocator-aware T: allocator propagates into "
           "elements") {
     std::array<std::byte, 1 << 20>      buf{};
