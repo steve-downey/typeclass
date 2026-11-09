@@ -12,10 +12,13 @@ import beman.tree_algorithms;
 #else
 
     #include <beman/transpose/functor.hpp>
+    #include <beman/transpose/monoid.hpp>
     #include <beman/tree_algorithms/fold_map.hpp>
     #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
     #if !BEMAN_TREE_ALGORITHMS_USE_MODULES()
+        #include <concepts>
+        #include <functional>
         #include <type_traits>
         #include <utility>
     #endif
@@ -63,7 +66,7 @@ constexpr auto layer_fold_map(const MapFn& map_fn, const Combine& combine, const
     -> Result {
     static_assert(transpose::has_instance_v<decltype(layer_fold<std::remove_cvref_t<Layer> >)>,
                   "no layer-fold instance: specialize "
-                  "beman::tree_algorithms::layer_fold_typeclass for this layer type, or use "
+                  "beman::tree_algorithms::layer_fold for this layer type, or use "
                   "the explicit forms in fold_map.hpp");
     return layer_fold<std::remove_cvref_t<Layer> >(map_fn, combine, identity, layer);
 }
@@ -93,13 +96,54 @@ constexpr auto fold_map(const MapFn& map_fn, const Combine& combine, const Resul
     -> Result {
     static_assert(transpose::has_instance_v<decltype(project<Tree>)>,
                   "no projection instance: specialize "
-                  "beman::tree_algorithms::project_typeclass for this tree type, or use the "
+                  "beman::tree_algorithms::project for this tree type, or use the "
                   "explicit forms in fold_map.hpp");
     auto algebra = [&](const auto& layer) -> Result { return layer_fold_map(map_fn, combine, identity, layer); };
     auto fmap_fn = [](auto&& fn, const auto& layer) { return layer_fmap(std::forward<decltype(fn)>(fn), layer); };
     return fold_with<Result>(algebra, fmap_fn, project<Tree>, &tree);
 }
 // 7f08b12d-3d26-4b5e-bf79-66d38f6fee0d end
+
+namespace detail {
+template <class Tree>
+struct fold_map_source_layer {};
+
+template <class Tree>
+    requires std::invocable<decltype(project<Tree>), const Tree*>
+struct fold_map_source_layer<Tree> {
+    using type = std::invoke_result_t<decltype(project<Tree>), const Tree*>;
+};
+
+template <template <class> class F>
+struct fold_map_source_layer<Fix<F> > {
+    using type = F<Fix<F> >;
+};
+
+template <class Tree>
+concept registered_fold_source =
+    requires { typename fold_map_source_layer<Tree>::type; } &&
+    transpose::has_instance_v<decltype(layer_fold<typename fold_map_source_layer<Tree>::type>)> &&
+    transpose::has_instance_v<decltype(transpose::functor<typename fold_map_source_layer<Tree>::type>)>;
+} // namespace detail
+
+/** Monoid-object bridge to the structural fold. This consumer overload
+ * retains the passed callable and monoid, including their state. Existing
+ * projections and layer maps copy payloads; the carrier must be copyable.
+ */
+template <class F, class Tree, class Monoid>
+    requires detail::registered_fold_source<Tree> && std::copy_constructible<transpose::applicative_value_t<Tree> > &&
+             std::invocable<F&, const transpose::applicative_value_t<Tree>&> &&
+             std::copyable<
+                 std::remove_cvref_t<std::invoke_result_t<F&, const transpose::applicative_value_t<Tree>&> > > &&
+             transpose::monoid_object<
+                 Monoid,
+                 std::remove_cvref_t<std::invoke_result_t<F&, const transpose::applicative_value_t<Tree>&> > >
+constexpr auto fold_map(F&& function, const Tree& tree, const Monoid& monoid) {
+    using Result = std::remove_cvref_t<std::invoke_result_t<F&, const transpose::applicative_value_t<Tree>&> >;
+    auto mapper  = [&](const auto& value) -> Result { return std::invoke(function, value); };
+    auto combine = [&](const Result& left, const Result& right) -> Result { return monoid.combine(left, right); };
+    return tree_algorithms::fold_map<Result>(mapper, combine, Result(monoid.identity()), tree);
+}
 
 } // namespace beman::tree_algorithms
 

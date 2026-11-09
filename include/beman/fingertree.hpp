@@ -17,6 +17,9 @@ import beman.fingertree;
     #include <beman/fingertree/tree/finger_tree.hpp>
     #include <beman/fingertree/tree/finger_tree_iterator.hpp>
     #include <beman/fingertree/tree/finger_tree_pmr.hpp>
+    #include <beman/fingertree/tree/finger_tree_rebind.hpp>
+    #include <beman/fingertree/tree/finger_tree_functor.hpp>
+    #include <beman/fingertree/tree/finger_tree_monoid.hpp>
     #include <beman/fingertree/tree/finger_tree_foldable.hpp>
     #include <beman/fingertree/tree/finger_tree_traversable.hpp>
     #include <beman/fingertree/tree/finger_tree_random_access.hpp>

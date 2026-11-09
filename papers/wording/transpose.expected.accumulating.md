@@ -6,16 +6,15 @@
 
 ```cpp
 template<class VALUE>
-auto pure(this auto&&, VALUE&& value) -> $expected-pure-t$<VALUE_TYPE, VALUE, ERROR_TYPE>;
+  auto pure(this auto&&, VALUE&& value) -> $expected-pure-t$<VALUE_TYPE, VALUE, ERROR_TYPE>;
 ```
 
 [x]{.pnum} *Returns*: An `expected` holding `value`.
 
 ```cpp
 template<class FUNCTION, class... CARRIERS>
-auto invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands)
-    -> $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>,
-                         ERROR_TYPE>;
+  auto invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands)
+      -> $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>, ERROR_TYPE>;
 ```
 
 [x+1]{.pnum} *Constraints*: `sizeof...(CARRIERS) > 0` is `true` and `$all-declare-v$<ERROR_TYPE, CARRIERS...>` is `true`.
@@ -26,9 +25,8 @@ auto invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands)
 
 ```cpp
 template<class FUNCTION, class... CARRIERS>
-auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
-    -> $expected-result-t$<
-        invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>;
+  auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
+      -> $expected-result-t$<invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>;
 ```
 
 [x+4]{.pnum} *Constraints*: At least one operand is an `expected`; the operands do not all declare `ERROR_TYPE`; and every operand either declares `ERROR_TYPE` or is a bare value.
@@ -37,13 +35,10 @@ auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
 
 ```cpp
 template<class FUNCTION, class... CARRIERS>
-auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
-    -> $mixed-result-t$<
-        $grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
-        $expected-result-t$<
-            invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
-            ERROR_TYPE>,
-        CARRIERS...>;
+  auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands)
+      -> $mixed-result-t$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
+                        $expected-result-t$<invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>,
+                        CARRIERS...>;
 ```
 
 [x+6]{.pnum} *Constraints*: At least one operand is an `expected`; the operands do not all declare `ERROR_TYPE` or a bare value; and every operand's grade belongs to this instance's grade model.

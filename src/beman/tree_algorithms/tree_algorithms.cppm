@@ -7,6 +7,7 @@ module;
 // module's purview.
 #include <beman/transpose/functor.hpp>
 #include <beman/transpose/overloaded.hpp>
+#include <beman/transpose/sequence.hpp>
 
 // <cassert> is macro-only, so `import std` does not provide it. Included
 // here it brings its declarations in attached to the global module, as

@@ -2,13 +2,15 @@
 #ifndef BEMAN_FINGERTREE_TREE_FINGER_TREE_INTERVAL_INDEX_HPP
 #define BEMAN_FINGERTREE_TREE_FINGER_TREE_INTERVAL_INDEX_HPP
 
-#include <beman/fingertree/tree/finger_tree.hpp>
+#include <beman/fingertree/tree/finger_tree_functor.hpp>
+#include <beman/fingertree/tree/finger_tree_traversable.hpp>
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/fold.hpp>
 #include <beman/transpose/monoid.hpp>
 #include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
+#include <cassert>
 #include <cstddef>
 #include <concepts>
 #include <functional>
@@ -59,9 +61,21 @@ class FingerTreeIntervalIndex {
 
     Tree d_tree;
 
+  public:
+    using value_type = PAYLOAD_TYPE;
+
     explicit FingerTreeIntervalIndex(Tree tree) : d_tree(std::move(tree)) {}
 
-  public:
+    /** Read-only access to the configured backing representation. */
+    auto backing_tree() const noexcept -> const Tree& { return d_tree; }
+
+    template <class F>
+    void for_each(F&& function) const
+        requires std::invocable<F&, const PAYLOAD_TYPE&>
+    {
+        d_tree.for_each([&](const Interval<PAYLOAD_TYPE>& value) { std::invoke(function, value.d_payload); });
+    }
+
     FingerTreeIntervalIndex() : d_tree(Tree{}) {}
 
     static auto from_intervals(std::vector<Entry> entries) -> FingerTreeIntervalIndex {
@@ -99,6 +113,52 @@ class FingerTreeIntervalIndex {
 
 namespace beman::fingertree {
 
+template <class T, class A, class U>
+    requires(!std::same_as<T, U>) &&
+            detail::measurable_payload<tree::Interval<U>, tree::IntervalMonoid, tree::IntervalMeasure<U>> &&
+            std::copy_constructible<A>
+struct finger_tree_rebind<tree::FingerTree<tree::Interval<T>, tree::IntervalMonoid, tree::IntervalMeasure<T>, A>,
+                          tree::Interval<U>> {
+    using source_type = tree::FingerTree<tree::Interval<T>, tree::IntervalMonoid, tree::IntervalMeasure<T>, A>;
+    using type        = tree::FingerTree<tree::Interval<U>, tree::IntervalMonoid, tree::IntervalMeasure<U>, A>;
+
+    static auto make_builder(const source_type& source) {
+        return detail::configured_tree_builder<type>{source.get_allocator(), source.get_monoid()};
+    }
+};
+
+namespace detail {
+template <class INDEX, class BUILDER>
+struct interval_index_builder {
+    BUILDER                                          builder;
+    std::vector<std::pair<std::size_t, std::size_t>> bounds;
+
+    auto operator()(std::vector<typename INDEX::value_type>&& payloads) -> INDEX {
+        assert(payloads.size() == bounds.size());
+        std::vector<tree::Interval<typename INDEX::value_type>> entries;
+        entries.reserve(payloads.size());
+        for (std::size_t i = 0; i < payloads.size(); ++i)
+            entries.push_back({bounds[i].first, bounds[i].second, std::move(payloads[i])});
+        return INDEX{std::invoke(builder, std::move(entries))};
+    }
+};
+} // namespace detail
+
+template <class T, class Tree, class U>
+    requires detail::rebindable<Tree, tree::Interval<U>>
+struct finger_tree_rebind<tree::FingerTreeIntervalIndex<T, Tree>, U> {
+    using source_type = tree::FingerTreeIntervalIndex<T, Tree>;
+    using type        = tree::FingerTreeIntervalIndex<U, finger_tree_rebind_t<Tree, tree::Interval<U>>>;
+
+    static auto make_builder(const source_type& source) {
+        auto builder = finger_tree_rebind<Tree, tree::Interval<U>>::make_builder(source.backing_tree());
+        std::vector<std::pair<std::size_t, std::size_t>> bounds;
+        source.backing_tree().for_each(
+            [&](const tree::Interval<T>& entry) { bounds.emplace_back(entry.d_start, entry.d_end); });
+        return detail::interval_index_builder<type, decltype(builder)>{std::move(builder), std::move(bounds)};
+    }
+};
+
 template <class PAYLOAD_TYPE, class Tree>
 struct FingerTreeIntervalIndexFoldableImpl {
     using element_type = PAYLOAD_TYPE;
@@ -110,11 +170,17 @@ struct FingerTreeIntervalIndexFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                                         function,
                   const beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>& index,
-                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>> {
-        using Result = std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>;
-        return std::ranges::fold_left(index.entries(), Result(monoid.identity()), [&](Result acc, const auto& value) {
-            return monoid.combine(std::move(acc), std::invoke(function, value.d_payload));
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>
+        requires std::invocable<F&, const PAYLOAD_TYPE&> &&
+                 beman::transpose::monoid_object<RESULT_MONOID,
+                                                 std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>>
+    {
+        using Result       = std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>;
+        Result accumulated = monoid.identity();
+        index.for_each([&](const PAYLOAD_TYPE& value) {
+            accumulated = monoid.combine(std::move(accumulated), std::invoke(function, value));
         });
+        return accumulated;
     }
 };
 
@@ -127,6 +193,10 @@ struct FingerTreeIntervalIndexFoldableMap
 namespace beman::transpose {
 
 template <class PAYLOAD_TYPE, class Tree>
+inline constexpr auto functor<beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>> =
+    beman::fingertree::FingerTreeFunctorMap<beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>>{};
+
+template <class PAYLOAD_TYPE, class Tree>
 inline constexpr auto foldable<beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>> =
     beman::fingertree::FingerTreeIntervalIndexFoldableMap<PAYLOAD_TYPE, Tree>{};
 
@@ -135,47 +205,8 @@ inline constexpr auto foldable<beman::fingertree::tree::FingerTreeIntervalIndex<
 namespace beman::fingertree {
 
 template <class PAYLOAD_TYPE, class Tree>
-struct FingerTreeIntervalIndexTraversableImpl {
-    using element_type = PAYLOAD_TYPE;
-
-    template <class APPLICATIVE, class F>
-    auto traverse(this auto&&,
-                  const APPLICATIVE&                                                          applicative,
-                  F&&                                                                         function,
-                  const beman::fingertree::tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>& index)
-        requires std::invocable<F&, const PAYLOAD_TYPE&> &&
-                 beman::transpose::applicative_object_for<
-                     APPLICATIVE,
-                     std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>>
-    {
-        using Context = std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>;
-        using U       = beman::transpose::applicative_value_t<Context>;
-
-        using Entry = beman::fingertree::tree::Interval<PAYLOAD_TYPE>;
-
-        const auto entries = index.entries();
-
-        std::vector<std::pair<std::size_t, std::size_t>> bounds;
-        bounds.reserve(entries.size());
-        for (const auto& entry : entries) {
-            bounds.emplace_back(entry.d_start, entry.d_end);
-        }
-        auto accumulated = beman::transpose::traversable<std::vector<Entry>>.traverse(
-            applicative, [&](const Entry& entry) { return std::invoke(function, entry.d_payload); }, entries);
-
-        return applicative.invoke(
-            [bounds = std::move(bounds)](std::vector<U> payloads) {
-                // Own endpoints independently of the source and deferred payload effects.
-                std::vector<beman::fingertree::tree::Interval<U>> values;
-                values.reserve(payloads.size());
-                for (std::size_t i = 0; i < payloads.size(); ++i) {
-                    values.push_back({bounds[i].first, bounds[i].second, std::move(payloads[i])});
-                }
-                return beman::fingertree::tree::FingerTreeIntervalIndex<U>::from_intervals(std::move(values));
-            },
-            std::move(accumulated));
-    }
-};
+using FingerTreeIntervalIndexTraversableImpl =
+    FingerTreeSequenceTraversableImpl<tree::FingerTreeIntervalIndex<PAYLOAD_TYPE, Tree>>;
 
 template <class PAYLOAD_TYPE, class Tree>
 struct FingerTreeIntervalIndexTraversableMap

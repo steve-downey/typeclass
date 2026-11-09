@@ -10,7 +10,14 @@ The [coherence plan](coherence-plan.md) follows the
 repairs are complete on `tree-coherence-correctness` (PR #44, stacked on the
 review in #43). Stage 0 implementation contracts are recorded in
 [coherence-contracts.md](coherence-contracts.md), including the supported-interface
-matrix and Rope migration. Stage 2 conformance is next; stages 3–6 remain planned.
+matrix and Rope migration. Stage 2 [primitive constraints and object conformance](coherence-conformance.md)
+is complete on `tree-coherence-conformance`, including Rope's explicit chunk
+route. Stage 3 [configured reconstruction](coherence-reconstruction.md) is complete
+on `tree-coherence-reconstruction`, including payload Functors and concatenation
+monoids. Stage 4 [payload tree adapters](coherence-payload-adapters.md) is complete
+on `tree-coherence-payload-adapters`, including the structural-fold bridge and
+Expr's constant Foldable. Stage 5 optional structural fingertree integration
+is next; stage 6 remains planned.
 
 1. Record the element, reconstruction, Rope, and integration contracts.
 2. Repair monoid-state propagation, duplicate tree effects, and native collection.

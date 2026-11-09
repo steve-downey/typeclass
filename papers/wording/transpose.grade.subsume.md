@@ -6,8 +6,7 @@
 
 ```cpp
 template<class TARGET_GRADE, class CARRIER>
-constexpr auto grade_subsume(CARRIER&& value)
-    -> $rebind-grade-t$<remove_cvref_t<CARRIER>, TARGET_GRADE>;
+  constexpr auto grade_subsume(CARRIER&& value) -> $rebind-grade-t$<remove_cvref_t<CARRIER>, TARGET_GRADE>;
 ```
 
 [x]{.pnum} *Constraints*: `TARGET_GRADE` satisfies `grade_semilattice`; the grade `value` carries is either `unit_grade` or subsumes into `TARGET_GRADE`; and `value`'s carrier re-indexed at `TARGET_GRADE` is constructible from `value`.

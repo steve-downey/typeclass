@@ -6,7 +6,7 @@
 
 ```cpp
 template<class TARGET_GRADE, class CARRIER>
-constexpr auto subsume(this auto&&, CARRIER&& value);
+  constexpr auto subsume(this auto&&, CARRIER&& value);
 ```
 
 [x]{.pnum} *Constraints*: `value` can be re-indexed to `TARGET_GRADE`.

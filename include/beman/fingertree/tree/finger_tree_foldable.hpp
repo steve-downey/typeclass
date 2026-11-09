@@ -5,6 +5,7 @@
 #include <beman/fingertree/tree/finger_tree.hpp>
 #include <beman/transpose/fold.hpp>
 
+#include <concepts>
 #include <functional>
 #include <type_traits>
 #include <utility>
@@ -26,7 +27,11 @@ struct FingerTreeFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                                              function,
                   const beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>& tree,
-                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>> {
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>>
+        requires std::invocable<F&, const T&> &&
+                 beman::transpose::monoid_object<RESULT_MONOID,
+                                                 std::remove_cvref_t<std::invoke_result_t<F&, const T&>>>
+    {
         using Result = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
 
         Result acc = monoid.identity();

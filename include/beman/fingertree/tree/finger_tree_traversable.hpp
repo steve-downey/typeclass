@@ -2,60 +2,63 @@
 #ifndef BEMAN_FINGERTREE_TREE_FINGER_TREE_TRAVERSABLE_HPP
 #define BEMAN_FINGERTREE_TREE_FINGER_TREE_TRAVERSABLE_HPP
 
-// Traversable constraint for FingerTree:
-// - Materialization: traverse materializes via flatten() into a vector.
-// - Reconstruction: results are rebuilt via FingerTree<U>::from_sequence(),
-//   applying the default UnitMeasure, monoid, and allocator to the result type.
-// - Applicative semantics: traversals run left-to-right independent of tree
-//   structure.
-//
-// Traversal is not a primary performance path, so O(n) materialization is
-// acceptable. Wrappers that need structure-preserving traversal can override.
-
-#include <beman/fingertree/tree/finger_tree.hpp>
+// Persistent sources are walked by reference. Transpose owns effect
+// sequencing; the declared rebind owns configured reconstruction.
+#include <beman/fingertree/tree/finger_tree_rebind.hpp>
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
 #include <concepts>
 #include <functional>
+#include <memory>
 #include <type_traits>
 #include <utility>
 #include <vector>
 
 namespace beman::fingertree {
 
-/** Traversable typeclass implementation for FingerTree; materialises via
- * flatten() then reconstructs with from_sequence(); O(n).
- */
-template <class T, class MONOID, class MEASURE_POLICY, class ALLOCATOR>
-struct FingerTreeTraversableImpl {
-    using element_type = T;
+/** Reference-reading traversal shared by the sequence and its wrappers. */
+template <class STRUCTURE>
+struct FingerTreeSequenceTraversableImpl {
+    using element_type = typename STRUCTURE::value_type;
 
     template <class APPLICATIVE, class F>
-    auto traverse(this auto&&,
-                  const APPLICATIVE&                                                               applicative,
-                  F&&                                                                              function,
-                  const beman::fingertree::tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>& tree)
-        requires std::invocable<F&, const T&> &&
-                 beman::transpose::applicative_object_for<APPLICATIVE,
-                                                          std::remove_cvref_t<std::invoke_result_t<F&, const T&>>>
+    constexpr auto traverse(this auto&&, const APPLICATIVE& applicative, F&& function, const STRUCTURE& source)
+        requires std::invocable<F&, const element_type&> &&
+                 transpose::applicative_object_for<
+                     APPLICATIVE,
+                     std::remove_cvref_t<std::invoke_result_t<F&, const element_type&>>> &&
+                 std::move_constructible<std::remove_cvref_t<std::invoke_result_t<F&, const element_type&>>> &&
+                 std::constructible_from<std::remove_cvref_t<std::invoke_result_t<F&, const element_type&>>,
+                                         std::invoke_result_t<F&, const element_type&>> &&
+                 detail::rebindable<STRUCTURE,
+                                    transpose::applicative_value_t<
+                                        std::remove_cvref_t<std::invoke_result_t<F&, const element_type&>>>>
     {
-        using Context = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
-        using U       = beman::transpose::applicative_value_t<Context>;
+        using Context = std::remove_cvref_t<std::invoke_result_t<F&, const element_type&>>;
+        using U       = transpose::applicative_value_t<Context>;
+        auto builder  = finger_tree_rebind<STRUCTURE, U>::make_builder(source);
 
-        // Keep the persistent input's const-reference element convention.
-        const auto values = tree.flatten();
-        auto       accumulated =
-            beman::transpose::traversable<std::vector<T>>.traverse(applicative, std::forward<F>(function), values);
-
+        // The pointers exist only while the vector primitive invokes the
+        // mapper. Deferred effects and reconstruction own their own data.
+        std::vector<const element_type*> positions;
+        source.for_each([&](const element_type& value) { positions.push_back(std::addressof(value)); });
+        auto accumulated = transpose::traversable<decltype(positions)>.traverse(
+            applicative,
+            [&](const element_type* value) -> Context { return std::invoke(function, *value); },
+            positions);
         return applicative.invoke(
-            [](std::vector<U> values) {
-                return beman::fingertree::tree::FingerTree<U>::from_sequence(std::move(values));
+            [builder = std::move(builder)](std::vector<U> values) mutable {
+                return std::invoke(builder, std::move(values));
             },
             std::move(accumulated));
     }
 };
+
+template <class T, class MONOID, class MEASURE_POLICY, class ALLOCATOR>
+using FingerTreeTraversableImpl =
+    FingerTreeSequenceTraversableImpl<tree::FingerTree<T, MONOID, MEASURE_POLICY, ALLOCATOR>>;
 
 /** Traversable typeclass map entry for FingerTree. */
 template <class T, class MONOID, class MEASURE_POLICY, class ALLOCATOR>

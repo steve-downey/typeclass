@@ -147,3 +147,71 @@ Affected declarations live in the consuming headers listed above; this pass
 changes no primitive lookup name, paper wording, org exhibit, or explicit-tier
 signature. The extraction plan's section 7 compatibility checklist still
 applies to all later adapters.
+
+## Stage 3 declaration details
+
+The three payload-polymorphic capability wrappers expose
+`backing_tree() const -> const Tree&`, a public explicit constructor from a
+configured backing tree, and `for_each` over const-reference payloads.
+These let the builder snapshot configuration and interval endpoints without
+copying source payloads. Their Functor and Traversable instances share the
+base tree's implementation through these operations. Rope retains its explicit
+chunk route and does not acquire these generic instances.
+
+Default priority and interval backing families declare type-changing rebinds
+in their wrapper headers. The priority family requires a copyable, totally
+ordered result because its measure stores both extrema. Their built-in
+monoids and measure policies are stateless; the byte allocator is retained.
+Custom backing families need their own declared rebind. A builder must be
+move-constructible and invocable as a named lvalue; reconstruction captures it
+by value in a mutable closure, so a custom builder need not have a const call
+operator.
+
+The explicit configured concatenation instance rebuilds both operands under
+its selected allocator and monoid. This costs O(n + m) and requires copyable
+payloads, but guarantees that no foreign allocator or cached measure enters
+the result. Its algebraic laws apply within the prototype's measure-law
+domain. The canonical default-count instance uses native persistent append
+and supports move-only payloads with its always-equal allocator.
+
+Vocabulary was checked in all three libraries and both evidence repos.
+The new rebind and concatenation names do not exist in the evidence repos;
+these consumer-side additions remain an intentional one-way divergence.
+
+The reconstruction refusal gate also exercises transpose's operation-object
+contract. `traverse` and `transpose` must constrain the delegated instance call
+as required by [operation-object-wording](../transpose/decisions.md#operation-object-wording).
+Checking only the inferred Applicative or element metadata is insufficient
+when a representation rejects a particular result. This enforces the existing
+contract; it adds no lookup mechanism or superclass requirement.
+
+## Stage 4 declaration details
+
+`tree_typeclasses.hpp` is the consumer header for payload Functor, Foldable,
+and Traversable on BinaryTree, BinaryTreeFix, FringeTree, and RoseTreeFix,
+and for Foldable on Expr's integer constants. The library umbrella includes
+it. Fix metadata and registrations live here and recognize only the declared
+binary/rose layer families; Fix itself stays mechanism-free. No general
+payload construction is inferred for Expr, Nat, or arbitrary Fix families.
+
+The lookup tier adds `fold_map(function, tree, monoid)`, delegating to its
+existing explicit-result structural fold. It preserves the named mapper and
+passed monoid by reference during the synchronous fold. The existing
+projections/layer maps copy payloads, and their carrier folds copy and assign
+results: this bridge requires copy-constructible payloads and copyable result
+carriers. Payload Functor and Traversable instead read source payloads by
+const reference and support fresh move-only results. They own shape metadata
+and reuse transpose's vector sequencing, including native collection and
+changing carriers. Binary sparse slots, fringe Empty/Leaf/Branch topology,
+and rose child order survive reconstruction.
+
+The independently ported transpose example BinaryTree retains its separate
+type and Applicative example. Tests pin agreement of payload/effect order
+with the library adapter. Expr's example-local length implementation uses
+the shared Foldable; its integer-only optional transformation remains an
+explicit example operation rather than a generic Traversable registration.
+
+These are consumer-side evidence APIs, consistent with the extraction
+compatibility checklist. They change neither structural verb signatures nor
+the proposed paper surface. Evidence repositories retain their independent
+implementations; extraction remains one-way.

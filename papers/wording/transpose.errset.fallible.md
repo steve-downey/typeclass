@@ -6,7 +6,7 @@
 
 ```cpp
 template<class VALUE>
-constexpr auto fallible(VALUE&& value) -> expected<remove_cvref_t<VALUE>, error_set<>>;
+  constexpr auto fallible(VALUE&& value) -> expected<remove_cvref_t<VALUE>, error_set<>>;
 ```
 
 [x]{.pnum} *Constraints*: `remove_cvref_t<VALUE>` is not a specialization of `expected`.
@@ -17,7 +17,7 @@ constexpr auto fallible(VALUE&& value) -> expected<remove_cvref_t<VALUE>, error_
 
 ```cpp
 template<class VALUE, class ERROR>
-constexpr auto fallible(expected<VALUE, ERROR> computation) -> expected<VALUE, ERROR>;
+  constexpr auto fallible(expected<VALUE, ERROR> computation) -> expected<VALUE, ERROR>;
 ```
 
 [x+3]{.pnum} *Returns*: `computation`.

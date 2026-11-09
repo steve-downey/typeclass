@@ -6,7 +6,7 @@
 
 ```cpp
 template<size_t N, class... Ts>
-auto transpose_tuple(const tuple<array<Ts, N>...>& soa) -> array<tuple<Ts...>, N>;
+  auto transpose_tuple(const tuple<array<Ts, N>...>& soa) -> array<tuple<Ts...>, N>;
 ```
 
 [x]{.pnum} *Effects*: Transposes a tuple of arrays into an array of tuples: the element at position `i` of the result is the tuple of the elements at position `i` of each operand array.

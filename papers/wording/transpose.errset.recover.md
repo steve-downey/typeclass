@@ -6,8 +6,7 @@
 
 ```cpp
 template<class... HANDLED, class VALUE, class... ERRORS, class HANDLER>
-constexpr auto recover(const expected<VALUE, error_set_of<ERRORS...>>& computation,
-                       HANDLER&& handler) -> $see below$;
+  constexpr auto recover(const expected<VALUE, error_set_of<ERRORS...>>& computation, HANDLER&& handler) -> $see below$;
 ```
 
 [x]{.pnum} *Constraints*: `sizeof...(ERRORS) > 0` is `true`.
@@ -22,8 +21,8 @@ constexpr auto recover(const expected<VALUE, error_set_of<ERRORS...>>& computati
 
 ```cpp
 template<class... HANDLED, class VALUE, class HANDLER>
-constexpr auto recover(const expected<VALUE, error_set_of<>>& computation, HANDLER&&)
-    -> expected<VALUE, error_set_of<>>;
+  constexpr auto recover(const expected<VALUE, error_set_of<>>& computation, HANDLER&&)
+      -> expected<VALUE, error_set_of<>>;
 ```
 
 [x+5]{.pnum} *Constraints*: The computation's grade is the empty error set.

@@ -17,6 +17,7 @@
 
 #include <beman/tree_algorithms/box.hpp>
 #include <beman/tree_algorithms/recursion_schemes.hpp>
+#include <beman/tree_algorithms/tree_typeclasses.hpp>
 
 using beman::transpose::functor;
 using beman::transpose::has_instance_v;
@@ -115,7 +116,10 @@ inline constexpr auto bst_coalgebra = [](const Range& r) -> BinaryTreeF<int, Ran
 
 static_assert(has_instance_v<decltype(functor<BinaryTreeF<int, int>>)>);
 static_assert(has_instance_v<decltype(functor<BinaryTreeF<int, IntFixed>>)>);
-static_assert(!has_instance_v<decltype(functor<IntTree>)>);
+// Complete trees map payloads; their layers map recursive child positions.
+// The module exports both interfaces, as does the explicit consumer header.
+static_assert(has_instance_v<decltype(functor<IntTree>)>);
+static_assert(has_instance_v<decltype(functor<IntFixed>)>);
 
 // fold_fix, both APIs: node(1, leaf 2, leaf 3) gives (2 - 1) - 3 == -2;
 // the mirrored tree gives (3 - 1) - 2 == 0, so child order matters.

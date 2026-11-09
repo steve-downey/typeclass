@@ -5,7 +5,8 @@
 ## Constructors [transpose.errset.cons]{- .sref} {-}
 
 ```cpp
-template<class ERROR> constexpr error_set_of(ERROR&& error);
+template<class ERROR>
+  constexpr error_set_of(ERROR&& error);
 ```
 
 [x]{.pnum} *Constraints*: `ERROR`, with cv-qualification and references removed, is one of the alternatives.
@@ -16,7 +17,7 @@ template<class ERROR> constexpr error_set_of(ERROR&& error);
 
 ```cpp
 template<class... NARROWER>
-constexpr error_set_of(const error_set_of<NARROWER...>& narrower);
+  constexpr error_set_of(const error_set_of<NARROWER...>& narrower);
 ```
 
 [x+3]{.pnum} *Constraints*: `NARROWER` is non-empty, names a different set, and every one of its alternatives is an alternative of `*this`.

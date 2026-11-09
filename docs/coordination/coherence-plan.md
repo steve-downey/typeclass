@@ -15,8 +15,17 @@ Stage 1 is complete on `tree-coherence-correctness`; it does
 not depend on the proposed API decisions. See the
 [correctness implementation note](coherence-correctness.md) for changes,
 validation, and remaining scope. Stage 0 is recorded in the
-[contract note](coherence-contracts.md). Stages 2–6 remain outstanding.
-Rope migration moves into stage 2 so its conformance gate can close.
+[contract note](coherence-contracts.md). Stage 2 primitive constraints and
+object conformance are complete on `tree-coherence-conformance`; see the
+[conformance implementation note](coherence-conformance.md). Rope's explicit
+chunk-traversal migration is included in stage 2. Stage 3 configured
+reconstruction, payload Functors and concatenation monoids are complete on
+`tree-coherence-reconstruction`; see the
+[reconstruction implementation note](coherence-reconstruction.md).
+Stage 4 payload adapters and the monoid-object fold bridge are complete on
+`tree-coherence-payload-adapters`; see the
+[payload implementation note](coherence-payload-adapters.md).
+Stages 5–6 remain outstanding.
 
 ## Target contracts
 
@@ -209,8 +218,8 @@ walk to avoid copying persistent input elements into a temporary vector.
 Functor, Traversable, and capability-wrapper reconstruction use this same
 builder contract. The interval index carries endpoints separately from
 payload effects. Wrapper construction must accept the configured backing
-tree instead of always invoking its default factory. Apply Rope's migration
-and document the supported replacement calls.
+tree instead of always invoking its default factory. Maintain Rope's explicit
+chunk-traversal route adopted in stage 2.
 
 Add the default concatenation Monoid and explicit configurable concatenation
 instance here. Recompute cached measures under the chosen result instance;
@@ -339,7 +348,7 @@ and local validation also maintained in every earlier stage.
 | Measures/allocators erased | 0 and 3 |
 | Layer callable category and hard errors | 2 |
 | Element metadata and deep concepts disagree | 0 and 2; new adapters in 4 |
-| Rope result shape | 0 and 3 |
+| Rope result shape | 0 and 2 |
 | Unconstrained result monoids | 2 |
 | Input/result copying in traversal | 3 |
 | Missing tree Foldable/Traversable/Functor adapters | 4 |

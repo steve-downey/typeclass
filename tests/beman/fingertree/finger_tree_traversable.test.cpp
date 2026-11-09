@@ -18,6 +18,7 @@
 #include <string>
 #include <type_traits>
 #include <utility>
+#include <variant>
 #include <vector>
 
 TEST_CASE("FingerTreeTraversableTest - TraverseOptionalSucceeds") {
@@ -99,7 +100,6 @@ struct NotAContext {
 TEMPLATE_TEST_CASE("FingerTreeTraversableTest - InvalidTraverseIsASoftFailure",
                    "",
                    beman::fingertree::tree::FingerTree<int>,
-                   beman::fingertree::tree::FingerTreeRope<>,
                    beman::fingertree::tree::FingerTreeIntervalIndex<std::string>,
                    beman::fingertree::tree::FingerTreePriorityQueue<int>,
                    beman::fingertree::tree::FingerTreeRandomAccess<int>) {
@@ -147,9 +147,22 @@ void check_wrappers() {
         check_collection<POLICY>(ft::FingerTreePriorityQueue<int>::from_values(values), values, [](const auto& t) {
             return t.to_vector();
         });
-        const auto chunks = empty ? std::vector<std::string>{} : std::vector<std::string>{"1", "2", "3"};
-        check_collection<POLICY>(
-            ft::FingerTreeRope<>::from_chunks(chunks), chunks, [](const auto& t) { return t.chunks(); });
+        const auto chunks  = ft::FingerTreeRope<>::from_chunks(empty ? std::vector<std::string>{}
+                                                                     : std::vector<std::string>{"1", "2", "3"})
+                                 .chunks();
+        POLICY::collects   = 0;
+        auto chunk_effects = beman::transpose::traversable<std::vector<std::string>>.traverse(
+            POLICY{},
+            [](const std::string& chunk) {
+                return ct::Writer<std::string, std::same_as<POLICY, ct::WriterMap<true, true>>>{chunk, chunk};
+            },
+            chunks);
+        auto rope_effect = POLICY{}.invoke(
+            [](std::vector<std::string> values) { return ft::FingerTreeRope<>::from_chunks(std::move(values)); },
+            std::move(chunk_effects));
+        CHECK(rope_effect.held.chunks() == chunks);
+        CHECK(rope_effect.log == (empty ? "" : "123"));
+        CHECK(POLICY::collects == (std::same_as<POLICY, ct::WriterMap<false>> ? 0 : 1));
         const auto entries = empty ? std::vector<ft::Interval<int>>{}
                                    : std::vector<ft::Interval<int>>{{7, 20, 1}, {9, 30, 2}, {12, 40, 3}};
         check_collection<POLICY>(
@@ -209,4 +222,52 @@ TEMPLATE_TEST_CASE("FingerTreeTraversableTest - DeferredReconstructionOwnsEndpoi
     CHECK(entries[2].d_start == 12);
     CHECK(entries[2].d_end == 40);
     CHECK(entries[2].d_payload == 30);
+}
+
+TEST_CASE("Rope chunk traversal supports arbitrary results and explicit rebuilding") {
+    const auto rope   = ft::FingerTreeRope<>::from_chunks({"a", "bc", "def"});
+    const auto chunks = rope.chunks();
+    const auto lengths =
+        beman::transpose::traverse([](const std::string& chunk) { return std::optional{chunk.size()}; }, chunks);
+    REQUIRE(lengths.has_value());
+    CHECK(*lengths == (std::vector<std::size_t>{1, 2, 3}));
+    const auto unit_positions =
+        beman::transpose::traverse([](const std::string&) { return std::optional{std::monostate{}}; }, chunks);
+    REQUIRE(unit_positions.has_value());
+    CHECK(unit_positions->size() == chunks.size());
+    const auto units = beman::transpose::traversable<std::vector<std::string>>.for_each(
+        chunks, [](const std::string&) { return std::optional{42}; });
+    CHECK(units.has_value());
+    const auto strings =
+        beman::transpose::traverse([](const std::string& chunk) { return std::optional{chunk + "!"}; }, chunks);
+    const auto rebuilt = beman::transpose::applicative<std::optional<std::string>>.invoke(
+        [](std::vector<std::string> values) { return ft::FingerTreeRope<>::from_chunks(std::move(values)); }, strings);
+    REQUIRE(rebuilt.has_value());
+    CHECK(rebuilt->to_string() == "a!bc!def!");
+}
+
+TEMPLATE_TEST_CASE("Deferred Rope chunk traversal owns its reconstruction",
+                   "",
+                   ct::DeferredMap<false>,
+                   ct::DeferredMap<true>) {
+    std::string log;
+    auto        result = [&] {
+        const auto rope    = ft::FingerTreeRope<>::from_chunks({"1", "2", "3"});
+        const auto chunks  = rope.chunks();
+        auto       effects = beman::transpose::traversable<std::vector<std::string>>.traverse(
+            TestType{},
+            [&](const std::string& chunk) {
+                return ct::Deferred<std::string>{[chunk, &log] {
+                    log += chunk;
+                    return chunk + "!";
+                }};
+            },
+            chunks);
+        return TestType{}.invoke(
+            [](std::vector<std::string> values) { return ft::FingerTreeRope<>::from_chunks(std::move(values)); },
+            std::move(effects));
+    }();
+    CHECK(log.empty());
+    CHECK(result.run().to_string() == "1!2!3!");
+    CHECK(log == "123");
 }

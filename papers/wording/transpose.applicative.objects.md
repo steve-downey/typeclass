@@ -25,7 +25,8 @@ inline constexpr $unspecified$ ap;
 [x+5]{.pnum} *Remarks*: The name `ap` denotes an operation object: it is not found by argument-dependent lookup, and no explicit template argument list may be given in a call to it. The context is deduced from the argument in context, not from the callable in context.
 
 ```cpp
-template<class CONTEXT> inline constexpr $unspecified$ pure;
+template<class CONTEXT>
+  inline constexpr $unspecified$ pure;
 ```
 
 [x+6]{.pnum} *Constraints*: For a call `pure<CONTEXT>(value)`, let `C` be `remove_cvref_t<CONTEXT>`. `applicative<C>.pure(value)` is a valid expression.
