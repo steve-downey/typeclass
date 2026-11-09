@@ -6,6 +6,7 @@
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/fold.hpp>
 #include <beman/transpose/monoid.hpp>
+#include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
 #include <cstddef>
@@ -150,22 +151,26 @@ struct FingerTreeIntervalIndexTraversableImpl {
         using Context = std::remove_cvref_t<std::invoke_result_t<F&, const PAYLOAD_TYPE&>>;
         using U       = beman::transpose::applicative_value_t<Context>;
 
-        auto accumulated = applicative.pure(std::vector<beman::fingertree::tree::Interval<U>>{});
+        using Entry = beman::fingertree::tree::Interval<PAYLOAD_TYPE>;
 
-        for (const auto& entry : index.entries()) {
-            auto lifted = std::invoke(function, entry.d_payload);
-            accumulated = applicative.invoke(
-                [start = entry.d_start, end = entry.d_end](std::vector<beman::fingertree::tree::Interval<U>> values,
-                                                           U                                                 payload) {
-                    values.push_back(beman::fingertree::tree::Interval<U>{start, end, std::move(payload)});
-                    return values;
-                },
-                std::move(accumulated),
-                std::move(lifted));
+        const auto entries = index.entries();
+
+        std::vector<std::pair<std::size_t, std::size_t>> bounds;
+        bounds.reserve(entries.size());
+        for (const auto& entry : entries) {
+            bounds.emplace_back(entry.d_start, entry.d_end);
         }
+        auto accumulated = beman::transpose::traversable<std::vector<Entry>>.traverse(
+            applicative, [&](const Entry& entry) { return std::invoke(function, entry.d_payload); }, entries);
 
         return applicative.invoke(
-            [](std::vector<beman::fingertree::tree::Interval<U>> values) {
+            [bounds = std::move(bounds)](std::vector<U> payloads) {
+                // Own endpoints independently of the source and deferred payload effects.
+                std::vector<beman::fingertree::tree::Interval<U>> values;
+                values.reserve(payloads.size());
+                for (std::size_t i = 0; i < payloads.size(); ++i) {
+                    values.push_back({bounds[i].first, bounds[i].second, std::move(payloads[i])});
+                }
                 return beman::fingertree::tree::FingerTreeIntervalIndex<U>::from_intervals(std::move(values));
             },
             std::move(accumulated));

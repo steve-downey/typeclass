@@ -2,12 +2,21 @@
 
 Proposed implementation plan, 2026-11-08. Starting point: `49c1b4b` and the
 [coherence review](review/2026-11-08-coherence/README.md). The recommendations
-below are proposed decisions, not recorded rulings from Steve.
+below are the original recommendations. The implementation contracts now
+adopted for execution are recorded in [coherence-contracts.md](coherence-contracts.md);
+that note is not a record of additional historical rulings from Steve.
 
 The outcome is one set of primitive contracts, with adapters that satisfy
 them and explicit boundaries where an interface does not apply. Repair the
 observed correctness failures first. Then complete the typeclass and
 structural adapters without changing the independence of the three proposals.
+
+Stage 1 is complete on `tree-coherence-correctness`; it does
+not depend on the proposed API decisions. See the
+[correctness implementation note](coherence-correctness.md) for changes,
+validation, and remaining scope. Stage 0 is recorded in the
+[contract note](coherence-contracts.md). Stages 2–6 remain outstanding.
+Rope migration moves into stage 2 so its conformance gate can close.
 
 ## Target contracts
 

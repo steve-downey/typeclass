@@ -6,6 +6,7 @@
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/fold.hpp>
 #include <beman/transpose/monoid.hpp>
+#include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
 #include <algorithm>
@@ -202,18 +203,10 @@ struct FingerTreePriorityQueueTraversableImpl {
         using Context = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
         using U       = beman::transpose::applicative_value_t<Context>;
 
-        auto accumulated = applicative.pure(std::vector<U>{});
-
-        for (const auto& value : queue.to_vector()) {
-            auto lifted = std::invoke(function, value);
-            accumulated = applicative.invoke(
-                [](std::vector<U> values, U element) {
-                    values.push_back(std::move(element));
-                    return values;
-                },
-                std::move(accumulated),
-                std::move(lifted));
-        }
+        // Keep the persistent input's const-reference element convention.
+        const auto values = queue.to_vector();
+        auto       accumulated =
+            beman::transpose::traversable<std::vector<T>>.traverse(applicative, std::forward<F>(function), values);
 
         return applicative.invoke(
             [](std::vector<U> values) {

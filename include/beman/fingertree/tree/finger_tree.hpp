@@ -1182,7 +1182,7 @@ class FingerTree {
     // fast path with a known-safe mixed tree, call app3 directly.
     [[nodiscard]] auto append(const FingerTree& right) const -> FingerTree {
         if (!alloc_equal(d_alloc, right.d_alloc)) {
-            auto rebuilt = from_sequence(right.flatten(), d_alloc);
+            auto rebuilt = from_sequence(right.flatten(), d_alloc, d_monoid);
             return app3(d_alloc, d_monoid, *this, {}, rebuilt);
         }
         return app3(d_alloc, d_monoid, *this, {}, right);

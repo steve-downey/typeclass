@@ -156,6 +156,41 @@ TEST_CASE("pmr::FingerTree - append: different resources rebuilds right side") {
     CHECK(c.flatten() == (std::vector<int>{1, 2, 3, 4, 5, 6}));
 }
 
+namespace {
+struct ModularSum {
+    std::size_t modulus = 100;
+    auto        identity() const -> std::size_t { return 0; }
+    auto        combine(std::size_t a, std::size_t b) const -> std::size_t { return (a + b) % modulus; }
+};
+struct Weight {
+    auto operator()(int value) const -> std::size_t { return static_cast<std::size_t>(value); }
+};
+} // namespace
+
+TEST_CASE("pmr::FingerTree - unequal-resource append preserves the monoid instance") {
+    using Alloc = std::pmr::polymorphic_allocator<std::byte>;
+    using Tree  = beman::fingertree::tree::FingerTree<int, ModularSum, Weight, Alloc>;
+    std::pmr::monotonic_buffer_resource left_resource, right_resource;
+    // Exercise empty, single and deep roots on both sides of app3.
+    for (const auto& left_values : {std::vector<int>{}, std::vector<int>{1}, std::vector<int>(30, 1)}) {
+        for (const auto& right_values :
+             {std::vector<int>{}, std::vector<int>{4}, std::vector<int>{4, 4}, std::vector<int>(30, 4)}) {
+            const auto left     = Tree::from_sequence(left_values, Alloc{&left_resource}, ModularSum{5});
+            const auto right    = Tree::from_sequence(right_values, Alloc{&right_resource}, ModularSum{5});
+            const auto joined   = left.append(right);
+            auto       expected = left_values;
+            expected.insert(expected.end(), right_values.begin(), right_values.end());
+            CHECK(joined.flatten() == expected);
+            CHECK(joined.measure() == std::accumulate(expected.begin(), expected.end(), std::size_t{}) % 5);
+            CHECK(joined.get_monoid().modulus == 5);
+            CHECK(joined.get_allocator().resource() == &left_resource);
+            CHECK(left.flatten() == left_values);
+            CHECK(right.flatten() == right_values);
+            CHECK(right.get_allocator().resource() == &right_resource);
+        }
+    }
+}
+
 TEST_CASE("pmr::FingerTree - move assignment: same resource fast path") {
     std::pmr::monotonic_buffer_resource mr;
     FT                                  t(&mr);

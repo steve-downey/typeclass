@@ -3,6 +3,7 @@
 
 set(transpose_tests
     baseline_deduction
+    binary_tree
     demo_sender_golden
     monoid
     overloaded

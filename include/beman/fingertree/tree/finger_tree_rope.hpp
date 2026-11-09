@@ -5,6 +5,7 @@
 #include <beman/fingertree/tree/finger_tree.hpp>
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/fold.hpp>
+#include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
 #include <algorithm>
@@ -186,18 +187,10 @@ struct FingerTreeRopeTraversableImpl {
         using Context = std::remove_cvref_t<std::invoke_result_t<F&, const std::string&>>;
         using U       = beman::transpose::applicative_value_t<Context>;
 
-        auto accumulated = applicative.pure(std::vector<U>{});
-
-        for (const auto& chunk : rope.chunks()) {
-            auto lifted = std::invoke(function, chunk);
-            accumulated = applicative.invoke(
-                [](std::vector<U> values, U element) {
-                    values.push_back(std::move(element));
-                    return values;
-                },
-                std::move(accumulated),
-                std::move(lifted));
-        }
+        // Keep the persistent input's const-reference element convention.
+        const auto values      = rope.chunks();
+        auto       accumulated = beman::transpose::traversable<std::vector<std::string>>.traverse(
+            applicative, std::forward<F>(function), values);
 
         // Result always uses the default (-backed) FingerTreeRope.
         return applicative.invoke(
