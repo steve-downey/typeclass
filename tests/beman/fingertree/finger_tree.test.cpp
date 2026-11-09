@@ -8,6 +8,8 @@
 
 #include <bit>
 #include <cstddef>
+#include <limits>
+#include <memory>
 #include <memory_resource>
 #include <string>
 #include <vector>
@@ -793,6 +795,117 @@ TEST_CASE("FingerTree - operator== compares element-wise") {
     CHECK(!(a == c));
     CHECK(!(a == d));
     CHECK(FT{} == FT{});
+}
+
+namespace {
+
+// Builds the same sequence 0..n-1 through four different construction
+// routes, so equal trees with different internal shapes are compared.
+template <typename FT>
+auto equality_shapes(int n) -> std::vector<FT> {
+    std::vector<int> values;
+    for (int i = 0; i < n; ++i)
+        values.push_back(i);
+    FT snocced;
+    for (int i = 0; i < n; ++i)
+        snocced = snocced.snoc(i);
+    FT consed;
+    for (int i = n - 1; i >= 0; --i)
+        consed = consed.cons(i);
+    auto half = FT::from_sequence(std::vector<int>(values.begin(), values.begin() + n / 2));
+    FT   rest;
+    for (int i = n / 2; i < n; ++i)
+        rest = rest.snoc(i);
+    return {FT::from_sequence(values), snocced, consed, half.append(rest)};
+}
+
+// Counts operator== calls so the tests can observe where comparison stops.
+struct CountedEq {
+    int               d_value;
+    inline static int s_comparisons = 0;
+    friend auto       operator==(const CountedEq& a, const CountedEq& b) -> bool {
+        ++s_comparisons;
+        return a.d_value == b.d_value;
+    }
+};
+
+} // namespace
+
+TEST_CASE("FingerTree - operator== agrees across construction shapes") {
+    using FT = beman::fingertree::tree::FingerTree<int>;
+    for (int n = 0; n <= 130; ++n) {
+        auto shapes = equality_shapes<FT>(n);
+        for (const auto& a : shapes)
+            for (const auto& b : shapes)
+                CHECK(a == b);
+        for (int i = 0; i < n; ++i) {
+            auto values                         = shapes[0].flatten();
+            values[static_cast<std::size_t>(i)] = -1;
+            const auto changed                  = FT::from_sequence(values);
+            for (const auto& a : shapes) {
+                CHECK(!(a == changed));
+                CHECK(!(changed == a));
+            }
+        }
+    }
+}
+
+TEST_CASE("FingerTree - operator== without the size shortcut detects length differences") {
+    // A custom measure has no O(1) size, so length mismatch must be found by
+    // the walk itself, on either side.
+    using FT = beman::fingertree::tree::FingerTree<int, weighted_monoid, WeightedMeasure>;
+    for (int n = 0; n <= 70; ++n) {
+        const auto shorter = equality_shapes<FT>(n);
+        const auto longer  = equality_shapes<FT>(n + 1);
+        for (std::size_t k = 0; k < shorter.size(); ++k) {
+            CHECK(shorter[k] == shorter[(k + 1) % shorter.size()]);
+            CHECK(!(shorter[k] == longer[k]));
+            CHECK(!(longer[k] == shorter[k]));
+        }
+    }
+}
+
+TEST_CASE("FingerTree - operator== stops at the first unequal element") {
+    using FT        = beman::fingertree::tree::FingerTree<CountedEq>;
+    constexpr int n = 200;
+    FT            base;
+    for (int i = 0; i < n; ++i)
+        base = base.snoc(CountedEq{i});
+    for (int k : {0, 1, 7, 99, 150, n - 1}) {
+        FT other;
+        for (int i = 0; i < n; ++i)
+            other = other.snoc(CountedEq{i == k ? -1 : i});
+        CountedEq::s_comparisons = 0;
+        CHECK(!(base == other));
+        CHECK(CountedEq::s_comparisons == k + 1);
+    }
+    CountedEq::s_comparisons = 0;
+    CHECK(base == base);
+    CHECK(CountedEq::s_comparisons == n);
+}
+
+TEST_CASE("FingerTree - operator== is element-wise even for shared structure") {
+    // Shared nodes are not taken as proof of equality: == stays the
+    // element-wise relation, so a non-reflexive element keeps a tree unequal
+    // to itself and to its copies.
+    using FT       = beman::fingertree::tree::FingerTree<double>;
+    const auto nan = std::numeric_limits<double>::quiet_NaN();
+    const auto t   = FT::from_sequence({1.0, nan, 3.0});
+    const auto u   = t;
+    CHECK(!(t == t));
+    CHECK(!(t == u));
+}
+
+TEST_CASE("FingerTree - operator== does not copy elements") {
+    using FT = beman::fingertree::tree::FingerTree<std::unique_ptr<int>>;
+    FT t;
+    for (int i = 0; i < 20; ++i)
+        t = t.snoc(std::make_unique<int>(i));
+    FT other;
+    for (int i = 0; i < 20; ++i)
+        other = other.snoc(std::make_unique<int>(i));
+    CHECK(t == t);
+    CHECK(!(t == other)); // distinct pointers
 }
 
 TEST_CASE("FingerTree - cbegin/cend match begin/end") {
