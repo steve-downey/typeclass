@@ -14,10 +14,12 @@
 #include <vector>
 
 #include <beman/transpose/string.hpp>
+#include "../../../examples/transpose/binary_tree.hpp"
+
+// Textual transpose headers must precede the tree module import.
 #include <beman/tree_algorithms/tree_typeclasses.hpp>
 #include <beman/tree_algorithms/tree_typeclasses.hpp> // Re-inclusion check.
 #include <beman/tree_algorithms/functors.hpp>
-#include "../../../examples/transpose/binary_tree.hpp"
 
 namespace {
 namespace ta = beman::tree_algorithms;

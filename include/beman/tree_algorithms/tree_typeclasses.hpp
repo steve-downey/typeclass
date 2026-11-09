@@ -110,8 +110,11 @@ constexpr auto record_binary(const Tree& source) {
         auto index = positions.size();
         positions.push_back(std::addressof(Model::value(tree)));
         shape.push_back({left, {}});
-        if (auto child = Model::right(tree))
-            shape[index].right = self(self, *child);
+        if (auto child = Model::right(tree)) {
+            // Recursion may reallocate shape; finish it before indexing.
+            const auto right   = self(self, *child);
+            shape[index].right = right;
+        }
         return index;
     };
     const auto root = record(record, source);
