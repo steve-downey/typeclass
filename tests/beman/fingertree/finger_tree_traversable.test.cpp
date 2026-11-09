@@ -187,7 +187,7 @@ TEMPLATE_TEST_CASE("FingerTreeTraversableTest - DeferredReconstructionOwnsEndpoi
                    ct::DeferredMap<true>) {
     std::string log;
     auto        result = [&] {
-        const auto index = ft::FingerTreeIntervalIndex<int>::from_intervals({{7, 20, 1}, {9, 30, 2}, {12, 40, 3}});
+        const auto index  = ft::FingerTreeIntervalIndex<int>::from_intervals({{7, 20, 1}, {9, 30, 2}, {12, 40, 3}});
         auto       mapper = [&](const int& value) {
             return ct::Deferred<int>{[value, &log] {
                 log += std::to_string(value);

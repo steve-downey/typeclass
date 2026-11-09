@@ -254,6 +254,38 @@ struct BinaryTreeApplicativeMap
 // Traversable instance for BinaryTree<T>
 // ---------------------------------------------------------------------------
 
+namespace detail {
+
+struct BinaryTreeShape {
+    std::optional<std::size_t> left;
+    std::optional<std::size_t> right;
+};
+
+// Keep reconstruction outside the return-type probes used by Traversable.
+// A named callable also owns the topology for deferred applicatives.
+struct BinaryTreeBuilder {
+    std::vector<BinaryTreeShape> shape;
+    std::size_t root;
+
+    template <class U>
+    auto operator()(std::vector<U> values) const -> BinaryTree<U> {
+        using ResultTree = BinaryTree<U>;
+        auto rebuild = [&](auto &&self, std::size_t position) -> ResultTree {
+            std::shared_ptr<ResultTree> left, right;
+            if (shape[position].left)
+                left = ResultTree::make_ptr(self(self, *shape[position].left));
+            if (shape[position].right)
+                right =
+                    ResultTree::make_ptr(self(self, *shape[position].right));
+            return ResultTree::from_children_ptrs(
+                std::move(values[position]), std::move(left), std::move(right));
+        };
+        return rebuild(rebuild, root);
+    }
+};
+
+} // namespace detail
+
 /** Traversable typeclass instance for BinaryTree<T>.
  * traverse maps each node value into an applicative context and rebuilds a
  * BinaryTree inside that context, preserving the original tree's shape.
@@ -287,15 +319,7 @@ struct BinaryTreeTraversableImpl {
                      std::remove_cvref_t<std::invoke_result_t<F &, const T &>>>
     auto traverse(this auto &&, const APPLICATIVE &applicative, F &&function,
                   const BinaryTree<T> &tree) {
-        using Context =
-            std::remove_cvref_t<std::invoke_result_t<F &, const T &>>;
-        using U = beman::transpose::applicative_value_t<Context>;
-
-        struct Shape {
-            std::optional<std::size_t> left;
-            std::optional<std::size_t> right;
-        };
-        std::vector<Shape> shape;
+        std::vector<detail::BinaryTreeShape> shape;
         std::vector<const BinaryTree<T> *> nodes;
         auto record = [&](auto &&self,
                           const BinaryTree<T> &node) -> std::size_t {
@@ -324,23 +348,7 @@ struct BinaryTreeTraversableImpl {
                 },
                 ordered_nodes);
         return applicative.invoke(
-            [shape = std::move(shape), root](std::vector<U> values) {
-                using ResultTree = BinaryTree<U>;
-                auto rebuild = [&](auto &&self,
-                                   std::size_t position) -> ResultTree {
-                    std::shared_ptr<ResultTree> left, right;
-                    if (shape[position].left)
-                        left = ResultTree::make_ptr(
-                            self(self, *shape[position].left));
-                    if (shape[position].right)
-                        right = ResultTree::make_ptr(
-                            self(self, *shape[position].right));
-                    return ResultTree::from_children_ptrs(
-                        std::move(values[position]), std::move(left),
-                        std::move(right));
-                };
-                return rebuild(rebuild, root);
-            },
+            detail::BinaryTreeBuilder{std::move(shape), root},
             std::move(accumulated));
     }
 };
