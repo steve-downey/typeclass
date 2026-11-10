@@ -1,3 +1,4 @@
-specgen 0.19.0 (git 856065d87d7a0b767fc2fcfb104611cb548d572c)
+specgen 0.21.1 (git 842067268757813d64bc834138d39bccb1a42921)
 clang args: -std=c++2c
 -I/home/sdowney/src/steve-downey/typeclass/recover-set-elimination-stack/include
+--gcc-toolchain=/home/sdowney/install/gcc-16

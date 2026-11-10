@@ -145,11 +145,11 @@ struct derive_traversable : protected Impl {
 
     // \ref{transpose.traversable.ops}, traversal operations
     template <class T, class F, class SELF>
-    constexpr auto for_each(this SELF &&self, T &&value, F &&function) noexcept(
-        noexcept(self.traverse(
-            applicative<std::remove_cvref_t<std::invoke_result_t<
-                F &, detail::traversal_argument_t<SELF, T>>>>,
-            std::forward<F>(function), std::forward<T>(value))))
+    constexpr auto
+    for_each(this SELF &&self, T &&value, F &&function) noexcept(noexcept(
+        self.traverse(applicative<std::remove_cvref_t<std::invoke_result_t<
+                          F &, detail::traversal_argument_t<SELF, T>>>>,
+                      std::forward<F>(function), std::forward<T>(value))))
         requires requires {
             self.traverse(applicative<std::remove_cvref_t<std::invoke_result_t<
                               F &, detail::traversal_argument_t<SELF, T>>>>,
@@ -498,11 +498,10 @@ concept traversable_object =
 template <class Impl>
 template <class T, class F, class SELF>
 constexpr auto derive_traversable<Impl>::
-    for_each(this SELF &&self, T &&value, F &&function) noexcept(
-        noexcept(self.traverse(
-            applicative<std::remove_cvref_t<std::invoke_result_t<
-                F &, detail::traversal_argument_t<SELF, T>>>>,
-            std::forward<F>(function), std::forward<T>(value))))
+    for_each(this SELF &&self, T &&value, F &&function) noexcept(noexcept(
+        self.traverse(applicative<std::remove_cvref_t<std::invoke_result_t<
+                          F &, detail::traversal_argument_t<SELF, T>>>>,
+                      std::forward<F>(function), std::forward<T>(value))))
     requires requires {
         self.traverse(applicative<std::remove_cvref_t<std::invoke_result_t<
                           F &, detail::traversal_argument_t<SELF, T>>>>,
