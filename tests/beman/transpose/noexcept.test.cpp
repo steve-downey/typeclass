@@ -157,9 +157,13 @@ TEST_CASE("the functor and monad bases on optional propagate the same way",
 
     // join is bind with the identity continuation, and bind reads its
     // operand as a const lvalue: the inner optional is copied out, so join
-    // answers what the carrier's copy constructor answers. libstdc++ declares
-    // it non-throwing for optional<int>; libc++ did not until LLVM 23.
-    STATIC_REQUIRE(noexcept(bt::join(std::optional<O>{a})) ==
+    // answers what the carrier's copy constructor answers. The operand is
+    // built outside the noexcept operand: optional's converting constructor
+    // has no exception specification in the standard, libstdc++ adds one,
+    // and libc++ did not until LLVM 23, so building it inline measured the
+    // library's constructor instead of join.
+    const std::optional<O> nested{a};
+    STATIC_REQUIRE(noexcept(bt::join(nested)) ==
                    std::is_nothrow_copy_constructible_v<O>);
 
     // The monad object's derived fmap and invoke route through bind with
