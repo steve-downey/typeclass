@@ -23,7 +23,8 @@ struct constant_function {
     VALUE value;
 
     template <class ARGUMENT>
-    constexpr auto operator()(const ARGUMENT &) const -> VALUE {
+    constexpr auto operator()(const ARGUMENT &) const
+        noexcept(std::is_nothrow_copy_constructible_v<VALUE>) -> VALUE {
         return value;
     }
 };
@@ -37,12 +38,20 @@ struct constant_function {
 
 /** CRTP base for Functor instances.
  * `Impl` must provide `fmap(f, container)`; `replace` is derived from it.
+ *
+ * Every operation carries a computed exception specification: `fmap`'s is
+ * `Impl`'s own, and `replace`'s is that of the route it takes, spelled from
+ * the same requires-expression the body selects the route by
+ * (docs/transpose/decisions.md#operation-noexcept).
  */
 template <class Impl>
 struct derive_functor : protected Impl {
     /** Applies `function` to every element of `value`. */
     template <class FUNCTION, class T>
-    constexpr auto fmap(this auto &&self, FUNCTION &&function, T &&value)
+    [[nodiscard]] constexpr auto
+    fmap(this auto &&self, FUNCTION &&function, T &&value) noexcept(
+        noexcept(impl_of(self).fmap(std::forward<FUNCTION>(function),
+                                    std::forward<T>(value))))
         requires requires(const Impl &impl) {
             impl.fmap(std::forward<FUNCTION>(function), std::forward<T>(value));
         }
@@ -56,7 +65,9 @@ struct derive_functor : protected Impl {
      * instance supplies one.
      */
     template <class T, class U>
-    constexpr auto replace(this auto &&self, T &&value, U &&replacement)
+    [[nodiscard]] constexpr auto
+    replace(this auto &&self, T &&value,
+            U &&replacement) noexcept(replace_nothrow<decltype(self), T, U>())
         requires requires(const Impl &impl) {
             impl.replace(std::forward<T>(value), std::forward<U>(replacement));
         } || requires(const Impl &impl) {
@@ -86,8 +97,25 @@ struct derive_functor : protected Impl {
   private:
     //! \omit
     template <class SELF>
-    static constexpr decltype(auto) impl_of(SELF &&self) {
+    static constexpr decltype(auto) impl_of(SELF &&self) noexcept {
         return static_cast<impl_ref_t<Impl, SELF>>(self);
+    }
+
+    //! \omit
+    template <class SELF, class T, class U>
+    static consteval auto replace_nothrow() -> bool {
+        if constexpr (requires {
+                          impl_of(std::declval<SELF &>())
+                              .replace(std::declval<T>(), std::declval<U>());
+                      }) {
+            return noexcept(impl_of(std::declval<SELF &>())
+                                .replace(std::declval<T>(), std::declval<U>()));
+        } else {
+            return noexcept(std::declval<SELF &>().fmap(
+                detail::constant_function<std::remove_cvref_t<U>>{
+                    std::declval<U>()},
+                std::declval<T>()));
+        }
     }
 };
 
@@ -203,7 +231,9 @@ struct fmap_fn {
     template <class F, class T,
               const auto &TC = functor<std::remove_cvref_t<T>>>
         requires requires { TC.fmap(std::declval<F>(), std::declval<T>()); }
-    constexpr auto operator()(F &&function, T &&value) const {
+    [[nodiscard]] constexpr auto operator()(F &&function, T &&value) const
+        noexcept(noexcept(TC.fmap(std::forward<F>(function),
+                                  std::forward<T>(value)))) {
         return TC.fmap(std::forward<F>(function), std::forward<T>(value));
     }
 };
@@ -217,7 +247,9 @@ struct replace_fn {
     template <class T, class U,
               const auto &TC = functor<std::remove_cvref_t<T>>>
         requires requires { TC.replace(std::declval<T>(), std::declval<U>()); }
-    constexpr auto operator()(T &&value, U &&replacement) const {
+    [[nodiscard]] constexpr auto operator()(T &&value, U &&replacement) const
+        noexcept(noexcept(TC.replace(std::forward<T>(value),
+                                     std::forward<U>(replacement)))) {
         return TC.replace(std::forward<T>(value), std::forward<U>(replacement));
     }
 };

@@ -73,11 +73,11 @@ is reported:
   drops (`traverse_with` in `transpose.traversable.delegate.md`).
 
 Headers outside the proposal carry no markup and are not generated from:
-`fold.hpp`, `monad.hpp`, `monoid.hpp`, `induced_monoid.hpp`, `functor.hpp`,
+`fold.hpp`, `monad.hpp`, `alternative.hpp`, `monoid.hpp`, `induced_monoid.hpp`, `functor.hpp`,
 `sender.hpp`, `zip_list.hpp`, `simd*.hpp`, `config.hpp`. `sender` and
 `zip_list` are non-normative demonstration types (see
-[`provenance.md`](provenance.md)); Monad and Foldable are stated non-goals, so
-their instances inside generated headers are `\omit`ted.
+[`provenance.md`](provenance.md)); Monad, Alternative and Foldable are stated
+non-goals, so their instances inside generated headers are `\omit`ted.
 
 ## Rules for marking up a header
 

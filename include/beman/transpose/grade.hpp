@@ -75,6 +75,7 @@ struct grade_subsumes;
 template <class GRADE>
 struct grade_model;
 
+//! \expos
 template <class LEFT, class RIGHT>
 using grade_join_t = typename grade_join<LEFT, RIGHT>::type;
 
@@ -201,10 +202,14 @@ using mixed_result_t =
  * Implementation detail for the accumulating expected object. The default is
  * left-biased same-type evidence, enough for single-slot errors; models with
  * multi-witness evidence can add a detail overload in their own header.
+ * Exposition-only, because the accumulating object's exception specification
+ * is computed through it.
  */
+//! \expos
 template <class EVIDENCE>
-constexpr auto combine_grade_evidence(const EVIDENCE &lhs,
-                                      const EVIDENCE & /*rhs*/) -> EVIDENCE {
+constexpr auto
+combine_grade_evidence(const EVIDENCE &lhs, const EVIDENCE & /*rhs*/) noexcept(
+    std::is_nothrow_copy_constructible_v<EVIDENCE>) -> EVIDENCE {
     return lhs;
 }
 
@@ -223,7 +228,9 @@ constexpr auto combine_grade_evidence(const EVIDENCE &lhs,
 //! separate machinery is needed: because the order is read off the join, the
 //! inclusion between two grades is unique, so there is exactly one coercion
 //! and the carrier already provides it. The source grade may be
-//! `unit_grade`; the target must be a model grade.
+//! `unit_grade`; the target must be a model grade. The exception
+//! specification is that of the coercion: the re-indexed carrier's
+//! construction from `value`.
 template <class TARGET_GRADE, class CARRIER>
     requires grade_semilattice<TARGET_GRADE> &&
              (std::is_same_v<grade_of_t<std::remove_cvref_t<CARRIER>>,
@@ -233,7 +240,9 @@ template <class TARGET_GRADE, class CARRIER>
              std::constructible_from<
                  rebind_grade_t<std::remove_cvref_t<CARRIER>, TARGET_GRADE>,
                  CARRIER>
-constexpr auto grade_subsume(CARRIER &&value)
+[[nodiscard]] constexpr auto grade_subsume(CARRIER &&value) noexcept(
+    std::is_nothrow_constructible_v<
+        rebind_grade_t<std::remove_cvref_t<CARRIER>, TARGET_GRADE>, CARRIER>)
     -> rebind_grade_t<std::remove_cvref_t<CARRIER>, TARGET_GRADE> {
     return rebind_grade_t<std::remove_cvref_t<CARRIER>, TARGET_GRADE>(
         std::forward<CARRIER>(value));

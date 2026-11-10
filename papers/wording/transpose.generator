@@ -1,4 +1,4 @@
-specgen 0.15.0 (git a8fde339e1dab5f95979fffaf535a023465e3d66)
+specgen 0.21.1 (git 842067268757813d64bc834138d39bccb1a42921)
 clang args: -std=c++2c
--I/home/sdowney/src/steve-downey/typeclass/tree-coherence-conformance/include
+-I/home/sdowney/src/steve-downey/typeclass/recover-set-elimination-stack/include
 --gcc-toolchain=/home/sdowney/install/gcc-16

@@ -6,7 +6,8 @@
 
 ```cpp
 template<class TARGET_GRADE, class CARRIER>
-  constexpr auto subsume(this auto&&, CARRIER&& value);
+  [[nodiscard]] constexpr auto subsume(this auto&&, CARRIER&& value) noexcept(
+      noexcept(grade_subsume<TARGET_GRADE>(forward<CARRIER>(value))));
 ```
 
 [x]{.pnum} *Constraints*: `value` can be re-indexed to `TARGET_GRADE`.

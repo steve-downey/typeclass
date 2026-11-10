@@ -39,24 +39,37 @@
 // accessor that hands out the underlying variant. Having only the subset
 // conversions is the coherence argument compiled into the overload set.
 //
-// TYPE ORDERING is P2830's job. Until it is available this header uses an
-// interim ordering read out of the compiler's own function signature, valid
-// only for the documented restrictions: named types, external linkage,
+// TYPE ORDERING is P2830's job. Until it is available the canonical set uses
+// an interim ordering read out of the compiler's own function signature,
+// valid only for the documented restrictions: named types, external linkage,
 // stable spelling. Two distinct types that render to the same name would be
 // silently conflated, so that case is a hard error rather than a wrong
-// answer -- see the static_assert in error_set_of.
+// answer -- see the static_assert in error_set_of. The set machinery and the
+// order live in detail/canonical_set.hpp, which has no error vocabulary
+// (docs/transpose/decisions.md#canonical-set-home); this header is its
+// first client.
+//
+// THE ORDER IS PART OF THE ABI. `error_set_of` stores its witnesses as a
+// tuple in canonical order, so its layout follows the order in use. It is
+// therefore declared in the inline namespace `ordered_by_type_name`, the
+// same key the order itself carries, so that the day a P2830 order exists a
+// translation unit built against it cannot be linked with one built against
+// the name order -- the mismatch fails at link time rather than violating
+// the ODR silently. User code and the wording spell `error_set<...>` and
+// `error_set_of<...>` as before; the key is part of the type's identity, not
+// of its spelling. See docs/transpose/decisions.md#type-order-abi.
 
+#include <beman/transpose/detail/canonical_set.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>
 #include <beman/transpose/grade.hpp>
 
-#include <array>
+#include <concepts>
 #include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <expected>
 #include <functional>
 #include <optional>
-#include <string_view>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -64,171 +77,14 @@
 
 namespace beman::transpose {
 
+inline namespace ordered_by_type_name {
+
 template <class... ERRORS>
 class error_set_of;
 
+} // namespace ordered_by_type_name
+
 namespace detail {
-
-// -- Interim type ordering (P2830 fallback) -------------------------------
-
-/** The compiler's spelling of T, extracted from the enclosing signature.
- * Valid as an ordering key only under the documented restrictions: named
- * types with external linkage and a stable spelling.
- */
-template <class T>
-consteval auto type_name() -> std::string_view {
-#if defined(_MSC_VER) && !defined(__clang__)
-    // MSVC has no __PRETTY_FUNCTION__. __FUNCSIG__ spells the specialization
-    // as `... type_name<T>(void)`, so the name is what sits between the
-    // template argument list and the last `>`. Should that spelling ever
-    // change, fall back to the whole signature, which still names T and so
-    // is still an injective key -- a duller order, not a broken one.
-    const std::string_view signature{__FUNCSIG__};
-    constexpr std::string_view marker{"type_name<"};
-
-    const auto found = signature.find(marker);
-    const auto stop = signature.rfind('>');
-    if (found == std::string_view::npos || stop == std::string_view::npos ||
-        stop <= found + marker.size()) {
-        return signature;
-    }
-    const auto start = found + marker.size();
-    return signature.substr(start, stop - start);
-#else
-    const std::string_view signature{__PRETTY_FUNCTION__};
-    constexpr std::string_view marker{"T = "};
-
-    const auto start = signature.find(marker) + marker.size();
-    auto stop = signature.find(';', start);
-    if (stop == std::string_view::npos) {
-        stop = signature.rfind(']');
-    }
-    return signature.substr(start, stop - start);
-#endif
-}
-
-/** Strict total order on types, by name. Interim stand-in for P2830. */
-template <class LEFT, class RIGHT>
-inline constexpr bool type_precedes_v = type_name<LEFT>() < type_name<RIGHT>();
-
-// -- Type list machinery --------------------------------------------------
-
-//! \omit
-template <class... ERRORS>
-struct type_list {};
-
-template <class T, class LIST>
-inline constexpr bool list_contains_v = false;
-
-template <class T, class... ERRORS>
-inline constexpr bool list_contains_v<T, type_list<ERRORS...>> =
-    (std::is_same_v<T, ERRORS> || ...);
-
-template <class T, class LIST>
-struct list_prepend;
-
-//! \omit
-template <class T, class... ERRORS>
-struct list_prepend<T, type_list<ERRORS...>> {
-    using type = type_list<T, ERRORS...>;
-};
-
-template <class T, class LIST>
-using list_prepend_t = typename list_prepend<T, LIST>::type;
-
-template <class T, class LIST>
-struct list_remove;
-
-//! \omit
-template <class T>
-struct list_remove<T, type_list<>> {
-    using type = type_list<>;
-};
-
-//! \omit
-template <class T, class HEAD, class... TAIL>
-struct list_remove<T, type_list<HEAD, TAIL...>> {
-  private:
-    using rest = typename list_remove<T, type_list<TAIL...>>::type;
-
-  public:
-    using type = std::conditional_t<std::is_same_v<T, HEAD>, rest,
-                                    list_prepend_t<HEAD, rest>>;
-};
-
-/** Deduplicate by type identity, keeping the first occurrence. Identity is
- * std::is_same, never the name: names are an ordering key, not an equality. */
-template <class LIST>
-struct list_dedupe;
-
-//! \omit
-template <>
-struct list_dedupe<type_list<>> {
-    using type = type_list<>;
-};
-
-//! \omit
-template <class HEAD, class... TAIL>
-struct list_dedupe<type_list<HEAD, TAIL...>> {
-    using type =
-        list_prepend_t<HEAD, typename list_dedupe<typename list_remove<
-                                 HEAD, type_list<TAIL...>>::type>::type>;
-};
-
-template <class T, class LIST>
-struct list_insert_sorted;
-
-//! \omit
-template <class T>
-struct list_insert_sorted<T, type_list<>> {
-    using type = type_list<T>;
-};
-
-//! \omit
-template <class T, class HEAD, class... TAIL>
-struct list_insert_sorted<T, type_list<HEAD, TAIL...>> {
-    using type = std::conditional_t<
-        type_precedes_v<T, HEAD>, type_list<T, HEAD, TAIL...>,
-        list_prepend_t<
-            HEAD, typename list_insert_sorted<T, type_list<TAIL...>>::type>>;
-};
-
-template <class LIST>
-struct list_sort;
-
-//! \omit
-template <>
-struct list_sort<type_list<>> {
-    using type = type_list<>;
-};
-
-//! \omit
-template <class HEAD, class... TAIL>
-struct list_sort<type_list<HEAD, TAIL...>> {
-    using type = typename list_insert_sorted<
-        HEAD, typename list_sort<type_list<TAIL...>>::type>::type;
-};
-
-/** The canonical form of a pack: deduplicated, then sorted. */
-template <class... ERRORS>
-using canonical_t =
-    typename list_sort<typename list_dedupe<type_list<ERRORS...>>::type>::type;
-
-/** False when two DISTINCT types render to the same name, which is exactly
- * the case the interim ordering cannot handle. */
-template <class... ERRORS>
-consteval auto names_are_distinct() -> bool {
-    constexpr std::size_t count = sizeof...(ERRORS);
-    const std::array<std::string_view, count> names{type_name<ERRORS>()...};
-    for (std::size_t i = 0; i < count; ++i) {
-        for (std::size_t j = i + 1; j < count; ++j) {
-            if (names[i] == names[j]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
 
 template <class LIST>
 struct error_set_from_list;
@@ -273,7 +129,8 @@ struct error_set_from_list<type_list<ERRORS...>> {
  * touch it.
  */
 template <class ERROR, class INJECTED>
-constexpr auto witness_slot(INJECTED &&error) -> std::optional<ERROR> {
+constexpr auto witness_slot(INJECTED &&error) noexcept(
+    std::is_nothrow_constructible_v<ERROR, INJECTED>) -> std::optional<ERROR> {
     if constexpr (std::is_same_v<ERROR, std::remove_cvref_t<INJECTED>>) {
         return std::optional<ERROR>(std::forward<INJECTED>(error));
     } else {
@@ -286,8 +143,8 @@ constexpr auto witness_slot(INJECTED &&error) -> std::optional<ERROR> {
  * empty otherwise. This is the value-level half of the ⊆ conversion --
  * copying over whichever witnesses the narrower value actually carries. */
 template <class ERROR, class... NARROWER>
-constexpr auto widen_slot(const error_set_of<NARROWER...> &narrower)
-    -> std::optional<ERROR> {
+constexpr auto widen_slot(const error_set_of<NARROWER...> &narrower) noexcept(
+    std::is_nothrow_copy_constructible_v<ERROR>) -> std::optional<ERROR> {
     if constexpr (error_set_of<NARROWER...>::template contains<ERROR>()) {
         return narrower.template witness<ERROR>();
     } else {
@@ -307,7 +164,7 @@ inline constexpr bool error_set_is_canonical_v =
 //! \expos
 template <class... ERRORS>
 inline constexpr bool error_set_names_distinct_v =
-    names_are_distinct<ERRORS...>();
+    names_are_distinct_v<ERRORS...>;
 
 } // namespace detail
 
@@ -317,6 +174,35 @@ inline constexpr bool error_set_names_distinct_v =
 //! \expos
 template <class T, class... ERRORS>
 inline constexpr bool error_set_has_v = (std::is_same_v<T, ERRORS> || ...);
+
+/// Whether every one of TYPES copies without throwing. Exposition-only, as
+/// `error_set_has_v` is, and for a second reason: an exception specification
+/// that folds over the class's pack directly is one MSVC fails to match
+/// between a declaration and its out-of-line definition.
+//! \expos
+template <class... TYPES>
+inline constexpr bool error_set_nothrow_copy_v =
+    (std::is_nothrow_copy_constructible_v<TYPES> && ...);
+
+/// Whether every one of TYPES moves without throwing.
+//! \expos
+template <class... TYPES>
+inline constexpr bool error_set_nothrow_move_v =
+    (std::is_nothrow_move_constructible_v<TYPES> && ...);
+
+/// Whether HANDLER is invocable on an rvalue of every one of TYPES without
+/// throwing.
+//! \expos
+template <class HANDLER, class... TYPES>
+inline constexpr bool error_set_nothrow_invocable_v =
+    (std::is_nothrow_invocable_v<HANDLER, TYPES> && ...);
+
+// The order-dependent type. Its witness tuple is laid out in canonical order,
+// so it carries the order's key; see the header comment and
+// docs/transpose/decisions.md#type-order-abi. The namespace closes after the
+// empty specialization below; `error_set` and everything after it are
+// ordinary members of beman::transpose.
+inline namespace ordered_by_type_name {
 
 /// The set of error types a computation may raise, at a canonical pack.
 ///
@@ -352,15 +238,18 @@ class error_set_of {
     // \ref{transpose.errset.cons}, constructors
     template <class ERROR>
         requires(error_set_has_v<std::remove_cvref_t<ERROR>, ERRORS...>)
-    constexpr error_set_of(ERROR &&error); /// NOLINT(*-explicit-constructor)
+    constexpr error_set_of(ERROR &&error) noexcept(
+        std::is_nothrow_constructible_v<std::remove_cvref_t<ERROR>, ERROR> &&
+        error_set_nothrow_move_v<ERRORS...>); /// NOLINT(*-explicit-constructor)
 
     template <class... NARROWER>
         requires(sizeof...(NARROWER) > 0) &&
                 (!std::is_same_v<error_set_of<NARROWER...>,
                                  error_set_of<ERRORS...>>) &&
                 (error_set_has_v<NARROWER, ERRORS...> && ...)
-    constexpr error_set_of(
-        const error_set_of<NARROWER...> &narrower); /// NOLINT(*-explicit-*)
+    constexpr error_set_of(const error_set_of<NARROWER...> &narrower) noexcept(
+        error_set_nothrow_copy_v<NARROWER...> &&
+        error_set_nothrow_move_v<ERRORS...>); /// NOLINT(*-explicit-*)
 
     // \ref{transpose.errset.obs}, observers
     template <class ERROR>
@@ -369,12 +258,15 @@ class error_set_of {
 
     template <class ERROR>
         requires(error_set_has_v<ERROR, ERRORS...>)
-    constexpr auto witness() const -> const std::optional<ERROR> &;
+    constexpr auto witness() const noexcept -> const std::optional<ERROR> &;
 
     constexpr auto witness_count() const noexcept -> std::size_t;
 
     template <class HANDLER>
-    constexpr auto visit(HANDLER &&handler) const -> decltype(auto);
+    constexpr auto visit(HANDLER &&handler) const
+        noexcept(error_set_nothrow_copy_v<ERRORS...> &&
+                 error_set_nothrow_invocable_v<HANDLER, ERRORS...>)
+            -> decltype(auto);
 
     // \ref{transpose.errset.ops}, operations
     //! \returns `true` if and only if both operands witness the same set of
@@ -387,8 +279,8 @@ class error_set_of {
     friend auto operator==(const error_set_of &, const error_set_of &)
         -> bool = default;
 
-    constexpr auto combined_with(const error_set_of &other) const
-        -> error_set_of;
+    [[nodiscard]] constexpr auto combined_with(const error_set_of &other) const
+        noexcept(error_set_nothrow_copy_v<ERRORS...>) -> error_set_of;
 
   private:
     //! \omit
@@ -400,7 +292,8 @@ class error_set_of {
     template <std::size_t... IDX>
     constexpr auto combine_witnesses(const error_set_of &other,
                                      std::index_sequence<IDX...>) const
-        -> std::tuple<std::optional<ERRORS>...> {
+        noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...))
+            -> std::tuple<std::optional<ERRORS>...> {
         return std::tuple<std::optional<ERRORS>...>{
             (std::get<IDX>(d_witnesses).has_value()
                  ? std::get<IDX>(d_witnesses)
@@ -442,10 +335,14 @@ class error_set_of {
 //! \remarks This is the injection of an error value into the set it belongs
 //! to. It is not explicit: a raised error is usable as the set that may raise
 //! it.
+//! The exception specification is that of constructing the witness from
+//! `error` and placing it in its slot.
 template <class... ERRORS>
 template <class ERROR>
     requires(error_set_has_v<std::remove_cvref_t<ERROR>, ERRORS...>)
-constexpr error_set_of<ERRORS...>::error_set_of(ERROR &&error)
+constexpr error_set_of<ERRORS...>::error_set_of(ERROR &&error) noexcept(
+    std::is_nothrow_constructible_v<std::remove_cvref_t<ERROR>, ERROR> &&
+    error_set_nothrow_move_v<ERRORS...>)
     : d_witnesses(detail::witness_slot<ERRORS>(std::forward<ERROR>(error))...) {
 }
 
@@ -457,6 +354,8 @@ constexpr error_set_of<ERRORS...>::error_set_of(ERROR &&error)
 //! conversion there is: there is none in the other direction, and none
 //! between incomparable sets. There is deliberately no conversion from the
 //! empty set, which is uninhabited, so no value ever needs one.
+//! The exception specification is that of copying each of `narrower`'s
+//! witnesses into its slot.
 template <class... ERRORS>
 template <class... NARROWER>
     requires(sizeof...(NARROWER) > 0) &&
@@ -464,7 +363,9 @@ template <class... NARROWER>
                              error_set_of<ERRORS...>>) &&
             (error_set_has_v<NARROWER, ERRORS...> && ...)
 constexpr error_set_of<ERRORS...>::error_set_of(
-    const error_set_of<NARROWER...> &narrower)
+    const error_set_of<NARROWER...>
+        &narrower) noexcept(error_set_nothrow_copy_v<NARROWER...> &&
+                            error_set_nothrow_move_v<ERRORS...>)
     : d_witnesses(detail::widen_slot<ERRORS>(narrower)...) {}
 
 // \rSec3[transpose.errset.obs]{Observers}
@@ -494,7 +395,7 @@ constexpr auto error_set_of<ERRORS...>::holds() const noexcept -> bool {
 template <class... ERRORS>
 template <class ERROR>
     requires(error_set_has_v<ERROR, ERRORS...>)
-constexpr auto error_set_of<ERRORS...>::witness() const
+constexpr auto error_set_of<ERRORS...>::witness() const noexcept
     -> const std::optional<ERROR> & {
     return std::get<std::optional<ERROR>>(d_witnesses);
 }
@@ -520,11 +421,16 @@ constexpr auto error_set_of<ERRORS...>::witness_count() const noexcept
 //! than one witness, which only accumulating composition produces, has no
 //! single value to hand back, and answering with the leftmost would turn a
 //! dropped error into a quiet wrong answer. For such a value, use `witness`
-//! per alternative, guarded by `holds` or `witness_count`.
+//! per alternative, guarded by `holds` or `witness_count`. The exception
+//! specification is that of copying the witness out and invoking `handler`
+//! on it as an rvalue, for every alternative; a violated precondition stops
+//! the program and does not throw.
 template <class... ERRORS>
 template <class HANDLER>
 constexpr auto error_set_of<ERRORS...>::visit(HANDLER &&handler) const
-    -> decltype(auto) {
+    noexcept(error_set_nothrow_copy_v<ERRORS...> &&
+             error_set_nothrow_invocable_v<HANDLER, ERRORS...>)
+        -> decltype(auto) {
     return std::visit(std::forward<HANDLER>(handler), to_variant());
 }
 
@@ -534,11 +440,12 @@ constexpr auto error_set_of<ERRORS...>::visit(HANDLER &&handler) const
 //! operand witnesses.
 //! \remarks Combination is left-biased per alternative: where both operands
 //! witness the same error type, `*this`'s witness is kept. This is the
-//! evidence-combining step of accumulating composition.
+//! evidence-combining step of accumulating composition. The exception
+//! specification is that of copying every witness.
 template <class... ERRORS>
-constexpr auto
+[[nodiscard]] constexpr auto
 error_set_of<ERRORS...>::combined_with(const error_set_of &other) const
-    -> error_set_of<ERRORS...> {
+    noexcept(error_set_nothrow_copy_v<ERRORS...>) -> error_set_of<ERRORS...> {
     return error_set_of(
         combine_witnesses(other, std::index_sequence_for<ERRORS...>{}));
 }
@@ -571,6 +478,8 @@ class error_set_of<> {
     friend auto operator==(const error_set_of &, const error_set_of &)
         -> bool = default;
 };
+
+} // namespace ordered_by_type_name
 
 // \rSec3[transpose.errset.empty]{The empty error set}
 
@@ -633,17 +542,22 @@ inline constexpr bool
 //! above is a commutative union and needs no semigroup; this value-level
 //! combination is what the accumulating applicative object uses.
 template <class... ERRORS>
-constexpr auto error_set_combine(const error_set_of<ERRORS...> &lhs,
-                                 const error_set_of<ERRORS...> &rhs)
+[[nodiscard]] constexpr auto
+error_set_combine(const error_set_of<ERRORS...> &lhs,
+                  const error_set_of<ERRORS...>
+                      &rhs) noexcept(noexcept(lhs.combined_with(rhs)))
     -> error_set_of<ERRORS...> {
     return lhs.combined_with(rhs);
 }
 
 namespace detail {
 
+//! \expos
 template <class... ERRORS>
-constexpr auto combine_grade_evidence(const error_set_of<ERRORS...> &lhs,
-                                      const error_set_of<ERRORS...> &rhs)
+constexpr auto
+combine_grade_evidence(const error_set_of<ERRORS...> &lhs,
+                       const error_set_of<ERRORS...>
+                           &rhs) noexcept(noexcept(error_set_combine(lhs, rhs)))
     -> error_set_of<ERRORS...> {
     return error_set_combine(lhs, rhs);
 }
@@ -674,46 +588,9 @@ constexpr auto combine_grade_evidence(const error_set_of<ERRORS...> &lhs,
 
 namespace detail {
 
-// -- Type-level: set difference and list concatenation --------------------
-
-/** FROM_LIST with every member of REMOVE_LIST taken out. */
-template <class REMOVE_LIST, class FROM_LIST>
-struct list_subtract;
-
-template <class FROM_LIST>
-struct list_subtract<type_list<>, FROM_LIST> {
-    using type = FROM_LIST;
-};
-
-template <class HEAD, class... TAIL, class FROM_LIST>
-struct list_subtract<type_list<HEAD, TAIL...>, FROM_LIST> {
-    using type = typename list_subtract<
-        type_list<TAIL...>, typename list_remove<HEAD, FROM_LIST>::type>::type;
-};
-
-template <class REMOVE_LIST, class FROM_LIST>
-using list_subtract_t = typename list_subtract<REMOVE_LIST, FROM_LIST>::type;
-
-/** Concatenates any number of type_lists, left to right. */
-template <class... LISTS>
-struct list_concat_all;
-
-template <>
-struct list_concat_all<> {
-    using type = type_list<>;
-};
-
-template <class... ERRORS>
-struct list_concat_all<type_list<ERRORS...>> {
-    using type = type_list<ERRORS...>;
-};
-
-template <class... LEFT, class... RIGHT, class... REST>
-struct list_concat_all<type_list<LEFT...>, type_list<RIGHT...>, REST...>
-    : list_concat_all<type_list<LEFT..., RIGHT...>, REST...> {};
-
-template <class... LISTS>
-using list_concat_all_t = typename list_concat_all<LISTS...>::type;
+// -- Type-level: the canonical error_set of a list -------------------------
+// Set difference (`list_subtract`) and concatenation (`list_concat_all`) are
+// the canonical set's own, in detail/canonical_set.hpp.
 
 /** The canonical error_set for an arbitrary (possibly unsorted, possibly
  * duplicate-bearing) type_list -- the type_list-input counterpart of the
@@ -850,6 +727,44 @@ using recover_return_t =
     rebind_grade_t<VALUE,
                    recover_final_grade_t<HANDLER, VALUE, GRADE, HANDLED...>>;
 
+/// Whether `recover` is non-throwing. The computation copies: the value out
+/// of a successful computation and into the result, each surviving witness
+/// into the narrowed set, and a recovered value out of a handler's result.
+/// It moves a recovered value into place and the narrowed set as it
+/// accumulates. Every handler is invoked on a `const` lvalue witness.
+//! \expos
+template <class HANDLER, class VALUE, class GRADE, class... HANDLED>
+struct recover_nothrow;
+
+template <class HANDLER, class VALUE, class... ERRORS, class... HANDLED>
+struct recover_nothrow<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...> {
+    using final_grade =
+        recover_final_grade_t<HANDLER, VALUE, error_set_of<ERRORS...>,
+                              HANDLED...>;
+    using returned =
+        recover_return_t<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...>;
+    static constexpr bool value =
+        (std::is_nothrow_invocable_v<HANDLER &, const HANDLED &> && ...) &&
+        (std::is_nothrow_copy_constructible_v<ERRORS> && ...) &&
+        std::is_nothrow_copy_constructible_v<final_grade> &&
+        std::is_nothrow_move_constructible_v<final_grade> &&
+        std::is_nothrow_copy_constructible_v<VALUE> &&
+        std::is_nothrow_move_constructible_v<VALUE> &&
+        std::is_nothrow_constructible_v<returned, const VALUE &> &&
+        (std::is_same_v<returned, VALUE> ||
+         std::is_nothrow_constructible_v<returned, std::unexpect_t,
+                                         const final_grade &>);
+};
+
+//! \expos
+//! \remarks `$recover-nothrow-v$<HANDLER, VALUE, GRADE, HANDLED...>` is `true`
+//! when invoking `HANDLER` on each handled alternative, copying the value
+//! and every witness that survives, and constructing the result are all
+//! non-throwing.
+template <class HANDLER, class VALUE, class GRADE, class... HANDLED>
+inline constexpr bool recover_nothrow_v =
+    recover_nothrow<HANDLER, VALUE, GRADE, HANDLED...>::value;
+
 /// The same type behind a member, so that a declaration can name it without
 /// instantiating it. `recover`'s trailing return type reaches `type` through
 /// `std::enable_if_t` on the grade being non-empty: on the empty grade the
@@ -886,12 +801,17 @@ struct recover_return {
 //! grade. Recovering one alternative from a value that raised two leaves the
 //! other, which is still an error. If more than one handled type is
 //! witnessed and each independently recovers a value, the first in canonical
-//! order is the result, matching the tie-break of `combined_with`.
+//! order is the result, matching the tie-break of `combined_with`. The
+//! exception specification is `$recover-nothrow-v$<HANDLER, VALUE,
+//! error_set_of<ERRORS...>, HANDLED...>`.
 template <class... HANDLED, class VALUE, class... ERRORS, class HANDLER>
     requires(sizeof...(ERRORS) > 0)
-constexpr auto
+[[nodiscard]] constexpr auto
 recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
-        HANDLER &&handler) ->
+        HANDLER &&
+            handler) noexcept(detail::recover_nothrow_v<HANDLER, VALUE,
+                                                        error_set_of<ERRORS...>,
+                                                        HANDLED...>) ->
     typename std::enable_if_t<
         (sizeof...(ERRORS) > 0),
         detail::recover_return<HANDLER, VALUE, error_set_of<ERRORS...>,
@@ -969,10 +889,15 @@ recover(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
 //! \remarks At the empty grade no alternative can be witnessed, so there is
 //! nothing to recover from and nothing to check `HANDLED` against. This is
 //! what keeps a generic recovery step well-formed when an earlier stage has
-//! statically eliminated every failure.
+//! statically eliminated every failure. The exception specification is that
+//! of copying `computation`.
 template <class... HANDLED, class VALUE, class HANDLER>
-constexpr auto recover(const std::expected<VALUE, error_set_of<>> &computation,
-                       HANDLER &&) -> std::expected<VALUE, error_set_of<>> {
+[[nodiscard]] constexpr auto
+recover(const std::expected<VALUE, error_set_of<>> &computation,
+        HANDLER &&) noexcept(std::
+                                 is_nothrow_copy_constructible_v<
+                                     std::expected<VALUE, error_set_of<>>>)
+    -> std::expected<VALUE, error_set_of<>> {
     static_assert(sizeof...(HANDLED) > 0,
                   "recover needs at least one HANDLED type.");
     return computation;
@@ -989,6 +914,228 @@ inline constexpr bool is_expected_v = false;
 template <class VALUE, class ERROR>
 inline constexpr bool is_expected_v<std::expected<VALUE, ERROR>> = true;
 
+// -- Public eliminators for a multi-witness value --------------------------
+// docs/transpose/decisions.md#multi-witness-elimination, amended 2026-11-01:
+// the fence moved. `visit` stays the one-of eliminator, partial by
+// precondition. These two are total over the witnessed subset: `fold_witnesses`
+// threads every present witness through an accumulator, in canonical order,
+// so that multiplicity is the caller's stated business; `collapse` maps every
+// alternative to one error type and folds the results with a combine, for the
+// boundary where a graded region ends. Both are built from the public API
+// only, `holds<E>()` and `witness<E>()`, as `recover`'s own fold is. Neither
+// needs the join-of-arms result type of eliminate.hpp: `fold_witnesses`'s arms
+// return the accumulator and `collapse`'s return the target.
+
+namespace detail {
+
+/** Whether `HANDLER` has an arm for `ARGS`: invocable and not returning
+ * `void`. `overloaded`'s consteval catch-all is invocable and returns `void`,
+ * so this reports it as the missing arm it stands for, before its own
+ * diagnostic fires. */
+//! \expos
+template <class HANDLER, class... ARGS>
+concept witness_arm_for =
+    std::invocable<HANDLER &, ARGS...> &&
+    !std::is_void_v<std::invoke_result_t<HANDLER &, ARGS...>>;
+
+/** One instantiation per alternative, so that a failing assertion names the
+ * alternative in its instantiation context. */
+//! \expos
+template <class HANDLER, class ACC, class E>
+struct fold_arm_check {
+    static_assert(witness_arm_for<HANDLER, ACC &&, const E &>,
+                  "fold_witnesses: no arm accepts (ACC, const E&) for this "
+                  "alternative -- add a case");
+    static_assert(std::is_invocable_r_v<ACC, HANDLER &, ACC &&, const E &>,
+                  "fold_witnesses: this arm's result does not convert to ACC");
+    static constexpr bool value = true;
+};
+
+//! \expos
+template <class HANDLER, class E>
+struct collapse_arm_check {
+    static_assert(witness_arm_for<HANDLER, const E &>,
+                  "collapse: no arm accepts this alternative -- add a case");
+    using type =
+        std::remove_cvref_t<std::invoke_result_t<HANDLER &, const E &>>;
+};
+
+/** The common result of every arm; ill-formed, with a message, when the arms
+ * disagree and no TARGET was named. */
+//! \expos
+template <class HANDLER, class... ERRORS>
+struct common_arm_result;
+
+template <class HANDLER, class FIRST, class... REST>
+struct common_arm_result<HANDLER, FIRST, REST...> {
+    using type = typename collapse_arm_check<HANDLER, FIRST>::type;
+    static_assert(
+        (std::is_same_v<type,
+                        typename collapse_arm_check<HANDLER, REST>::type> &&
+         ...),
+        "collapse: the arms return different types. Name the target, "
+        "collapse<TARGET>(...), and every arm's result converts to it.");
+};
+
+/** TARGET as written, or the arms' common result when TARGET is void. A
+ * specialization rather than conditional_t, so that naming TARGET never
+ * instantiates the agreement check. */
+//! \expos
+template <class TARGET, class HANDLER, class... ERRORS>
+struct collapse_target {
+    using type = TARGET;
+};
+
+template <class HANDLER, class... ERRORS>
+struct collapse_target<void, HANDLER, ERRORS...>
+    : common_arm_result<HANDLER, ERRORS...> {};
+
+//! \expos
+template <class TARGET, class HANDLER, class... ERRORS>
+using collapse_target_t =
+    typename collapse_target<TARGET, HANDLER, ERRORS...>::type;
+
+//! \expos
+//! \remarks `$collapse-nothrow$<TARGET, HANDLER, COMBINE, ERRORS...>` is
+//! `true` when invoking `HANDLER` on each alternative and converting its
+//! result to the target, combining two results with `COMBINE`, and moving a
+//! result into place are all non-throwing.
+template <class TARGET, class HANDLER, class COMBINE, class... ERRORS>
+inline constexpr bool collapse_nothrow =
+    (std::is_nothrow_invocable_r_v<
+         collapse_target_t<TARGET, HANDLER, ERRORS...>, HANDLER &,
+         const ERRORS &> &&
+     ...) &&
+    std::is_nothrow_invocable_r_v<
+        collapse_target_t<TARGET, HANDLER, ERRORS...>, COMBINE &,
+        collapse_target_t<TARGET, HANDLER, ERRORS...>,
+        collapse_target_t<TARGET, HANDLER, ERRORS...>> &&
+    std::is_nothrow_move_constructible_v<
+        collapse_target_t<TARGET, HANDLER, ERRORS...>> &&
+    std::is_nothrow_move_assignable_v<
+        collapse_target_t<TARGET, HANDLER, ERRORS...>>;
+
+} // namespace detail
+
+// \rSec3[transpose.errset.fold]{fold_witnesses}
+
+//! \mandates For every alternative `E` of the set, `handler` is invocable
+//! with `(ACC&&, const E&)` and the result converts to `ACC`.
+//! \effects For each alternative the set witnesses, in canonical order,
+//! replaces the accumulator with `handler(std::move(acc), witness)`, starting
+//! from `init`.
+//! \returns The final accumulator.
+//! \remarks Multiplicity is the caller's stated business: the accumulator is
+//! where two witnesses meet, and nothing is dropped unless an arm drops it.
+//! An alternative no arm accepts is ill-formed; the diagnostic names it. The
+//! exception specification is that of each arm's invocation and conversion
+//! to `ACC`, and of moving the accumulator.
+template <class ACC, class HANDLER, class... ERRORS>
+[[nodiscard]] constexpr auto fold_witnesses(
+    const error_set_of<ERRORS...> &errors, ACC init,
+    HANDLER &&
+        handler) noexcept((std::is_nothrow_invocable_r_v<ACC, HANDLER &, ACC &&,
+                                                         const ERRORS &> &&
+                           ...) &&
+                          std::is_nothrow_move_constructible_v<ACC> &&
+                          std::is_nothrow_move_assignable_v<ACC>) -> ACC {
+    static_assert((detail::fold_arm_check<HANDLER, ACC, ERRORS>::value && ...));
+    ACC acc = std::move(init);
+    auto step = [&]<class E>(std::type_identity<E>) {
+        if (errors.template holds<E>()) {
+            acc = std::invoke(handler, std::move(acc),
+                              *errors.template witness<E>());
+        }
+    };
+    (step(std::type_identity<ERRORS>{}), ...);
+    return acc;
+}
+
+// \rSec3[transpose.errset.collapse]{collapse}
+
+//! \remarks `keep_first` is the default multiplicity rule of `collapse`: of
+//! two results, the first in canonical order is kept, matching
+//! `error_set_of::combined_with` and `recover`.
+struct keep_first {
+    // \ref{transpose.errset.collapse}, the default combine
+    //! \returns `first`.
+    template <class T>
+    [[nodiscard]] constexpr auto operator()(T first, const T &) const
+        noexcept(std::is_nothrow_move_constructible_v<T>) -> T {
+        return first;
+    }
+};
+
+//! \mandates For every alternative `E` of the set, `handler` is invocable
+//! with `const E&`. If `TARGET` is `void`, every arm's decayed result is one
+//! type; otherwise each arm's result converts to `TARGET`.
+//! \effects Invokes `handler` on each present witness in canonical order and
+//! folds the results with `combine`, which by default keeps the first.
+//! \returns One `TARGET`, or when `TARGET` is `void` one value of the arms'
+//! common result type.
+//! \remarks This is the boundary verb: a graded region ends here and one
+//! error type leaves. The set is non-empty by invariant, so there is always
+//! a result. Pass a combine when a second witness must not be dropped; the
+//! default is the left-biased pick of `combined_with`, which is the silent
+//! drop `visit`'s precondition refuses, made explicit by the name. The
+//! exception specification is `$collapse-nothrow$<TARGET, HANDLER, COMBINE,
+//! ERRORS...>`.
+template <class TARGET = void, class HANDLER, class COMBINE = keep_first,
+          class... ERRORS>
+    requires(sizeof...(ERRORS) > 0)
+[[nodiscard]] constexpr auto collapse(
+    const error_set_of<ERRORS...> &errors, HANDLER &&handler,
+    COMBINE combine = {}) noexcept(detail::collapse_nothrow<TARGET, HANDLER,
+                                                            COMBINE, ERRORS...>)
+    -> detail::collapse_target_t<TARGET, HANDLER, ERRORS...> {
+    using Result = detail::collapse_target_t<TARGET, HANDLER, ERRORS...>;
+    std::optional<Result> acc;
+    auto step = [&]<class E>(std::type_identity<E>) {
+        if (errors.template holds<E>()) {
+            Result r = std::invoke(handler, *errors.template witness<E>());
+            acc = acc.has_value()
+                      ? std::invoke(combine, std::move(*acc), std::move(r))
+                      : std::move(r);
+        }
+    };
+    (step(std::type_identity<ERRORS>{}), ...);
+    return std::move(*acc);
+}
+
+//! \effects If `computation` holds a value, nothing; otherwise as for
+//! `collapse` on `computation.error()`.
+//! \returns `expected<VALUE, T>`, where `T` is the type `collapse` on the
+//! error yields: holding `computation`'s value, or the collapsed error.
+//! \remarks The result is the ungraded `expected<VALUE, T>`: the grade is
+//! gone. A caller who wants to stay graded names `collapse<error_set<T>>`,
+//! and the singleton set converts from `T` through the injecting
+//! constructor. The exception specification is that of `collapse` on the
+//! error, and of copying `computation`'s value into the result.
+template <class TARGET = void, class VALUE, class... ERRORS, class HANDLER,
+          class COMBINE = keep_first>
+    requires(sizeof...(ERRORS) > 0)
+[[nodiscard]] constexpr auto
+collapse(const std::expected<VALUE, error_set_of<ERRORS...>> &computation,
+         HANDLER &&handler,
+         COMBINE combine =
+             {}) noexcept(detail::collapse_nothrow<TARGET, HANDLER, COMBINE,
+                                                   ERRORS...> &&
+                          (std::is_void_v<VALUE> ||
+                           std::is_nothrow_copy_constructible_v<VALUE>))
+    -> std::expected<VALUE,
+                     detail::collapse_target_t<TARGET, HANDLER, ERRORS...>> {
+    using Result = detail::collapse_target_t<TARGET, HANDLER, ERRORS...>;
+    if (computation.has_value()) {
+        if constexpr (std::is_void_v<VALUE>) {
+            return std::expected<VALUE, Result>{};
+        } else {
+            return std::expected<VALUE, Result>(std::in_place, *computation);
+        }
+    }
+    return std::unexpected(collapse<TARGET>(
+        computation.error(), std::forward<HANDLER>(handler), combine));
+}
+
 // \rSec3[transpose.errset.fallible]{The uniform spelling}
 
 // docs/transpose/decisions.md#uniform-form-surface. The empty grade is spelled
@@ -1004,10 +1151,12 @@ inline constexpr bool is_expected_v<std::expected<VALUE, ERROR>> = true;
 //! \remarks This is the explicit spelling of a value at the empty grade: a
 //! computation that cannot fail, written in the fallible carrier so that the
 //! error-side operations apply to it, vacuously. The bare value remains the
-//! spelling of the empty grade everywhere the user does not write this.
+//! spelling of the empty grade everywhere the user does not write this. The
+//! exception specification is that of constructing the value from `value`.
 template <class VALUE>
     requires(!is_expected_v<std::remove_cvref_t<VALUE>>)
-constexpr auto fallible(VALUE &&value)
+[[nodiscard]] constexpr auto fallible(VALUE &&value) noexcept(
+    std::is_nothrow_constructible_v<std::remove_cvref_t<VALUE>, VALUE>)
     -> std::expected<std::remove_cvref_t<VALUE>, error_set<>> {
     return std::expected<std::remove_cvref_t<VALUE>, error_set<>>{
         std::in_place, std::forward<VALUE>(value)};
@@ -1016,9 +1165,12 @@ constexpr auto fallible(VALUE &&value)
 //! \returns `computation`.
 //! \remarks An `expected` is already in the carrier, at whatever grade it
 //! carries; `fallible` is the identity on it, so generic code can apply it to
-//! an operand that may or may not already be fallible.
+//! an operand that may or may not already be fallible. The exception
+//! specification is that of moving `computation`.
 template <class VALUE, class ERROR>
-constexpr auto fallible(std::expected<VALUE, ERROR> computation)
+[[nodiscard]] constexpr auto
+fallible(std::expected<VALUE, ERROR> computation) noexcept(
+    std::is_nothrow_move_constructible_v<std::expected<VALUE, ERROR>>)
     -> std::expected<VALUE, ERROR> {
     return computation;
 }

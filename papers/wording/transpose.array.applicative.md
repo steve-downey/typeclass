@@ -6,14 +6,16 @@
 
 ```cpp
 template<class VALUE>
-  auto pure(this auto&&, VALUE&& value);
+  [[nodiscard]] auto pure(this auto&&,
+                          VALUE&& value) noexcept(is_nothrow_constructible_v<remove_cvref_t<VALUE>, VALUE&>);
 ```
 
 [x]{.pnum} *Returns*: An `array<remove_cvref_t<VALUE>, N>` each of whose `N` elements is a copy of `value`.
 
 ```cpp
 template<class FUNCTION, class FIRST, class... REST>
-  auto invoke(this auto&&, FUNCTION&& function, FIRST&& first, REST&&... rest);
+  [[nodiscard]] auto invoke(this auto&&, FUNCTION&& function, FIRST&& first,
+                            REST&&... rest) noexcept($lanewise-invoke-nothrow$<FUNCTION, FIRST, REST...>);
 ```
 
 [x+1]{.pnum} *Constraints*:

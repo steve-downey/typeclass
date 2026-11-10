@@ -37,6 +37,12 @@ namespace detail {
 // invoke_result_t on it -- fails the probe softly for a function the
 // derivation could not have applied. Like probe_witness, each body
 // establishes only the result type.
+//
+// Each call operator's exception specification is that of the continuation
+// it stands in for, so a derived operation's exception specification --
+// computed by asking whether bind with the probe is noexcept -- is the one
+// the body's own continuation would give (see
+// docs/transpose/decisions.md#operation-noexcept).
 
 /** The continuation `fmap` binds with: `pure(std::invoke(function, a))`.
  * `FUNCTION` is invoked as the lvalue the derivation captures.
@@ -50,8 +56,10 @@ struct fmap_continuation_probe {
                                            std::declval<ARGUMENT>()));
                  }
     constexpr auto operator()(ARGUMENT &&) const
-        -> decltype(std::declval<const IMPL &>().pure(std::invoke(
-            std::declval<FUNCTION &>(), std::declval<ARGUMENT>()))) {
+        noexcept(noexcept(std::declval<const IMPL &>().pure(
+            std::invoke(std::declval<FUNCTION &>(), std::declval<ARGUMENT>()))))
+            -> decltype(std::declval<const IMPL &>().pure(std::invoke(
+                std::declval<FUNCTION &>(), std::declval<ARGUMENT>()))) {
         std::unreachable();
     }
 };
@@ -70,14 +78,17 @@ template <class SELF, class FUNCTION, class... BOUND>
 struct invoke_continuation_probe<SELF, FUNCTION, std::tuple<BOUND...>> {
     template <class HEAD>
         requires std::invocable<FUNCTION &, BOUND..., HEAD> && requires {
-            std::declval<SELF>().pure(std::invoke(std::declval<FUNCTION &>(),
-                                                  std::declval<BOUND>()...,
-                                                  std::declval<HEAD>()));
+            std::declval<SELF &>().pure(std::invoke(std::declval<FUNCTION &>(),
+                                                    std::declval<BOUND>()...,
+                                                    std::declval<HEAD>()));
         }
     constexpr auto operator()(HEAD &&) const
-        -> decltype(std::declval<SELF>().pure(
+        noexcept(noexcept(std::declval<SELF &>().pure(
             std::invoke(std::declval<FUNCTION &>(), std::declval<BOUND>()...,
-                        std::declval<HEAD>()))) {
+                        std::declval<HEAD>()))))
+            -> decltype(std::declval<SELF &>().pure(
+                std::invoke(std::declval<FUNCTION &>(),
+                            std::declval<BOUND>()..., std::declval<HEAD>()))) {
         std::unreachable();
     }
 };
@@ -87,16 +98,80 @@ struct invoke_continuation_probe<SELF, FUNCTION, std::tuple<BOUND...>, NEXT,
                                  REST...> {
     template <class HEAD>
         requires requires {
-            std::declval<SELF>().bind(
+            std::declval<SELF &>().bind(
                 std::declval<NEXT>(),
                 invoke_continuation_probe<
                     SELF, FUNCTION, std::tuple<BOUND..., HEAD &>, REST...>{});
         }
     constexpr auto
-    operator()(HEAD &&) const -> decltype(std::declval<SELF>().bind(
+    operator()(HEAD &&) const noexcept(noexcept(std::declval<SELF &>().bind(
         std::declval<NEXT>(),
         invoke_continuation_probe<SELF, FUNCTION, std::tuple<BOUND..., HEAD &>,
-                                  REST...>{})) {
+                                  REST...>{})))
+        -> decltype(std::declval<SELF &>().bind(
+            std::declval<NEXT>(),
+            invoke_continuation_probe<
+                SELF, FUNCTION, std::tuple<BOUND..., HEAD &>, REST...>{})) {
+        std::unreachable();
+    }
+};
+
+/** The continuation `join` binds with: the identity, handing back the inner
+ * value it receives as a value, moved from an rvalue and copied from an
+ * lvalue. A named type rather than a lambda so that `join`'s constraint, its
+ * body and its exception specification name one callable; this one is what
+ * runs, not a probe, so its body is real.
+ */
+struct identity_continuation {
+    template <class INNER>
+    constexpr auto operator()(INNER &&inner) const noexcept(
+        std::is_nothrow_constructible_v<std::remove_cvref_t<INNER>, INNER>)
+        -> std::remove_cvref_t<INNER> {
+        return std::forward<INNER>(inner);
+    }
+};
+
+/** The inner continuation the derived `ap` binds with:
+ * `pure(std::invoke(function, argument))`, `FUNCTION` being the callable the
+ * outer continuation received, invoked as the lvalue the derivation captures.
+ * Named only so that `ap`'s exception specification can be computed; the
+ * body binds its own lambdas.
+ */
+template <class SELF, class FUNCTION>
+struct ap_argument_continuation_probe {
+    template <class ARGUMENT>
+        requires requires {
+            std::declval<SELF &>().pure(std::invoke(std::declval<FUNCTION &>(),
+                                                    std::declval<ARGUMENT>()));
+        }
+    constexpr auto operator()(ARGUMENT &&) const
+        noexcept(noexcept(std::declval<SELF &>().pure(
+            std::invoke(std::declval<FUNCTION &>(), std::declval<ARGUMENT>()))))
+            -> decltype(std::declval<SELF &>().pure(std::invoke(
+                std::declval<FUNCTION &>(), std::declval<ARGUMENT>()))) {
+        std::unreachable();
+    }
+};
+
+/** The outer continuation the derived `ap` binds with: binds `ma`, as the
+ * lvalue the derivation captures it by, with the inner continuation for the
+ * callable it receives.
+ */
+template <class SELF, class MA>
+struct ap_function_continuation_probe {
+    template <class FUNCTION>
+        requires requires {
+            std::declval<SELF &>().bind(
+                std::declval<MA &>(),
+                ap_argument_continuation_probe<SELF, FUNCTION>{});
+        }
+    constexpr auto operator()(FUNCTION &&) const
+        noexcept(noexcept(std::declval<SELF &>().bind(
+            std::declval<MA &>(),
+            ap_argument_continuation_probe<SELF, FUNCTION>{})))
+            -> decltype(std::declval<SELF &>().bind(
+                std::declval<MA &>(),
+                ap_argument_continuation_probe<SELF, FUNCTION>{})) {
         std::unreachable();
     }
 };
@@ -116,7 +191,8 @@ struct kleisli_composition {
         requires requires(SELF &monad, const F &first, const G &second) {
             monad.bind(first(std::declval<ARGUMENT>()), second);
         }
-    constexpr auto operator()(ARGUMENT &&argument) const {
+    [[nodiscard]] constexpr auto operator()(ARGUMENT &&argument) const
+        noexcept(noexcept(self.bind(f(std::forward<ARGUMENT>(argument)), g))) {
         return self.bind(f(std::forward<ARGUMENT>(argument)), g);
     }
 };
@@ -151,7 +227,9 @@ struct derive_monad : protected Impl {
      * BASIS only, so Functor's derived surface stays Functor's.
      */
     template <class FUNCTION, class MA>
-    constexpr auto fmap(this auto &&self, FUNCTION &&function, MA &&ma)
+    [[nodiscard]] constexpr auto
+    fmap(this auto &&self, FUNCTION &&function,
+         MA &&ma) noexcept(fmap_nothrow<decltype(self), FUNCTION, MA>())
         requires requires(const Impl &impl) {
             impl.fmap(std::forward<FUNCTION>(function), std::forward<MA>(ma));
         } || requires(const Impl &impl) {
@@ -184,8 +262,10 @@ struct derive_monad : protected Impl {
     // before bind returns), which holds for every Monad instance in this
     // repository.
     template <class FUNCTION, class FIRST, class... REST>
-    constexpr auto invoke(this auto &&self, FUNCTION &&function, FIRST &&first,
-                          REST &&...rest)
+    [[nodiscard]] constexpr auto
+    invoke(this auto &&self, FUNCTION &&function, FIRST &&first,
+           REST &&...rest) noexcept(invoke_nothrow<decltype(self), FUNCTION,
+                                                   FIRST, REST...>())
         requires requires(const Impl &impl) {
             impl.invoke(std::forward<FUNCTION>(function),
                         std::forward<FIRST>(first),
@@ -238,12 +318,13 @@ struct derive_monad : protected Impl {
     // the one member in this step where the derivation, not just the probe,
     // addresses Impl rather than self.
     template <class MMA>
-    constexpr auto join(this auto &&self, MMA &&mma)
+    [[nodiscard]] constexpr auto
+    join(this auto &&self,
+         MMA &&mma) noexcept(join_nothrow<decltype(self), MMA>())
         requires requires(const Impl &impl) {
             impl.join(std::forward<MMA>(mma));
         } || requires(const Impl &impl) {
-            impl.bind(std::forward<MMA>(mma),
-                      [](auto &&inner) { return inner; });
+            impl.bind(std::forward<MMA>(mma), detail::identity_continuation{});
         }
     {
         if constexpr (requires {
@@ -252,7 +333,7 @@ struct derive_monad : protected Impl {
             return impl_of(self).join(std::forward<MMA>(mma));
         } else {
             return impl_of(self).bind(std::forward<MMA>(mma),
-                                      [](auto &&inner) { return inner; });
+                                      detail::identity_continuation{});
         }
     }
 
@@ -266,7 +347,9 @@ struct derive_monad : protected Impl {
     // constraint: calling it with an argument f cannot take, or whose
     // result g cannot continue, fails softly at the call.
     template <class F, class G>
-    constexpr auto kleisli(this auto &&self, F f, G g)
+    [[nodiscard]] constexpr auto
+    kleisli(this auto &&self, F f,
+            G g) noexcept(kleisli_nothrow<decltype(self), F, G>())
         requires requires(const Impl &impl) { impl.kleisli(f, g); } ||
                  (std::move_constructible<F> && std::move_constructible<G>)
     {
@@ -289,9 +372,17 @@ struct derive_monad : protected Impl {
      * when the context can hold a callable, and the constraint says so, so
      * the member disappears for contexts that cannot (std::simd::vec) rather
      * than failing inside the body.
+     *
+     * The derived route's exception specification is computed through
+     * `detail::ap_function_continuation_probe`, which stands in for the two
+     * closures the body binds with and carries their exception
+     * specifications; the constraint itself names no probe, since whether the
+     * route exists is answered by the element types alone.
      */
     template <class MF, class MA>
-    constexpr auto ap(this auto &&self, MF &&mf, MA &&ma)
+    [[nodiscard]] constexpr auto
+    ap(this auto &&self, MF &&mf,
+       MA &&ma) noexcept(ap_nothrow<decltype(self), MF, MA>())
         requires requires(const Impl &impl) {
             impl.ap(std::forward<MF>(mf), std::forward<MA>(ma));
         } || requires {
@@ -324,7 +415,9 @@ struct derive_monad : protected Impl {
      * where widening is reached for most often.
      */
     template <class TARGET_GRADE, class CARRIER>
-    constexpr auto subsume(this auto &&, CARRIER &&value)
+    [[nodiscard]] constexpr auto
+    subsume(this auto &&, CARRIER &&value) noexcept(
+        noexcept(grade_subsume<TARGET_GRADE>(std::forward<CARRIER>(value))))
         requires requires {
             grade_subsume<TARGET_GRADE>(std::forward<CARRIER>(value));
         }
@@ -334,8 +427,10 @@ struct derive_monad : protected Impl {
 
     // bind_with: explicit monad object override.
     template <class MONAD_MAP, class MA, class F>
-    constexpr auto bind_with(this auto &&, const MONAD_MAP &monad_map, MA &&ma,
-                             F &&f)
+    [[nodiscard]] constexpr auto
+    bind_with(this auto &&, const MONAD_MAP &monad_map, MA &&ma,
+              F &&f) noexcept(noexcept(monad_map.bind(std::forward<MA>(ma),
+                                                      std::forward<F>(f))))
         requires requires {
             monad_map.bind(std::forward<MA>(ma), std::forward<F>(f));
         }
@@ -358,15 +453,104 @@ struct derive_monad : protected Impl {
      * deliberately does NOT consult functor<T>: a caller who
      * wants the registered default says so by looking it up.
      */
-    constexpr auto as_functor(this auto &&self) {
+    [[nodiscard]] constexpr auto as_functor(this auto &&self) noexcept {
         return derive_functor<std::remove_cvref_t<decltype(self)>>{};
     }
 
   private:
     //! \omit
     template <class SELF>
-    static constexpr decltype(auto) impl_of(SELF &&self) {
+    static constexpr decltype(auto) impl_of(SELF &&self) noexcept {
         return static_cast<impl_ref_t<Impl, SELF>>(self);
+    }
+
+    //! \omit
+    template <class SELF, class FUNCTION, class MA>
+    static consteval auto fmap_nothrow() -> bool {
+        if constexpr (requires {
+                          impl_of(std::declval<SELF &>())
+                              .fmap(std::declval<FUNCTION>(),
+                                    std::declval<MA>());
+                      }) {
+            return noexcept(
+                impl_of(std::declval<SELF &>())
+                    .fmap(std::declval<FUNCTION>(), std::declval<MA>()));
+        } else {
+            return noexcept(
+                impl_of(std::declval<SELF &>())
+                    .bind(std::declval<MA>(),
+                          detail::fmap_continuation_probe<Impl, FUNCTION>{}));
+        }
+    }
+
+    //! \omit
+    template <class SELF, class FUNCTION, class FIRST, class... REST>
+    static consteval auto invoke_nothrow() -> bool {
+        if constexpr (requires {
+                          impl_of(std::declval<SELF &>())
+                              .invoke(std::declval<FUNCTION>(),
+                                      std::declval<FIRST>(),
+                                      std::declval<REST>()...);
+                      }) {
+            return noexcept(impl_of(std::declval<SELF &>())
+                                .invoke(std::declval<FUNCTION>(),
+                                        std::declval<FIRST>(),
+                                        std::declval<REST>()...));
+        } else {
+            return noexcept(std::declval<SELF &>().bind(
+                std::declval<FIRST>(),
+                detail::invoke_continuation_probe<SELF, FUNCTION, std::tuple<>,
+                                                  REST...>{}));
+        }
+    }
+
+    //! \omit
+    template <class SELF, class MMA>
+    static consteval auto join_nothrow() -> bool {
+        if constexpr (requires {
+                          impl_of(std::declval<SELF &>())
+                              .join(std::declval<MMA>());
+                      }) {
+            return noexcept(
+                impl_of(std::declval<SELF &>()).join(std::declval<MMA>()));
+        } else {
+            return noexcept(impl_of(std::declval<SELF &>())
+                                .bind(std::declval<MMA>(),
+                                      detail::identity_continuation{}));
+        }
+    }
+
+    //! \omit
+    template <class SELF, class F, class G>
+    static consteval auto kleisli_nothrow() -> bool {
+        if constexpr (requires {
+                          impl_of(std::declval<SELF &>())
+                              .kleisli(std::declval<F &>(),
+                                       std::declval<G &>());
+                      }) {
+            return noexcept(
+                impl_of(std::declval<SELF &>())
+                    .kleisli(std::declval<F &>(), std::declval<G &>()));
+        } else {
+            return (std::is_nothrow_move_constructible_v<F> &&
+                    std::is_nothrow_move_constructible_v<G>);
+        }
+    }
+
+    //! \omit
+    template <class SELF, class MF, class MA>
+    static consteval auto ap_nothrow() -> bool {
+        if constexpr (requires {
+                          impl_of(std::declval<SELF &>())
+                              .ap(std::declval<MF>(), std::declval<MA>());
+                      }) {
+            return noexcept(impl_of(std::declval<SELF &>())
+                                .ap(std::declval<MF>(), std::declval<MA>()));
+        } else {
+            return noexcept(std::declval<SELF &>().bind(
+                std::declval<MF>(),
+                detail::ap_function_continuation_probe<SELF, MA>{}));
+        }
     }
 };
 
@@ -457,7 +641,8 @@ struct bind_fn {
     template <class MA, class F,
               const auto &TC = monad<std::remove_cvref_t<MA>>>
         requires requires { TC.bind(std::declval<MA>(), std::declval<F>()); }
-    constexpr auto operator()(MA &&ma, F &&f) const {
+    [[nodiscard]] constexpr auto operator()(MA &&ma, F &&f) const
+        noexcept(noexcept(TC.bind(std::forward<MA>(ma), std::forward<F>(f)))) {
         return TC.bind(std::forward<MA>(ma), std::forward<F>(f));
     }
 };
@@ -470,7 +655,8 @@ struct join_fn {
     /** Flattens a nested monadic value; equivalent to `bind(mma, id)`. */
     template <class MMA, const auto &TC = monad<std::remove_cvref_t<MMA>>>
         requires requires { TC.join(std::declval<MMA>()); }
-    constexpr auto operator()(MMA &&mma) const {
+    [[nodiscard]] constexpr auto operator()(MMA &&mma) const
+        noexcept(noexcept(TC.join(std::forward<MMA>(mma)))) {
         return TC.join(std::forward<MMA>(mma));
     }
 };
@@ -491,7 +677,8 @@ struct kleisli_fn {
     /** Forward Kleisli composition: `(f >=> g) a = f a >>= g`. */
     template <class F, class G>
         requires requires { TC.kleisli(std::declval<F>(), std::declval<G>()); }
-    constexpr auto operator()(F &&f, G &&g) const {
+    [[nodiscard]] constexpr auto operator()(F &&f, G &&g) const
+        noexcept(noexcept(TC.kleisli(std::forward<F>(f), std::forward<G>(g)))) {
         return TC.kleisli(std::forward<F>(f), std::forward<G>(g));
     }
 };
@@ -507,7 +694,9 @@ inline constexpr kleisli_fn<CONTEXT> kleisli{};
  * Retained for source compatibility; `bind` is the spelling to use.
  */
 template <class MA, class F>
-auto mbind(MA &&ma, F &&f) {
+[[nodiscard]] auto mbind(MA &&ma,
+                         F &&f) noexcept(noexcept(bind(std::forward<MA>(ma),
+                                                       std::forward<F>(f)))) {
     return bind(std::forward<MA>(ma), std::forward<F>(f));
 }
 

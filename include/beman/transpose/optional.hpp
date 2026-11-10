@@ -3,7 +3,7 @@
 #ifndef BEMAN_TRANSPOSE_OPTIONAL_HPP
 #define BEMAN_TRANSPOSE_OPTIONAL_HPP
 
-// Functor, Applicative and Monad instances for std::optional<T>.
+// Functor, Applicative, Monad and Alternative instances for std::optional<T>.
 //
 // This header stands in for <optional>, which in the proposal declares the
 // applicative instance itself (docs/transpose/decisions.md#instance-placement).
@@ -13,12 +13,14 @@
 // includes it, and so does traverse.hpp, whose traversable_impl probes with the
 // optional applicative.
 
+#include <beman/transpose/alternative.hpp>
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/detail/typeclass_base.hpp>
 #include <beman/transpose/functor.hpp>
 #include <beman/transpose/monad.hpp>
 
 #include <concepts>
+#include <cstddef>
 #include <functional>
 #include <optional>
 #include <type_traits>
@@ -54,6 +56,17 @@ concept optional_holdable_value =
     !std::same_as<std::remove_cvref_t<RESULT>, std::nullopt_t> &&
     !std::same_as<std::remove_cvref_t<RESULT>, std::in_place_t>;
 
+//! \expos
+//! \remarks `$optional-invoke-nothrow$<FUNCTION, FIRST, REST...>` is `true`
+//! when invoking `FUNCTION` on the values the operands hold, each in its
+//! operand's value category, and constructing an `optional` from the result
+//! are both non-throwing.
+template <class FUNCTION, class FIRST, class... REST>
+inline constexpr bool optional_invoke_nothrow = invokes_nothrow_into<
+    std::optional<std::remove_cvref_t<std::invoke_result_t<
+        FUNCTION &, contained_ref_t<FIRST>, contained_ref_t<REST>...>>>,
+    FUNCTION &, contained_ref_t<FIRST>, contained_ref_t<REST>...>;
+
 } // namespace detail
 
 /// Applicative instance for std::optional: the flagship of the invoke core.
@@ -64,8 +77,13 @@ template <class VALUE_TYPE>
 struct optional_applicative_impl {
     // \ref{transpose.optional.applicative}, applicative instance for optional
     template <class VALUE>
-    constexpr auto pure(this auto &&, VALUE &&value)
+    [[nodiscard]] constexpr auto pure(this auto &&, VALUE &&value) noexcept(
+        std::is_nothrow_constructible_v<
+            std::optional<std::remove_cvref_t<VALUE>>, VALUE>)
         -> std::optional<std::remove_cvref_t<VALUE>>;
+
+    [[nodiscard]] constexpr auto zero(this auto &&) noexcept
+        -> std::optional<VALUE_TYPE>;
 
     template <class FUNCTION, class FIRST, class... REST>
         requires detail::is_optional_v<FIRST> &&
@@ -75,8 +93,11 @@ struct optional_applicative_impl {
                  detail::optional_holdable_value<std::invoke_result_t<
                      FUNCTION &, detail::contained_ref_t<FIRST>,
                      detail::contained_ref_t<REST>...>>
-    constexpr auto invoke(this auto &&, FUNCTION &&function, FIRST &&first,
-                          REST &&...rest)
+    [[nodiscard]] constexpr auto
+    invoke(this auto &&, FUNCTION &&function, FIRST &&first,
+           REST &&...rest) noexcept(detail::optional_invoke_nothrow<FUNCTION,
+                                                                    FIRST,
+                                                                    REST...>)
         -> std::optional<std::remove_cvref_t<
             std::invoke_result_t<FUNCTION &, detail::contained_ref_t<FIRST>,
                                  detail::contained_ref_t<REST>...>>>;
@@ -88,6 +109,7 @@ struct optional_applicative_map
     : derive_applicative<optional_applicative_impl<VALUE_TYPE>> {
     using optional_applicative_impl<VALUE_TYPE>::invoke;
     using optional_applicative_impl<VALUE_TYPE>::pure;
+    using optional_applicative_impl<VALUE_TYPE>::zero;
 };
 
 /// Applicative instance for `std::optional<VALUE_TYPE>`.
@@ -109,8 +131,15 @@ struct OptionalFunctorImpl {
         requires std::invocable<F, const VALUE_TYPE &> &&
                  detail::optional_holdable_value<
                      std::invoke_result_t<F, const VALUE_TYPE &>>
-    constexpr auto fmap(this auto &&, F &&function,
-                        const std::optional<VALUE_TYPE> &value) {
+    [[nodiscard]] constexpr auto
+    fmap(this auto &&, F &&function,
+         const std::optional<VALUE_TYPE>
+             &value) noexcept(detail::
+                                  invokes_nothrow_into<
+                                      std::optional<std::remove_cvref_t<
+                                          std::invoke_result_t<
+                                              F, const VALUE_TYPE &>>>,
+                                      F, const VALUE_TYPE &>) {
         using Result = std::invoke_result_t<F, const VALUE_TYPE &>;
         if (!value) {
             return std::optional<std::remove_cvref_t<Result>>{};
@@ -140,7 +169,9 @@ struct OptionalMonadImpl {
     using element_type = VALUE_TYPE;
 
     template <class VALUE>
-    constexpr auto pure(this auto &&, VALUE &&value)
+    [[nodiscard]] constexpr auto pure(this auto &&, VALUE &&value) noexcept(
+        noexcept(applicative<std::optional<VALUE_TYPE>>.pure(
+            std::forward<VALUE>(value))))
         -> std::optional<std::remove_cvref_t<VALUE>> {
         return applicative<std::optional<VALUE_TYPE>>.pure(
             std::forward<VALUE>(value));
@@ -150,7 +181,11 @@ struct OptionalMonadImpl {
     // plain result would be returned as-is, with a value-initialized one
     // standing in for the empty case, which breaks the monad laws.
     template <class A, class F>
-    constexpr auto bind(this auto &&, const std::optional<A> &ma, F &&f)
+    [[nodiscard]] constexpr auto
+    bind(this auto &&, const std::optional<A> &ma, F &&f) noexcept(
+        detail::invokes_nothrow_into<
+            std::remove_cvref_t<std::invoke_result_t<F, const A &>>, F,
+            const A &>)
         -> std::remove_cvref_t<std::invoke_result_t<F, const A &>>
         requires detail::is_optional_v<std::invoke_result_t<F, const A &>>
     {
@@ -173,16 +208,241 @@ template <class VALUE_TYPE>
 inline constexpr auto monad<std::optional<VALUE_TYPE>> =
     OptionalMonadMap<VALUE_TYPE>{};
 
+// -- The Alternative instance ----------------------------------------------
+//
+// Evidence, not proposed: see alternative.hpp. The disjunction over optional
+// is the leftmost engaged operand, at the join of the operands' value types;
+// a bare last operand cannot fail and makes the result total; `zero` is the
+// disengaged optional the applicative object declares first.
+
+namespace detail {
+
+/** The value type an operand of a disjunction over `optional` contributes:
+ * the contained type of an `optional`, the operand itself otherwise. */
+//! \omit
+template <class OPERAND>
+struct optional_disjunction_value {
+    using type = std::remove_cvref_t<OPERAND>;
+};
+
+//! \omit
+template <class VALUE>
+struct optional_disjunction_value<std::optional<VALUE>> {
+    using type = VALUE;
+};
+
+//! \omit
+template <class OPERAND>
+using optional_disjunction_value_t =
+    typename optional_disjunction_value<std::remove_cvref_t<OPERAND>>::type;
+
+/** An operand's contribution with its own value category: the held value of
+ * an `optional`, the operand itself otherwise. A specialization rather than
+ * a conditional, so that `contained_ref_t` is never formed for a bare
+ * operand. */
+//! \omit
+template <class OPERAND>
+struct optional_disjunction_ref {
+    using type = bare_ref_t<OPERAND>;
+};
+
+//! \omit
+template <class OPERAND>
+    requires is_optional_v<OPERAND>
+struct optional_disjunction_ref<OPERAND> {
+    using type = contained_ref_t<OPERAND>;
+};
+
+//! \omit
+template <class OPERAND>
+using optional_disjunction_ref_t =
+    typename optional_disjunction_ref<OPERAND>::type;
+
+/** The shape of a disjunction over `optional`: every operand but the last is
+ * an `optional`, and the last is an `optional` or a bare value. An operand
+ * after one that cannot fail would never be consulted while its type still
+ * entered the join; the shape rules it out. */
+//! \omit
+template <class... OPERANDS>
+inline constexpr bool optional_disjunction_shape_v =
+    []<std::size_t... INDICES>(std::index_sequence<INDICES...>) {
+        return (
+            (is_optional_v<OPERANDS> || (INDICES + 1 == sizeof...(OPERANDS) &&
+                                         infallible_operand<OPERANDS>)) &&
+            ...);
+    }(std::index_sequence_for<OPERANDS...>{});
+
+//! \omit
+template <class... OPERANDS>
+using optional_disjunction_join_t =
+    disjunction_join_t<optional_disjunction_value_t<OPERANDS>...>;
+
+/** The result of a disjunction over `optional`: the join in an `optional`
+ * when every operand is one, the join itself when the last cannot fail. */
+//! \omit
+template <class... OPERANDS>
+using optional_alt_result_t =
+    std::conditional_t<(is_optional_v<OPERANDS> && ...),
+                       std::optional<optional_disjunction_join_t<OPERANDS...>>,
+                       optional_disjunction_join_t<OPERANDS...>>;
+
+//! \omit
+template <class... OPERANDS>
+concept optional_disjunction_joinable =
+    (joins_into<optional_disjunction_join_t<OPERANDS...>,
+                optional_disjunction_ref_t<OPERANDS>> &&
+     ...);
+
+/** Whether an operand already is the result: an `optional` of the result's
+ * own type. Such an operand is passed on whole, by its copy or move
+ * constructor, rather than unwrapped and re-wrapped through the
+ * `in_place_t` constructor. The value is the same either way; the
+ * difference is the exception specification. The standard gives
+ * `optional`'s move constructor a conditional `noexcept` and leaves its
+ * `in_place_t` constructor without one, which a library may add or not, so
+ * only the first lets `alt(a, a)` be non-throwing on every implementation.
+ */
+//! \omit
+template <class RESULT, class OPERAND>
+inline constexpr bool optional_alt_passes_whole_v =
+    is_optional_v<OPERAND> &&
+    std::is_same_v<std::remove_cvref_t<OPERAND>, RESULT>;
+
+/** Whether one operand's contribution reaches the result without throwing:
+ * passed on whole, or placed into the join and the join into the result. */
+//! \omit
+template <class RESULT, class JOIN, class OPERAND>
+inline constexpr bool optional_alt_operand_nothrow_v = [] {
+    if constexpr (optional_alt_passes_whole_v<RESULT, OPERAND>) {
+        return std::is_nothrow_constructible_v<RESULT, bare_ref_t<OPERAND>>;
+    } else if constexpr (std::is_same_v<RESULT, JOIN>) {
+        return noexcept(into_join<JOIN>(
+                   std::declval<optional_disjunction_ref_t<OPERAND>>())) &&
+               std::is_nothrow_move_constructible_v<JOIN>;
+    } else {
+        return noexcept(into_join<JOIN>(
+                   std::declval<optional_disjunction_ref_t<OPERAND>>())) &&
+               std::is_nothrow_constructible_v<RESULT, std::in_place_t, JOIN>;
+    }
+}();
+
+/** Whether the disjunction is non-throwing: every operand's contribution
+ * reaches the result without throwing. */
+//! \omit
+template <class... OPERANDS>
+inline constexpr bool optional_alt_nothrow =
+    (optional_alt_operand_nothrow_v<optional_alt_result_t<OPERANDS...>,
+                                    optional_disjunction_join_t<OPERANDS...>,
+                                    OPERANDS> &&
+     ...);
+
+/** Places a contribution: into the join, and the join into the `optional`
+ * when the result is one. */
+//! \omit
+template <class RESULT, class JOIN, class REF>
+constexpr auto optional_alt_place(REF &&contribution) -> RESULT {
+    if constexpr (std::is_same_v<RESULT, JOIN>) {
+        return into_join<JOIN>(std::forward<REF>(contribution));
+    } else {
+        return RESULT{std::in_place,
+                      into_join<JOIN>(std::forward<REF>(contribution))};
+    }
+}
+
+/** The leftmost engaged operand's contribution; the disengaged result when
+ * every operand is a disengaged `optional`; a bare operand, reached only
+ * last, as it is. */
+//! \omit
+template <class RESULT, class JOIN, class FIRST, class... REST>
+constexpr auto optional_alt_select(FIRST &&first, REST &&...rest) -> RESULT {
+    if constexpr (is_optional_v<FIRST>) {
+        if (first.has_value()) {
+            if constexpr (optional_alt_passes_whole_v<RESULT, FIRST>) {
+                return RESULT(bare_ref(std::forward<FIRST>(first)));
+            } else {
+                return optional_alt_place<RESULT, JOIN>(
+                    forward_contained(std::forward<FIRST>(first)));
+            }
+        }
+        if constexpr (sizeof...(REST) == 0) {
+            return RESULT{};
+        } else {
+            return optional_alt_select<RESULT, JOIN>(
+                std::forward<REST>(rest)...);
+        }
+    } else {
+        return optional_alt_place<RESULT, JOIN>(
+            bare_ref(std::forward<FIRST>(first)));
+    }
+}
+
+} // namespace detail
+
+/// Alternative instance for std::optional. Alternative is not proposed by
+/// this paper, so this instance carries no wording. `zero` delegates to the
+/// applicative instance above, which declares it first.
+//! \omit
+template <class VALUE_TYPE>
+struct optional_alternative_impl {
+    /** The leftmost engaged operand, at the join of the operands' value
+     * types. Each operand's held value is passed on with that operand's own
+     * value category, as `invoke` passes it. */
+    template <class FIRST, class... REST>
+        requires(sizeof...(REST) > 0) &&
+                detail::optional_disjunction_shape_v<FIRST, REST...> &&
+                detail::optional_disjunction_joinable<FIRST, REST...>
+    [[nodiscard]] constexpr auto
+    alt(this auto &&, FIRST &&first,
+        REST &&...rest) noexcept(detail::optional_alt_nothrow<FIRST, REST...>)
+        -> detail::optional_alt_result_t<FIRST, REST...> {
+        return detail::optional_alt_select<
+            detail::optional_alt_result_t<FIRST, REST...>,
+            detail::optional_disjunction_join_t<FIRST, REST...>>(
+            std::forward<FIRST>(first), std::forward<REST>(rest)...);
+    }
+
+    [[nodiscard]] constexpr auto zero(this auto &&) noexcept
+        -> std::optional<VALUE_TYPE> {
+        return applicative<std::optional<VALUE_TYPE>>.zero();
+    }
+};
+
+//! \omit
+template <class VALUE_TYPE>
+struct optional_alternative_map
+    : derive_alternative<optional_alternative_impl<VALUE_TYPE>> {
+    using optional_alternative_impl<VALUE_TYPE>::alt;
+    using optional_alternative_impl<VALUE_TYPE>::zero;
+};
+
+/** Alternative instance for `std::optional<VALUE_TYPE>`. */
+template <class VALUE_TYPE>
+inline constexpr auto alternative<std::optional<VALUE_TYPE>> =
+    optional_alternative_map<VALUE_TYPE>{};
+
 // \rSec3[transpose.optional.applicative]{Applicative instance for optional}
 
 //! \returns An engaged `optional` holding `value`.
 template <class VALUE_TYPE>
 template <class VALUE>
-constexpr auto optional_applicative_impl<VALUE_TYPE>::pure(this auto &&,
-                                                           VALUE &&value)
-    -> std::optional<std::remove_cvref_t<VALUE>> {
+[[nodiscard]] constexpr auto optional_applicative_impl<VALUE_TYPE>::
+    pure(this auto &&, VALUE &&value) noexcept(
+        std::is_nothrow_constructible_v<
+            std::optional<std::remove_cvref_t<VALUE>>, VALUE>)
+        -> std::optional<std::remove_cvref_t<VALUE>> {
     return std::optional<std::remove_cvref_t<VALUE>>{
         std::forward<VALUE>(value)};
+}
+
+//! \returns A disengaged `optional<VALUE_TYPE>`.
+//! \remarks The failure state of `optional` carries no witness, so `optional`
+//! has a `zero`; it is the identity of the first-engaged disjunction that
+//! `first_monoid` already folds with.
+template <class VALUE_TYPE>
+[[nodiscard]] constexpr auto
+optional_applicative_impl<VALUE_TYPE>::zero(this auto &&) noexcept
+    -> std::optional<VALUE_TYPE> {
+    return std::optional<VALUE_TYPE>{};
 }
 
 //! \returns If every operand is engaged, an engaged `optional` holding the
@@ -202,9 +462,10 @@ template <class FUNCTION, class FIRST, class... REST>
              detail::optional_holdable_value<std::invoke_result_t<
                  FUNCTION &, detail::contained_ref_t<FIRST>,
                  detail::contained_ref_t<REST>...>>
-constexpr auto
-optional_applicative_impl<VALUE_TYPE>::invoke(this auto &&, FUNCTION &&function,
-                                              FIRST &&first, REST &&...rest)
+[[nodiscard]] constexpr auto optional_applicative_impl<VALUE_TYPE>::invoke(
+    this auto &&, FUNCTION &&function, FIRST &&first,
+    REST &&...rest) noexcept(detail::optional_invoke_nothrow<FUNCTION, FIRST,
+                                                             REST...>)
     -> std::optional<std::remove_cvref_t<
         std::invoke_result_t<FUNCTION &, detail::contained_ref_t<FIRST>,
                              detail::contained_ref_t<REST>...>>> {

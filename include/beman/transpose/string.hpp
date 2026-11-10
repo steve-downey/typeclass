@@ -23,8 +23,9 @@ template <>
 struct Monoid<std::string> {
     using value_type = std::string;
 
-    constexpr auto identity() const -> std::string { return {}; }
+    constexpr auto identity() const noexcept -> std::string { return {}; }
 
+    // No exception specification: concatenation allocates.
     constexpr auto combine(const std::string &lhs, const std::string &rhs) const
         -> std::string {
         return lhs + rhs;

@@ -56,6 +56,13 @@ template<class GRADE>
 
 :::
 
+```cpp
+namespace std {
+  template<class LEFT, class RIGHT>
+  using $grade-join-t$ = typename grade_join<LEFT, RIGHT>::type; // exposition only
+}
+```
+
 ::: wording
 
 ```cpp
@@ -156,5 +163,16 @@ namespace std {
   using $mixed-result-t$ = $see below$; // exposition only
 }
 ```
+
+::: wording
+
+```cpp
+template<class EVIDENCE>
+  constexpr auto combine_grade_evidence(const EVIDENCE& lhs,
+                                        const EVIDENCE& /*rhs*/) noexcept(is_nothrow_copy_constructible_v<EVIDENCE>)
+      -> EVIDENCE;
+```
+
+:::
 
 :::

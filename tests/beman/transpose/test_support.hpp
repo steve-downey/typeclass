@@ -271,19 +271,20 @@ struct Sequence {
 namespace beman::transpose {
 
 /** Applicative implementation for Identity<V>: pure wraps, invoke unwraps
- * every operand and calls the plain function once. */
+ * every operand and calls the plain function once. Both are `constexpr`, so
+ * that the instance laws in laws.hpp run over it in a constant expression. */
 template <class VALUE_TYPE>
 struct TestIdentityApplicativeImpl {
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value) {
+    constexpr auto pure(this auto &&, VALUE &&value) {
         return test::Identity<std::remove_cvref_t<VALUE>>{
             std::forward<VALUE>(value)};
     }
 
     template <class FUNCTION, class FIRST, class... REST>
-    auto invoke(this auto &&, FUNCTION &&function,
-                const test::Identity<FIRST> &first,
-                const test::Identity<REST> &...rest)
+    constexpr auto invoke(this auto &&, FUNCTION &&function,
+                          const test::Identity<FIRST> &first,
+                          const test::Identity<REST> &...rest)
         -> test::Identity<std::remove_cvref_t<
             std::invoke_result_t<FUNCTION &, const FIRST &, const REST &...>>> {
         using Result = std::remove_cvref_t<

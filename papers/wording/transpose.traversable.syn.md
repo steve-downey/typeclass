@@ -50,6 +50,15 @@ namespace std {
 
 ```cpp
 namespace std {
+  template<class OBJ, class T, class F>
+  using $traversal-context-t$ =
+      remove_cvref_t<invoke_result_t<F&, $traversal-argument-t$<OBJ, T>>>; // exposition
+                                                                         // only
+}
+```
+
+```cpp
+namespace std {
   template<class Impl>
   struct derive_traversable : protected Impl {
     // Alternate-core: Impl::traverse is the primitive; transpose is derived
@@ -62,7 +71,11 @@ namespace std {
 
     // @[transpose.traversable.ops]{- .sref}@, traversal operations
     template<class T, class F, class SELF>
-    constexpr auto for_each(this SELF&& self, T&& value, F&& function)
+    constexpr auto for_each(this SELF&& self, T&& value, F&& function) noexcept(
+        noexcept(self.traverse(
+            applicative<
+                remove_cvref_t<invoke_result_t<F&, $traversal-argument-t$<SELF, T>>>>,
+            forward<F>(function), forward<T>(value))))
       requires requires {
         self.traverse(
             applicative<
@@ -72,7 +85,9 @@ namespace std {
 
     template<class T>
       requires $applicative-context$<typename Impl::element_type>
-    constexpr auto transpose(this auto&& self, T&& value)
+    [[nodiscard]] constexpr auto transpose(this auto&& self, T&& value) noexcept(
+        noexcept(self.traverse(applicative<typename Impl::element_type>, identity{},
+                               forward<T>(value))))
       requires requires {
         self.traverse(applicative<typename Impl::element_type>, identity{},
                       forward<T>(value));
@@ -80,19 +95,26 @@ namespace std {
 
     // @[transpose.traversable.delegate]{- .sref}@, delegated traversal
     template<class TRAVERSABLE_MAP, class T, class F>
-    constexpr auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
-                                 F&& function, T&& value)
+    [[nodiscard]] constexpr auto traverse_with(
+        this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& function,
+        T&& value) noexcept(noexcept(traversable_map
+                                         .traverse(applicative<$traversal-context-t$<
+                                                       TRAVERSABLE_MAP, T, F>>,
+                                                   forward<F>(function),
+                                                   forward<T>(value))))
       requires requires {
         traversable_map.traverse(
-            applicative<remove_cvref_t<
-                invoke_result_t<F&, $traversal-argument-t$<TRAVERSABLE_MAP, T>>>>,
+            applicative<$traversal-context-t$<TRAVERSABLE_MAP, T, F>>,
             forward<F>(function), forward<T>(value));
       };
 
     template<class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
-    constexpr auto traverse_with(this auto&&, const TRAVERSABLE_MAP& traversable_map,
-                                 const APPLICATIVE_MAP& applicative_map, F&& function,
-                                 T&& value)
+    [[nodiscard]] constexpr auto traverse_with(
+        this auto&&, const TRAVERSABLE_MAP& traversable_map,
+        const APPLICATIVE_MAP& applicative_map, F&& function,
+        T&& value) noexcept(noexcept(traversable_map.traverse(applicative_map,
+                                                              forward<F>(function),
+                                                              forward<T>(value))))
       requires requires {
         traversable_map.traverse(applicative_map, forward<F>(function),
                                  forward<T>(value));
@@ -101,8 +123,10 @@ namespace std {
     template<class TRAVERSABLE_MAP, class T>
       requires $applicative-context$<
           typename remove_cvref_t<TRAVERSABLE_MAP>::element_type>
-    constexpr auto transpose_with(this auto&& self,
-                                  const TRAVERSABLE_MAP& traversable_map, T&& value)
+    [[nodiscard]] constexpr auto transpose_with(
+        this auto&& self, const TRAVERSABLE_MAP& traversable_map,
+        T&& value) noexcept(noexcept(self.traverse_with(traversable_map, identity{},
+                                                        forward<T>(value))))
       requires requires {
         self.traverse_with(traversable_map, identity{}, forward<T>(value));
       };

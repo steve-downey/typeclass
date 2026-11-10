@@ -22,8 +22,10 @@ target_sources(
                 "${PROJECT_BINARY_DIR}/include"
             FILES
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/config.hpp
+                ${PROJECT_SOURCE_DIR}/include/beman/transpose/alternative.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/apply.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/array.hpp
+                ${PROJECT_SOURCE_DIR}/include/beman/transpose/eliminate.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/error_set.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/expected.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/fold.hpp
@@ -43,6 +45,7 @@ target_sources(
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/simd.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/simd_lanes.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/detail/applicative_derivation.hpp
+                ${PROJECT_SOURCE_DIR}/include/beman/transpose/detail/canonical_set.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/detail/make_array.hpp
                 ${PROJECT_SOURCE_DIR}/include/beman/transpose/detail/typeclass_base.hpp
                 "${PROJECT_BINARY_DIR}/include/beman/transpose/config_generated.hpp"

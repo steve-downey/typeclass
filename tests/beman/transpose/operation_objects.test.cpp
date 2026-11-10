@@ -17,6 +17,7 @@
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/fold.hpp>
 #include <beman/transpose/monad.hpp>
+#include <beman/transpose/monoid.hpp>
 #include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
@@ -24,8 +25,10 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <expected>
 #include <optional>
 #include <string>
+#include <system_error>
 #include <type_traits>
 #include <vector>
 
@@ -437,6 +440,48 @@ TEST_CASE("typeclass: a missing instance is detectable before the call") {
     STATIC_REQUIRE_FALSE(
         bt::has_instance_v<decltype(bt::foldable<Unregistered>)>);
     STATIC_REQUIRE_FALSE(bt::has_instance_v<decltype(bt::monad<Unregistered>)>);
+}
+
+// -- raise and zero: the operation objects that build a failure ------------
+
+namespace {
+
+// Availability is asked through NAMED CONCEPTS: a bare requires-expression at
+// block scope hard-errors on an invalid expression instead of yielding false.
+template <class CONTEXT>
+concept has_zero = requires { bt::zero<CONTEXT>(); };
+template <class CONTEXT, class ERROR>
+concept has_raise = requires(ERROR error) { bt::raise<CONTEXT>(error); };
+} // namespace
+// Both name the context, for the reason pure does: they build one rather than
+// consuming one (docs/transpose/decisions.md#failure-injection-spelling).
+
+TEST_CASE("typeclass: zero<C>() is the witness-free failure state of C") {
+    auto none = bt::zero<std::optional<int>>();
+    STATIC_REQUIRE(std::is_same_v<decltype(none), std::optional<int>>);
+    REQUIRE_FALSE(none.has_value());
+    // It agrees with the lookup object it dispatches through, and with the
+    // identity of the first-engaged monoid it is the Alternative identity of.
+    REQUIRE(none == bt::applicative<std::optional<int>>.zero());
+    REQUIRE(none == bt::first_monoid<int>{}.identity());
+
+    constexpr auto at_compile_time = bt::zero<std::optional<int>>();
+    STATIC_REQUIRE(!at_compile_time.has_value());
+}
+
+TEST_CASE("typeclass: raise<C>(e) agrees with the lookup object's raise") {
+    using exp = std::expected<int, std::errc>;
+    auto through_object = bt::raise<exp>(std::errc::invalid_argument);
+    auto through_lookup =
+        bt::applicative<exp>.raise(std::errc::invalid_argument);
+    STATIC_REQUIRE(
+        std::is_same_v<decltype(through_object), decltype(through_lookup)>);
+    REQUIRE(through_object == through_lookup);
+
+    // A context that cannot fail has no raise, and a context whose failure
+    // needs a witness has no zero: each is a constraint that does not match.
+    STATIC_REQUIRE(!has_raise<std::vector<int>, int>);
+    STATIC_REQUIRE(!has_zero<exp>);
 }
 
 namespace operation_test {

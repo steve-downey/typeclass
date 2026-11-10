@@ -102,8 +102,10 @@ struct sender {
  */
 template <class T>
 struct SenderApplicativeImpl {
+    // Neither operation carries an exception specification: each builds a
+    // sender, which stores its work in a std::function and so may allocate.
     template <class VALUE>
-    auto pure(this auto &&, VALUE &&value) {
+    [[nodiscard]] auto pure(this auto &&, VALUE &&value) {
         using U = std::remove_cvref_t<VALUE>;
         return sender<U>::ready(U(std::forward<VALUE>(value)));
     }
@@ -131,8 +133,8 @@ struct SenderApplicativeImpl {
      * sender can hold, which a function returning void is not.
      */
     template <class FUNCTION, class FIRST, class... REST>
-    auto invoke(this auto &&, FUNCTION &&function, sender<FIRST> first,
-                sender<REST>... rest)
+    [[nodiscard]] auto invoke(this auto &&, FUNCTION &&function,
+                              sender<FIRST> first, sender<REST>... rest)
         -> sender<std::remove_cvref_t<std::invoke_result_t<
             const std::remove_cvref_t<FUNCTION> &, FIRST, REST...>>>
         requires std::constructible_from<std::remove_cvref_t<FUNCTION>,

@@ -6,7 +6,8 @@
 
 ```cpp
 template<class APPLICATIVE, class FUNCTION, class VALUES>
-  constexpr auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function, VALUES&& values);
+  [[nodiscard]] constexpr auto traverse(this auto&&, const APPLICATIVE& applicative, FUNCTION&& function,
+                                        VALUES&& values);
 ```
 
 [x]{.pnum} *Constraints*: `remove_cvref_t<VALUES>` is `vector<VALUE_TYPE>`. Let `A` be `$traversal-argument-t$<vector_traversable_impl, VALUES>`: `VALUE_TYPE&&` if `VALUES` is a non-`const`, non-`volatile` rvalue, `const VALUE_TYPE&` otherwise. `function` is invocable with an argument of type `A`, and `APPLICATIVE` satisfies `applicative_object_for` for the context it returns.

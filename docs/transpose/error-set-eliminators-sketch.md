@@ -1,6 +1,10 @@
 # Sketch: public eliminators for a multi-witness `error_set`
 
-Status: a sketch for the "fence moves" outcome of
+Status: SHIPPED 2026-11-01 by stage
+[set-elimination](transpose-surface-plan.md#set-elimination), after the
+house-style pass; the shipped forms are in `error_set.hpp` and differ from the
+header below only in layout, wording comments, and `keep_first` being a named
+public type. Originally a sketch for the "fence moves" outcome of
 [multi-witness-elimination](decisions.md#multi-witness-elimination), written
 2026-11-01 so that the ruling in stage
 [set-elimination](transpose-surface-plan.md#set-elimination) is taken against

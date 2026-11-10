@@ -446,6 +446,12 @@ official grade registration?
   graded": libfn licenses moves between its contexts by the information
   preserved, not by a shared lattice. Filed as
   [licensed-context-crossings](#licensed-context-crossings).
+- 2026-11-01 — Advanced by that slug's decision: the Boolean model and the
+  error-set model now have a stated crossing rule, so `optional` and
+  `expected` can be related without sharing a lattice. What remains open
+  here is narrower than before: whether `std::optional` is registered as the
+  Boolean model's carrier at all, which is a public-surface decision and not
+  needed for the crossing rule to apply to it.
 
 ---
 
@@ -787,6 +793,21 @@ verb is not a gap awaiting a verb; it is the fence line.
   the `std::expected` leaves the grade). The library's job is to provide the
   forms so that programmers write less. Decision text amended above; the
   original 2026-08-29 Why stands as the record of why the fence existed.
+- 2026-11-01 — Shipped by stage
+  [set-elimination](transpose-surface-plan.md#set-elimination):
+  `fold_witnesses` and `collapse` in `error_set.hpp`, with `keep_first` as
+  the named default combine, wording sections `[transpose.errset.fold]` and
+  `[transpose.errset.collapse]` included in the paper after `recover`, and
+  tests in `error_set.test.cpp` (both witnesses reach the accumulator in
+  canonical order; a combine keeps the second; a named target converts; a
+  void computation collapses; the single-witness `collapse` agrees with
+  `visit`). Sub-question 4 is answered: `recover` is **left as is**. Its fold
+  carries two accumulators, the recovered value and the surviving witnesses,
+  and threads the unhandled witnesses through `carry_witness`; re-expressing
+  that through `fold_witnesses` would mean a tuple accumulator and a second
+  pass for the carry, which is more mechanism than it removes. The two folds
+  are built from the same two public observers, which is the sharing
+  [functor-monad-grounding](#functor-monad-grounding) asks for.
 
 ---
 
@@ -976,6 +997,8 @@ A product of grade models is a new semantic feature with no current client, the 
   carrier into another's. That question is
   [licensed-context-crossings](#licensed-context-crossings), which must not
   weaken this one.
+- 2026-11-01 — licensed-context-crossings decided; the mixing-point tests
+  in `laws.test.cpp` are unchanged by it, as required.
 
 ---
 
@@ -1554,6 +1577,29 @@ is out of scope for this decision.
   returning a doubled-replacement marker, and asserts `as_functor().replace`
   returns the marker, not the `fmap`-derived answer. Suite went from 154 to
   159.
+- 2026-11-01 — The one-off agreement test is generalized by the instance-law
+  harness, stage [instance-laws](transpose-surface-plan.md#instance-laws).
+  `tests/beman/transpose/laws.hpp` now carries Functor (identity,
+  composition), Applicative (identity, homomorphism, interchange,
+  composition, each in invoke/pure form and in its n-ary form) and Monad
+  (left identity, right identity, associativity) checkers quantified over an
+  object and a sample, each law its own `static_assert` message, plus the
+  coherence checks that pin every grown or derived operation to its basis:
+  `fmap(f, m) == bind(m, pure . f)` (this entry's theorem, as a law),
+  `join`/`bind`, the synthesized n-ary `invoke` against nested `bind`, `ap`
+  against `invoke(evaluate, ...)`, and `map`/`lift`/`zip_with` against
+  `invoke`/`pure`. The agreement itself is `fmap_agrees_with_invoke`, run
+  for the hand-written Functor, the Monad-grown `fmap` and the layered
+  `derive_functor<OptionalMonadMap>` against the Applicative's unary
+  `invoke`. Run in `laws.test.cpp` over `std::optional` and the test
+  `Identity` at compile time, and over `std::expected` (both objects; the
+  accumulating one takes no monad laws), `std::array` and `zip_list` at
+  runtime, because those instances' basis operations are not `constexpr`
+  (logged under
+  [derived-op-constant-evaluation](#derived-op-constant-evaluation)). The
+  probe algebra is string concatenation, not addition: a lawless `pure` that
+  leaves a mark is caught by the homomorphism law only because `x + "pure"
+  + "f"` and `x + "f" + "pure"` differ.
 
 ## derived-op-native-preference
 
@@ -3869,6 +3915,22 @@ own copy met that, so moving onto transpose's base must not lose it.
   constant-evaluated. They are `constexpr` and forward to a native
   `fold_left`/`fold_right` in a constant expression; the derived path is not.
   Replacing `std::function` there is open.
+- 2026-11-01 — Observed by stage
+  [instance-laws](transpose-surface-plan.md#instance-laws), which planned
+  to run its `consteval` law checkers over every registered instance: the
+  bases are `constexpr`, but the basis operations of three instances are
+  not. `expected_applicative_impl`, `accumulating_expected_applicative_impl`
+  and `ExpectedMonadImpl` (`pure`, `invoke`, `bind`), `array_applicative_impl`
+  (`pure`, `invoke`) and `ZipListApplicativeImpl` (`pure`, `invoke`, and
+  `zip_list`'s own `repeat` and `operator==`) are declared without it, so
+  calling them through a `constexpr` base in a constant expression fails.
+  This entry's decision names only `std::optional` and `std::vector`, so
+  this is a gap beside it rather than a contradiction of it. Not patched by
+  that stage, which is test-only: its laws for those three instances run at
+  runtime under `REQUIRE`, through the same `constexpr` per-law checkers,
+  and the test records which. Adding `constexpr` to those instances (and the
+  test `Identity`, done in that stage) would move them to `static_assert`
+  with no other change.
 
 ---
 
@@ -4086,7 +4148,36 @@ at the empty grade is recorded as a scoped exception under
 **Question:** Which moves of a value between contexts of different grade
 models, or between a graded context and an ungraded one, are licensed, and by
 what rule?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01.
+**Decision:** A crossing is a deliberate, named move of one value from one
+carrier into another; it is not a mixing point, and
+[cross-model-mixing](#cross-model-mixing) is untouched by it. A crossing is
+licensed in exactly two cases. First, when it loses no information, which is
+the case exactly when the source is at its model's bottom: a value that
+cannot fail enters any fallible context, and the identity carriers of two
+models (`expected<T, error_set<>>` and the Boolean model's `Fallible<T,
+never_fails>`) cross in both directions with nothing asked. Second, on the
+failure path through a handler: entering a context whose failure state
+carries more than the source's needs a handler that **supplies** it (an
+error for an empty Boolean value); entering one whose failure state carries
+less needs a handler that **consumes** what would be dropped (the error set,
+on the way to a Boolean value). Success values pass through every licensed
+crossing unchanged, and the handler is never asked on the success path. The
+rule is stated against models, not carriers: it reads the source's grade
+and the target's, never the carrier names. No operation ships. The rule is
+demonstrated test-only in `laws.test.cpp` against the Boolean model's
+`Fallible`, and a future `into<C>` must satisfy it.
+**Why:** Without a stated rule every future question about `optional` and
+`expected` together re-derives it from the lattice, and the lattice is the
+wrong instrument: the two models share none, and what decides whether a
+move is honest is whether information is lost. libfn's identity cluster is
+the evidence that the rule fits on a page. Stating it against models keeps
+the tripwire of stage
+[context-crossings](transpose-surface-plan.md#context-crossings) intact:
+nothing here registers `std::optional` as graded, which remains
+[optional-grade-model](#optional-grade-model)'s own question.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.3).
@@ -4104,6 +4195,15 @@ what rule?
   the other. *Proposed resolution:* a decision stating the rule, a test-only
   demonstration of the `optional` to `expected` lift under it, and no new
   operation until a client needs one.
+- 2026-11-01 — Shipped by stage
+  [context-crossings](transpose-surface-plan.md#context-crossings): the
+  `context_crossing` section of `laws.test.cpp`, with `into_expected` and
+  `into_fallible` as the demonstration, a concept pinning that a lossless
+  crossing exists without a handler and a lossy one does not in either
+  direction, and runtime tests that the handler is asked exactly on the
+  failure path. `cross-model-mixing`'s tests are unchanged. The
+  demonstration uses `Fallible`, not `std::optional`; the tripwire did not
+  fire.
 
 ---
 
@@ -4112,7 +4212,31 @@ what rule?
 **Question:** Does the library provide an overload-set elimination whose
 result type is the join of the arms' result types, so that a visitor over a
 sum may have heterogeneous arms without the user naming the union?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01; the name and the order rule by the stage.
+**Decision:** Yes: `eliminate(variant, arms)` in `eliminate.hpp`, beside
+`overloaded`. Its result is the join of the arms: the one type every arm
+returns when their decayed results agree, otherwise `std::variant` of the
+distinct results **in alternative order**, deduplicated by identity and not
+sorted, holding the result at the position of its type. `eliminate_indexed`
+passes `std::in_place_index_t<I>` to the arm as well, for arms that must tell
+two alternatives of one type apart or want the position as a template
+argument. An alternative no arm accepts is a compile error naming it, with
+`overloaded`'s consteval catch-all counted as a missing arm. The join is a
+value: no operation object, `grade_of` or `rebind_grade` reads it, per
+[value-side-grading](#value-side-grading). The header is proposed with
+`overloaded` ([overloaded-home](#overloaded-home)) and, like it, has no
+wording yet.
+**Why:** `std::visit` requiring one result type is the pain in both clients:
+an algebra over a variant-shaped layer in `tree_algorithms` spells the layer
+type on every arm, and a visitor whose arms produce different things names
+their union by hand. Alternative order rather than canonical order is forced
+by the first client: the join of arms that rebuild a `variant<Zero,
+Succ<B>>` must be exactly that type, which a sorted set would not be. That
+is a divergence from the plan's "built on the canonical set", logged below;
+the Why held and the What did not, so only the deduplication is shared with
+the error set.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.4 and §4). `std::visit` requires
@@ -4130,6 +4254,17 @@ sum may have heterogeneous arms without the user naming the union?
   `error_set` or a sum of the same shape with a different name is answered by
   [value-side-grading](#value-side-grading) and
   [canonical-set-home](#canonical-set-home).
+- 2026-11-01 — Divergence under the protocol of stage
+  [set-elimination](transpose-surface-plan.md#set-elimination): the plan's
+  deliverable said the join-of-arms type is "built on the canonical set".
+  Canonical means sorted, and a sorted join of `Zero` and `Succ<B>` is not
+  `NatF<B>`. The What was false and the Why true, so the join deduplicates in
+  alternative order and shares only `list_dedupe` with
+  [canonical-set-home](#canonical-set-home)'s header. Shipped: `eliminate.hpp`,
+  `eliminate.test.cpp`, and a layer test in
+  `tests/beman/tree_algorithms/functors.test.cpp`. The name `eliminate` was
+  chosen over `visit_join` and `match`: it is the term the rest of this log
+  uses for consuming a sum, and `match` is the pattern-matching proposals'.
 - 2026-10-31 — Refined by the expanded challenge under
   [multi-witness-elimination](#multi-witness-elimination): the `error_set`
   eliminators sketched there return an accumulator or a single error type,
@@ -4277,6 +4412,13 @@ writes the variant and its continuations by hand repeatedly along a pipeline.
 - 2026-10-31 — Answered by Steve: no, at least for now. Stage
   [failure-side](transpose-surface-plan.md#failure-side) no longer rules on
   this; it assumes it.
+- 2026-11-01 — Confirmed in stage
+  [set-elimination](transpose-surface-plan.md#set-elimination): `eliminate`'s
+  join-of-arms result is a `std::variant` that nothing reads as a grade, and
+  the shape sub-question's order is settled as alternative order, not
+  canonical, for the reason logged under
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination). The
+  tripwire did not fire.
 
 ---
 
@@ -4285,7 +4427,30 @@ writes the variant and its continuations by hand repeatedly along a pipeline.
 **Question:** What generic operation enters the failure state of a graded
 context, as the dual of `pure`, and how does it relate to the `zero<C>()`
 planned for Alternative?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01.
+**Decision:** `raise<C>(e)`, an operation object parameterized on the
+context for the reason `pure<C>` is: it builds a context rather than
+consuming one, so no argument carries it. It dispatches to the applicative
+object's own `raise`. For the error-set model, the object over
+`expected<T, E>` raises at the join of its grade with the grade `e`'s type
+alone would carry, spelled lazily: raising the declared alternative yields
+`expected<T, E>` verbatim, a different alternative widens to an error set,
+and a raised error set contributes its members; the uniform spelling of the
+empty grade acquires its first alternative; the void context raises like any
+other; both `expected` objects share one `raise`. `zero<C>()` is the
+witness-free failure state and the identity of Alternative's disjunction,
+decided under the same rule and spelled alongside: `optional` has one,
+dispatching to the object's `zero`; `expected` has none, because its failure
+state needs a witness, which is what `raise` supplies. A context that cannot
+fail has no `raise`. Both absences are constraints that do not match.
+**Why:** `pure` without its dual leaves generic graded code unable to fail
+without naming the carrier, which is the one thing generic code cannot do.
+The grade reading is the one the cores already use, so `raise` adds no new
+rule to the algebra. Deciding `raise` and `zero` together keeps "builds a
+context, so names it" in one place, and keeps `zero` from being invented a
+second time when Alternative arrives.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.5). `pure<C>(v)` builds the success
@@ -4298,6 +4463,14 @@ planned for Alternative?
   `pure` is, with the grade of the result the singleton of `e`'s type joined
   into `C`'s grade; `zero<C>()` for Alternative is the same shape and the two
   are decided together under one rule ("builds a context, so names it").
+- 2026-11-01 — Shipped by stage
+  [failure-side](transpose-surface-plan.md#failure-side): `raise` on both
+  `expected` applicative objects with `raise_result` as the grade rule, `zero`
+  on the `optional` object, the `raise<C>` and `zero<C>` operation objects in
+  `apply.hpp` beside `pure<C>`, tests in `expected.test.cpp` and
+  `operation_objects.test.cpp`, and golden section 11 of
+  `baseline_deduction.test.cpp`. The goldens of sections 1 to 10 are
+  untouched.
 
 ---
 
@@ -4306,7 +4479,40 @@ planned for Alternative?
 **Question:** When Alternative arrives, what are the value-side and
 error-side semantics of its disjunction, and does an infallible operand make
 the disjunction total?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed
+answer on 2026-11-01; the typeclass itself deferred by the stage, then
+shipped as evidence the same day on Steve's ruling ("Do Alternative").
+**Decision:** The semantics, decided before the typeclass so that it had
+nothing left to decide when written. `alt(a, b, ...)` yields the
+leftmost operand that holds a value. *Value side:* when the operands' value
+types agree, that type; when they differ, `std::variant` of the distinct
+value types in operand order, deduplicated by identity, the same join
+`eliminate` computes, and not read as a grade
+([value-side-grading](#value-side-grading)). *Error side:* the disjunction
+fails only when every operand fails, and its error is then every operand's
+evidence combined, at the join of the operands' grades, exactly as the
+accumulating applicative combines; for `error_set` that is the witnessed
+union. *Annihilation:* an operand that cannot fail, a bare value or the
+uniform spelling of the empty grade, makes the disjunction total: the result
+is the bare value type, or the variant join of value types with no failure
+alternative. *Identity:* `zero<C>()` where `C` has one. *Laws:* `zero` is a
+two-sided identity of `alt`; `alt` is associative; left catch,
+`alt(pure(a), x) == pure(a)`; and the annihilation rule. The operator
+spelling is left to libfn; this library's verbs are named. The typeclass,
+`derive_alternative<Impl>` in `alternative.hpp` with the n-ary `alt` as
+basis and `zero` as a basis operation where the context has one, ships as
+**evidence**, on the same footing as Monad: decided, implemented, unproposed,
+and never framed as rejected. It stays unproposed until a client calls `alt`.
+**Why:** libfn's `|` is a complete algebra and the duality with `&` is what
+a typeclass needs to state the laws; writing them down now costs a
+paragraph and spares the typeclass a second design pass. The error side as
+the accumulating union rather than a product type keeps every failure's
+evidence in the one carrier `error_set` already is, instead of inventing a
+product carrier for one verb. Deferring the typeclass follows the
+coordination rule that nothing ships silent: `alt` has no caller in the
+tree today, and a shipped-but-unproposed Alternative would need the
+evidence label Monad carries without Monad's proof-of-mechanism reason.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.6). `first_monoid` in `monoid.hpp`
@@ -4322,6 +4528,63 @@ the disjunction total?
   value types where they differ, the common type where they agree. The
   `empty`/`zero` naming note in `functor.hpp` is the standing decision on the
   identity's name.
+- 2026-11-01 — Decided by stage
+  [failure-side](transpose-surface-plan.md#failure-side) as above. The
+  "positional sum" of the 2026-10-30 entry is refined to the variant join in
+  operand order, deduplicated, matching
+  [heterogeneous-arm-elimination](#heterogeneous-arm-elimination). `zero`
+  shipped; `alt` did not. The stage's tripwire did not fire: nothing here
+  reads a value-side sum as a grade.
+- 2026-11-01 — Steve ruled the typeclass in: "it's better to continue to
+  make sure anything I might want is still working and not blocked by other
+  decisions." Shipped as evidence on branch `alternative`:
+  `include/beman/transpose/alternative.hpp` (`derive_alternative<Impl>`,
+  the `alternative<T>` lookup, `alternative_impl` and `alternative_object`,
+  the `alt` operation object), instances for `optional` and `expected` in
+  their headers, the five laws as `check_alternative_laws` in the harness
+  (compile-time for `optional`, runtime for `expected`), golden section 12
+  of `baseline_deduction.test.cpp`, and `alternative.test.cpp`. Four
+  divergences from the Decision's sketch of the typeclass, each a
+  consequence of writing it down:
+  1. **The basis is `alt`; `zero` is a basis operation where the context
+     has one**, not a required half of the basis. `expected` has a
+     disjunction and no identity, and it is the one instance on which the
+     error-side rule has any content; requiring `zero` would have excluded
+     it. An instance without `zero` is a semigroup, and the two identity laws
+     are vacuous for it rather than false. `alternative_impl` therefore
+     requires only `alt`.
+  2. **`alt` is n-ary at the basis**, not a binary basis folded by the base.
+     Folding nests the value join -- `variant<variant<A, B>, C>` where
+     `variant<A, B, C>` is meant -- and only the instance sees all of its
+     operands at once. The base derives nothing today; it exists so that the
+     lookup, the concepts and the operation object have the family's shape.
+  3. **`first_monoid` is not re-expressed through the instance.** Doing so
+     makes `monoid.hpp` include `optional.hpp` and so `apply.hpp`, which
+     fingertree, a consumer of `monoid.hpp` alone, has no use for. The
+     equivalence is pinned instead: `first_monoid<T>::combine` equals `alt`
+     over `optional<T>` and its `identity` equals `zero`, in
+     `alternative.test.cpp`, with the applicative's `zero` documented as the
+     identity `first_monoid` folds with.
+  4. **The shape of a disjunction is fixed**: at least two operands; every
+     operand but the last is a carrier of the one context; the last is a
+     carrier or an operand that cannot fail -- a bare value, or for
+     `expected` the uniform spelling at the empty grade, which holds a value
+     by construction and whose holding one is the operation's precondition.
+     An operand after one that cannot fail would never be consulted while
+     its type still entered the join, so it is a constraint that does not
+     match. A carrier of another context is never read as a bare value, so a
+     mistaken mixture is a constraint failure and not a silent annihilation
+     of the error channel.
+  Two readings the Decision left implicit are now fixed by the
+  implementation: on `expected`, when every operand fails and the
+  alternative has one slot, the leftmost witness is kept, which is what
+  `error_set_combine` does per type and what makes the fold associative; and
+  the void context takes part with the unit, `void` staying `void` when every
+  operand is a `void` expected, as the cores keep it. The tripwire did not
+  fire: the laws type-check without reading a value-side sum as a grade. The
+  goldens of sections 1 to 11 are untouched; the wording is regenerated for
+  the two instance headers and is unchanged in content, the instances being
+  `\omit`ted as Monad's are.
 
 ---
 
@@ -4330,7 +4593,28 @@ the disjunction total?
 **Question:** Where does the canonical type-set machinery live: inside the
 `error_set` model, or beside the grade framework where a second model or a
 value-side sum can reuse it?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed answer
+on 2026-11-01.
+**Decision:** A header of its own beside `grade.hpp`:
+`include/beman/transpose/detail/canonical_set.hpp`, holding `type_list` and
+its operations, `canonical_t`, the interim name order with its collision
+check, set difference and concatenation. It is `detail` for now and becomes
+public when stage
+[set-elimination](transpose-surface-plan.md#set-elimination) gives it a
+second client. It carries no error vocabulary. `error_set.hpp` includes it
+and keeps only what names `error_set`: `error_set_from_list`,
+`error_set_of_list_t`, and the two traits the class's Mandates name.
+`grade.hpp` does not include it, and the law harness still includes
+`grade.hpp` alone. The order's ABI key lands here too; see
+[type-order-abi](#type-order-abi).
+**Why:** [grade-generality](#grade-generality) says the framework is free of
+error vocabulary, and the set is the half with none in it; kept under the
+model, the one reusable datum was the model's private property. libfn's
+single `copack` serving error grades, value-side joins and its identity
+carrier is the evidence that the set is what gets reused. `detail` rather
+than public because a public header with one client is a promise made before
+the second client has said what it needs.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.7). `canonical_t`, `type_list`,
@@ -4345,6 +4629,24 @@ value-side sum can reuse it?
   [heterogeneous-arm-elimination](#heterogeneous-arm-elimination) its second.
   This is also where [type-order-abi](#type-order-abi) lands, since the order
   is the set's.
+- 2026-11-01 — Shipped by stage
+  [set-home-and-abi](transpose-surface-plan.md#set-home-and-abi). Moved:
+  `type_name`, `type_precedes_v`, `names_are_distinct`, `type_list`,
+  `list_contains_v`, `list_prepend`, `list_remove`, `list_dedupe`,
+  `list_insert_sorted`, `list_sort`, `canonical_t`, `list_subtract`,
+  `list_concat_all`. The pack parameters were renamed `ERRORS` to `TYPES` on
+  the way, which is the only edit to a moved declaration. Two consequences
+  for the wording, both under
+  [wording-visible-internals](#wording-visible-internals): the moved entities
+  the wording names (`type_list`, `canonical_t`, `list_subtract_t`,
+  `list_concat_all_t`) are `\expos` where they are now defined, and render
+  as their exposition spellings; and `names_are_distinct_v` was added beside
+  `names_are_distinct` because specgen's cross-header `\expos` reaches alias
+  and variable templates but did not take on the function template, so
+  `error_set_names_distinct_v` names the trait. The `list_subtract` and
+  `list_concat_all` specializations that had leaked unmarked into
+  `transpose.errset.lattice.md` leave it with the move. The goldens are
+  byte-identical; no deduced `error_set` spelling changed.
 
 ---
 
@@ -4353,7 +4655,69 @@ value-side sum can reuse it?
 **Question:** Do the typeclass operations carry a computed `noexcept`
 specification, and is a result that must not be dropped marked
 `[[nodiscard]]`?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed answer
+on 2026-11-01.
+**Decision:** Yes to both, under one rule: every exception specification is
+computed and propagated, never promised.
+
+1. **A basis operation** of a registered instance computes its specification
+   from the callable's invocation and the carrier's constructors, and from
+   nothing else: `detail::invokes_nothrow_into<RETURNED, F, ARGS...>` is
+   the spelling, with the failure path's constructors added where the
+   carrier has one (`expected-failure-nothrow`,
+   `expected-accumulate-nothrow`, `raise-nothrow`). An operation promises
+   nothing the callable and the carrier did not promise first.
+2. **A derived operation** of a CRTP base carries the specification of the
+   route its body takes, Impl's own operation where Impl has one that
+   accepts the arguments and the derivation otherwise, computed from the
+   same requires-expression the body selects the route by. In `apply.hpp`
+   each is a named exposition-only trait (`applicative-map-nothrow` and its
+   siblings) probing Impl through `impl_ref_t<Impl, decltype(self)>`, the
+   reference the body addresses Impl by; in the evidence headers (`functor`,
+   `monad`, `fold`) the same conditional is spelled inline on the member.
+   The derived route is asked through the probe type the constraint already
+   names, and every probe carries the specification of the continuation it
+   stands in for, so asking whether `bind` with the probe is `noexcept`
+   answers for the body's own closure.
+3. **An operation object** propagates the member it dispatches to:
+   `noexcept(noexcept(TC.op(args...)))`. The wording states this as "the
+   exception specification is equivalent to `noexcept(applicative<C>.op(
+   ...))`", since the object types are omitted from the synopsis.
+4. **An operation that allocates carries no specification.** The absence
+   is the specification, as it is for the standard containers' own
+   allocating operations; `noexcept(false)` is not written. These are the
+   vector `traverse` and `fmap`, `Monoid<vector>::combine`,
+   `Monoid<string>::combine`, `zip_list`'s `invoke`, both operations of the
+   demonstration `sender`, and the derived routes of `fold_left`,
+   `fold_right` (spelled `false`: they compose `std::function`) and
+   `to_vector`.
+5. **`[[nodiscard]]`** is on every operation object's call operator, every
+   derived member that returns a value, every instance basis operation
+   (`pure`, `raise`, `zero`, `invoke`, `fmap`, `bind`, `traverse`,
+   `fold_map`, `length`), and the free operations `eliminate`,
+   `eliminate_indexed`, `fold_witnesses`, `collapse`, `recover`, `fallible`,
+   `error_set_combine`, `grade_subsume`, `combined_with` and `mbind`. It is
+   deliberately not on `for_each`, which is `traverse` with its arguments
+   the other way round and the spelling for a traversal made for its
+   effects; not on `visit`, whose result may be `void`; and not on the
+   monoid instances, which are not operations of a typeclass object.
+6. A `std::variant` that is valueless by exception is a precondition
+   violation for `eliminate` and `eliminate_indexed`, stated as an
+   *Expects*; the indexed form already dispatched through a jump table that
+   has no entry for it. Both are `noexcept` exactly when their arms and the
+   join's construction are.
+
+**Why:** LEWG asks on every proposal, and the honest answer is the one the
+types already know. libfn's test, that the pipeline propagates the verb's
+own answer rather than promising `noexcept` and terminating when a callback
+throws, is the shape copied here: a specification that is computed from the
+callable and the carrier can only be wrong where the body does something the
+computation did not read, and a specification that mirrors the body's route
+cannot name a route the body did not take. The SFINAE-friendly basis that
+`apply.hpp`'s invariants already require is what makes the derived
+specifications computable without instantiating a deduced body; had one
+needed that, it would have been a basis defect upstream of this stage.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.9). No header under
@@ -4368,6 +4732,39 @@ specification, and is a result that must not be dropped marked
   constraint already names; `[[nodiscard]]` on every operation object and
   derived member that returns a context. The wording generator must carry
   both through.
+- 2026-11-01 — Decided by Steve Downey's acceptance of the surface plan, and
+  shipped by stage
+  [noexcept-sweep](transpose-surface-plan.md#noexcept-sweep) on branch
+  `noexcept-sweep`. Swept: `apply`, `functor`, `monad`, `traverse`, `fold`,
+  `optional`, `expected`, `sequence`, `array`, `zip_list`, `sender`,
+  `simd_lanes`, `simd`, `string`, `monoid`, `grade`, `error_set`,
+  `eliminate`, and `detail/typeclass_base` and
+  `detail/applicative_derivation`. `impl_ref_t` and `combine_grade_evidence`
+  became exposition-only so the traits could name them; `join`'s identity
+  continuation became the named `detail::identity_continuation`, so that the
+  constraint, the body and the specification name one callable; the derived
+  monad `ap` gained two continuation probes for its specification alone,
+  since its constraint names none; `probe_witness` and its siblings are
+  `noexcept`, as the closures they stand in for are; and every base's
+  private `impl_of` is `noexcept`, without which each specification spelled
+  through it read as potentially throwing, the one surprise of the sweep.
+  The tripwire did not fire: no operation's specification needed a deduced
+  body instantiated.
+  The operations left without a specification are exactly those point 4
+  names, by rule, and `simd.hpp`'s two were written against its existing
+  constraint tokens but not compiled here, where `<simd>` is unavailable.
+  The `[[nodiscard]]` audit was done by hand with `-Werror=unused-result`
+  over a scratch unit dropping each operation's result: eighteen diagnosed,
+  `for_each` silent. `noexcept.test.cpp` pins propagation: a throwing
+  callable's `noexcept(false)` through `traverse` over `vector<int>` into
+  `optional`, and `invoke`, `fmap`, `bind`, `pure` and `zero` on `optional`
+  answering what the carrier's constructors answer. The standard leaves
+  `optional`'s converting constructor without a specification and libstdc++
+  gives it a conditional one, so the tests state the equalities with the
+  trait the computation reads and assert the bare `noexcept(true)` form
+  only under `__GLIBCXX__`; for the same reason `pure<optional<string>>`
+  from an rvalue is `noexcept` there (a move) while from an lvalue it is not
+  (a copy that may allocate), which is the case the stage's test describes.
 
 ---
 
@@ -4376,7 +4773,30 @@ specification, and is a result that must not be dropped marked
 **Question:** How does the reference implementation guard against the
 canonical order changing under it, when the interim name-based order gives
 way to P2830 reflection-based ordering?
-**Status:** OPEN 2026-10-30
+**Status:** DECIDED 2026-11-01
+**Decided by:** Steve Downey, by accepting the surface plan's proposed answer
+on 2026-11-01.
+**Decision:** An inline namespace keyed on the order in use. The key today is
+`ordered_by_type_name`. It wraps the order itself -- `type_name`,
+`type_precedes_v`, `names_are_distinct`, `names_are_distinct_v` -- in
+`beman::transpose::detail`, and the order-dependent type `error_set_of` --
+forward declaration, definition, out-of-line members, and the empty
+specialization -- in `beman::transpose`. `error_set`, the lattice operations,
+`recover` and the model registration are ordinary members of
+`beman::transpose`, so every `error_set<...>` and `error_set_of<...>`
+spelling in user code, tests and wording is unchanged. A P2830
+`std::type_order` key is a second inline namespace beside this one, never a
+change to this one's contents.
+**Why:** libfn found that its interim name order and `std::type_order`
+disagree, so a `copack`'s layout differs by mode; `error_set_of` lays its
+witness tuple out in canonical order and inherits the hazard the day the
+order changes. With the key in place, two translation units built against
+different orders fail to link instead of violating the ODR silently, and
+adopting it while there is one order makes that day a non-event. The key
+goes on the type whose layout follows the order and on the order itself, and
+nowhere else: `type_list` and `canonical_t` carry no layout, so a second
+order gives them distinct instantiations rather than conflicting
+definitions. The standard has one order, so the paper is unaffected.
 **Log:**
 - 2026-10-30 — Raised by the libfn comparison
   ([review](review/libfn-comparison.md) §3.10). libfn found that its interim
@@ -4389,3 +4809,19 @@ way to P2830 reflection-based ordering?
   concern and a rationale sentence. *Proposed resolution:* an inline namespace
   on the order-dependent types, keyed on which order is in use, adopted before
   a P2830 path exists so the day it does is a non-event.
+- 2026-11-01 — Shipped by stage
+  [set-home-and-abi](transpose-surface-plan.md#set-home-and-abi).
+  SUBSTITUTION for one acceptance item: the stage asks for a compile-fail
+  test that two translation units cannot mix order keys, and with one key in
+  existence that test cannot be written. The substitute, in
+  `tests/beman/transpose/error_set.test.cpp`, pins that the key is part of
+  the type's identity: `error_set<A>` is the same type as
+  `ordered_by_type_name::error_set_of<A>`, and the key appears in
+  `type_name<error_set<A, B>>()`. The second half is GCC-only: Clang
+  suppresses inline namespaces in `__PRETTY_FUNCTION__`, so there the key is
+  in the mangled name but not the rendered one. The compile-fail test is due
+  the day a second key exists. Two observations: because GCC renders the key,
+  an `error_set` that were itself an element of a canonical set would now
+  sort by a different name on GCC than before -- nothing nests one, and the
+  goldens are byte-identical; and specgen renders the synopsis without the
+  inline namespace, so the wording does not see it.

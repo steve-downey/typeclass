@@ -133,6 +133,10 @@ ill-formed.
 ### Stage 2 — [set-home-and-abi](#set-home-and-abi) {#set-home-and-abi}
 Closes [canonical-set-home](decisions.md#canonical-set-home),
 [type-order-abi](decisions.md#type-order-abi).
+Status: DONE 2026-11-01 on branch `set-home-and-abi`. The header is
+`detail/canonical_set.hpp`; the key is `ordered_by_type_name`; the two-TU
+compile-fail test was substituted by identity checks, logged under
+type-order-abi.
 Deliverables:
 - The canonical set machinery (`type_list`, sort, dedupe, `canonical_t`, the
   name order and its collision check) in its own header beside `grade.hpp`,
@@ -158,6 +162,12 @@ move → STOP; this stage is a relocation.
 Closes [heterogeneous-arm-elimination](decisions.md#heterogeneous-arm-elimination);
 rules on the 2026-10-30 challenge under
 [multi-witness-elimination](decisions.md#multi-witness-elimination).
+Status: DONE 2026-11-01 on branch `set-elimination`, fence moved. Shipped
+`eliminate`/`eliminate_indexed` in `eliminate.hpp` and `fold_witnesses`/
+`collapse` in `error_set.hpp`. One divergence, logged under
+heterogeneous-arm-elimination: the join of arms deduplicates in alternative
+order, not canonical order. `recover` is left as is. The tripwire did not
+fire.
 Read that slug and [accumulation-evidence](decisions.md#accumulation-evidence)
 before starting. The ruling has two possible outcomes, and the stage must be
 written for whichever Steve chooses:
@@ -202,6 +212,11 @@ sub-question, and the proposed answer is no.
 
 ### Stage 4 — [instance-laws](#instance-laws) {#instance-laws}
 Test deliverable; closes no slug. Extends `tests/beman/transpose/laws.hpp`.
+Status: DONE 2026-11-01 on branch `instance-laws`. `optional` and the test
+`Identity` run at compile time; `expected`, `array` and `zip_list` run at
+runtime because their basis operations are not `constexpr`, logged under
+derived-op-constant-evaluation. The lawless instance is demonstrated behind
+a macro, with the diagnostics recorded.
 Deliverables:
 - Applicative laws (identity, homomorphism, interchange, composition) and
   Monad laws (left identity, right identity, associativity) as `consteval`
@@ -226,6 +241,9 @@ once.
 ### Stage 5 — [context-crossings](#context-crossings) {#context-crossings}
 Closes [licensed-context-crossings](decisions.md#licensed-context-crossings);
 advances [optional-grade-model](decisions.md#optional-grade-model).
+Status: DONE 2026-11-01 on branch `context-crossings`. The rule is decided
+and demonstrated test-only in `laws.test.cpp` against the Boolean model's
+`Fallible`; no operation shipped; the tripwire did not fire.
 Deliverables:
 - The rule, as a decision: a crossing is licensed when it loses no
   information, or when it is on the failure path through a handler that
@@ -250,6 +268,11 @@ must be answered there, not here as a side effect.
 Closes [failure-injection-spelling](decisions.md#failure-injection-spelling)
 and
 [alternative-disjunction-semantics](decisions.md#alternative-disjunction-semantics).
+Status: DONE 2026-11-01 on branch `failure-side`. `raise<C>` and `zero<C>`
+shipped beside `pure<C>`; the disjunction semantics are decided and the
+Alternative typeclass was deferred by the stage and then shipped as evidence
+on 2026-11-01 on branch `alternative`, with its laws in the harness; see the
+[decision's Log](decisions.md#alternative-disjunction-semantics). The tripwire did not fire.
 Assumes [value-side-grading](decisions.md#value-side-grading), decided no on
 2026-10-31: the disjunction's value side is a `std::variant` over the
 deduplicated operand types, or the common type, and is not read as a grade.
@@ -276,6 +299,13 @@ stage assumes.
 
 ### Stage 7 — [noexcept-sweep](#noexcept-sweep) {#noexcept-sweep}
 Closes [operation-noexcept](decisions.md#operation-noexcept).
+Status: DONE 2026-11-01 on branch `noexcept-sweep`. Every basis, derived and
+object operation carries a computed specification, the route-selecting
+derived members computing theirs from the requires-expression the body
+selects by; operations that allocate carry none, by rule, and the rule is
+recorded under the slug. `[[nodiscard]]` is on every result-bearing operation
+except `for_each`. The wording regenerates and verifies. The tripwire did not
+fire.
 Deliverables:
 - Conditional `noexcept` on every basis operation of every registered
   instance and on every derived operation of the CRTP bases, computed from
@@ -296,6 +326,13 @@ deduced body → STOP; that is a basis that is not SFINAE-friendly, which
 `apply.hpp`'s invariant forbids, and the fix is upstream of this stage.
 
 ### Stage 8 — [surface-paper-revision](#surface-paper-revision) {#surface-paper-revision}
+Status: DONE 2026-11-01 on branch `surface-paper-revision`, except that the
+`noexcept` sweep's effect on the paper is the regenerated wording alone, which
+stage noexcept-sweep commits. Added to `papers/D3200R0.md`: `raise` and `zero`
+in the proposed operations and beside `pure`; a section on `overloaded` and
+`eliminate`; the eliminators, the unit, and the empty-grade closure in the
+grading rationale; the crossing rule in Compatibility; value-side grading and
+Alternative in the deliberate omissions.
 Deliverables: P3200 rationale for the unit and the `void` effect; the
 closure-at-∅ argument and the uniform spelling; the crossing rule as a
 sentence in the compatibility section; the eliminator, if shipped, beside
