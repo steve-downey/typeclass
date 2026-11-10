@@ -8,12 +8,8 @@
 template<class TRAVERSABLE_MAP, class T, class F>
   [[nodiscard]] constexpr auto traverse_with(
       this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& function,
-      T&& value) noexcept(noexcept(traversable_map
-                                       .traverse(applicative<remove_cvref_t<
-                                                     invoke_result_t<F&,
-  
-                                                                     $traversal-argument-t$<TRAVERSABLE_MAP, T>>>>,
-                                                 forward<F>(function), forward<T>(value))));
+      T&& value) noexcept(noexcept(traversable_map.traverse(applicative<$traversal-context-t$<TRAVERSABLE_MAP, T, F>>,
+                                                            forward<F>(function), forward<T>(value))));
 ```
 
 [x]{.pnum} *Constraints*: Let `C` be the context `function` returns for an argument of type `$traversal-argument-t$<TRAVERSABLE_MAP, T>`. `traversable_map.traverse` accepts the object `applicative<C>` names, `function`, and `value`.

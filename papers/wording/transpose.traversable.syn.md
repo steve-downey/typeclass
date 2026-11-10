@@ -50,6 +50,15 @@ namespace std {
 
 ```cpp
 namespace std {
+  template<class OBJ, class T, class F>
+  using $traversal-context-t$ =
+      remove_cvref_t<invoke_result_t<F&, $traversal-argument-t$<OBJ, T>>>; // exposition
+                                                                         // only
+}
+```
+
+```cpp
+namespace std {
   template<class Impl>
   struct derive_traversable : protected Impl {
     // Alternate-core: Impl::traverse is the primitive; transpose is derived
@@ -89,17 +98,13 @@ namespace std {
     [[nodiscard]] constexpr auto traverse_with(
         this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& function,
         T&& value) noexcept(noexcept(traversable_map
-                                         .traverse(
-                                             applicative<remove_cvref_t<invoke_result_t<
-                                                 F&,
-
-                                                 $traversal-argument-t$<TRAVERSABLE_MAP,
-                                                                      T>>>>,
-                                             forward<F>(function), forward<T>(value))))
+                                         .traverse(applicative<$traversal-context-t$<
+                                                       TRAVERSABLE_MAP, T, F>>,
+                                                   forward<F>(function),
+                                                   forward<T>(value))))
       requires requires {
         traversable_map.traverse(
-            applicative<remove_cvref_t<
-                invoke_result_t<F&, $traversal-argument-t$<TRAVERSABLE_MAP, T>>>>,
+            applicative<$traversal-context-t$<TRAVERSABLE_MAP, T, F>>,
             forward<F>(function), forward<T>(value));
       };
 

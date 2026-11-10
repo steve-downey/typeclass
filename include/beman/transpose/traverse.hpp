@@ -93,6 +93,12 @@ using traversal_argument_t = std::conditional_t<
     typename std::remove_cvref_t<OBJ>::element_type &&,
     const typename std::remove_cvref_t<OBJ>::element_type &>;
 
+/// The context `F` returns for an element of `T` as `OBJ` presents it.
+//! \expos
+template <class OBJ, class T, class F>
+using traversal_context_t = std::remove_cvref_t<
+    std::invoke_result_t<F &, traversal_argument_t<OBJ, T>>>;
+
 } // namespace detail
 
 /// Traversable pattern invariants:
@@ -173,19 +179,14 @@ struct derive_traversable : protected Impl {
         this auto &&, const TRAVERSABLE_MAP &traversable_map, F &&function,
         T &&value) noexcept(noexcept(traversable_map
                                          .traverse(
-                                             applicative<std::remove_cvref_t<
-                                                 std::invoke_result_t<
-                                                     F &,
-                                                     detail::
-                                                         traversal_argument_t<
-                                                             TRAVERSABLE_MAP,
-                                                             T>>>>,
+                                             applicative<
+                                                 detail::traversal_context_t<
+                                                     TRAVERSABLE_MAP, T, F>>,
                                              std::forward<F>(function),
                                              std::forward<T>(value))))
         requires requires {
             traversable_map.traverse(
-                applicative<std::remove_cvref_t<std::invoke_result_t<
-                    F &, detail::traversal_argument_t<TRAVERSABLE_MAP, T>>>>,
+                applicative<detail::traversal_context_t<TRAVERSABLE_MAP, T, F>>,
                 std::forward<F>(function), std::forward<T>(value));
         };
 
