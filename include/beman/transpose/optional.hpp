@@ -293,20 +293,48 @@ concept optional_disjunction_joinable =
                 optional_disjunction_ref_t<OPERANDS>> &&
      ...);
 
-/** Whether the disjunction is non-throwing: placing each operand's
- * contribution into the join, and the join into the result. */
+/** Whether an operand already is the result: an `optional` of the result's
+ * own type. Such an operand is passed on whole, by its copy or move
+ * constructor, rather than unwrapped and re-wrapped through the
+ * `in_place_t` constructor. The value is the same either way; the
+ * difference is the exception specification. The standard gives
+ * `optional`'s move constructor a conditional `noexcept` and leaves its
+ * `in_place_t` constructor without one, which a library may add or not, so
+ * only the first lets `alt(a, a)` be non-throwing on every implementation.
+ */
+//! \omit
+template <class RESULT, class OPERAND>
+inline constexpr bool optional_alt_passes_whole_v =
+    is_optional_v<OPERAND> &&
+    std::is_same_v<std::remove_cvref_t<OPERAND>, RESULT>;
+
+/** Whether one operand's contribution reaches the result without throwing:
+ * passed on whole, or placed into the join and the join into the result. */
+//! \omit
+template <class RESULT, class JOIN, class OPERAND>
+inline constexpr bool optional_alt_operand_nothrow_v = [] {
+    if constexpr (optional_alt_passes_whole_v<RESULT, OPERAND>) {
+        return std::is_nothrow_constructible_v<RESULT, bare_ref_t<OPERAND>>;
+    } else if constexpr (std::is_same_v<RESULT, JOIN>) {
+        return noexcept(into_join<JOIN>(
+                   std::declval<optional_disjunction_ref_t<OPERAND>>())) &&
+               std::is_nothrow_move_constructible_v<JOIN>;
+    } else {
+        return noexcept(into_join<JOIN>(
+                   std::declval<optional_disjunction_ref_t<OPERAND>>())) &&
+               std::is_nothrow_constructible_v<RESULT, std::in_place_t, JOIN>;
+    }
+}();
+
+/** Whether the disjunction is non-throwing: every operand's contribution
+ * reaches the result without throwing. */
 //! \omit
 template <class... OPERANDS>
 inline constexpr bool optional_alt_nothrow =
-    (noexcept(into_join<optional_disjunction_join_t<OPERANDS...>>(
-         std::declval<optional_disjunction_ref_t<OPERANDS>>())) &&
-     ...) &&
-    ((is_optional_v<OPERANDS> && ...)
-         ? std::is_nothrow_constructible_v<
-               optional_alt_result_t<OPERANDS...>, std::in_place_t,
-               optional_disjunction_join_t<OPERANDS...>>
-         : std::is_nothrow_move_constructible_v<
-               optional_disjunction_join_t<OPERANDS...>>);
+    (optional_alt_operand_nothrow_v<optional_alt_result_t<OPERANDS...>,
+                                    optional_disjunction_join_t<OPERANDS...>,
+                                    OPERANDS> &&
+     ...);
 
 /** Places a contribution: into the join, and the join into the `optional`
  * when the result is one. */
@@ -329,8 +357,12 @@ template <class RESULT, class JOIN, class FIRST, class... REST>
 constexpr auto optional_alt_select(FIRST &&first, REST &&...rest) -> RESULT {
     if constexpr (is_optional_v<FIRST>) {
         if (first.has_value()) {
-            return optional_alt_place<RESULT, JOIN>(
-                forward_contained(std::forward<FIRST>(first)));
+            if constexpr (optional_alt_passes_whole_v<RESULT, FIRST>) {
+                return RESULT(bare_ref(std::forward<FIRST>(first)));
+            } else {
+                return optional_alt_place<RESULT, JOIN>(
+                    forward_contained(std::forward<FIRST>(first)));
+            }
         }
         if constexpr (sizeof...(REST) == 0) {
             return RESULT{};
