@@ -8,6 +8,7 @@ var hierarchy =
     [ "beman::tree_algorithms::Add< A >", "structbeman_1_1tree__algorithms_1_1Add.html", null ],
     [ "beman::transpose::all_monoid", "structbeman_1_1transpose_1_1all__monoid.html", null ],
     [ "beman::transpose::all_of_fn", "structbeman_1_1transpose_1_1all__of__fn.html", null ],
+    [ "beman::transpose::alt_fn", "structbeman_1_1transpose_1_1alt__fn.html", null ],
     [ "beman::transpose::any_monoid", "structbeman_1_1transpose_1_1any__monoid.html", null ],
     [ "beman::transpose::any_of_fn", "structbeman_1_1transpose_1_1any__of__fn.html", null ],
     [ "beman::transpose::ap_fn", "structbeman_1_1transpose_1_1ap__fn.html", null ],
@@ -56,8 +57,15 @@ var hierarchy =
     [ "beman::transpose::error_set_join< LEFT, RIGHT >", "structbeman_1_1transpose_1_1error__set__join.html", null ],
     [ "beman::transpose::error_set_join< error_set_of< LEFT... >, error_set_of< RIGHT... > >", "structbeman_1_1transpose_1_1error__set__join_3_01error__set__of_3_01LEFT_8_8_8_01_4_00_01error__0fac858c96e5975e75b81c6912161298.html", null ],
     [ "beman::transpose::error_set_model", "structbeman_1_1transpose_1_1error__set__model.html", null ],
-    [ "beman::transpose::error_set_of< ERRORS >", "classbeman_1_1transpose_1_1error__set__of.html", null ],
-    [ "beman::transpose::error_set_of<>", "classbeman_1_1transpose_1_1error__set__of_3_4.html", null ],
+    [ "beman::transpose::error_set_of< ERRORS >", "classbeman_1_1transpose_1_1ordered__by__type__name_1_1error__set__of.html", null ],
+    [ "beman::transpose::ordered_by_type_name::error_set_of< ERRORS >", "classbeman_1_1transpose_1_1ordered__by__type__name_1_1error__set__of.html", null ],
+    [ "beman::transpose::error_set_of<>", "classbeman_1_1transpose_1_1ordered__by__type__name_1_1error__set__of_3_4.html", null ],
+    [ "beman::transpose::ordered_by_type_name::error_set_of<>", "classbeman_1_1transpose_1_1ordered__by__type__name_1_1error__set__of_3_4.html", null ],
+    [ "beman::transpose::expected_alternative_impl< VALUE_TYPE, ERROR_TYPE >", "structbeman_1_1transpose_1_1expected__alternative__impl.html", [
+      [ "beman::transpose::derive_alternative< expected_alternative_impl< VALUE_TYPE, ERROR_TYPE > >", "structbeman_1_1transpose_1_1derive__alternative.html", [
+        [ "beman::transpose::expected_alternative_map< VALUE_TYPE, ERROR_TYPE >", "structbeman_1_1transpose_1_1expected__alternative__map.html", null ]
+      ] ]
+    ] ],
     [ "beman::transpose::expected_applicative_impl< VALUE_TYPE, ERROR_TYPE >", "structbeman_1_1transpose_1_1expected__applicative__impl.html", [
       [ "beman::transpose::derive_applicative< expected_applicative_impl< VALUE_TYPE, ERROR_TYPE > >", "structbeman_1_1transpose_1_1derive__applicative.html", [
         [ "beman::transpose::expected_applicative_map< VALUE_TYPE, ERROR_TYPE >", "structbeman_1_1transpose_1_1expected__applicative__map.html", null ]
@@ -183,6 +191,7 @@ var hierarchy =
     [ "beman::transpose::grade_of< std::expected< VALUE, error_set_of< ERRORS... > > >", "structbeman_1_1transpose_1_1grade__of_3_01std_1_1expected_3_01VALUE_00_01error__set__of_3_01ERRORS_8_8_8_01_4_01_4_01_4.html", null ],
     [ "beman::transpose::grade_subsumes< LEFT, RIGHT >", "structbeman_1_1transpose_1_1grade__subsumes.html", null ],
     [ "Impl", null, [
+      [ "beman::transpose::derive_alternative< Impl >", "structbeman_1_1transpose_1_1derive__alternative.html", null ],
       [ "beman::transpose::derive_applicative< Impl >", "structbeman_1_1transpose_1_1derive__applicative.html", null ],
       [ "beman::transpose::derive_foldable< Impl >", "structbeman_1_1transpose_1_1derive__foldable.html", null ],
       [ "beman::transpose::derive_functor< Impl >", "structbeman_1_1transpose_1_1derive__functor.html", null ],
@@ -193,6 +202,7 @@ var hierarchy =
     [ "beman::fingertree::tree::IntervalMeasure< PAYLOAD_TYPE >", "structbeman_1_1fingertree_1_1tree_1_1IntervalMeasure.html", null ],
     [ "beman::transpose::invoke_fn", "structbeman_1_1transpose_1_1invoke__fn.html", null ],
     [ "beman::transpose::join_fn", "structbeman_1_1transpose_1_1join__fn.html", null ],
+    [ "beman::transpose::keep_first", "structbeman_1_1transpose_1_1keep__first.html", null ],
     [ "beman::transpose::kleisli_fn< CONTEXT, TC >", "structbeman_1_1transpose_1_1kleisli__fn.html", null ],
     [ "beman::transpose::kleisli_monoid< MONAD_OBJECT, A >", "structbeman_1_1transpose_1_1kleisli__monoid.html", null ],
     [ "beman::fingertree::tree::ft::Elem< T, MONOID >::Leaf", "structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Leaf.html", null ],
@@ -214,6 +224,11 @@ var hierarchy =
     ] ],
     [ "beman::fingertree::tree::ft::Elem< T, MONOID >::Node2", "structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node2.html", null ],
     [ "beman::fingertree::tree::ft::Elem< T, MONOID >::Node3", "structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node3.html", null ],
+    [ "beman::transpose::optional_alternative_impl< VALUE_TYPE >", "structbeman_1_1transpose_1_1optional__alternative__impl.html", [
+      [ "beman::transpose::derive_alternative< optional_alternative_impl< VALUE_TYPE > >", "structbeman_1_1transpose_1_1derive__alternative.html", [
+        [ "beman::transpose::optional_alternative_map< VALUE_TYPE >", "structbeman_1_1transpose_1_1optional__alternative__map.html", null ]
+      ] ]
+    ] ],
     [ "beman::transpose::optional_applicative_impl< VALUE_TYPE >", "structbeman_1_1transpose_1_1optional__applicative__impl.html", [
       [ "beman::transpose::derive_applicative< optional_applicative_impl< VALUE_TYPE > >", "structbeman_1_1transpose_1_1derive__applicative.html", [
         [ "beman::transpose::optional_applicative_map< VALUE_TYPE >", "structbeman_1_1transpose_1_1optional__applicative__map.html", null ]
@@ -243,6 +258,7 @@ var hierarchy =
     [ "beman::fingertree::tree::PriorityMeasure< T >", "structbeman_1_1fingertree_1_1tree_1_1PriorityMeasure.html", null ],
     [ "beman::transpose::product_monoid< T >", "structbeman_1_1transpose_1_1product__monoid.html", null ],
     [ "beman::transpose::pure_fn< CONTEXT, TC >", "structbeman_1_1transpose_1_1pure__fn.html", null ],
+    [ "beman::transpose::raise_fn< CONTEXT, TC >", "structbeman_1_1transpose_1_1raise__fn.html", null ],
     [ "beman::transpose::rebind_grade< CONTEXT, GRADE >", "structbeman_1_1transpose_1_1rebind__grade.html", null ],
     [ "beman::transpose::rebind_grade< std::expected< VALUE, ERROR >, error_set_of< HEAD, TAIL... > >", "structbeman_1_1transpose_1_1rebind__grade_3_01std_1_1expected_3_01VALUE_00_01ERROR_01_4_00_01err520bed977de71b6387b60800b16870a7.html", null ],
     [ "beman::transpose::rebind_grade< std::expected< VALUE, ERROR >, error_set_of<> >", "structbeman_1_1transpose_1_1rebind__grade_3_01std_1_1expected_3_01VALUE_00_01ERROR_01_4_00_01error__set__of_3_4_01_4.html", null ],
@@ -300,6 +316,7 @@ var hierarchy =
     ] ],
     [ "beman::fingertree::tree::FingerTree< T, MONOID, MEASURE_POLICY, ALLOCATOR >::View", "structbeman_1_1fingertree_1_1tree_1_1FingerTree_1_1View.html", null ],
     [ "beman::tree_algorithms::Zero", "structbeman_1_1tree__algorithms_1_1Zero.html", null ],
+    [ "beman::transpose::zero_fn< CONTEXT, TC >", "structbeman_1_1transpose_1_1zero__fn.html", null ],
     [ "beman::transpose::zip_list< T >", "structbeman_1_1transpose_1_1zip__list.html", null ],
     [ "beman::transpose::zip_with_fn", "structbeman_1_1transpose_1_1zip__with__fn.html", null ],
     [ "beman::transpose::ZipListApplicativeImpl< T >", "structbeman_1_1transpose_1_1ZipListApplicativeImpl.html", [

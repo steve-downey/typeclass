@@ -9,6 +9,6 @@ var searchData=
   ['split_6',['split',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#ae8989cb46e0eb9e274ccec50b0e028ba',1,'beman::fingertree::tree::FingerTree']]],
   ['split_5fat_7',['split_at',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#ad4811b1140d03c4d1fce0ef62484ba46',1,'beman::fingertree::tree::FingerTree']]],
   ['split_5fat_5fmeasure_8',['split_at_measure',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a19b6baa5a7ade215443f2a7823b7ef38',1,'beman::fingertree::tree::FingerTree']]],
-  ['subsume_9',['subsume',['../structbeman_1_1transpose_1_1derive__applicative.html#a29fc51a0123c34ba2a5df5ffe998833c',1,'beman::transpose::derive_applicative::subsume()'],['../structbeman_1_1transpose_1_1derive__monad.html#a2cb9f88de361551bea38b637afdc1cbd',1,'beman::transpose::derive_monad::subsume()']]],
+  ['subsume_9',['subsume',['../structbeman_1_1transpose_1_1derive__applicative.html#ab2602aee23364110c876263ca8ca9d2c',1,'beman::transpose::derive_applicative::subsume()'],['../structbeman_1_1transpose_1_1derive__monad.html#a5e630d8488416ff63f59e4cdfdc06907',1,'beman::transpose::derive_monad::subsume()']]],
   ['swap_10',['swap',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#ae1039d3c53d2c0c13fcc85a0b3065485',1,'beman::fingertree::tree::FingerTree']]]
 ];

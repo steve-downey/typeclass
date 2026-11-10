@@ -150,10 +150,10 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a0a5e670c9d07c65027aa6f9fc9c9cee7"><td class="memTemplParams" colspan="2">template&lt;class TARGET_GRADE , class CARRIER &gt; <br />
+<tr class="memitem:aed943ae15cef4376d03d774d29bef8e2"><td class="memTemplParams" colspan="2">template&lt;class TARGET_GRADE , class CARRIER &gt; <br />
 requires grade_semilattice&lt;TARGET_GRADE&gt; &amp;&amp; (std::is_same_v&lt;grade_of_t&lt;std::remove_cvref_t&lt;CARRIER&gt;&gt;, unit_grade&gt; || grade_subsumes_v&lt;grade_of_t&lt;std::remove_cvref_t&lt;CARRIER&gt;&gt;, TARGET_GRADE&gt;) &amp;&amp; std::constructible_from&lt; rebind_grade_t&lt;std::remove_cvref_t&lt;CARRIER&gt;, TARGET_GRADE&gt;, CARRIER&gt;</td></tr>
-<tr class="memitem:a0a5e670c9d07c65027aa6f9fc9c9cee7"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a0a5e670c9d07c65027aa6f9fc9c9cee7">beman::transpose::grade_subsume</a> (CARRIER &amp;&amp;value) -&gt; rebind_grade_t&lt; std::remove_cvref_t&lt; CARRIER &gt;, TARGET_GRADE &gt;</td></tr>
-<tr class="separator:a0a5e670c9d07c65027aa6f9fc9c9cee7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed943ae15cef4376d03d774d29bef8e2"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#aed943ae15cef4376d03d774d29bef8e2">beman::transpose::grade_subsume</a> (CARRIER &amp;&amp;value) noexcept(std::is_nothrow_constructible_v&lt; rebind_grade_t&lt; std::remove_cvref_t&lt; CARRIER &gt;, TARGET_GRADE &gt;, CARRIER &gt;) -&gt; rebind_grade_t&lt; std::remove_cvref_t&lt; CARRIER &gt;, TARGET_GRADE &gt;</td></tr>
+<tr class="separator:aed943ae15cef4376d03d774d29bef8e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>

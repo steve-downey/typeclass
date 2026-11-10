@@ -6,5 +6,5 @@ var searchData=
   ['has_5funit_5fcount_5fmeasure_3',['has_unit_count_measure',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#ac2f89af086c01cedc724e969855d08ba',1,'beman::fingertree::tree::FingerTree']]],
   ['head_4',['head',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a33493648cfa07b4c5dc7222f839e82f0',1,'beman::fingertree::tree::FingerTree']]],
   ['head_5fref_5',['head_ref',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a315ab04a562a85eb888dca793c2b4459',1,'beman::fingertree::tree::FingerTree']]],
-  ['holds_6',['holds',['../classbeman_1_1transpose_1_1error__set__of.html#a45c062304e5241109cea8b40db297dde',1,'beman::transpose::error_set_of']]]
+  ['holds_6',['holds',['../classbeman_1_1transpose_1_1ordered__by__type__name_1_1error__set__of.html#a45cd5ee8af856e6dd47b2736a1baf399',1,'beman::transpose::ordered_by_type_name::error_set_of']]]
 ];

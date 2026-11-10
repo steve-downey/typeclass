@@ -105,17 +105,17 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1fold__left
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a42a139644c281fc9431b8cfdab2cac6b"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:a2f57dec38ce3d4a4f82821a36b784630"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.fold_left(std::declval&lt;T&gt;(), std::declval&lt;STATE&gt;(), std::declval&lt;F&gt;()); }</td></tr>
-<tr class="memitem:a42a139644c281fc9431b8cfdab2cac6b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1fold__left__fn.html#a42a139644c281fc9431b8cfdab2cac6b">operator()</a> (T &amp;&amp;value, STATE initial_state, F &amp;&amp;function) const</td></tr>
-<tr class="memdesc:a42a139644c281fc9431b8cfdab2cac6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Left-associative fold in the instance's traversal order.  <br /></td></tr>
-<tr class="separator:a42a139644c281fc9431b8cfdab2cac6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f57dec38ce3d4a4f82821a36b784630"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1fold__left__fn.html#a2f57dec38ce3d4a4f82821a36b784630">operator()</a> (T &amp;&amp;value, STATE initial_state, F &amp;&amp;function) const noexcept(noexcept(TC.fold_left(std::forward&lt; T &gt;(value), std::move(initial_state), std::forward&lt; F &gt;(function))))</td></tr>
+<tr class="memdesc:a2f57dec38ce3d4a4f82821a36b784630"><td class="mdescLeft">&#160;</td><td class="mdescRight">Left-associative fold in the instance's traversal order.  <br /></td></tr>
+<tr class="separator:a2f57dec38ce3d4a4f82821a36b784630"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for the derived <code>fold_left</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a42a139644c281fc9431b8cfdab2cac6b" name="a42a139644c281fc9431b8cfdab2cac6b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42a139644c281fc9431b8cfdab2cac6b">&#9670;&#160;</a></span>operator()()</h2>
+<a id="a2f57dec38ce3d4a4f82821a36b784630" name="a2f57dec38ce3d4a4f82821a36b784630"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f57dec38ce3d4a4f82821a36b784630">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -152,7 +152,7 @@ requires requires { TC.fold_left(std::declval&lt;T&gt;(), std::declval&lt;STATE&
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

@@ -112,17 +112,17 @@ Inheritance diagram for beman::transpose::SimdLanesApplicativeImpl&lt; T, N &gt;
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a601d2b104c46e77b27669a292345a331"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
-<tr class="memitem:a601d2b104c46e77b27669a292345a331"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1SimdLanesApplicativeImpl.html#a601d2b104c46e77b27669a292345a331">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value)</td></tr>
-<tr class="separator:a601d2b104c46e77b27669a292345a331"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f9a6f7425e9c0946d3ec5d266a1081a"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
+<tr class="memitem:ac81389360dca0a948eca7220dcf5250e"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
+<tr class="memitem:ac81389360dca0a948eca7220dcf5250e"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1SimdLanesApplicativeImpl.html#ac81389360dca0a948eca7220dcf5250e">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value) noexcept(std::is_nothrow_constructible_v&lt; std::remove_cvref_t&lt; VALUE &gt;, VALUE &gt; &amp;&amp;std::is_nothrow_copy_constructible_v&lt; std::remove_cvref_t&lt; VALUE &gt; &gt;)</td></tr>
+<tr class="separator:ac81389360dca0a948eca7220dcf5250e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42c8cd7a647039b1ab9c8cedbd69dcce"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
 requires detail::is_simd_lanes_of_width_v&lt;FIRST, N&gt; &amp;&amp; (detail::is_simd_lanes_of_width_v&lt;REST, N&gt; &amp;&amp; ...)</td></tr>
-<tr class="memitem:a4f9a6f7425e9c0946d3ec5d266a1081a"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1SimdLanesApplicativeImpl.html#a4f9a6f7425e9c0946d3ec5d266a1081a">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest)</td></tr>
-<tr class="separator:a4f9a6f7425e9c0946d3ec5d266a1081a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42c8cd7a647039b1ab9c8cedbd69dcce"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1SimdLanesApplicativeImpl.html#a42c8cd7a647039b1ab9c8cedbd69dcce">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest) noexcept(detail::lanewise_invoke_nothrow&lt; FUNCTION, decltype(std::forward&lt; FIRST &gt;(first) .data), decltype(std::forward&lt; REST &gt;(rest) .data)... &gt;)</td></tr>
+<tr class="separator:a42c8cd7a647039b1ab9c8cedbd69dcce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a601d2b104c46e77b27669a292345a331" name="a601d2b104c46e77b27669a292345a331"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a601d2b104c46e77b27669a292345a331">&#9670;&#160;</a></span>pure()</h2>
+<a id="ac81389360dca0a948eca7220dcf5250e" name="ac81389360dca0a948eca7220dcf5250e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac81389360dca0a948eca7220dcf5250e">&#9670;&#160;</a></span>pure()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -154,15 +154,15 @@ template&lt;class VALUE &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a4f9a6f7425e9c0946d3ec5d266a1081a" name="a4f9a6f7425e9c0946d3ec5d266a1081a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f9a6f7425e9c0946d3ec5d266a1081a">&#9670;&#160;</a></span>invoke()</h2>
+<a id="a42c8cd7a647039b1ab9c8cedbd69dcce" name="a42c8cd7a647039b1ab9c8cedbd69dcce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42c8cd7a647039b1ab9c8cedbd69dcce">&#9670;&#160;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -207,7 +207,7 @@ requires detail::is_simd_lanes_of_width_v&lt;FIRST, N&gt; &amp;&amp; (detail::is
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

@@ -111,48 +111,48 @@ Inheritance diagram for beman::transpose::derive_monad&lt; Impl &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4c9bd681f9858c7bae0714501bfd4ee6"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class MA &gt; <br />
+<tr class="memitem:a871f90e041daeaf9c6374a91ba3ddfd5"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class MA &gt; <br />
 requires requires(const Impl &amp;impl) { impl.fmap(std::forward&lt;FUNCTION&gt;(function), std::forward&lt;MA&gt;(ma)); } || requires(const Impl &amp;impl) { impl.bind(std::forward&lt;MA&gt;(ma), detail::fmap_continuation_probe&lt;Impl, FUNCTION&gt;{}); }</td></tr>
-<tr class="memitem:a4c9bd681f9858c7bae0714501bfd4ee6"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a4c9bd681f9858c7bae0714501bfd4ee6">fmap</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, MA &amp;&amp;ma)</td></tr>
-<tr class="memdesc:a4c9bd681f9858c7bae0714501bfd4ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">fmap: the Functor basis, grounded in bind + pure.  <br /></td></tr>
-<tr class="separator:a4c9bd681f9858c7bae0714501bfd4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8deaadc0ade28ca522d04ce567e5507a"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
+<tr class="memitem:a871f90e041daeaf9c6374a91ba3ddfd5"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a871f90e041daeaf9c6374a91ba3ddfd5">fmap</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, MA &amp;&amp;ma) noexcept(fmap_nothrow&lt; decltype(self), FUNCTION, MA &gt;())</td></tr>
+<tr class="memdesc:a871f90e041daeaf9c6374a91ba3ddfd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">fmap: the Functor basis, grounded in bind + pure.  <br /></td></tr>
+<tr class="separator:a871f90e041daeaf9c6374a91ba3ddfd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6e5896b96edf2b8dbca922e112e70d6"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
 requires requires(const Impl &amp;impl) { impl.invoke(std::forward&lt;FUNCTION&gt;(function), std::forward&lt;FIRST&gt;(first), std::forward&lt;REST&gt;(rest)...); } || requires { self.bind( std::forward&lt;FIRST&gt;(first), detail::invoke_continuation_probe&lt;decltype(self), FUNCTION, std::tuple&lt;&gt;, REST...&gt;{}); }</td></tr>
-<tr class="memitem:a8deaadc0ade28ca522d04ce567e5507a"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a8deaadc0ade28ca522d04ce567e5507a">invoke</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest)</td></tr>
-<tr class="separator:a8deaadc0ade28ca522d04ce567e5507a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:accad9e64f5e38f0f4cf077412a03cff9"><td class="memTemplParams" colspan="2">template&lt;class MMA &gt; <br />
-requires requires(const Impl &amp;impl) { impl.join(std::forward&lt;MMA&gt;(mma)); } || requires(const Impl &amp;impl) { impl.bind(std::forward&lt;MMA&gt;(mma), [](auto &amp;&amp;inner) { return inner; }); }</td></tr>
-<tr class="memitem:accad9e64f5e38f0f4cf077412a03cff9"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#accad9e64f5e38f0f4cf077412a03cff9">join</a> (this auto &amp;&amp;self, MMA &amp;&amp;mma)</td></tr>
-<tr class="separator:accad9e64f5e38f0f4cf077412a03cff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac7fd9f3a77cb097b194cbc9c4f5ad51d"><td class="memTemplParams" colspan="2">template&lt;class F , class G &gt; <br />
+<tr class="memitem:ac6e5896b96edf2b8dbca922e112e70d6"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#ac6e5896b96edf2b8dbca922e112e70d6">invoke</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest) noexcept(invoke_nothrow&lt; decltype(self), FUNCTION, FIRST, REST... &gt;())</td></tr>
+<tr class="separator:ac6e5896b96edf2b8dbca922e112e70d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f1d8c130970750e4056df50b3565e3a"><td class="memTemplParams" colspan="2">template&lt;class MMA &gt; <br />
+requires requires(const Impl &amp;impl) { impl.join(std::forward&lt;MMA&gt;(mma)); } || requires(const Impl &amp;impl) { impl.bind(std::forward&lt;MMA&gt;(mma), detail::identity_continuation{}); }</td></tr>
+<tr class="memitem:a6f1d8c130970750e4056df50b3565e3a"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a6f1d8c130970750e4056df50b3565e3a">join</a> (this auto &amp;&amp;self, MMA &amp;&amp;mma) noexcept(join_nothrow&lt; decltype(self), MMA &gt;())</td></tr>
+<tr class="separator:a6f1d8c130970750e4056df50b3565e3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6067cb750d0f3107fd4d7d7baba2d18"><td class="memTemplParams" colspan="2">template&lt;class F , class G &gt; <br />
 requires requires(const Impl &amp;impl) { impl.kleisli(f, g); } || (std::move_constructible&lt;F&gt; &amp;&amp; std::move_constructible&lt;G&gt;)</td></tr>
-<tr class="memitem:ac7fd9f3a77cb097b194cbc9c4f5ad51d"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#ac7fd9f3a77cb097b194cbc9c4f5ad51d">kleisli</a> (this auto &amp;&amp;self, F f, G g)</td></tr>
-<tr class="separator:ac7fd9f3a77cb097b194cbc9c4f5ad51d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7acb97b271179a05adcdce0db98bca9"><td class="memTemplParams" colspan="2">template&lt;class MF , class MA &gt; <br />
+<tr class="memitem:ad6067cb750d0f3107fd4d7d7baba2d18"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#ad6067cb750d0f3107fd4d7d7baba2d18">kleisli</a> (this auto &amp;&amp;self, F f, G g) noexcept(kleisli_nothrow&lt; decltype(self), F, G &gt;())</td></tr>
+<tr class="separator:ad6067cb750d0f3107fd4d7d7baba2d18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0e49f364261f32cbb5431a1de942f3e"><td class="memTemplParams" colspan="2">template&lt;class MF , class MA &gt; <br />
 requires requires(const Impl &amp;impl) { impl.ap(std::forward&lt;MF&gt;(mf), std::forward&lt;MA&gt;(ma)); } || requires { typename <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">applicative_value_t</a>&lt;MF&gt;; typename <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">applicative_value_t</a>&lt;MA&gt;; requires std::invocable&lt;const <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">applicative_value_t</a>&lt;MF&gt; &amp;, const <a class="el" href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">applicative_value_t</a>&lt;MA&gt; &amp;&gt;; }</td></tr>
-<tr class="memitem:ae7acb97b271179a05adcdce0db98bca9"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#ae7acb97b271179a05adcdce0db98bca9">ap</a> (this auto &amp;&amp;self, MF &amp;&amp;mf, MA &amp;&amp;ma)</td></tr>
-<tr class="memdesc:ae7acb97b271179a05adcdce0db98bca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">ap: one-step contextual application, derived from bind + pure.  <br /></td></tr>
-<tr class="separator:ae7acb97b271179a05adcdce0db98bca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cb9f88de361551bea38b637afdc1cbd"><td class="memTemplParams" colspan="2">template&lt;class TARGET_GRADE , class CARRIER &gt; <br />
-requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e670c9d07c65027aa6f9fc9c9cee7">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</td></tr>
-<tr class="memitem:a2cb9f88de361551bea38b637afdc1cbd"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a2cb9f88de361551bea38b637afdc1cbd">subsume</a> (this auto &amp;&amp;, CARRIER &amp;&amp;value)</td></tr>
-<tr class="memdesc:a2cb9f88de361551bea38b637afdc1cbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses a value at a wider grade, defaulted from the grade algebra.  <br /></td></tr>
-<tr class="separator:a2cb9f88de361551bea38b637afdc1cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7ddb2e636dc41e2d521e14a3e9741937"><td class="memTemplParams" colspan="2">template&lt;class MONAD_MAP , class MA , class F &gt; <br />
+<tr class="memitem:af0e49f364261f32cbb5431a1de942f3e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#af0e49f364261f32cbb5431a1de942f3e">ap</a> (this auto &amp;&amp;self, MF &amp;&amp;mf, MA &amp;&amp;ma) noexcept(ap_nothrow&lt; decltype(self), MF, MA &gt;())</td></tr>
+<tr class="memdesc:af0e49f364261f32cbb5431a1de942f3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">ap: one-step contextual application, derived from bind + pure.  <br /></td></tr>
+<tr class="separator:af0e49f364261f32cbb5431a1de942f3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e630d8488416ff63f59e4cdfdc06907"><td class="memTemplParams" colspan="2">template&lt;class TARGET_GRADE , class CARRIER &gt; <br />
+requires requires { <a class="el" href="namespacebeman_1_1transpose.html#aed943ae15cef4376d03d774d29bef8e2">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</td></tr>
+<tr class="memitem:a5e630d8488416ff63f59e4cdfdc06907"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a5e630d8488416ff63f59e4cdfdc06907">subsume</a> (this auto &amp;&amp;, CARRIER &amp;&amp;value) noexcept(noexcept(<a class="el" href="namespacebeman_1_1transpose.html#aed943ae15cef4376d03d774d29bef8e2">grade_subsume</a>&lt; TARGET_GRADE &gt;(std::forward&lt; CARRIER &gt;(value))))</td></tr>
+<tr class="memdesc:a5e630d8488416ff63f59e4cdfdc06907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Uses a value at a wider grade, defaulted from the grade algebra.  <br /></td></tr>
+<tr class="separator:a5e630d8488416ff63f59e4cdfdc06907"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a607912fe8859e83fadaf2ca80140c6da"><td class="memTemplParams" colspan="2">template&lt;class MONAD_MAP , class MA , class F &gt; <br />
 requires requires { monad_map.bind(std::forward&lt;MA&gt;(ma), std::forward&lt;F&gt;(f)); }</td></tr>
-<tr class="memitem:a7ddb2e636dc41e2d521e14a3e9741937"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a7ddb2e636dc41e2d521e14a3e9741937">bind_with</a> (this auto &amp;&amp;, const MONAD_MAP &amp;monad_map, MA &amp;&amp;ma, F &amp;&amp;f)</td></tr>
-<tr class="separator:a7ddb2e636dc41e2d521e14a3e9741937"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02c00c1163bfb779ffe440f7cebad631"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a02c00c1163bfb779ffe440f7cebad631">as_functor</a> (this auto &amp;&amp;self)</td></tr>
-<tr class="memdesc:a02c00c1163bfb779ffe440f7cebad631"><td class="mdescLeft">&#160;</td><td class="mdescRight">The full Functor instance over this monad object.  <br /></td></tr>
-<tr class="separator:a02c00c1163bfb779ffe440f7cebad631"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a607912fe8859e83fadaf2ca80140c6da"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a607912fe8859e83fadaf2ca80140c6da">bind_with</a> (this auto &amp;&amp;, const MONAD_MAP &amp;monad_map, MA &amp;&amp;ma, F &amp;&amp;f) noexcept(noexcept(monad_map.bind(std::forward&lt; MA &gt;(ma), std::forward&lt; F &gt;(f))))</td></tr>
+<tr class="separator:a607912fe8859e83fadaf2ca80140c6da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7aa5315b50c23f6dde2428451e454a27"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__monad.html#a7aa5315b50c23f6dde2428451e454a27">as_functor</a> (this auto &amp;&amp;self) noexcept</td></tr>
+<tr class="memdesc:a7aa5315b50c23f6dde2428451e454a27"><td class="mdescLeft">&#160;</td><td class="mdescRight">The full Functor instance over this monad object.  <br /></td></tr>
+<tr class="separator:a7aa5315b50c23f6dde2428451e454a27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class Impl&gt;<br />
 struct beman::transpose::derive_monad&lt; Impl &gt;</div><p>CRTP base for Monad instances. </p>
 <p><code>Impl</code> must provide <code><a class="el" href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">pure(value)</a></code> and <code><a class="el" href="namespacebeman_1_1transpose.html#a9ce465f427e17e5009fc088ce0db2ef7" title="Sequential composition: bind(ma, f).">bind(ma, f)</a></code>. The n-ary <code>invoke</code> is synthesized; <code>join</code> and <code>kleisli</code> are derived. Monad does not inherit from Applicative, but provides the equivalent applicative operation once <code>invoke</code> is synthesized from <code>bind</code> + <code>pure</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4c9bd681f9858c7bae0714501bfd4ee6" name="a4c9bd681f9858c7bae0714501bfd4ee6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c9bd681f9858c7bae0714501bfd4ee6">&#9670;&#160;</a></span>fmap()</h2>
+<a id="a871f90e041daeaf9c6374a91ba3ddfd5" name="a871f90e041daeaf9c6374a91ba3ddfd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a871f90e041daeaf9c6374a91ba3ddfd5">&#9670;&#160;</a></span>fmap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -191,7 +191,7 @@ requires requires(const Impl &amp;impl) { impl.fmap(std::forward&lt;FUNCTION&gt;
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -202,8 +202,8 @@ requires requires(const Impl &amp;impl) { impl.fmap(std::forward&lt;FUNCTION&gt;
 
 </div>
 </div>
-<a id="a8deaadc0ade28ca522d04ce567e5507a" name="a8deaadc0ade28ca522d04ce567e5507a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8deaadc0ade28ca522d04ce567e5507a">&#9670;&#160;</a></span>invoke()</h2>
+<a id="ac6e5896b96edf2b8dbca922e112e70d6" name="ac6e5896b96edf2b8dbca922e112e70d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6e5896b96edf2b8dbca922e112e70d6">&#9670;&#160;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -248,15 +248,15 @@ requires requires(const Impl &amp;impl) { impl.invoke(std::forward&lt;FUNCTION&g
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="accad9e64f5e38f0f4cf077412a03cff9" name="accad9e64f5e38f0f4cf077412a03cff9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#accad9e64f5e38f0f4cf077412a03cff9">&#9670;&#160;</a></span>join()</h2>
+<a id="a6f1d8c130970750e4056df50b3565e3a" name="a6f1d8c130970750e4056df50b3565e3a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f1d8c130970750e4056df50b3565e3a">&#9670;&#160;</a></span>join()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -264,7 +264,7 @@ requires requires(const Impl &amp;impl) { impl.invoke(std::forward&lt;FUNCTION&g
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
 template&lt;class MMA &gt; <br />
-requires requires(const Impl &amp;impl) { impl.join(std::forward&lt;MMA&gt;(mma)); } || requires(const Impl &amp;impl) { impl.bind(std::forward&lt;MMA&gt;(mma), [](auto &amp;&amp;inner) { return inner; }); }</div>
+requires requires(const Impl &amp;impl) { impl.join(std::forward&lt;MMA&gt;(mma)); } || requires(const Impl &amp;impl) { impl.bind(std::forward&lt;MMA&gt;(mma), detail::identity_continuation{}); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -289,15 +289,15 @@ requires requires(const Impl &amp;impl) { impl.join(std::forward&lt;MMA&gt;(mma)
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ac7fd9f3a77cb097b194cbc9c4f5ad51d" name="ac7fd9f3a77cb097b194cbc9c4f5ad51d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac7fd9f3a77cb097b194cbc9c4f5ad51d">&#9670;&#160;</a></span>kleisli()</h2>
+<a id="ad6067cb750d0f3107fd4d7d7baba2d18" name="ad6067cb750d0f3107fd4d7d7baba2d18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6067cb750d0f3107fd4d7d7baba2d18">&#9670;&#160;</a></span>kleisli()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -336,15 +336,15 @@ requires requires(const Impl &amp;impl) { impl.kleisli(f, g); } || (std::move_co
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ae7acb97b271179a05adcdce0db98bca9" name="ae7acb97b271179a05adcdce0db98bca9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae7acb97b271179a05adcdce0db98bca9">&#9670;&#160;</a></span>ap()</h2>
+<a id="af0e49f364261f32cbb5431a1de942f3e" name="af0e49f364261f32cbb5431a1de942f3e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0e49f364261f32cbb5431a1de942f3e">&#9670;&#160;</a></span>ap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -383,19 +383,20 @@ requires requires(const Impl &amp;impl) { impl.ap(std::forward&lt;MF&gt;(mf), st
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 <p>ap: one-step contextual application, derived from bind + pure. </p>
 <p><a class="el" href="namespacebeman_1_1transpose.html#a01fe90066997f5d64ec063d4f6fff430">ap(mf, ma)</a> = mf &gt;&gt;= \f -&gt; ma &gt;&gt;= <em>-&gt;</em> <a class="el" href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">pure(f a)</a></p>
-<p>The Applicative base derives ap from its n-ary invoke; a monad-derived instance has no invoke to derive from until one is synthesized, so it gets ap from the bind basis instead. Both derivations exist exactly when the context can hold a callable, and the constraint says so, so the member disappears for contexts that cannot (std::simd::vec) rather than failing inside the body. </p>
+<p>The Applicative base derives ap from its n-ary invoke; a monad-derived instance has no invoke to derive from until one is synthesized, so it gets ap from the bind basis instead. Both derivations exist exactly when the context can hold a callable, and the constraint says so, so the member disappears for contexts that cannot (std::simd::vec) rather than failing inside the body.</p>
+<p>The derived route's exception specification is computed through <code>detail::ap_function_continuation_probe</code>, which stands in for the two closures the body binds with and carries their exception specifications; the constraint itself names no probe, since whether the route exists is answered by the element types alone. </p>
 
 </div>
 </div>
-<a id="a2cb9f88de361551bea38b637afdc1cbd" name="a2cb9f88de361551bea38b637afdc1cbd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2cb9f88de361551bea38b637afdc1cbd">&#9670;&#160;</a></span>subsume()</h2>
+<a id="a5e630d8488416ff63f59e4cdfdc06907" name="a5e630d8488416ff63f59e4cdfdc06907"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e630d8488416ff63f59e4cdfdc06907">&#9670;&#160;</a></span>subsume()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -403,7 +404,7 @@ requires requires(const Impl &amp;impl) { impl.ap(std::forward&lt;MF&gt;(mf), st
 template&lt;class Impl &gt; </div>
 <div class="memtemplate">
 template&lt;class TARGET_GRADE , class CARRIER &gt; <br />
-requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e670c9d07c65027aa6f9fc9c9cee7">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</div>
+requires requires { <a class="el" href="namespacebeman_1_1transpose.html#aed943ae15cef4376d03d774d29bef8e2">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -428,7 +429,7 @@ requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e67
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -438,8 +439,8 @@ requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e67
 
 </div>
 </div>
-<a id="a7ddb2e636dc41e2d521e14a3e9741937" name="a7ddb2e636dc41e2d521e14a3e9741937"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7ddb2e636dc41e2d521e14a3e9741937">&#9670;&#160;</a></span>bind_with()</h2>
+<a id="a607912fe8859e83fadaf2ca80140c6da" name="a607912fe8859e83fadaf2ca80140c6da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a607912fe8859e83fadaf2ca80140c6da">&#9670;&#160;</a></span>bind_with()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -484,15 +485,15 @@ requires requires { monad_map.bind(std::forward&lt;MA&gt;(ma), std::forward&lt;F
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a02c00c1163bfb779ffe440f7cebad631" name="a02c00c1163bfb779ffe440f7cebad631"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a02c00c1163bfb779ffe440f7cebad631">&#9670;&#160;</a></span>as_functor()</h2>
+<a id="a7aa5315b50c23f6dde2428451e454a27" name="a7aa5315b50c23f6dde2428451e454a27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7aa5315b50c23f6dde2428451e454a27">&#9670;&#160;</a></span>as_functor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -512,7 +513,7 @@ template&lt;class Impl &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

@@ -24,7 +24,7 @@ var searchData=
   ['splitat_21',['SplitAt',['../structbeman_1_1fingertree_1_1tree_1_1FingerTree_1_1SplitAt.html',1,'beman::fingertree::tree::FingerTree']]],
   ['string_2ehpp_22',['string.hpp',['../string_8hpp.html',1,'']]],
   ['structure_5felement_5ft_23',['structure_element_t',['../namespacebeman_1_1transpose.html#a26ba55822aa7e6c39ad28b5f85e84530',1,'beman::transpose']]],
-  ['subsume_24',['subsume',['../structbeman_1_1transpose_1_1derive__applicative.html#a29fc51a0123c34ba2a5df5ffe998833c',1,'beman::transpose::derive_applicative::subsume()'],['../structbeman_1_1transpose_1_1derive__monad.html#a2cb9f88de361551bea38b637afdc1cbd',1,'beman::transpose::derive_monad::subsume()']]],
+  ['subsume_24',['subsume',['../structbeman_1_1transpose_1_1derive__applicative.html#ab2602aee23364110c876263ca8ca9d2c',1,'beman::transpose::derive_applicative::subsume()'],['../structbeman_1_1transpose_1_1derive__monad.html#a5e630d8488416ff63f59e4cdfdc06907',1,'beman::transpose::derive_monad::subsume()']]],
   ['succ_25',['Succ',['../structbeman_1_1tree__algorithms_1_1Succ.html',1,'beman::tree_algorithms']]],
   ['sum_5fmonoid_26',['sum_monoid',['../structbeman_1_1transpose_1_1sum__monoid.html',1,'beman::transpose']]],
   ['sum_5fmonoid_3c_20std_3a_3asize_5ft_20_3e_27',['sum_monoid&lt; std::size_t &gt;',['../structbeman_1_1transpose_1_1sum__monoid.html',1,'beman::transpose']]],

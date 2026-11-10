@@ -111,81 +111,82 @@ Inheritance diagram for beman::transpose::derive_foldable&lt; Impl &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2f27b6583da48ba922211e310fa28298"><td class="memTemplParams" colspan="2">template&lt;class F , class T , class MONOID &gt; <br />
+<tr class="memitem:aa065914ee6053dae212133cac95306eb"><td class="memTemplParams" colspan="2">template&lt;class F , class T , class MONOID &gt; <br />
 requires requires(const Impl &amp;impl) { impl.fold_map(std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); } || requires(const Impl &amp;impl) { typename Impl::element_type; requires std::invocable&lt;F &amp;, const typename Impl::element_type &amp;&gt;; { monoid.combine( std::invoke( function, std::declval&lt;const typename Impl::element_type &amp;&gt;()), monoid.identity()) } -&gt; std::convertible_to&lt;<a class="el" href="namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2">monoid_value_t</a>&lt;MONOID&gt;&gt;; impl.fold_right(std::forward&lt;T&gt;(value), monoid.identity(), detail::fold_map_step_probe_witness&lt;F, MONOID&gt;{}); }</td></tr>
-<tr class="memitem:a2f27b6583da48ba922211e310fa28298"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a2f27b6583da48ba922211e310fa28298">fold_map</a> (this auto &amp;&amp;self, F &amp;&amp;function, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>)</td></tr>
-<tr class="separator:a2f27b6583da48ba922211e310fa28298"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb8b923e8791496b8bda9fb8e1f22655"><td class="memTemplParams" colspan="2">template&lt;class F , class T &gt; <br />
+<tr class="memitem:aa065914ee6053dae212133cac95306eb"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#aa065914ee6053dae212133cac95306eb">fold_map</a> (this auto &amp;&amp;self, F &amp;&amp;function, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>) noexcept(fold_map_nothrow&lt; decltype(self), F, T, MONOID &gt;())</td></tr>
+<tr class="separator:aa065914ee6053dae212133cac95306eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2b187d510e519de9874309b6f9d79ad"><td class="memTemplParams" colspan="2">template&lt;class F , class T &gt; <br />
 requires requires(const Impl &amp;impl) { impl.fold_map(std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value)); } || requires { typename Impl::element_type; requires detail::has_registered_monoid&lt; detail::fold_result_t&lt;Impl, F&gt;&gt;; self.fold_map(std::forward&lt;F&gt;(function), std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1Monoid.html">Monoid</a>&lt;detail::fold_result_t&lt;Impl, F&gt;&gt;{}); }</td></tr>
-<tr class="memitem:acb8b923e8791496b8bda9fb8e1f22655"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#acb8b923e8791496b8bda9fb8e1f22655">fold_map</a> (this auto &amp;&amp;self, F &amp;&amp;function, T &amp;&amp;value)</td></tr>
-<tr class="separator:acb8b923e8791496b8bda9fb8e1f22655"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93bc933f1f2bfec8dc5f4a5872e26522"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
+<tr class="memitem:af2b187d510e519de9874309b6f9d79ad"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#af2b187d510e519de9874309b6f9d79ad">fold_map</a> (this auto &amp;&amp;self, F &amp;&amp;function, T &amp;&amp;value) noexcept(fold_map_default_nothrow&lt; decltype(self), F, T &gt;())</td></tr>
+<tr class="separator:af2b187d510e519de9874309b6f9d79ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9692abde87db6d9cf35fddacd794ddaa"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
 requires requires(const Impl &amp;impl) { impl.length(std::forward&lt;T&gt;(value)); } || requires { self.fold_map(detail::probe_witness&lt;std::size_t&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1sum__monoid.html">sum_monoid</a>&lt;std::size_t&gt;{}); }</td></tr>
-<tr class="memitem:a93bc933f1f2bfec8dc5f4a5872e26522"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a93bc933f1f2bfec8dc5f4a5872e26522">length</a> (this auto &amp;&amp;self, T &amp;&amp;value) -&gt; std::size_t</td></tr>
-<tr class="memdesc:a93bc933f1f2bfec8dc5f4a5872e26522"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements in the foldable container.  <br /></td></tr>
-<tr class="separator:a93bc933f1f2bfec8dc5f4a5872e26522"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af28df991eeadd56e2fd339c9015b2f51"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F &gt; <br />
+<tr class="memitem:a9692abde87db6d9cf35fddacd794ddaa"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a9692abde87db6d9cf35fddacd794ddaa">length</a> (this auto &amp;&amp;self, T &amp;&amp;value) noexcept(length_nothrow&lt; decltype(self), T &gt;()) -&gt; std::size_t</td></tr>
+<tr class="memdesc:a9692abde87db6d9cf35fddacd794ddaa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of elements in the foldable container.  <br /></td></tr>
+<tr class="separator:a9692abde87db6d9cf35fddacd794ddaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6b120c838a6359a5fa177c7e8dd948a"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F &gt; <br />
 requires requires(const Impl &amp;impl) { impl.fold_left(std::forward&lt;T&gt;(value), std::move(initial_state), std::forward&lt;F&gt;(function)); } || requires { requires std::constructible_from&lt;std::remove_cvref_t&lt;F&gt;, F&gt;; self.fold_map( detail::fold_left_probe_witness&lt;std::remove_cvref_t&lt;F&gt;, std::remove_cvref_t&lt;STATE&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::left_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</td></tr>
-<tr class="memitem:af28df991eeadd56e2fd339c9015b2f51"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#af28df991eeadd56e2fd339c9015b2f51">fold_left</a> (this auto &amp;&amp;self, T &amp;&amp;value, STATE initial_state, F &amp;&amp;function)</td></tr>
-<tr class="memdesc:af28df991eeadd56e2fd339c9015b2f51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Left-associative fold: applies <code>function(state, element)</code> for each element in traversal order, starting from <code>initial_state</code>.  <br /></td></tr>
-<tr class="separator:af28df991eeadd56e2fd339c9015b2f51"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3881209710115e2c66dea816902de090"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F &gt; <br />
+<tr class="memitem:ad6b120c838a6359a5fa177c7e8dd948a"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#ad6b120c838a6359a5fa177c7e8dd948a">fold_left</a> (this auto &amp;&amp;self, T &amp;&amp;value, STATE initial_state, F &amp;&amp;function) noexcept(fold_left_nothrow&lt; decltype(self), T, STATE, F &gt;())</td></tr>
+<tr class="memdesc:ad6b120c838a6359a5fa177c7e8dd948a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Left-associative fold: applies <code>function(state, element)</code> for each element in traversal order, starting from <code>initial_state</code>.  <br /></td></tr>
+<tr class="separator:ad6b120c838a6359a5fa177c7e8dd948a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9890ba6fbf199b0a0d97bf6613b8b312"><td class="memTemplParams" colspan="2">template&lt;class T , class STATE , class F &gt; <br />
 requires requires(const Impl &amp;impl) { impl.fold_right(std::forward&lt;T&gt;(value), std::move(initial_state), std::forward&lt;F&gt;(function)); } || requires(const Impl &amp;impl) { requires std::constructible_from&lt;std::remove_cvref_t&lt;F&gt;, F&gt;; impl.fold_map( detail::fold_right_probe_witness&lt;std::remove_cvref_t&lt;F&gt;, std::remove_cvref_t&lt;STATE&gt;&gt;{}, std::forward&lt;T&gt;(value), detail::right_compose_monoid&lt;std::remove_cvref_t&lt;STATE&gt;&gt;{}); }</td></tr>
-<tr class="memitem:a3881209710115e2c66dea816902de090"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a3881209710115e2c66dea816902de090">fold_right</a> (this auto &amp;&amp;self, T &amp;&amp;value, STATE initial_state, F &amp;&amp;function)</td></tr>
-<tr class="memdesc:a3881209710115e2c66dea816902de090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Right-associative fold: applies <code>function(element, state)</code> for each element in reverse traversal order, starting from <code>initial_state</code>.  <br /></td></tr>
-<tr class="separator:a3881209710115e2c66dea816902de090"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cab9be126b52b254bfc454c3cb005bd"><td class="memTemplParams" colspan="2">template&lt;class T , class MONOID &gt; <br />
+<tr class="memitem:a9890ba6fbf199b0a0d97bf6613b8b312"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a9890ba6fbf199b0a0d97bf6613b8b312">fold_right</a> (this auto &amp;&amp;self, T &amp;&amp;value, STATE initial_state, F &amp;&amp;function) noexcept(fold_right_nothrow&lt; decltype(self), T, STATE, F &gt;())</td></tr>
+<tr class="memdesc:a9890ba6fbf199b0a0d97bf6613b8b312"><td class="mdescLeft">&#160;</td><td class="mdescRight">Right-associative fold: applies <code>function(element, state)</code> for each element in reverse traversal order, starting from <code>initial_state</code>.  <br /></td></tr>
+<tr class="separator:a9890ba6fbf199b0a0d97bf6613b8b312"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00015b253a44c0f9a15f19933dc90fe6"><td class="memTemplParams" colspan="2">template&lt;class T , class MONOID &gt; <br />
 requires requires(const Impl &amp;impl) { impl.combine_all(std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); } || requires { self.fold_map(detail::identity_probe_witness{}, std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); }</td></tr>
-<tr class="memitem:a1cab9be126b52b254bfc454c3cb005bd"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a1cab9be126b52b254bfc454c3cb005bd">combine_all</a> (this auto &amp;&amp;self, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>)</td></tr>
-<tr class="memdesc:a1cab9be126b52b254bfc454c3cb005bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines all elements under <code>monoid</code>, an instance over the element type.  <br /></td></tr>
-<tr class="separator:a1cab9be126b52b254bfc454c3cb005bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d56b18f774013a77d357e94e629c4b7"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
+<tr class="memitem:a00015b253a44c0f9a15f19933dc90fe6"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a00015b253a44c0f9a15f19933dc90fe6">combine_all</a> (this auto &amp;&amp;self, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>) noexcept(combine_all_nothrow&lt; decltype(self), T, MONOID &gt;())</td></tr>
+<tr class="memdesc:a00015b253a44c0f9a15f19933dc90fe6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines all elements under <code>monoid</code>, an instance over the element type.  <br /></td></tr>
+<tr class="separator:a00015b253a44c0f9a15f19933dc90fe6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9f3b5571a9f041b16e99257c6b68f7b"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
 requires requires(const Impl &amp;impl) { impl.combine_all(std::forward&lt;T&gt;(value)); } || requires { self.fold_map(detail::identity_probe_witness{}, std::forward&lt;T&gt;(value)); }</td></tr>
-<tr class="memitem:a7d56b18f774013a77d357e94e629c4b7"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a7d56b18f774013a77d357e94e629c4b7">combine_all</a> (this auto &amp;&amp;self, T &amp;&amp;value)</td></tr>
-<tr class="memdesc:a7d56b18f774013a77d357e94e629c4b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines all elements using the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of the element type.  <br /></td></tr>
-<tr class="separator:a7d56b18f774013a77d357e94e629c4b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ee26b367178bc09cd7ade89149c5aae"><td class="memTemplParams" colspan="2">template&lt;class T , class MONOID &gt; <br />
+<tr class="memitem:ab9f3b5571a9f041b16e99257c6b68f7b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#ab9f3b5571a9f041b16e99257c6b68f7b">combine_all</a> (this auto &amp;&amp;self, T &amp;&amp;value) noexcept(combine_all_registered_nothrow&lt; decltype(self), T &gt;())</td></tr>
+<tr class="memdesc:ab9f3b5571a9f041b16e99257c6b68f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines all elements using the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of the element type.  <br /></td></tr>
+<tr class="separator:ab9f3b5571a9f041b16e99257c6b68f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a833a6903a5846f24854859ae72e0e743"><td class="memTemplParams" colspan="2">template&lt;class T , class MONOID &gt; <br />
 requires requires(const Impl &amp;impl) { impl.fold(std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); } || requires { self.combine_all(std::forward&lt;T&gt;(value), <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>); }</td></tr>
-<tr class="memitem:a9ee26b367178bc09cd7ade89149c5aae"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a9ee26b367178bc09cd7ade89149c5aae">fold</a> (this auto &amp;&amp;self, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>)</td></tr>
-<tr class="memdesc:a9ee26b367178bc09cd7ade89149c5aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias for <code>combine_all</code>.  <br /></td></tr>
-<tr class="separator:a9ee26b367178bc09cd7ade89149c5aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a931bdd44c79aafd930539bef495c0c46"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
+<tr class="memitem:a833a6903a5846f24854859ae72e0e743"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a833a6903a5846f24854859ae72e0e743">fold</a> (this auto &amp;&amp;self, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>) noexcept(fold_nothrow&lt; decltype(self), T, MONOID &gt;())</td></tr>
+<tr class="memdesc:a833a6903a5846f24854859ae72e0e743"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alias for <code>combine_all</code>.  <br /></td></tr>
+<tr class="separator:a833a6903a5846f24854859ae72e0e743"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73df51bbbaca15fe144bc9ae6b280df2"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
 requires requires(const Impl &amp;impl) { impl.fold(std::forward&lt;T&gt;(value)); } || requires { self.combine_all(std::forward&lt;T&gt;(value)); }</td></tr>
-<tr class="memitem:a931bdd44c79aafd930539bef495c0c46"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a931bdd44c79aafd930539bef495c0c46">fold</a> (this auto &amp;&amp;self, T &amp;&amp;value)</td></tr>
-<tr class="separator:a931bdd44c79aafd930539bef495c0c46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae1514b8e421f5f803fe7c99bd351114"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
+<tr class="memitem:a73df51bbbaca15fe144bc9ae6b280df2"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a73df51bbbaca15fe144bc9ae6b280df2">fold</a> (this auto &amp;&amp;self, T &amp;&amp;value) noexcept(fold_registered_nothrow&lt; decltype(self), T &gt;())</td></tr>
+<tr class="separator:a73df51bbbaca15fe144bc9ae6b280df2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37ed437a33ceb1a61d9df566c7bef5ce"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
 requires requires(const Impl &amp;impl) { impl.any_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::predicate_probe_witness&lt;PREDICATE&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1any__monoid.html">any_monoid</a>{}); }</td></tr>
-<tr class="memitem:aae1514b8e421f5f803fe7c99bd351114"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#aae1514b8e421f5f803fe7c99bd351114">any_of</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate) -&gt; bool</td></tr>
-<tr class="memdesc:aae1514b8e421f5f803fe7c99bd351114"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if any element satisfies <code>predicate</code>.  <br /></td></tr>
-<tr class="separator:aae1514b8e421f5f803fe7c99bd351114"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0edb61bc4bf88b247ef6ef88ea8e000f"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
+<tr class="memitem:a37ed437a33ceb1a61d9df566c7bef5ce"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a37ed437a33ceb1a61d9df566c7bef5ce">any_of</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate) noexcept(any_of_nothrow&lt; decltype(self), T, PREDICATE &gt;()) -&gt; bool</td></tr>
+<tr class="memdesc:a37ed437a33ceb1a61d9df566c7bef5ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if any element satisfies <code>predicate</code>.  <br /></td></tr>
+<tr class="separator:a37ed437a33ceb1a61d9df566c7bef5ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9906d24bd5b894d4d913d14ed6ede86a"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
 requires requires(const Impl &amp;impl) { impl.all_of(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { self.fold_map(detail::predicate_probe_witness&lt;PREDICATE&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1all__monoid.html">all_monoid</a>{}); }</td></tr>
-<tr class="memitem:a0edb61bc4bf88b247ef6ef88ea8e000f"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a0edb61bc4bf88b247ef6ef88ea8e000f">all_of</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate) -&gt; bool</td></tr>
-<tr class="memdesc:a0edb61bc4bf88b247ef6ef88ea8e000f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if all elements satisfy <code>predicate</code>.  <br /></td></tr>
-<tr class="separator:a0edb61bc4bf88b247ef6ef88ea8e000f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74ebd77555369e29bf9ff52d38d79b16"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
+<tr class="memitem:a9906d24bd5b894d4d913d14ed6ede86a"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a9906d24bd5b894d4d913d14ed6ede86a">all_of</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate) noexcept(all_of_nothrow&lt; decltype(self), T, PREDICATE &gt;()) -&gt; bool</td></tr>
+<tr class="memdesc:a9906d24bd5b894d4d913d14ed6ede86a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if all elements satisfy <code>predicate</code>.  <br /></td></tr>
+<tr class="separator:a9906d24bd5b894d4d913d14ed6ede86a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a576d9e1e02c34ff9028ae67626d358a1"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
 requires requires(const Impl &amp;impl) { impl.empty(std::forward&lt;T&gt;(value)); } || requires { self.any_of(std::forward&lt;T&gt;(value), detail::probe_witness&lt;bool&gt;{}); }</td></tr>
-<tr class="memitem:a74ebd77555369e29bf9ff52d38d79b16"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a74ebd77555369e29bf9ff52d38d79b16">empty</a> (this auto &amp;&amp;self, T &amp;&amp;value) -&gt; bool</td></tr>
-<tr class="memdesc:a74ebd77555369e29bf9ff52d38d79b16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if the container holds no elements.  <br /></td></tr>
-<tr class="separator:a74ebd77555369e29bf9ff52d38d79b16"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5d58fb428567c0c83013fbfc3af3824"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
+<tr class="memitem:a576d9e1e02c34ff9028ae67626d358a1"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a576d9e1e02c34ff9028ae67626d358a1">empty</a> (this auto &amp;&amp;self, T &amp;&amp;value) noexcept(empty_nothrow&lt; decltype(self), T &gt;()) -&gt; bool</td></tr>
+<tr class="memdesc:a576d9e1e02c34ff9028ae67626d358a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns <code>true</code> if the container holds no elements.  <br /></td></tr>
+<tr class="separator:a576d9e1e02c34ff9028ae67626d358a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad160f1f0c9a2d39f6e70f60922e64acc"><td class="memTemplParams" colspan="2">template&lt;class T &gt; <br />
 requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(value)); } || requires { typename Impl::element_type; self.fold_map( detail::vector_probe_witness{}, std::forward&lt;T&gt;(value), detail::vector_concat_monoid&lt;typename Impl::element_type&gt;{}); }</td></tr>
-<tr class="memitem:aa5d58fb428567c0c83013fbfc3af3824"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#aa5d58fb428567c0c83013fbfc3af3824">to_vector</a> (this auto &amp;&amp;self, T &amp;&amp;value)</td></tr>
-<tr class="memdesc:aa5d58fb428567c0c83013fbfc3af3824"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collects all elements into a <code>std::vector</code> in traversal order.  <br /></td></tr>
-<tr class="separator:aa5d58fb428567c0c83013fbfc3af3824"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
+<tr class="memitem:ad160f1f0c9a2d39f6e70f60922e64acc"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#ad160f1f0c9a2d39f6e70f60922e64acc">to_vector</a> (this auto &amp;&amp;self, T &amp;&amp;value) noexcept(to_vector_nothrow&lt; decltype(self), T &gt;())</td></tr>
+<tr class="memdesc:ad160f1f0c9a2d39f6e70f60922e64acc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collects all elements into a <code>std::vector</code> in traversal order.  <br /></td></tr>
+<tr class="separator:ad160f1f0c9a2d39f6e70f60922e64acc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39cdc78772f8dd9622e04f26979d539e"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE &gt; <br />
 requires requires(const Impl &amp;impl) { impl.find_first(std::forward&lt;T&gt;(value), std::forward&lt;PREDICATE&gt;(predicate)); } || requires { typename Impl::element_type; self.fold_map( detail::find_first_probe_witness&lt;PREDICATE, typename Impl::element_type&gt;{}, std::forward&lt;T&gt;(value), <a class="el" href="structbeman_1_1transpose_1_1first__monoid.html">first_monoid</a>&lt;typename Impl::element_type&gt;{}); }</td></tr>
-<tr class="memitem:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#ab6b3a9a87cf9894e75ffd0d3e063c0b0">find_first</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate)</td></tr>
-<tr class="memdesc:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first element satisfying <code>predicate</code>, or an empty optional.  <br /></td></tr>
-<tr class="separator:ab6b3a9a87cf9894e75ffd0d3e063c0b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a39cdc78772f8dd9622e04f26979d539e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__foldable.html#a39cdc78772f8dd9622e04f26979d539e">find_first</a> (this auto &amp;&amp;self, T &amp;&amp;value, PREDICATE &amp;&amp;predicate) noexcept(find_first_nothrow&lt; decltype(self), T, PREDICATE &gt;())</td></tr>
+<tr class="memdesc:a39cdc78772f8dd9622e04f26979d539e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first element satisfying <code>predicate</code>, or an empty optional.  <br /></td></tr>
+<tr class="separator:a39cdc78772f8dd9622e04f26979d539e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class Impl&gt;<br />
 struct beman::transpose::derive_foldable&lt; Impl &gt;</div><p>CRTP base for Foldable instances. </p>
-<p><code>Impl</code> must provide either <code><a class="el" href="namespacebeman_1_1transpose.html#a5e1d10d9e16af348c9d167dd06d8ad24" title="The semantic centre of Foldable: fold_map(f, container[, monoid]).">fold_map(f, container, monoid)</a></code> or <code>fold_right</code> + <code>element_type</code>; all other operations are derived from whichever is the primitive. Declaring <code>element_type</code> additionally unlocks the derived operations that must name the element type: the two-argument <code>fold_map</code>, <code>combine_all</code> and <code>fold</code> without an instance, <code>to_vector</code> and <code>find_first</code>. </p>
+<p><code>Impl</code> must provide either <code><a class="el" href="namespacebeman_1_1transpose.html#a5e1d10d9e16af348c9d167dd06d8ad24" title="The semantic centre of Foldable: fold_map(f, container[, monoid]).">fold_map(f, container, monoid)</a></code> or <code>fold_right</code> + <code>element_type</code>; all other operations are derived from whichever is the primitive. Declaring <code>element_type</code> additionally unlocks the derived operations that must name the element type: the two-argument <code>fold_map</code>, <code>combine_all</code> and <code>fold</code> without an instance, <code>to_vector</code> and <code>find_first</code>.</p>
+<p>Every operation carries a computed exception specification: that of the route it takes, spelled from the same requires-expression the body selects the route by, with the derived route asked through the probe the constraint names (docs/transpose/decisions.md#operation-noexcept). The derived <code>fold_left</code> and <code>fold_right</code> are never noexcept, because the programs they compose are <code>std::function</code>s. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2f27b6583da48ba922211e310fa28298" name="a2f27b6583da48ba922211e310fa28298"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f27b6583da48ba922211e310fa28298">&#9670;&#160;</a></span>fold_map() <span class="overload">[1/2]</span></h2>
+<a id="aa065914ee6053dae212133cac95306eb" name="aa065914ee6053dae212133cac95306eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa065914ee6053dae212133cac95306eb">&#9670;&#160;</a></span>fold_map() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -230,15 +231,15 @@ requires requires(const Impl &amp;impl) { impl.fold_map(std::forward&lt;F&gt;(fu
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="acb8b923e8791496b8bda9fb8e1f22655" name="acb8b923e8791496b8bda9fb8e1f22655"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb8b923e8791496b8bda9fb8e1f22655">&#9670;&#160;</a></span>fold_map() <span class="overload">[2/2]</span></h2>
+<a id="af2b187d510e519de9874309b6f9d79ad" name="af2b187d510e519de9874309b6f9d79ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2b187d510e519de9874309b6f9d79ad">&#9670;&#160;</a></span>fold_map() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -277,15 +278,15 @@ requires requires(const Impl &amp;impl) { impl.fold_map(std::forward&lt;F&gt;(fu
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a93bc933f1f2bfec8dc5f4a5872e26522" name="a93bc933f1f2bfec8dc5f4a5872e26522"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a93bc933f1f2bfec8dc5f4a5872e26522">&#9670;&#160;</a></span>length()</h2>
+<a id="a9692abde87db6d9cf35fddacd794ddaa" name="a9692abde87db6d9cf35fddacd794ddaa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9692abde87db6d9cf35fddacd794ddaa">&#9670;&#160;</a></span>length()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -319,7 +320,7 @@ requires requires(const Impl &amp;impl) { impl.length(std::forward&lt;T&gt;(valu
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -328,8 +329,8 @@ requires requires(const Impl &amp;impl) { impl.length(std::forward&lt;T&gt;(valu
 
 </div>
 </div>
-<a id="af28df991eeadd56e2fd339c9015b2f51" name="af28df991eeadd56e2fd339c9015b2f51"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af28df991eeadd56e2fd339c9015b2f51">&#9670;&#160;</a></span>fold_left()</h2>
+<a id="ad6b120c838a6359a5fa177c7e8dd948a" name="ad6b120c838a6359a5fa177c7e8dd948a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6b120c838a6359a5fa177c7e8dd948a">&#9670;&#160;</a></span>fold_left()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -374,7 +375,7 @@ requires requires(const Impl &amp;impl) { impl.fold_left(std::forward&lt;T&gt;(v
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -383,8 +384,8 @@ requires requires(const Impl &amp;impl) { impl.fold_left(std::forward&lt;T&gt;(v
 
 </div>
 </div>
-<a id="a3881209710115e2c66dea816902de090" name="a3881209710115e2c66dea816902de090"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3881209710115e2c66dea816902de090">&#9670;&#160;</a></span>fold_right()</h2>
+<a id="a9890ba6fbf199b0a0d97bf6613b8b312" name="a9890ba6fbf199b0a0d97bf6613b8b312"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9890ba6fbf199b0a0d97bf6613b8b312">&#9670;&#160;</a></span>fold_right()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -429,7 +430,7 @@ requires requires(const Impl &amp;impl) { impl.fold_right(std::forward&lt;T&gt;(
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -438,8 +439,8 @@ requires requires(const Impl &amp;impl) { impl.fold_right(std::forward&lt;T&gt;(
 
 </div>
 </div>
-<a id="a1cab9be126b52b254bfc454c3cb005bd" name="a1cab9be126b52b254bfc454c3cb005bd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1cab9be126b52b254bfc454c3cb005bd">&#9670;&#160;</a></span>combine_all() <span class="overload">[1/2]</span></h2>
+<a id="a00015b253a44c0f9a15f19933dc90fe6" name="a00015b253a44c0f9a15f19933dc90fe6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00015b253a44c0f9a15f19933dc90fe6">&#9670;&#160;</a></span>combine_all() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -478,7 +479,7 @@ requires requires(const Impl &amp;impl) { impl.combine_all(std::forward&lt;T&gt;
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -487,8 +488,8 @@ requires requires(const Impl &amp;impl) { impl.combine_all(std::forward&lt;T&gt;
 
 </div>
 </div>
-<a id="a7d56b18f774013a77d357e94e629c4b7" name="a7d56b18f774013a77d357e94e629c4b7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7d56b18f774013a77d357e94e629c4b7">&#9670;&#160;</a></span>combine_all() <span class="overload">[2/2]</span></h2>
+<a id="ab9f3b5571a9f041b16e99257c6b68f7b" name="ab9f3b5571a9f041b16e99257c6b68f7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab9f3b5571a9f041b16e99257c6b68f7b">&#9670;&#160;</a></span>combine_all() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -521,7 +522,7 @@ requires requires(const Impl &amp;impl) { impl.combine_all(std::forward&lt;T&gt;
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -531,8 +532,8 @@ requires requires(const Impl &amp;impl) { impl.combine_all(std::forward&lt;T&gt;
 
 </div>
 </div>
-<a id="a9ee26b367178bc09cd7ade89149c5aae" name="a9ee26b367178bc09cd7ade89149c5aae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ee26b367178bc09cd7ade89149c5aae">&#9670;&#160;</a></span>fold() <span class="overload">[1/2]</span></h2>
+<a id="a833a6903a5846f24854859ae72e0e743" name="a833a6903a5846f24854859ae72e0e743"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a833a6903a5846f24854859ae72e0e743">&#9670;&#160;</a></span>fold() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -571,7 +572,7 @@ requires requires(const Impl &amp;impl) { impl.fold(std::forward&lt;T&gt;(value)
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -581,8 +582,8 @@ requires requires(const Impl &amp;impl) { impl.fold(std::forward&lt;T&gt;(value)
 
 </div>
 </div>
-<a id="a931bdd44c79aafd930539bef495c0c46" name="a931bdd44c79aafd930539bef495c0c46"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a931bdd44c79aafd930539bef495c0c46">&#9670;&#160;</a></span>fold() <span class="overload">[2/2]</span></h2>
+<a id="a73df51bbbaca15fe144bc9ae6b280df2" name="a73df51bbbaca15fe144bc9ae6b280df2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73df51bbbaca15fe144bc9ae6b280df2">&#9670;&#160;</a></span>fold() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -615,15 +616,15 @@ requires requires(const Impl &amp;impl) { impl.fold(std::forward&lt;T&gt;(value)
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aae1514b8e421f5f803fe7c99bd351114" name="aae1514b8e421f5f803fe7c99bd351114"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae1514b8e421f5f803fe7c99bd351114">&#9670;&#160;</a></span>any_of()</h2>
+<a id="a37ed437a33ceb1a61d9df566c7bef5ce" name="a37ed437a33ceb1a61d9df566c7bef5ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37ed437a33ceb1a61d9df566c7bef5ce">&#9670;&#160;</a></span>any_of()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -663,7 +664,7 @@ requires requires(const Impl &amp;impl) { impl.any_of(std::forward&lt;T&gt;(valu
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -672,8 +673,8 @@ requires requires(const Impl &amp;impl) { impl.any_of(std::forward&lt;T&gt;(valu
 
 </div>
 </div>
-<a id="a0edb61bc4bf88b247ef6ef88ea8e000f" name="a0edb61bc4bf88b247ef6ef88ea8e000f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0edb61bc4bf88b247ef6ef88ea8e000f">&#9670;&#160;</a></span>all_of()</h2>
+<a id="a9906d24bd5b894d4d913d14ed6ede86a" name="a9906d24bd5b894d4d913d14ed6ede86a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9906d24bd5b894d4d913d14ed6ede86a">&#9670;&#160;</a></span>all_of()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -713,7 +714,7 @@ requires requires(const Impl &amp;impl) { impl.all_of(std::forward&lt;T&gt;(valu
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -722,8 +723,8 @@ requires requires(const Impl &amp;impl) { impl.all_of(std::forward&lt;T&gt;(valu
 
 </div>
 </div>
-<a id="a74ebd77555369e29bf9ff52d38d79b16" name="a74ebd77555369e29bf9ff52d38d79b16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74ebd77555369e29bf9ff52d38d79b16">&#9670;&#160;</a></span>empty()</h2>
+<a id="a576d9e1e02c34ff9028ae67626d358a1" name="a576d9e1e02c34ff9028ae67626d358a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a576d9e1e02c34ff9028ae67626d358a1">&#9670;&#160;</a></span>empty()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -757,7 +758,7 @@ requires requires(const Impl &amp;impl) { impl.empty(std::forward&lt;T&gt;(value
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -767,8 +768,8 @@ requires requires(const Impl &amp;impl) { impl.empty(std::forward&lt;T&gt;(value
 
 </div>
 </div>
-<a id="aa5d58fb428567c0c83013fbfc3af3824" name="aa5d58fb428567c0c83013fbfc3af3824"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5d58fb428567c0c83013fbfc3af3824">&#9670;&#160;</a></span>to_vector()</h2>
+<a id="ad160f1f0c9a2d39f6e70f60922e64acc" name="ad160f1f0c9a2d39f6e70f60922e64acc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad160f1f0c9a2d39f6e70f60922e64acc">&#9670;&#160;</a></span>to_vector()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -801,7 +802,7 @@ requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(v
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -811,8 +812,8 @@ requires requires(const Impl &amp;impl) { impl.to_vector(std::forward&lt;T&gt;(v
 
 </div>
 </div>
-<a id="ab6b3a9a87cf9894e75ffd0d3e063c0b0" name="ab6b3a9a87cf9894e75ffd0d3e063c0b0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6b3a9a87cf9894e75ffd0d3e063c0b0">&#9670;&#160;</a></span>find_first()</h2>
+<a id="a39cdc78772f8dd9622e04f26979d539e" name="a39cdc78772f8dd9622e04f26979d539e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a39cdc78772f8dd9622e04f26979d539e">&#9670;&#160;</a></span>find_first()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -851,7 +852,7 @@ requires requires(const Impl &amp;impl) { impl.find_first(std::forward&lt;T&gt;(
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

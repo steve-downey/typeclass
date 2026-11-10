@@ -111,54 +111,54 @@ Inheritance diagram for beman::transpose::derive_applicative&lt; Impl &gt;:</div
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abe8613dc169e6fecf50f97e10283ee52"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST_ARGUMENT , class... REST_ARGUMENTS&gt; <br />
+<tr class="memitem:a4724b31efff12229cc910395bcf21c0d"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST_ARGUMENT , class... REST_ARGUMENTS&gt; <br />
 requires requires(const Impl &amp;impl) { impl.invoke(std::forward&lt;FUNCTION&gt;(function), std::forward&lt;FIRST_ARGUMENT&gt;(first_argument), std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...); } || detail::invocable_through_ap&lt;decltype(self), FUNCTION, FIRST_ARGUMENT, REST_ARGUMENTS...&gt;</td></tr>
-<tr class="memitem:abe8613dc169e6fecf50f97e10283ee52"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#abe8613dc169e6fecf50f97e10283ee52">invoke</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments)</td></tr>
-<tr class="separator:abe8613dc169e6fecf50f97e10283ee52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adaebf7f879238a65d41f806e59d100be"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION_IN_CONTEXT , class ARGUMENT_IN_CONTEXT &gt; <br />
+<tr class="memitem:a4724b31efff12229cc910395bcf21c0d"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a4724b31efff12229cc910395bcf21c0d">invoke</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments) noexcept(detail::applicative_invoke_nothrow&lt; Impl, decltype(self), FUNCTION, FIRST_ARGUMENT, REST_ARGUMENTS... &gt;)</td></tr>
+<tr class="separator:a4724b31efff12229cc910395bcf21c0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f4dbbb3ad54ed584988fdb388d983f3"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION_IN_CONTEXT , class ARGUMENT_IN_CONTEXT &gt; <br />
 requires requires(const Impl &amp;impl) { impl.ap(std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function), std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument)); } || requires(const Impl &amp;impl) { impl.invoke(<a class="el" href="namespacebeman_1_1transpose.html#ab45a1fba92026eb4438ae55c3538089b">applicative_eval</a>, std::forward&lt;FUNCTION_IN_CONTEXT&gt;(function), std::forward&lt;ARGUMENT_IN_CONTEXT&gt;(argument)); }</td></tr>
-<tr class="memitem:adaebf7f879238a65d41f806e59d100be"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#adaebf7f879238a65d41f806e59d100be">ap</a> (this auto &amp;&amp;self, FUNCTION_IN_CONTEXT &amp;&amp;function, ARGUMENT_IN_CONTEXT &amp;&amp;argument)</td></tr>
-<tr class="separator:adaebf7f879238a65d41f806e59d100be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20d1c575dd7a6c281a92cb033ccd0cac"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class ARGUMENT &gt; <br />
+<tr class="memitem:a6f4dbbb3ad54ed584988fdb388d983f3"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a6f4dbbb3ad54ed584988fdb388d983f3">ap</a> (this auto &amp;&amp;self, FUNCTION_IN_CONTEXT &amp;&amp;function, ARGUMENT_IN_CONTEXT &amp;&amp;argument) noexcept(detail::applicative_ap_nothrow&lt; Impl, decltype(self), FUNCTION_IN_CONTEXT, ARGUMENT_IN_CONTEXT &gt;)</td></tr>
+<tr class="separator:a6f4dbbb3ad54ed584988fdb388d983f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa679219aae9fa0897fe77a8d778940f"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class ARGUMENT &gt; <br />
 requires requires(const Impl &amp;impl) { impl.map(std::forward&lt;FUNCTION&gt;(function), std::forward&lt;ARGUMENT&gt;(argument)); } || requires { self.invoke(std::forward&lt;FUNCTION&gt;(function), std::forward&lt;ARGUMENT&gt;(argument)); }</td></tr>
-<tr class="memitem:a20d1c575dd7a6c281a92cb033ccd0cac"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a20d1c575dd7a6c281a92cb033ccd0cac">map</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, ARGUMENT &amp;&amp;argument)</td></tr>
-<tr class="separator:a20d1c575dd7a6c281a92cb033ccd0cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7e5b98a2c33b3a11a836df5a663685b"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; <br />
+<tr class="memitem:afa679219aae9fa0897fe77a8d778940f"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#afa679219aae9fa0897fe77a8d778940f">map</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, ARGUMENT &amp;&amp;argument) noexcept(detail::applicative_map_nothrow&lt; Impl, decltype(self), FUNCTION, ARGUMENT &gt;)</td></tr>
+<tr class="separator:afa679219aae9fa0897fe77a8d778940f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb409e21fce309ad617310d8a3756b2d"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; <br />
 requires requires(const Impl &amp;impl) { impl.lift(std::forward&lt;VALUE&gt;(value)); } || requires { self.pure(std::forward&lt;VALUE&gt;(value)); }</td></tr>
-<tr class="memitem:aa7e5b98a2c33b3a11a836df5a663685b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#aa7e5b98a2c33b3a11a836df5a663685b">lift</a> (this auto &amp;&amp;self, VALUE &amp;&amp;value)</td></tr>
-<tr class="separator:aa7e5b98a2c33b3a11a836df5a663685b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b8f607d76f3912e968d4ab9eb0278a5"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST_ARGUMENT , class SECOND_ARGUMENT &gt; <br />
+<tr class="memitem:acb409e21fce309ad617310d8a3756b2d"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#acb409e21fce309ad617310d8a3756b2d">lift</a> (this auto &amp;&amp;self, VALUE &amp;&amp;value) noexcept(detail::applicative_lift_nothrow&lt; Impl, decltype(self), VALUE &gt;)</td></tr>
+<tr class="separator:acb409e21fce309ad617310d8a3756b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3bf502f36ba73dc18ab4eb59c86ea80"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST_ARGUMENT , class SECOND_ARGUMENT &gt; <br />
 requires requires(const Impl &amp;impl) { impl.zip_with(std::forward&lt;FUNCTION&gt;(function), std::forward&lt;FIRST_ARGUMENT&gt;(first_argument), std::forward&lt;SECOND_ARGUMENT&gt;(second_argument)); } || requires { self.invoke(std::forward&lt;FUNCTION&gt;(function), std::forward&lt;FIRST_ARGUMENT&gt;(first_argument), std::forward&lt;SECOND_ARGUMENT&gt;(second_argument)); }</td></tr>
-<tr class="memitem:a2b8f607d76f3912e968d4ab9eb0278a5"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a2b8f607d76f3912e968d4ab9eb0278a5">zip_with</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument)</td></tr>
-<tr class="separator:a2b8f607d76f3912e968d4ab9eb0278a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5506a11062973c605f38a28e1a1b166a"><td class="memTemplParams" colspan="2">template&lt;class FIRST_ARGUMENT , class SECOND_ARGUMENT &gt; <br />
+<tr class="memitem:ac3bf502f36ba73dc18ab4eb59c86ea80"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#ac3bf502f36ba73dc18ab4eb59c86ea80">zip_with</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument) noexcept(detail::applicative_zip_with_nothrow&lt; Impl, decltype(self), FUNCTION, FIRST_ARGUMENT, SECOND_ARGUMENT &gt;)</td></tr>
+<tr class="separator:ac3bf502f36ba73dc18ab4eb59c86ea80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a089f6a3eec08f61beef611dc5087691c"><td class="memTemplParams" colspan="2">template&lt;class FIRST_ARGUMENT , class SECOND_ARGUMENT &gt; <br />
 requires requires(const Impl &amp;impl) { impl.discard_first(std::forward&lt;FIRST_ARGUMENT&gt;(first_argument), std::forward&lt;SECOND_ARGUMENT&gt;(second_argument)); } || requires { self.invoke(<a class="el" href="namespacebeman_1_1transpose.html#a669ddd20f385c1612a3332b96674c2db">discard_first_eval</a>, std::forward&lt;FIRST_ARGUMENT&gt;(first_argument), std::forward&lt;SECOND_ARGUMENT&gt;(second_argument)); }</td></tr>
-<tr class="memitem:a5506a11062973c605f38a28e1a1b166a"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a5506a11062973c605f38a28e1a1b166a">discard_first</a> (this auto &amp;&amp;self, FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument)</td></tr>
-<tr class="separator:a5506a11062973c605f38a28e1a1b166a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad37c934ddc57195ed84be50d88a1bd37"><td class="memTemplParams" colspan="2">template&lt;class FIRST_ARGUMENT , class SECOND_ARGUMENT &gt; <br />
+<tr class="memitem:a089f6a3eec08f61beef611dc5087691c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a089f6a3eec08f61beef611dc5087691c">discard_first</a> (this auto &amp;&amp;self, FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument) noexcept(detail::applicative_discard_first_nothrow&lt; Impl, decltype(self), FIRST_ARGUMENT, SECOND_ARGUMENT &gt;)</td></tr>
+<tr class="separator:a089f6a3eec08f61beef611dc5087691c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8edd96cc3b047650a08180dd780dd6f4"><td class="memTemplParams" colspan="2">template&lt;class FIRST_ARGUMENT , class SECOND_ARGUMENT &gt; <br />
 requires requires(const Impl &amp;impl) { impl.discard_second(std::forward&lt;FIRST_ARGUMENT&gt;(first_argument), std::forward&lt;SECOND_ARGUMENT&gt;(second_argument)); } || requires { self.invoke(<a class="el" href="namespacebeman_1_1transpose.html#adb96a4f83cb84456fb344a32b0aa1b7a">discard_second_eval</a>, std::forward&lt;FIRST_ARGUMENT&gt;(first_argument), std::forward&lt;SECOND_ARGUMENT&gt;(second_argument)); }</td></tr>
-<tr class="memitem:ad37c934ddc57195ed84be50d88a1bd37"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#ad37c934ddc57195ed84be50d88a1bd37">discard_second</a> (this auto &amp;&amp;self, FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument)</td></tr>
-<tr class="separator:ad37c934ddc57195ed84be50d88a1bd37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a29fc51a0123c34ba2a5df5ffe998833c"><td class="memTemplParams" colspan="2">template&lt;class TARGET_GRADE , class CARRIER &gt; <br />
-requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e670c9d07c65027aa6f9fc9c9cee7">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</td></tr>
-<tr class="memitem:a29fc51a0123c34ba2a5df5ffe998833c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a29fc51a0123c34ba2a5df5ffe998833c">subsume</a> (this auto &amp;&amp;, CARRIER &amp;&amp;value)</td></tr>
-<tr class="separator:a29fc51a0123c34ba2a5df5ffe998833c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3f70129ffae5efef09a5a8819bec7d7"><td class="memTemplParams" colspan="2">template&lt;class APPLICATIVE_MAP , class FUNCTION , class FIRST_ARGUMENT , class... REST_ARGUMENTS&gt; <br />
+<tr class="memitem:a8edd96cc3b047650a08180dd780dd6f4"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a8edd96cc3b047650a08180dd780dd6f4">discard_second</a> (this auto &amp;&amp;self, FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument) noexcept(detail::applicative_discard_second_nothrow&lt; Impl, decltype(self), FIRST_ARGUMENT, SECOND_ARGUMENT &gt;)</td></tr>
+<tr class="separator:a8edd96cc3b047650a08180dd780dd6f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2602aee23364110c876263ca8ca9d2c"><td class="memTemplParams" colspan="2">template&lt;class TARGET_GRADE , class CARRIER &gt; <br />
+requires requires { <a class="el" href="namespacebeman_1_1transpose.html#aed943ae15cef4376d03d774d29bef8e2">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</td></tr>
+<tr class="memitem:ab2602aee23364110c876263ca8ca9d2c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#ab2602aee23364110c876263ca8ca9d2c">subsume</a> (this auto &amp;&amp;, CARRIER &amp;&amp;value) noexcept(noexcept(<a class="el" href="namespacebeman_1_1transpose.html#aed943ae15cef4376d03d774d29bef8e2">grade_subsume</a>&lt; TARGET_GRADE &gt;(std::forward&lt; CARRIER &gt;(value))))</td></tr>
+<tr class="separator:ab2602aee23364110c876263ca8ca9d2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41a3b492bf8915322981015520fdbcc0"><td class="memTemplParams" colspan="2">template&lt;class APPLICATIVE_MAP , class FUNCTION , class FIRST_ARGUMENT , class... REST_ARGUMENTS&gt; <br />
 requires requires { applicative_map.invoke( std::forward&lt;FUNCTION&gt;(function), std::forward&lt;FIRST_ARGUMENT&gt;(first_argument), std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...); }</td></tr>
-<tr class="memitem:ae3f70129ffae5efef09a5a8819bec7d7"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#ae3f70129ffae5efef09a5a8819bec7d7">invoke_with</a> (this auto &amp;&amp;, const APPLICATIVE_MAP &amp;applicative_map, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments)</td></tr>
-<tr class="separator:ae3f70129ffae5efef09a5a8819bec7d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbaa207252a0db912de63c24a9425ef9"><td class="memTemplParams" colspan="2">template&lt;const auto &amp; APPLICATIVE_MAP, class FUNCTION , class FIRST_ARGUMENT , class... REST_ARGUMENTS&gt; <br />
+<tr class="memitem:a41a3b492bf8915322981015520fdbcc0"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a41a3b492bf8915322981015520fdbcc0">invoke_with</a> (this auto &amp;&amp;, const APPLICATIVE_MAP &amp;applicative_map, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments) noexcept(noexcept(applicative_map .<a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a4724b31efff12229cc910395bcf21c0d">invoke</a>(std::forward&lt; FUNCTION &gt;(function), std::forward&lt; FIRST_ARGUMENT &gt;(first_argument), std::forward&lt; REST_ARGUMENTS &gt;(rest_arguments)...)))</td></tr>
+<tr class="separator:a41a3b492bf8915322981015520fdbcc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eea7666251e152966fc1363722a893d"><td class="memTemplParams" colspan="2">template&lt;const auto &amp; APPLICATIVE_MAP, class FUNCTION , class FIRST_ARGUMENT , class... REST_ARGUMENTS&gt; <br />
 requires requires { APPLICATIVE_MAP.invoke( std::forward&lt;FUNCTION&gt;(function), std::forward&lt;FIRST_ARGUMENT&gt;(first_argument), std::forward&lt;REST_ARGUMENTS&gt;(rest_arguments)...); }</td></tr>
-<tr class="memitem:abbaa207252a0db912de63c24a9425ef9"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#abbaa207252a0db912de63c24a9425ef9">invoke_with</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments)</td></tr>
-<tr class="separator:abbaa207252a0db912de63c24a9425ef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eea7666251e152966fc1363722a893d"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a7eea7666251e152966fc1363722a893d">invoke_with</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, REST_ARGUMENTS &amp;&amp;...rest_arguments) noexcept(noexcept(APPLICATIVE_MAP .<a class="el" href="structbeman_1_1transpose_1_1derive__applicative.html#a4724b31efff12229cc910395bcf21c0d">invoke</a>(std::forward&lt; FUNCTION &gt;(function), std::forward&lt; FIRST_ARGUMENT &gt;(first_argument), std::forward&lt; REST_ARGUMENTS &gt;(rest_arguments)...)))</td></tr>
+<tr class="separator:a7eea7666251e152966fc1363722a893d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class Impl&gt;<br />
 struct beman::transpose::derive_applicative&lt; Impl &gt;</div><p>CRTP base for Applicative instances. </p>
 <p><code>Impl</code> must provide <code><a class="el" href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">pure(value)</a></code> and either the n-ary <code><a class="el" href="namespacebeman_1_1transpose.html#a66c285a86cc3624bc83fefd648e57df4">invoke(f, args_in_context...)</a></code> or the one-step <code><a class="el" href="namespacebeman_1_1transpose.html#a01fe90066997f5d64ec063d4f6fff430">ap(f_in_context, arg_in_context)</a></code>; the base derives the missing one and every other operation. invoke is the user-facing interface; ap is the classic basis. A Map may re-expose <code>Impl::invoke</code> with a using-declaration, as the library's own instances do, but it need not: the base's <code>invoke</code> is constrained on whichever basis <code>Impl</code> supplies, so leaving the using-declaration out never turns a probe of <code>invoke</code> into a hard error. Re-exposing is an optimization that skips the base's dispatch. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="abe8613dc169e6fecf50f97e10283ee52" name="abe8613dc169e6fecf50f97e10283ee52"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe8613dc169e6fecf50f97e10283ee52">&#9670;&#160;</a></span>invoke()</h2>
+<a id="a4724b31efff12229cc910395bcf21c0d" name="a4724b31efff12229cc910395bcf21c0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4724b31efff12229cc910395bcf21c0d">&#9670;&#160;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -204,15 +204,15 @@ requires requires(const Impl &amp;impl) { impl.invoke(std::forward&lt;FUNCTION&g
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="adaebf7f879238a65d41f806e59d100be" name="adaebf7f879238a65d41f806e59d100be"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adaebf7f879238a65d41f806e59d100be">&#9670;&#160;</a></span>ap()</h2>
+<a id="a6f4dbbb3ad54ed584988fdb388d983f3" name="a6f4dbbb3ad54ed584988fdb388d983f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f4dbbb3ad54ed584988fdb388d983f3">&#9670;&#160;</a></span>ap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,15 +252,15 @@ requires requires(const Impl &amp;impl) { impl.ap(std::forward&lt;FUNCTION_IN_CO
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a20d1c575dd7a6c281a92cb033ccd0cac" name="a20d1c575dd7a6c281a92cb033ccd0cac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20d1c575dd7a6c281a92cb033ccd0cac">&#9670;&#160;</a></span>map()</h2>
+<a id="afa679219aae9fa0897fe77a8d778940f" name="afa679219aae9fa0897fe77a8d778940f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa679219aae9fa0897fe77a8d778940f">&#9670;&#160;</a></span>map()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -300,15 +300,15 @@ requires requires(const Impl &amp;impl) { impl.map(std::forward&lt;FUNCTION&gt;(
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aa7e5b98a2c33b3a11a836df5a663685b" name="aa7e5b98a2c33b3a11a836df5a663685b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa7e5b98a2c33b3a11a836df5a663685b">&#9670;&#160;</a></span>lift()</h2>
+<a id="acb409e21fce309ad617310d8a3756b2d" name="acb409e21fce309ad617310d8a3756b2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb409e21fce309ad617310d8a3756b2d">&#9670;&#160;</a></span>lift()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -342,15 +342,15 @@ requires requires(const Impl &amp;impl) { impl.lift(std::forward&lt;VALUE&gt;(va
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a2b8f607d76f3912e968d4ab9eb0278a5" name="a2b8f607d76f3912e968d4ab9eb0278a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2b8f607d76f3912e968d4ab9eb0278a5">&#9670;&#160;</a></span>zip_with()</h2>
+<a id="ac3bf502f36ba73dc18ab4eb59c86ea80" name="ac3bf502f36ba73dc18ab4eb59c86ea80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3bf502f36ba73dc18ab4eb59c86ea80">&#9670;&#160;</a></span>zip_with()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -396,15 +396,15 @@ requires requires(const Impl &amp;impl) { impl.zip_with(std::forward&lt;FUNCTION
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a5506a11062973c605f38a28e1a1b166a" name="a5506a11062973c605f38a28e1a1b166a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5506a11062973c605f38a28e1a1b166a">&#9670;&#160;</a></span>discard_first()</h2>
+<a id="a089f6a3eec08f61beef611dc5087691c" name="a089f6a3eec08f61beef611dc5087691c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a089f6a3eec08f61beef611dc5087691c">&#9670;&#160;</a></span>discard_first()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -444,15 +444,15 @@ requires requires(const Impl &amp;impl) { impl.discard_first(std::forward&lt;FIR
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ad37c934ddc57195ed84be50d88a1bd37" name="ad37c934ddc57195ed84be50d88a1bd37"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad37c934ddc57195ed84be50d88a1bd37">&#9670;&#160;</a></span>discard_second()</h2>
+<a id="a8edd96cc3b047650a08180dd780dd6f4" name="a8edd96cc3b047650a08180dd780dd6f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8edd96cc3b047650a08180dd780dd6f4">&#9670;&#160;</a></span>discard_second()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -492,24 +492,24 @@ requires requires(const Impl &amp;impl) { impl.discard_second(std::forward&lt;FI
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a29fc51a0123c34ba2a5df5ffe998833c" name="a29fc51a0123c34ba2a5df5ffe998833c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a29fc51a0123c34ba2a5df5ffe998833c">&#9670;&#160;</a></span>subsume()</h2>
+<a id="ab2602aee23364110c876263ca8ca9d2c" name="ab2602aee23364110c876263ca8ca9d2c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2602aee23364110c876263ca8ca9d2c">&#9670;&#160;</a></span>subsume()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Impl &gt; <br />
-requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e670c9d07c65027aa6f9fc9c9cee7">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</div>
+requires requires { <a class="el" href="namespacebeman_1_1transpose.html#aed943ae15cef4376d03d774d29bef8e2">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</div>
 <div class="memtemplate">
 template&lt;class TARGET_GRADE , class CARRIER &gt; <br />
-requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e670c9d07c65027aa6f9fc9c9cee7">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</div>
+requires requires { <a class="el" href="namespacebeman_1_1transpose.html#aed943ae15cef4376d03d774d29bef8e2">grade_subsume</a>&lt;TARGET_GRADE&gt;(std::forward&lt;CARRIER&gt;(value)); }</div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -534,15 +534,15 @@ requires requires { <a class="el" href="namespacebeman_1_1transpose.html#a0a5e67
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ae3f70129ffae5efef09a5a8819bec7d7" name="ae3f70129ffae5efef09a5a8819bec7d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae3f70129ffae5efef09a5a8819bec7d7">&#9670;&#160;</a></span>invoke_with() <span class="overload">[1/2]</span></h2>
+<a id="a41a3b492bf8915322981015520fdbcc0" name="a41a3b492bf8915322981015520fdbcc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a41a3b492bf8915322981015520fdbcc0">&#9670;&#160;</a></span>invoke_with() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -594,15 +594,15 @@ requires requires { applicative_map.invoke( std::forward&lt;FUNCTION&gt;(functio
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="abbaa207252a0db912de63c24a9425ef9" name="abbaa207252a0db912de63c24a9425ef9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbaa207252a0db912de63c24a9425ef9">&#9670;&#160;</a></span>invoke_with() <span class="overload">[2/2]</span></h2>
+<a id="a7eea7666251e152966fc1363722a893d" name="a7eea7666251e152966fc1363722a893d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7eea7666251e152966fc1363722a893d">&#9670;&#160;</a></span>invoke_with() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -648,7 +648,7 @@ requires requires { APPLICATIVE_MAP.invoke( std::forward&lt;FUNCTION&gt;(functio
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

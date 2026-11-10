@@ -2,6 +2,8 @@ var concepts =
 [
     [ "beman", "namespacebeman.html", [
       [ "transpose", "namespacebeman_1_1transpose.html", [
+        [ "alternative_impl", "conceptbeman_1_1transpose_1_1alternative__impl.html", null ],
+        [ "alternative_object", "conceptbeman_1_1transpose_1_1alternative__object.html", null ],
         [ "applicative_impl", "conceptbeman_1_1transpose_1_1applicative__impl.html", null ],
         [ "applicative_object", "conceptbeman_1_1transpose_1_1applicative__object.html", null ],
         [ "foldable_impl", "conceptbeman_1_1transpose_1_1foldable__impl.html", null ],

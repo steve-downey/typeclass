@@ -11,13 +11,13 @@ var searchData=
   ['make_5fslot_8',['make_slot',['../namespacebeman_1_1tree__algorithms.html#ad7bcb1308671db78501a4485990ded62',1,'beman::tree_algorithms']]],
   ['make_5fsucc_9',['make_succ',['../namespacebeman_1_1tree__algorithms.html#a53349124213431c396a7af5482e15f5a',1,'beman::tree_algorithms']]],
   ['make_5fzero_10',['make_zero',['../namespacebeman_1_1tree__algorithms.html#ab8afe3d8ac744ad4680957e89769883f',1,'beman::tree_algorithms']]],
-  ['map_11',['map',['../structbeman_1_1transpose_1_1derive__applicative.html#a20d1c575dd7a6c281a92cb033ccd0cac',1,'beman::transpose::derive_applicative']]],
+  ['map_11',['map',['../structbeman_1_1transpose_1_1derive__applicative.html#afa679219aae9fa0897fe77a8d778940f',1,'beman::transpose::derive_applicative']]],
   ['max_12',['max',['../classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a29ed66a78ec91965d2acc4f2439d6593',1,'beman::fingertree::tree::FingerTreePriorityQueue']]],
   ['max_5fsize_13',['max_size',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a1ec4e33e6e365939ca7891fc3e6ab889',1,'beman::fingertree::tree::FingerTree']]],
-  ['mbind_14',['mbind',['../namespacebeman_1_1transpose.html#ac17f550d3e4236b11d59c51d5d8c9ede',1,'beman::transpose']]],
+  ['mbind_14',['mbind',['../namespacebeman_1_1transpose.html#a0b9efe60883f38377fa9b6d07e3ebb20',1,'beman::transpose']]],
   ['measure_15',['measure',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a63119ba7d89162e8ad64d1344b410211',1,'beman::fingertree::tree::FingerTree::measure()'],['../classbeman_1_1tree__algorithms_1_1FringeTree.html#a7a1d119b7081978e1ede31ffaaf8856a',1,'beman::tree_algorithms::FringeTree::measure()']]],
   ['min_16',['min',['../classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#ae73e88d2e74b97d4dc82d56e1adde660',1,'beman::fingertree::tree::FingerTreePriorityQueue']]],
-  ['monoid_5fcombine_17',['monoid_combine',['../namespacebeman_1_1transpose.html#a11a01701a9a03c8a81a3c9366c82f20b',1,'beman::transpose']]],
-  ['monoid_5fidentity_18',['monoid_identity',['../namespacebeman_1_1transpose.html#acba84f38225ce37463e38b2875f3c00f',1,'beman::transpose']]],
+  ['monoid_5fcombine_17',['monoid_combine',['../namespacebeman_1_1transpose.html#a50b5c831d79245ee5d9bc6689a705d9a',1,'beman::transpose']]],
+  ['monoid_5fidentity_18',['monoid_identity',['../namespacebeman_1_1transpose.html#a6365937c0ff7195ecc303293a13c015c',1,'beman::transpose']]],
   ['mul_5fnode_19',['mul_node',['../namespacebeman_1_1tree__algorithms.html#aa30a8172383018787acd564137315475',1,'beman::tree_algorithms']]]
 ];

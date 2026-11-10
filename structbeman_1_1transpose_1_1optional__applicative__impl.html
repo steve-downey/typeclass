@@ -115,21 +115,23 @@ Inheritance diagram for beman::transpose::optional_applicative_impl&lt; VALUE_TY
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae530ecba893dcb3c19565e0e4c183814"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
-<tr class="memitem:ae530ecba893dcb3c19565e0e4c183814"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#ae530ecba893dcb3c19565e0e4c183814">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value) -&gt; std::optional&lt; std::remove_cvref_t&lt; VALUE &gt; &gt;</td></tr>
-<tr class="separator:ae530ecba893dcb3c19565e0e4c183814"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add85cb52ce6d9c0c7dce162ec435eed0"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
+<tr class="memitem:ae1c6d17d69db01d9e3e6761bc97f0a39"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
+<tr class="memitem:ae1c6d17d69db01d9e3e6761bc97f0a39"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#ae1c6d17d69db01d9e3e6761bc97f0a39">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value) noexcept(std::is_nothrow_constructible_v&lt; std::optional&lt; std::remove_cvref_t&lt; VALUE &gt; &gt;, VALUE &gt;) -&gt; std::optional&lt; std::remove_cvref_t&lt; VALUE &gt; &gt;</td></tr>
+<tr class="separator:ae1c6d17d69db01d9e3e6761bc97f0a39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cc8c27339d264b8fbb4ddc481de33fb"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#a4cc8c27339d264b8fbb4ddc481de33fb">zero</a> (this auto &amp;&amp;) noexcept -&gt; std::optional&lt; VALUE_TYPE &gt;</td></tr>
+<tr class="separator:a4cc8c27339d264b8fbb4ddc481de33fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e721cb443fc8cc94099344f073f50df"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
 requires detail::is_optional_v&lt;FIRST&gt; &amp;&amp; (detail::is_optional_v&lt;REST&gt; &amp;&amp; ...) &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;, detail::contained_ref_t&lt;REST&gt;...&gt; &amp;&amp; detail::optional_holdable_value&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::contained_ref_t&lt;FIRST&gt;, detail::contained_ref_t&lt;REST&gt;...&gt;&gt;</td></tr>
-<tr class="memitem:add85cb52ce6d9c0c7dce162ec435eed0"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#add85cb52ce6d9c0c7dce162ec435eed0">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest) -&gt; std::optional&lt; std::remove_cvref_t&lt; std::invoke_result_t&lt; FUNCTION &amp;, detail::contained_ref_t&lt; FIRST &gt;, detail::contained_ref_t&lt; REST &gt;... &gt; &gt; &gt;</td></tr>
-<tr class="separator:add85cb52ce6d9c0c7dce162ec435eed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e721cb443fc8cc94099344f073f50df"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html#a7e721cb443fc8cc94099344f073f50df">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest) noexcept(detail::optional_invoke_nothrow&lt; FUNCTION, FIRST, REST... &gt;) -&gt; std::optional&lt; std::remove_cvref_t&lt; std::invoke_result_t&lt; FUNCTION &amp;, detail::contained_ref_t&lt; FIRST &gt;, detail::contained_ref_t&lt; REST &gt;... &gt; &gt; &gt;</td></tr>
+<tr class="separator:a7e721cb443fc8cc94099344f073f50df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class VALUE_TYPE&gt;<br />
 struct beman::transpose::optional_applicative_impl&lt; VALUE_TYPE &gt;</div><p>Applicative instance for std::optional: the flagship of the invoke core. </p>
 <p>The trailing return type keeps invoke SFINAE-friendly so availability probes fail cleanly. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae530ecba893dcb3c19565e0e4c183814" name="ae530ecba893dcb3c19565e0e4c183814"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae530ecba893dcb3c19565e0e4c183814">&#9670;&#160;</a></span>pure()</h2>
+<a id="ae1c6d17d69db01d9e3e6761bc97f0a39" name="ae1c6d17d69db01d9e3e6761bc97f0a39"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae1c6d17d69db01d9e3e6761bc97f0a39">&#9670;&#160;</a></span>pure()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -161,15 +163,43 @@ template&lt;class VALUE &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="add85cb52ce6d9c0c7dce162ec435eed0" name="add85cb52ce6d9c0c7dce162ec435eed0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add85cb52ce6d9c0c7dce162ec435eed0">&#9670;&#160;</a></span>invoke()</h2>
+<a id="a4cc8c27339d264b8fbb4ddc481de33fb" name="a4cc8c27339d264b8fbb4ddc481de33fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cc8c27339d264b8fbb4ddc481de33fb">&#9670;&#160;</a></span>zero()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class VALUE_TYPE &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr auto <a class="el" href="structbeman_1_1transpose_1_1optional__applicative__impl.html">beman::transpose::optional_applicative_impl</a>&lt; VALUE_TYPE &gt;::zero </td>
+          <td>(</td>
+          <td class="paramtype">this auto &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td> -&gt; std::optional&lt;VALUE_TYPE&gt;</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a7e721cb443fc8cc94099344f073f50df" name="a7e721cb443fc8cc94099344f073f50df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e721cb443fc8cc94099344f073f50df">&#9670;&#160;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -217,7 +247,7 @@ requires detail::is_optional_v&lt;FIRST&gt; &amp;&amp; (detail::is_optional_v&lt
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

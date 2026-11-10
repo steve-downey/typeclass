@@ -105,18 +105,18 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1ap__fn.htm
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adbd768756719c5f051c39c1ab6941e6e"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION_IN_CONTEXT , class ARGUMENT_IN_CONTEXT , const auto &amp; TC = applicative&lt;std::remove_cvref_t&lt;ARGUMENT_IN_CONTEXT&gt;&gt;&gt; <br />
+<tr class="memitem:aea465980eef3abfbc30977464dabfb1b"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION_IN_CONTEXT , class ARGUMENT_IN_CONTEXT , const auto &amp; TC = applicative&lt;std::remove_cvref_t&lt;ARGUMENT_IN_CONTEXT&gt;&gt;&gt; <br />
 requires requires { TC.ap(std::declval&lt;FUNCTION_IN_CONTEXT&gt;(), std::declval&lt;ARGUMENT_IN_CONTEXT&gt;()); }</td></tr>
-<tr class="memitem:adbd768756719c5f051c39c1ab6941e6e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1ap__fn.html#adbd768756719c5f051c39c1ab6941e6e">operator()</a> (FUNCTION_IN_CONTEXT &amp;&amp;function, ARGUMENT_IN_CONTEXT &amp;&amp;argument) const</td></tr>
-<tr class="memdesc:adbd768756719c5f051c39c1ab6941e6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a callable held in context to one argument in context.  <br /></td></tr>
-<tr class="separator:adbd768756719c5f051c39c1ab6941e6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea465980eef3abfbc30977464dabfb1b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1ap__fn.html#aea465980eef3abfbc30977464dabfb1b">operator()</a> (FUNCTION_IN_CONTEXT &amp;&amp;function, ARGUMENT_IN_CONTEXT &amp;&amp;argument) const noexcept(noexcept(TC.ap(std::forward&lt; FUNCTION_IN_CONTEXT &gt;(function), std::forward&lt; ARGUMENT_IN_CONTEXT &gt;(argument))))</td></tr>
+<tr class="memdesc:aea465980eef3abfbc30977464dabfb1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies a callable held in context to one argument in context.  <br /></td></tr>
+<tr class="separator:aea465980eef3abfbc30977464dabfb1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for Applicative's <code>ap</code>, the classic one-step application; secondary to <code>invoke</code>, and available only where the context can hold a callable. </p>
 <p>The context keys the lookup and is deduced from the argument-in-context, not from the callable-in-context. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="adbd768756719c5f051c39c1ab6941e6e" name="adbd768756719c5f051c39c1ab6941e6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adbd768756719c5f051c39c1ab6941e6e">&#9670;&#160;</a></span>operator()()</h2>
+<a id="aea465980eef3abfbc30977464dabfb1b" name="aea465980eef3abfbc30977464dabfb1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea465980eef3abfbc30977464dabfb1b">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -147,7 +147,7 @@ requires requires { TC.ap(std::declval&lt;FUNCTION_IN_CONTEXT&gt;(), std::declva
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

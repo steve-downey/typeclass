@@ -105,22 +105,22 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1combine__a
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af401d9f29c051cf72d11ab97634efd59"><td class="memTemplParams" colspan="2">template&lt;class T , class MONOID , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:a5d0c50cd43e398dd0dc175aad39b389a"><td class="memTemplParams" colspan="2">template&lt;class T , class MONOID , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.combine_all(std::declval&lt;T&gt;(), std::declval&lt;MONOID&gt;()); }</td></tr>
-<tr class="memitem:af401d9f29c051cf72d11ab97634efd59"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1combine__all__fn.html#af401d9f29c051cf72d11ab97634efd59">operator()</a> (T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>) const</td></tr>
-<tr class="memdesc:af401d9f29c051cf72d11ab97634efd59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines all elements under <code>monoid</code>.  <br /></td></tr>
-<tr class="separator:af401d9f29c051cf72d11ab97634efd59"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9739e685f6de58261ea38f5ade0ee0e0"><td class="memTemplParams" colspan="2">template&lt;class T , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:a5d0c50cd43e398dd0dc175aad39b389a"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1combine__all__fn.html#a5d0c50cd43e398dd0dc175aad39b389a">operator()</a> (T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>) const noexcept(noexcept(TC.combine_all(std::forward&lt; T &gt;(value), std::move(<a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>))))</td></tr>
+<tr class="memdesc:a5d0c50cd43e398dd0dc175aad39b389a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines all elements under <code>monoid</code>.  <br /></td></tr>
+<tr class="separator:a5d0c50cd43e398dd0dc175aad39b389a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3baabbfaa86756a0e0a094a14528ec96"><td class="memTemplParams" colspan="2">template&lt;class T , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.combine_all(std::declval&lt;T&gt;()); }</td></tr>
-<tr class="memitem:a9739e685f6de58261ea38f5ade0ee0e0"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1combine__all__fn.html#a9739e685f6de58261ea38f5ade0ee0e0">operator()</a> (T &amp;&amp;value) const</td></tr>
-<tr class="memdesc:a9739e685f6de58261ea38f5ade0ee0e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines all elements under the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of the element type; not a candidate where the element type has no registration.  <br /></td></tr>
-<tr class="separator:a9739e685f6de58261ea38f5ade0ee0e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3baabbfaa86756a0e0a094a14528ec96"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1combine__all__fn.html#a3baabbfaa86756a0e0a094a14528ec96">operator()</a> (T &amp;&amp;value) const noexcept(noexcept(TC.combine_all(std::forward&lt; T &gt;(value))))</td></tr>
+<tr class="memdesc:a3baabbfaa86756a0e0a094a14528ec96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines all elements under the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of the element type; not a candidate where the element type has no registration.  <br /></td></tr>
+<tr class="separator:a3baabbfaa86756a0e0a094a14528ec96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for the derived <code>combine_all</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="af401d9f29c051cf72d11ab97634efd59" name="af401d9f29c051cf72d11ab97634efd59"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af401d9f29c051cf72d11ab97634efd59">&#9670;&#160;</a></span>operator()() <span class="overload">[1/2]</span></h2>
+<a id="a5d0c50cd43e398dd0dc175aad39b389a" name="a5d0c50cd43e398dd0dc175aad39b389a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d0c50cd43e398dd0dc175aad39b389a">&#9670;&#160;</a></span>operator()() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -151,7 +151,7 @@ requires requires { TC.combine_all(std::declval&lt;T&gt;(), std::declval&lt;MONO
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -160,8 +160,8 @@ requires requires { TC.combine_all(std::declval&lt;T&gt;(), std::declval&lt;MONO
 
 </div>
 </div>
-<a id="a9739e685f6de58261ea38f5ade0ee0e0" name="a9739e685f6de58261ea38f5ade0ee0e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9739e685f6de58261ea38f5ade0ee0e0">&#9670;&#160;</a></span>operator()() <span class="overload">[2/2]</span></h2>
+<a id="a3baabbfaa86756a0e0a094a14528ec96" name="a3baabbfaa86756a0e0a094a14528ec96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3baabbfaa86756a0e0a094a14528ec96">&#9670;&#160;</a></span>operator()() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -182,7 +182,7 @@ requires requires { TC.combine_all(std::declval&lt;T&gt;()); }</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

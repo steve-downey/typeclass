@@ -105,23 +105,23 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1fold__map_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a60d254f39d13f225dad424d007098170"><td class="memTemplParams" colspan="2">template&lt;class F , class T , class MONOID , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:a59c7a175b6ff7866d34555c8a1404d93"><td class="memTemplParams" colspan="2">template&lt;class F , class T , class MONOID , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.fold_map(std::declval&lt;F&gt;(), std::declval&lt;T&gt;(), std::declval&lt;MONOID&gt;()); }</td></tr>
-<tr class="memitem:a60d254f39d13f225dad424d007098170"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1fold__map__fn.html#a60d254f39d13f225dad424d007098170">operator()</a> (F &amp;&amp;function, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>) const</td></tr>
-<tr class="memdesc:a60d254f39d13f225dad424d007098170"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps each element into <code>monoid</code> and combines the images in the instance's documented traversal order.  <br /></td></tr>
-<tr class="separator:a60d254f39d13f225dad424d007098170"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70a05a78d30a95876fe58d75b6bcb048"><td class="memTemplParams" colspan="2">template&lt;class F , class T , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:a59c7a175b6ff7866d34555c8a1404d93"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1fold__map__fn.html#a59c7a175b6ff7866d34555c8a1404d93">operator()</a> (F &amp;&amp;function, T &amp;&amp;value, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>) const noexcept(noexcept(TC.fold_map(std::forward&lt; F &gt;(function), std::forward&lt; T &gt;(value), std::move(<a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>))))</td></tr>
+<tr class="memdesc:a59c7a175b6ff7866d34555c8a1404d93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps each element into <code>monoid</code> and combines the images in the instance's documented traversal order.  <br /></td></tr>
+<tr class="separator:a59c7a175b6ff7866d34555c8a1404d93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8539c61ac84204a9fae58ad8c964b32e"><td class="memTemplParams" colspan="2">template&lt;class F , class T , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.fold_map(std::declval&lt;F&gt;(), std::declval&lt;T&gt;()); }</td></tr>
-<tr class="memitem:a70a05a78d30a95876fe58d75b6bcb048"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1fold__map__fn.html#a70a05a78d30a95876fe58d75b6bcb048">operator()</a> (F &amp;&amp;function, T &amp;&amp;value) const</td></tr>
-<tr class="memdesc:a70a05a78d30a95876fe58d75b6bcb048"><td class="mdescLeft">&#160;</td><td class="mdescRight">As above, with the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of the result type.  <br /></td></tr>
-<tr class="separator:a70a05a78d30a95876fe58d75b6bcb048"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8539c61ac84204a9fae58ad8c964b32e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1fold__map__fn.html#a8539c61ac84204a9fae58ad8c964b32e">operator()</a> (F &amp;&amp;function, T &amp;&amp;value) const noexcept(noexcept(TC.fold_map(std::forward&lt; F &gt;(function), std::forward&lt; T &gt;(value))))</td></tr>
+<tr class="memdesc:a8539c61ac84204a9fae58ad8c964b32e"><td class="mdescLeft">&#160;</td><td class="mdescRight">As above, with the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of the result type.  <br /></td></tr>
+<tr class="separator:a8539c61ac84204a9fae58ad8c964b32e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for Foldable's <code>fold_map</code> primitive. </p>
 <p>The container type keys the lookup and is deduced from the second argument. The monoid instance is the trailing argument, as it is on the instance (docs/transpose/decisions.md<a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f" title="Canonical lookup object for Monoid&lt;VALUE_TYPE&gt;; used by generic algorithms.">monoid</a>-selection); without it the call defaults to the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of the result type, and where that type has no registration the two-argument form is not a candidate. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a60d254f39d13f225dad424d007098170" name="a60d254f39d13f225dad424d007098170"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60d254f39d13f225dad424d007098170">&#9670;&#160;</a></span>operator()() <span class="overload">[1/2]</span></h2>
+<a id="a59c7a175b6ff7866d34555c8a1404d93" name="a59c7a175b6ff7866d34555c8a1404d93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59c7a175b6ff7866d34555c8a1404d93">&#9670;&#160;</a></span>operator()() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -158,7 +158,7 @@ requires requires { TC.fold_map(std::declval&lt;F&gt;(), std::declval&lt;T&gt;()
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -173,8 +173,8 @@ requires requires { TC.fold_map(std::declval&lt;F&gt;(), std::declval&lt;T&gt;()
 
 </div>
 </div>
-<a id="a70a05a78d30a95876fe58d75b6bcb048" name="a70a05a78d30a95876fe58d75b6bcb048"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a70a05a78d30a95876fe58d75b6bcb048">&#9670;&#160;</a></span>operator()() <span class="overload">[2/2]</span></h2>
+<a id="a8539c61ac84204a9fae58ad8c964b32e" name="a8539c61ac84204a9fae58ad8c964b32e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8539c61ac84204a9fae58ad8c964b32e">&#9670;&#160;</a></span>operator()() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -205,7 +205,7 @@ requires requires { TC.fold_map(std::declval&lt;F&gt;(), std::declval&lt;T&gt;()
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

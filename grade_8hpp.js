@@ -9,6 +9,6 @@ var grade_8hpp =
     [ "grade_of_t", "grade_8hpp.html#afb36f4cfc565d3b179156a4d02b445b8", null ],
     [ "rebind_grade_t", "grade_8hpp.html#a992d04f499d7f764ece410aa4887c16a", null ],
     [ "grade_model_t", "grade_8hpp.html#a87f9ae0cade0402edd72a863ecb236b5", null ],
-    [ "grade_subsume", "grade_8hpp.html#a0a5e670c9d07c65027aa6f9fc9c9cee7", null ],
+    [ "grade_subsume", "grade_8hpp.html#aed943ae15cef4376d03d774d29bef8e2", null ],
     [ "grade_subsumes_v", "grade_8hpp.html#a7e31e675c9c267d15a8fc5f5ae8c792b", null ]
 ];

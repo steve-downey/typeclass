@@ -125,7 +125,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af1996cba379763829a80f576de5777cf"><td class="memTemplParams" colspan="2">template&lt;class APPLICATIVE , class FUNCTION , class VALUES &gt; <br />
 requires std::same_as&lt;std::remove_cvref_t&lt;VALUES&gt;, std::vector&lt;VALUE_TYPE&gt;&gt; &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::traversal_argument_t&lt; <a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html">vector_traversable_impl</a>, VALUES&gt;&gt; &amp;&amp; applicative_object_for&lt; APPLICATIVE, std::remove_cvref_t&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::traversal_argument_t&lt; <a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html">vector_traversable_impl</a>, VALUES&gt;&gt;&gt;&gt;</td></tr>
 <tr class="memitem:af1996cba379763829a80f576de5777cf"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1vector__traversable__impl.html#af1996cba379763829a80f576de5777cf">traverse</a> (this auto &amp;&amp;, const APPLICATIVE &amp;<a class="el" href="namespacebeman_1_1transpose.html#acb8e20e3d78eab757dc41d5041d40b64">applicative</a>, FUNCTION &amp;&amp;function, VALUES &amp;&amp;values)</td></tr>
-<tr class="memdesc:af1996cba379763829a80f576de5777cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Traversal preserves shape: the result holds one element per element of <code>values</code>, in the same order.  <br /></td></tr>
+<tr class="memdesc:af1996cba379763829a80f576de5777cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">No exception specification: the traversal collects into a vector, which allocates, so it is potentially throwing whatever <code>function</code> and <code>applicative</code> promise.  <br /></td></tr>
 <tr class="separator:af1996cba379763829a80f576de5777cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
@@ -208,7 +208,9 @@ requires std::same_as&lt;std::remove_cvref_t&lt;VALUES&gt;, std::vector&lt;VALUE
 </table>
 </div><div class="memdoc">
 
-<p>Traversal preserves shape: the result holds one element per element of <code>values</code>, in the same order. </p>
+<p>No exception specification: the traversal collects into a vector, which allocates, so it is potentially throwing whatever <code>function</code> and <code>applicative</code> promise. </p>
+<p>Traversal preserves shape: the result holds one element per element of <code>values</code>, in the same order.</p>
+<p>The absence is the specification, as it is for the standard containers' own allocating operations (docs/transpose/decisions.md#operation-noexcept).</p>
 <p>Elements are visited in the vector's iteration order, and their contexts are composed in that same order. Preferring <code>collect</code> is the Traversable-side instance of the rule every derived operation in this library follows: an object that supplies a native operation is asked for it, and one that does not is derived against unchanged. It is what admits an <code>applicative</code> whose composition is not type-stable &ndash; a pairwise fold must assign each partial result back into a variable of one type, which a context whose combination names a new type at every step cannot do &ndash; and the requirement is stated as the expression rather than as a property of the context so that this operation stays generic over what supplies it. On the pairwise path the accumulated result is handed to each composition as an rvalue: composing it as an lvalue would oblige <code>applicative</code> to copy the whole prefix built so far, once per element, making a successful traversal quadratic rather than linear in the elements it collects. </p>
 
 </div>

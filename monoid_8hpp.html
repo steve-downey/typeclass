@@ -167,14 +167,14 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:acba84f38225ce37463e38b2875f3c00f"><td class="memTemplParams" colspan="2">template&lt;class VALUE_TYPE &gt; </td></tr>
-<tr class="memitem:acba84f38225ce37463e38b2875f3c00f"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#acba84f38225ce37463e38b2875f3c00f">beman::transpose::monoid_identity</a> () -&gt; VALUE_TYPE</td></tr>
-<tr class="memdesc:acba84f38225ce37463e38b2875f3c00f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the identity element of the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of VALUE_TYPE.  <br /></td></tr>
-<tr class="separator:acba84f38225ce37463e38b2875f3c00f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11a01701a9a03c8a81a3c9366c82f20b"><td class="memTemplParams" colspan="2">template&lt;class VALUE_TYPE &gt; </td></tr>
-<tr class="memitem:a11a01701a9a03c8a81a3c9366c82f20b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a11a01701a9a03c8a81a3c9366c82f20b">beman::transpose::monoid_combine</a> (const VALUE_TYPE &amp;lhs, const VALUE_TYPE &amp;rhs) -&gt; VALUE_TYPE</td></tr>
-<tr class="memdesc:a11a01701a9a03c8a81a3c9366c82f20b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines two values using the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of VALUE_TYPE.  <br /></td></tr>
-<tr class="separator:a11a01701a9a03c8a81a3c9366c82f20b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6365937c0ff7195ecc303293a13c015c"><td class="memTemplParams" colspan="2">template&lt;class VALUE_TYPE &gt; </td></tr>
+<tr class="memitem:a6365937c0ff7195ecc303293a13c015c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a6365937c0ff7195ecc303293a13c015c">beman::transpose::monoid_identity</a> () noexcept(noexcept(monoid&lt; VALUE_TYPE &gt;.identity())) -&gt; VALUE_TYPE</td></tr>
+<tr class="memdesc:a6365937c0ff7195ecc303293a13c015c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the identity element of the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of VALUE_TYPE.  <br /></td></tr>
+<tr class="separator:a6365937c0ff7195ecc303293a13c015c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50b5c831d79245ee5d9bc6689a705d9a"><td class="memTemplParams" colspan="2">template&lt;class VALUE_TYPE &gt; </td></tr>
+<tr class="memitem:a50b5c831d79245ee5d9bc6689a705d9a"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a50b5c831d79245ee5d9bc6689a705d9a">beman::transpose::monoid_combine</a> (const VALUE_TYPE &amp;lhs, const VALUE_TYPE &amp;rhs) noexcept(noexcept(monoid&lt; VALUE_TYPE &gt;.combine(lhs, rhs))) -&gt; VALUE_TYPE</td></tr>
+<tr class="memdesc:a50b5c831d79245ee5d9bc6689a705d9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Combines two values using the registered <a class="el" href="structbeman_1_1transpose_1_1Monoid.html" title="Customization point for the Monoid registry.">Monoid</a> of VALUE_TYPE.  <br /></td></tr>
+<tr class="separator:a50b5c831d79245ee5d9bc6689a705d9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>

@@ -105,17 +105,17 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1replace__f
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abb6b290999a3ffc19d537cbf945dd107"><td class="memTemplParams" colspan="2">template&lt;class T , class U , const auto &amp; TC = functor&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:a2068cbe4caa82b2cf59da79709210551"><td class="memTemplParams" colspan="2">template&lt;class T , class U , const auto &amp; TC = functor&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.replace(std::declval&lt;T&gt;(), std::declval&lt;U&gt;()); }</td></tr>
-<tr class="memitem:abb6b290999a3ffc19d537cbf945dd107"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1replace__fn.html#abb6b290999a3ffc19d537cbf945dd107">operator()</a> (T &amp;&amp;value, U &amp;&amp;replacement) const</td></tr>
-<tr class="memdesc:abb6b290999a3ffc19d537cbf945dd107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces every element of <code>value</code> with <code>replacement</code>.  <br /></td></tr>
-<tr class="separator:abb6b290999a3ffc19d537cbf945dd107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2068cbe4caa82b2cf59da79709210551"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1replace__fn.html#a2068cbe4caa82b2cf59da79709210551">operator()</a> (T &amp;&amp;value, U &amp;&amp;replacement) const noexcept(noexcept(TC.replace(std::forward&lt; T &gt;(value), std::forward&lt; U &gt;(replacement))))</td></tr>
+<tr class="memdesc:a2068cbe4caa82b2cf59da79709210551"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces every element of <code>value</code> with <code>replacement</code>.  <br /></td></tr>
+<tr class="separator:a2068cbe4caa82b2cf59da79709210551"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for Functor's derived <code>replace</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="abb6b290999a3ffc19d537cbf945dd107" name="abb6b290999a3ffc19d537cbf945dd107"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb6b290999a3ffc19d537cbf945dd107">&#9670;&#160;</a></span>operator()()</h2>
+<a id="a2068cbe4caa82b2cf59da79709210551" name="a2068cbe4caa82b2cf59da79709210551"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2068cbe4caa82b2cf59da79709210551">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,7 +146,7 @@ requires requires { TC.replace(std::declval&lt;T&gt;(), std::declval&lt;U&gt;())
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

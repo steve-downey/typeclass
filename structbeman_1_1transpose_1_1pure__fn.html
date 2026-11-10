@@ -105,19 +105,19 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1pure__fn.h
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab14c8025cee3b933fa3556052ee8762e"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; <br />
+<tr class="memitem:af08494d05c7b4531cd47c541a36df7c8"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; <br />
 requires requires { TC.pure(std::declval&lt;VALUE&gt;()); }</td></tr>
-<tr class="memitem:ab14c8025cee3b933fa3556052ee8762e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1pure__fn.html#ab14c8025cee3b933fa3556052ee8762e">operator()</a> (VALUE &amp;&amp;value) const</td></tr>
-<tr class="memdesc:ab14c8025cee3b933fa3556052ee8762e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Embeds a plain value into the applicative context.  <br /></td></tr>
-<tr class="separator:ab14c8025cee3b933fa3556052ee8762e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af08494d05c7b4531cd47c541a36df7c8"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1pure__fn.html#af08494d05c7b4531cd47c541a36df7c8">operator()</a> (VALUE &amp;&amp;value) const noexcept(noexcept(TC.pure(std::forward&lt; VALUE &gt;(value))))</td></tr>
+<tr class="memdesc:af08494d05c7b4531cd47c541a36df7c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Embeds a plain value into the applicative context.  <br /></td></tr>
+<tr class="separator:af08494d05c7b4531cd47c541a36df7c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class CONTEXT, const auto &amp; TC = applicative&lt;std::remove_cvref_t&lt;CONTEXT&gt;&gt;&gt;<br />
 struct beman::transpose::pure_fn&lt; CONTEXT, TC &gt;</div><p>Operation object for Applicative's <code>pure</code>, parameterized on the context because no argument can name it. </p>
 <p><code>CONTEXT</code> is the instantiated context type that keys the lookup, e.g. <code>pure&lt;std::optional&lt;int&gt;&gt;(42)</code>. This is the one place the deducing pattern does not reach: <code>pure</code> builds the context rather than consuming one, so the context is in the return type and never in an argument. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab14c8025cee3b933fa3556052ee8762e" name="ab14c8025cee3b933fa3556052ee8762e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab14c8025cee3b933fa3556052ee8762e">&#9670;&#160;</a></span>operator()()</h2>
+<a id="af08494d05c7b4531cd47c541a36df7c8" name="af08494d05c7b4531cd47c541a36df7c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af08494d05c7b4531cd47c541a36df7c8">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -140,7 +140,7 @@ requires requires { TC.pure(std::declval&lt;VALUE&gt;()); }</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

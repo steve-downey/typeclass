@@ -105,17 +105,17 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1any__of__f
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9ca96b729381152805c71f1d62750e4e"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:ab0568b8be10747be5ca3a44e8fac9212"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.any_of(std::declval&lt;T&gt;(), std::declval&lt;PREDICATE&gt;()); }</td></tr>
-<tr class="memitem:a9ca96b729381152805c71f1d62750e4e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1any__of__fn.html#a9ca96b729381152805c71f1d62750e4e">operator()</a> (T &amp;&amp;value, PREDICATE &amp;&amp;predicate) const -&gt; bool</td></tr>
-<tr class="memdesc:a9ca96b729381152805c71f1d62750e4e"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when any element satisfies <code>predicate</code>.  <br /></td></tr>
-<tr class="separator:a9ca96b729381152805c71f1d62750e4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0568b8be10747be5ca3a44e8fac9212"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1any__of__fn.html#ab0568b8be10747be5ca3a44e8fac9212">operator()</a> (T &amp;&amp;value, PREDICATE &amp;&amp;predicate) const noexcept(noexcept(TC.any_of(std::forward&lt; T &gt;(value), std::forward&lt; PREDICATE &gt;(predicate)))) -&gt; bool</td></tr>
+<tr class="memdesc:ab0568b8be10747be5ca3a44e8fac9212"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when any element satisfies <code>predicate</code>.  <br /></td></tr>
+<tr class="separator:ab0568b8be10747be5ca3a44e8fac9212"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for the derived <code>any_of</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9ca96b729381152805c71f1d62750e4e" name="a9ca96b729381152805c71f1d62750e4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9ca96b729381152805c71f1d62750e4e">&#9670;&#160;</a></span>operator()()</h2>
+<a id="ab0568b8be10747be5ca3a44e8fac9212" name="ab0568b8be10747be5ca3a44e8fac9212"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0568b8be10747be5ca3a44e8fac9212">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,7 +146,7 @@ requires requires { TC.any_of(std::declval&lt;T&gt;(), std::declval&lt;PREDICATE
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

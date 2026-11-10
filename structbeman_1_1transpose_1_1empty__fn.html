@@ -105,18 +105,18 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1empty__fn.
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aeb671bac802303e950aa51d0d2fb2950"><td class="memTemplParams" colspan="2">template&lt;class T , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:a247b3decb9b717fe78bc3f2ad11751ce"><td class="memTemplParams" colspan="2">template&lt;class T , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.empty(std::declval&lt;T&gt;()); }</td></tr>
-<tr class="memitem:aeb671bac802303e950aa51d0d2fb2950"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1empty__fn.html#aeb671bac802303e950aa51d0d2fb2950">operator()</a> (T &amp;&amp;value) const -&gt; bool</td></tr>
-<tr class="memdesc:aeb671bac802303e950aa51d0d2fb2950"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when the container holds no elements.  <br /></td></tr>
-<tr class="separator:aeb671bac802303e950aa51d0d2fb2950"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a247b3decb9b717fe78bc3f2ad11751ce"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1empty__fn.html#a247b3decb9b717fe78bc3f2ad11751ce">operator()</a> (T &amp;&amp;value) const noexcept(noexcept(TC.empty(std::forward&lt; T &gt;(value)))) -&gt; bool</td></tr>
+<tr class="memdesc:a247b3decb9b717fe78bc3f2ad11751ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when the container holds no elements.  <br /></td></tr>
+<tr class="separator:a247b3decb9b717fe78bc3f2ad11751ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for the derived <code>empty</code>. </p>
 <p>See the naming-hazard note above: this name is the one genuine collision risk in the set. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="aeb671bac802303e950aa51d0d2fb2950" name="aeb671bac802303e950aa51d0d2fb2950"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb671bac802303e950aa51d0d2fb2950">&#9670;&#160;</a></span>operator()()</h2>
+<a id="a247b3decb9b717fe78bc3f2ad11751ce" name="a247b3decb9b717fe78bc3f2ad11751ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a247b3decb9b717fe78bc3f2ad11751ce">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -137,7 +137,7 @@ requires requires { TC.empty(std::declval&lt;T&gt;()); }</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

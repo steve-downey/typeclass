@@ -1,7 +1,8 @@
 var structbeman_1_1transpose_1_1expected__applicative__impl =
 [
-    [ "pure", "structbeman_1_1transpose_1_1expected__applicative__impl.html#a1cff390d8bfc6324657bea3544987e75", null ],
-    [ "invoke", "structbeman_1_1transpose_1_1expected__applicative__impl.html#ad86550d127a27dd0b4d8f702e8aece58", null ],
-    [ "invoke", "structbeman_1_1transpose_1_1expected__applicative__impl.html#a44edcb51414e163b2a664a02e6df5240", null ],
-    [ "invoke", "structbeman_1_1transpose_1_1expected__applicative__impl.html#a527ed1d8f7e29b752b0cf30f432e1db3", null ]
+    [ "pure", "structbeman_1_1transpose_1_1expected__applicative__impl.html#a3bdc94360f38262fd8cd7a0737695795", null ],
+    [ "raise", "structbeman_1_1transpose_1_1expected__applicative__impl.html#ae160b1c5fa644cce6a8c75dbcfd0b898", null ],
+    [ "invoke", "structbeman_1_1transpose_1_1expected__applicative__impl.html#a9289a6c9296318b4c2f194ac427c34ec", null ],
+    [ "invoke", "structbeman_1_1transpose_1_1expected__applicative__impl.html#a9adf4f175bf77f4020f553b462446795", null ],
+    [ "invoke", "structbeman_1_1transpose_1_1expected__applicative__impl.html#aeefe3c52175bd2334120cf29e2b05278", null ]
 ];

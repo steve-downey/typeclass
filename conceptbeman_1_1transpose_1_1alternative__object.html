@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>beman.typeclass: Member List</title>
+<title>beman.typeclass: beman::transpose::alternative_object Concept Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -65,7 +65,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('classbeman_1_1transpose_1_1error__set__of_3_4.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('conceptbeman_1_1transpose_1_1alternative__object.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -91,20 +91,36 @@ $(document).ready(function(){initNavTree('classbeman_1_1transpose_1_1error__set_
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">beman::transpose::error_set_of&lt;&gt; Member List</div></div>
+  <div class="headertitle"><div class="title">beman::transpose::alternative_object Concept Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>This is the complete list of members for <a class="el" href="classbeman_1_1transpose_1_1error__set__of_3_4.html">beman::transpose::error_set_of&lt;&gt;</a>, including all inherited members.</p>
-<table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classbeman_1_1transpose_1_1error__set__of_3_4.html#a1ea06204f1861b44df48f89eb6c8be66">contains</a>() noexcept -&gt; bool</td><td class="entry"><a class="el" href="classbeman_1_1transpose_1_1error__set__of_3_4.html">beman::transpose::error_set_of&lt;&gt;</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">static</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classbeman_1_1transpose_1_1error__set__of_3_4.html#aba433f380bf331dbfe52a2eb3dc08694">error_set_of</a>()=delete</td><td class="entry"><a class="el" href="classbeman_1_1transpose_1_1error__set__of_3_4.html">beman::transpose::error_set_of&lt;&gt;</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classbeman_1_1transpose_1_1error__set__of_3_4.html#a13b255d9c68ddecdbb28c8d615a0547f">operator==</a></td><td class="entry"><a class="el" href="classbeman_1_1transpose_1_1error__set__of_3_4.html">beman::transpose::error_set_of&lt;&gt;</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-</table></div><!-- contents -->
+<p>Deep object concept for an Alternative object over <code>CONTEXT</code>: <code>alt</code> over two contexts, <code>alt</code> with a bare last operand &ndash; the annihilation form, whose result is total &ndash; and <code>alt_with</code>.  
+<a href="conceptbeman_1_1transpose_1_1alternative__object.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="alternative_8hpp_source.html">beman/transpose/alternative.hpp</a>&gt;</code></p>
+<h2 class="groupheader">Concept definition</h2>
+<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> OBJ, <span class="keyword">class</span> CONTEXT&gt;</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptbeman_1_1transpose_1_1alternative__object.html">beman::transpose::alternative_object</a> = </div>
+<div class="line">    <span class="keyword">requires</span>(<span class="keyword">const</span> OBJ &amp;obj, <span class="keyword">const</span> CONTEXT &amp;context) {</div>
+<div class="line">        obj.alt(context, context);</div>
+<div class="line">        obj.alt(context, std::declval&lt;applicative_value_t&lt;CONTEXT&gt;&gt;());</div>
+<div class="line">        obj.alt_with(obj, context, context);</div>
+<div class="line">    } &amp;&amp;</div>
+<div class="line">    (!<span class="keyword">requires</span>(<span class="keyword">const</span> OBJ &amp;obj) { obj.zero(); } ||</div>
+<div class="line">     <span class="keyword">requires</span>(<span class="keyword">const</span> OBJ &amp;obj) {</div>
+<div class="line">         { obj.zero() } -&gt; std::same_as&lt;CONTEXT&gt;;</div>
+<div class="line">     })</div>
+<div class="ttc" id="aconceptbeman_1_1transpose_1_1alternative__object_html"><div class="ttname"><a href="conceptbeman_1_1transpose_1_1alternative__object.html">beman::transpose::alternative_object</a></div><div class="ttdoc">Deep object concept for an Alternative object over CONTEXT: alt over two contexts,...</div><div class="ttdef"><b>Definition:</b> alternative.hpp:175</div></div>
+</div><!-- fragment --><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Deep object concept for an Alternative object over <code>CONTEXT</code>: <code>alt</code> over two contexts, <code>alt</code> with a bare last operand &ndash; the annihilation form, whose result is total &ndash; and <code>alt_with</code>. </p>
+<p><code>zero</code>, where the object has one, is the context in its failure state, so its type is <code>CONTEXT</code>. </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
+    <li class="navelem"><a class="el" href="namespacebeman.html">beman</a></li><li class="navelem"><a class="el" href="namespacebeman_1_1transpose.html">transpose</a></li><li class="navelem"><a class="el" href="conceptbeman_1_1transpose_1_1alternative__object.html">alternative_object</a></li>
     <li class="footer">Generated by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6 </li>
   </ul>
 </div>

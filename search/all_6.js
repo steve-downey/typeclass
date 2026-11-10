@@ -17,7 +17,7 @@ var searchData=
   ['grade_5fof_3c_20std_3a_3aexpected_3c_20value_2c_20error_20_3e_20_3e_14',['grade_of&lt; std::expected&lt; VALUE, ERROR &gt; &gt;',['../structbeman_1_1transpose_1_1grade__of_3_01std_1_1expected_3_01VALUE_00_01ERROR_01_4_01_4.html',1,'beman::transpose']]],
   ['grade_5fof_3c_20std_3a_3aexpected_3c_20value_2c_20error_5fset_5fof_3c_20errors_2e_2e_2e_20_3e_20_3e_20_3e_15',['grade_of&lt; std::expected&lt; VALUE, error_set_of&lt; ERRORS... &gt; &gt; &gt;',['../structbeman_1_1transpose_1_1grade__of_3_01std_1_1expected_3_01VALUE_00_01error__set__of_3_01ERRORS_8_8_8_01_4_01_4_01_4.html',1,'beman::transpose']]],
   ['grade_5fof_5ft_16',['grade_of_t',['../namespacebeman_1_1transpose.html#afb36f4cfc565d3b179156a4d02b445b8',1,'beman::transpose']]],
-  ['grade_5fsubsume_17',['grade_subsume',['../namespacebeman_1_1transpose.html#a0a5e670c9d07c65027aa6f9fc9c9cee7',1,'beman::transpose']]],
+  ['grade_5fsubsume_17',['grade_subsume',['../namespacebeman_1_1transpose.html#aed943ae15cef4376d03d774d29bef8e2',1,'beman::transpose']]],
   ['grade_5fsubsumes_18',['grade_subsumes',['../structbeman_1_1transpose_1_1grade__subsumes.html',1,'beman::transpose']]],
   ['grade_5fsubsumes_3c_20error_5fset_5fof_3c_20left_2e_2e_2e_20_3e_2c_20error_5fset_5fof_3c_20right_2e_2e_2e_20_3e_20_3e_19',['grade_subsumes&lt; error_set_of&lt; LEFT... &gt;, error_set_of&lt; RIGHT... &gt; &gt;',['../structbeman_1_1transpose_1_1grade__subsumes_3_01error__set__of_3_01LEFT_8_8_8_01_4_00_01error__sba3c91dd2108c84923b5736074d55756.html',1,'beman::transpose']]],
   ['grade_5fsubsumes_5fv_20',['grade_subsumes_v',['../namespacebeman_1_1transpose.html#a7e31e675c9c267d15a8fc5f5ae8c792b',1,'beman::transpose']]]

@@ -112,17 +112,17 @@ Inheritance diagram for beman::transpose::array_applicative_impl&lt; T, N &gt;:<
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a20ed0db7cae73132d9d2ec32678aee41"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
-<tr class="memitem:a20ed0db7cae73132d9d2ec32678aee41"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html#a20ed0db7cae73132d9d2ec32678aee41">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value)</td></tr>
-<tr class="separator:a20ed0db7cae73132d9d2ec32678aee41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef42e480005047ea213ebd0c7eb6f3fc"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
+<tr class="memitem:a400d0dd41ded8a576353285b872c6395"><td class="memTemplParams" colspan="2">template&lt;class VALUE &gt; </td></tr>
+<tr class="memitem:a400d0dd41ded8a576353285b872c6395"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html#a400d0dd41ded8a576353285b872c6395">pure</a> (this auto &amp;&amp;, VALUE &amp;&amp;value) noexcept(std::is_nothrow_constructible_v&lt; std::remove_cvref_t&lt; VALUE &gt;, VALUE &amp; &gt;)</td></tr>
+<tr class="separator:a400d0dd41ded8a576353285b872c6395"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98eda2a2efc739945656bcab578340a2"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
 requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is_std_array_of_extent_v&lt;REST, N&gt; &amp;&amp; ...) &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::element_ref_t&lt;FIRST&gt;, detail::element_ref_t&lt;REST&gt;...&gt; &amp;&amp; detail::holdable_value&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::element_ref_t&lt;FIRST&gt;, detail::element_ref_t&lt;REST&gt;...&gt;&gt;</td></tr>
-<tr class="memitem:aef42e480005047ea213ebd0c7eb6f3fc"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html#aef42e480005047ea213ebd0c7eb6f3fc">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest)</td></tr>
-<tr class="separator:aef42e480005047ea213ebd0c7eb6f3fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98eda2a2efc739945656bcab578340a2"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html#a98eda2a2efc739945656bcab578340a2">invoke</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, FIRST &amp;&amp;first, REST &amp;&amp;...rest) noexcept(detail::lanewise_invoke_nothrow&lt; FUNCTION, FIRST, REST... &gt;)</td></tr>
+<tr class="separator:a98eda2a2efc739945656bcab578340a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a20ed0db7cae73132d9d2ec32678aee41" name="a20ed0db7cae73132d9d2ec32678aee41"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20ed0db7cae73132d9d2ec32678aee41">&#9670;&#160;</a></span>pure()</h2>
+<a id="a400d0dd41ded8a576353285b872c6395" name="a400d0dd41ded8a576353285b872c6395"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a400d0dd41ded8a576353285b872c6395">&#9670;&#160;</a></span>pure()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -130,6 +130,9 @@ requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is
 template&lt;class T , std::size_t N&gt; </div>
 <div class="memtemplate">
 template&lt;class VALUE &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">auto <a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html">beman::transpose::array_applicative_impl</a>&lt; T, N &gt;::pure </td>
@@ -149,12 +152,17 @@ template&lt;class VALUE &gt; </div>
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aef42e480005047ea213ebd0c7eb6f3fc" name="aef42e480005047ea213ebd0c7eb6f3fc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef42e480005047ea213ebd0c7eb6f3fc">&#9670;&#160;</a></span>invoke()</h2>
+<a id="a98eda2a2efc739945656bcab578340a2" name="a98eda2a2efc739945656bcab578340a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98eda2a2efc739945656bcab578340a2">&#9670;&#160;</a></span>invoke()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -164,6 +172,9 @@ requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is
 <div class="memtemplate">
 template&lt;class FUNCTION , class FIRST , class... REST&gt; <br />
 requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is_std_array_of_extent_v&lt;REST, N&gt; &amp;&amp; ...) &amp;&amp; std::invocable&lt;FUNCTION &amp;, detail::element_ref_t&lt;FIRST&gt;, detail::element_ref_t&lt;REST&gt;...&gt; &amp;&amp; detail::holdable_value&lt;std::invoke_result_t&lt; FUNCTION &amp;, detail::element_ref_t&lt;FIRST&gt;, detail::element_ref_t&lt;REST&gt;...&gt;&gt;</div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">auto <a class="el" href="structbeman_1_1transpose_1_1array__applicative__impl.html">beman::transpose::array_applicative_impl</a>&lt; T, N &gt;::invoke </td>
@@ -195,6 +206,11 @@ requires detail::is_std_array_of_extent_v&lt;FIRST, N&gt; &amp;&amp; (detail::is
           <td></td><td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>

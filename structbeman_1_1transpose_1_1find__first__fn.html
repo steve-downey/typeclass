@@ -105,17 +105,17 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1find__firs
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae1749f8422bc049e03c903e4c219e3e0"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:a351ce3eb2c0814c6f4bed24b92c441d4"><td class="memTemplParams" colspan="2">template&lt;class T , class PREDICATE , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.find_first(std::declval&lt;T&gt;(), std::declval&lt;PREDICATE&gt;()); }</td></tr>
-<tr class="memitem:ae1749f8422bc049e03c903e4c219e3e0"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1find__first__fn.html#ae1749f8422bc049e03c903e4c219e3e0">operator()</a> (T &amp;&amp;value, PREDICATE &amp;&amp;predicate) const</td></tr>
-<tr class="memdesc:ae1749f8422bc049e03c903e4c219e3e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">First element satisfying <code>predicate</code>, or an empty optional.  <br /></td></tr>
-<tr class="separator:ae1749f8422bc049e03c903e4c219e3e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a351ce3eb2c0814c6f4bed24b92c441d4"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1find__first__fn.html#a351ce3eb2c0814c6f4bed24b92c441d4">operator()</a> (T &amp;&amp;value, PREDICATE &amp;&amp;predicate) const noexcept(noexcept(TC.find_first(std::forward&lt; T &gt;(value), std::forward&lt; PREDICATE &gt;(predicate))))</td></tr>
+<tr class="memdesc:a351ce3eb2c0814c6f4bed24b92c441d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">First element satisfying <code>predicate</code>, or an empty optional.  <br /></td></tr>
+<tr class="separator:a351ce3eb2c0814c6f4bed24b92c441d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for the derived <code>find_first</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae1749f8422bc049e03c903e4c219e3e0" name="ae1749f8422bc049e03c903e4c219e3e0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1749f8422bc049e03c903e4c219e3e0">&#9670;&#160;</a></span>operator()()</h2>
+<a id="a351ce3eb2c0814c6f4bed24b92c441d4" name="a351ce3eb2c0814c6f4bed24b92c441d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a351ce3eb2c0814c6f4bed24b92c441d4">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,7 +146,7 @@ requires requires { TC.find_first(std::declval&lt;T&gt;(), std::declval&lt;PREDI
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

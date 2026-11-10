@@ -111,8 +111,8 @@ $(document).ready(function(){initNavTree('conceptbeman_1_1transpose_1_1applicati
 <div class="line">        impl.ap(impl.pure(detail::probe_witness&lt;applicative_value_t&lt;CONTEXT&gt;&gt;{}),</div>
 <div class="line">                context);</div>
 <div class="line">    })</div>
-<div class="ttc" id="aconceptbeman_1_1transpose_1_1applicative__impl_html"><div class="ttname"><a href="conceptbeman_1_1transpose_1_1applicative__impl.html">beman::transpose::applicative_impl</a></div><div class="ttdoc">Applicative pattern invariants:</div><div class="ttdef"><b>Definition:</b> apply.hpp:90</div></div>
-<div class="ttc" id="anamespacebeman_1_1transpose_html_a46e5acce5433886d8105e0e6de949760"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">beman::transpose::applicative_value_t</a></div><div class="ttdeci">typename applicative_value&lt; std::remove_cvref_t&lt; T &gt; &gt;::type applicative_value_t</div><div class="ttdoc">Convenience alias for applicative_value&lt;T&gt;::type.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:107</div></div>
+<div class="ttc" id="aconceptbeman_1_1transpose_1_1applicative__impl_html"><div class="ttname"><a href="conceptbeman_1_1transpose_1_1applicative__impl.html">beman::transpose::applicative_impl</a></div><div class="ttdoc">Applicative pattern invariants:</div><div class="ttdef"><b>Definition:</b> apply.hpp:216</div></div>
+<div class="ttc" id="anamespacebeman_1_1transpose_html_a46e5acce5433886d8105e0e6de949760"><div class="ttname"><a href="namespacebeman_1_1transpose.html#a46e5acce5433886d8105e0e6de949760">beman::transpose::applicative_value_t</a></div><div class="ttdeci">typename applicative_value&lt; std::remove_cvref_t&lt; T &gt; &gt;::type applicative_value_t</div><div class="ttdoc">Convenience alias for applicative_value&lt;T&gt;::type.</div><div class="ttdef"><b>Definition:</b> typeclass_base.hpp:114</div></div>
 </div><!-- fragment --><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Applicative pattern invariants: </p>
 <ul>
@@ -120,6 +120,7 @@ $(document).ready(function(){initNavTree('conceptbeman_1_1transpose_1_1applicati
 <li>ap (one-step application of a callable-in-context) is the classic basis and remains available as a secondary operation, but it is never the lead verb: papers, examples, and teaching lead with invoke. The interface choice is forced by std::simd::vec, which cannot form a vec&lt;callable&gt; &ndash; ap is unspellable exactly where this proposal's motivation lives, while n-ary invoke works everywhere.</li>
 <li>ap-from-invoke is invoke(applicative_eval, cf, cx); it exists only when the context can hold a callable. invoke-from-ap is the currying derivation (detail::terminating_partial); its cost lives entirely in the derivation direction.</li>
 <li>Impls keep their basis SFINAE-friendly: a trailing return type via std::invoke_result_t (or an explicit requires clause), never a bare auto return with the result type computed only in the body, so that availability probes fail cleanly instead of hard-erroring.</li>
+<li>Every operation carries a computed exception specification: an Impl's basis from the callable's invocation and the carrier's constructors, a derived operation from the route it takes. A SFINAE-friendly basis is what makes the latter computable without instantiating a body (docs/transpose/decisions.md#operation-noexcept).</li>
 <li>Derived operations (map/lift/zip_with/discard_*) live on that object.</li>
 <li>Dispatch happens through a provided object or applicative&lt;Concrete&gt;.</li>
 <li>Do not introduce hidden alternate semantics without a distinct map/type. </li>

@@ -124,6 +124,12 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1pure__fn.html">beman::transpose::pure_fn&lt; CONTEXT, TC &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Operation object for Applicative's <code>pure</code>, parameterized on the context because no argument can name it.  <a href="structbeman_1_1transpose_1_1pure__fn.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1raise__fn.html">beman::transpose::raise_fn&lt; CONTEXT, TC &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Operation object for <code>raise</code>, the dual of <code>pure</code>: it builds a context in its failure state, so like <code>pure</code> it must name the context.  <a href="structbeman_1_1transpose_1_1raise__fn.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zero__fn.html">beman::transpose::zero_fn&lt; CONTEXT, TC &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Operation object for <code>zero</code>, the failure state that carries no witness: the identity of Alternative's disjunction, decided under the same rule as <code>raise</code> (docs/transpose/decisions.md#failure-injection-spelling).  <a href="structbeman_1_1transpose_1_1zero__fn.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zip__with__fn.html">beman::transpose::zip_with_fn</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Operation object for the derived <code>zip_with</code>.  <a href="structbeman_1_1transpose_1_1zip__with__fn.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,6 +181,12 @@ Variables</h2></td></tr>
 <tr class="memitem:ad69281e3689121b8f7f023021d7423d2"><td class="memTemplParams" colspan="2">template&lt;class CONTEXT &gt; </td></tr>
 <tr class="memitem:ad69281e3689121b8f7f023021d7423d2"><td class="memTemplItemLeft" align="right" valign="top">constexpr pure_fn&lt; CONTEXT &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#ad69281e3689121b8f7f023021d7423d2">beman::transpose::pure</a> {}</td></tr>
 <tr class="separator:ad69281e3689121b8f7f023021d7423d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85859198f3d71504d907ae4fbb73ac68"><td class="memTemplParams" colspan="2">template&lt;class CONTEXT &gt; </td></tr>
+<tr class="memitem:a85859198f3d71504d907ae4fbb73ac68"><td class="memTemplItemLeft" align="right" valign="top">constexpr raise_fn&lt; CONTEXT &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a85859198f3d71504d907ae4fbb73ac68">beman::transpose::raise</a> {}</td></tr>
+<tr class="separator:a85859198f3d71504d907ae4fbb73ac68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93608e8a1bcd6bb715ea5410a906feaa"><td class="memTemplParams" colspan="2">template&lt;class CONTEXT &gt; </td></tr>
+<tr class="memitem:a93608e8a1bcd6bb715ea5410a906feaa"><td class="memTemplItemLeft" align="right" valign="top">constexpr zero_fn&lt; CONTEXT &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a93608e8a1bcd6bb715ea5410a906feaa">beman::transpose::zero</a> {}</td></tr>
+<tr class="separator:a93608e8a1bcd6bb715ea5410a906feaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6300716ab71ef10e3d8196bb4bba0583"><td class="memItemLeft" align="right" valign="top">constexpr zip_with_fn&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a6300716ab71ef10e3d8196bb4bba0583">beman::transpose::zip_with</a> {}</td></tr>
 <tr class="separator:a6300716ab71ef10e3d8196bb4bba0583"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4222f534c37462e36d6fdb5f392ffe58"><td class="memItemLeft" align="right" valign="top">constexpr discard_first_fn&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1transpose.html#a4222f534c37462e36d6fdb5f392ffe58">beman::transpose::discard_first</a> {}</td></tr>

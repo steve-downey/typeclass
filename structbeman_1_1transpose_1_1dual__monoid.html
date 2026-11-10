@@ -112,10 +112,10 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1e8ee0e77f8980a36238dae096fe05d9"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#a1e8ee0e77f8980a36238dae096fe05d9">identity</a> () const -&gt; <a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#aa2530fd995d921d5f0e2cb5c3ed2a910">value_type</a></td></tr>
-<tr class="separator:a1e8ee0e77f8980a36238dae096fe05d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d24c2c5892142a4e21e4dde3e87291a"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#a3d24c2c5892142a4e21e4dde3e87291a">combine</a> (const <a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#aa2530fd995d921d5f0e2cb5c3ed2a910">value_type</a> &amp;lhs, const <a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#aa2530fd995d921d5f0e2cb5c3ed2a910">value_type</a> &amp;rhs) const -&gt; <a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#aa2530fd995d921d5f0e2cb5c3ed2a910">value_type</a></td></tr>
-<tr class="separator:a3d24c2c5892142a4e21e4dde3e87291a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c1d5e8767f86e3d3ad013c16e03c3e4"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#a2c1d5e8767f86e3d3ad013c16e03c3e4">identity</a> () const noexcept(noexcept(d_inner.identity())) -&gt; <a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#aa2530fd995d921d5f0e2cb5c3ed2a910">value_type</a></td></tr>
+<tr class="separator:a2c1d5e8767f86e3d3ad013c16e03c3e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0e572fd6452746a9eedd1b1d95d0e97"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#af0e572fd6452746a9eedd1b1d95d0e97">combine</a> (const <a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#aa2530fd995d921d5f0e2cb5c3ed2a910">value_type</a> &amp;lhs, const <a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#aa2530fd995d921d5f0e2cb5c3ed2a910">value_type</a> &amp;rhs) const noexcept(noexcept(d_inner.combine(rhs, lhs))) -&gt; <a class="el" href="structbeman_1_1transpose_1_1dual__monoid.html#aa2530fd995d921d5f0e2cb5c3ed2a910">value_type</a></td></tr>
+<tr class="separator:af0e572fd6452746a9eedd1b1d95d0e97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -144,8 +144,8 @@ template&lt;class M &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a1e8ee0e77f8980a36238dae096fe05d9" name="a1e8ee0e77f8980a36238dae096fe05d9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e8ee0e77f8980a36238dae096fe05d9">&#9670;&#160;</a></span>identity()</h2>
+<a id="a2c1d5e8767f86e3d3ad013c16e03c3e4" name="a2c1d5e8767f86e3d3ad013c16e03c3e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2c1d5e8767f86e3d3ad013c16e03c3e4">&#9670;&#160;</a></span>identity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -164,15 +164,15 @@ template&lt;class M &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a3d24c2c5892142a4e21e4dde3e87291a" name="a3d24c2c5892142a4e21e4dde3e87291a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d24c2c5892142a4e21e4dde3e87291a">&#9670;&#160;</a></span>combine()</h2>
+<a id="af0e572fd6452746a9eedd1b1d95d0e97" name="af0e572fd6452746a9eedd1b1d95d0e97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0e572fd6452746a9eedd1b1d95d0e97">&#9670;&#160;</a></span>combine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -202,7 +202,7 @@ template&lt;class M &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

@@ -114,18 +114,18 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a64756eed5b739c1cd8c053ce4acbbfe8"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zip__list.html#a64756eed5b739c1cd8c053ce4acbbfe8">is_repeating</a> () const -&gt; bool</td></tr>
-<tr class="memdesc:a64756eed5b739c1cd8c053ce4acbbfe8"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when this <a class="el" href="structbeman_1_1transpose_1_1zip__list.html" title="List with positional (zip) applicative semantics that can represent an infinite repetition of a singl...">zip_list</a> represents an infinite repetition.  <br /></td></tr>
-<tr class="separator:a64756eed5b739c1cd8c053ce4acbbfe8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d8f3deff5d74e7088ac076189962b5e"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zip__list.html#a0d8f3deff5d74e7088ac076189962b5e">finite_size</a> () const -&gt; std::size_t</td></tr>
-<tr class="memdesc:a0d8f3deff5d74e7088ac076189962b5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of elements in the finite representation; 0 for infinite lists.  <br /></td></tr>
-<tr class="separator:a0d8f3deff5d74e7088ac076189962b5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc643e7be8eed988fcb45d07461ec52e"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zip__list.html#adc643e7be8eed988fcb45d07461ec52e">is_repeating</a> () const noexcept -&gt; bool</td></tr>
+<tr class="memdesc:adc643e7be8eed988fcb45d07461ec52e"><td class="mdescLeft">&#160;</td><td class="mdescRight">True when this <a class="el" href="structbeman_1_1transpose_1_1zip__list.html" title="List with positional (zip) applicative semantics that can represent an infinite repetition of a singl...">zip_list</a> represents an infinite repetition.  <br /></td></tr>
+<tr class="separator:adc643e7be8eed988fcb45d07461ec52e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a133a83c420107f99dfb17e9778ae98b3"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zip__list.html#a133a83c420107f99dfb17e9778ae98b3">finite_size</a> () const noexcept -&gt; std::size_t</td></tr>
+<tr class="memdesc:a133a83c420107f99dfb17e9778ae98b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of elements in the finite representation; 0 for infinite lists.  <br /></td></tr>
+<tr class="separator:a133a83c420107f99dfb17e9778ae98b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a1d850340843409bf39ac700e561b5508"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zip__list.html#a1d850340843409bf39ac700e561b5508">repeat</a> (T value) -&gt; <a class="el" href="structbeman_1_1transpose_1_1zip__list.html">zip_list</a></td></tr>
-<tr class="memdesc:a1d850340843409bf39ac700e561b5508"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an infinite <a class="el" href="structbeman_1_1transpose_1_1zip__list.html" title="List with positional (zip) applicative semantics that can represent an infinite repetition of a singl...">zip_list</a> repeating <code>value</code> at every position.  <br /></td></tr>
-<tr class="separator:a1d850340843409bf39ac700e561b5508"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1a2e12256062fb2c2a0700c61732fa4"><td class="memItemLeft" align="right" valign="top">static auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zip__list.html#aa1a2e12256062fb2c2a0700c61732fa4">repeat</a> (T value) noexcept(std::is_nothrow_move_constructible_v&lt; T &gt;) -&gt; <a class="el" href="structbeman_1_1transpose_1_1zip__list.html">zip_list</a></td></tr>
+<tr class="memdesc:aa1a2e12256062fb2c2a0700c61732fa4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an infinite <a class="el" href="structbeman_1_1transpose_1_1zip__list.html" title="List with positional (zip) applicative semantics that can represent an infinite repetition of a singl...">zip_list</a> repeating <code>value</code> at every position.  <br /></td></tr>
+<tr class="separator:aa1a2e12256062fb2c2a0700c61732fa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -168,8 +168,8 @@ template&lt;class T &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a1d850340843409bf39ac700e561b5508" name="a1d850340843409bf39ac700e561b5508"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d850340843409bf39ac700e561b5508">&#9670;&#160;</a></span>repeat()</h2>
+<a id="aa1a2e12256062fb2c2a0700c61732fa4" name="aa1a2e12256062fb2c2a0700c61732fa4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1a2e12256062fb2c2a0700c61732fa4">&#9670;&#160;</a></span>repeat()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -189,7 +189,7 @@ template&lt;class T &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -198,8 +198,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a64756eed5b739c1cd8c053ce4acbbfe8" name="a64756eed5b739c1cd8c053ce4acbbfe8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64756eed5b739c1cd8c053ce4acbbfe8">&#9670;&#160;</a></span>is_repeating()</h2>
+<a id="adc643e7be8eed988fcb45d07461ec52e" name="adc643e7be8eed988fcb45d07461ec52e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc643e7be8eed988fcb45d07461ec52e">&#9670;&#160;</a></span>is_repeating()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -218,7 +218,7 @@ template&lt;class T &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -227,8 +227,8 @@ template&lt;class T &gt; </div>
 
 </div>
 </div>
-<a id="a0d8f3deff5d74e7088ac076189962b5e" name="a0d8f3deff5d74e7088ac076189962b5e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0d8f3deff5d74e7088ac076189962b5e">&#9670;&#160;</a></span>finite_size()</h2>
+<a id="a133a83c420107f99dfb17e9778ae98b3" name="a133a83c420107f99dfb17e9778ae98b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a133a83c420107f99dfb17e9778ae98b3">&#9670;&#160;</a></span>finite_size()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -247,7 +247,7 @@ template&lt;class T &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

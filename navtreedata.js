@@ -60,14 +60,14 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"annotated.html",
-"classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a54a9c13fbfb1162b21a230fd80e0e914",
-"finger__tree_8hpp.html#ad4d3f9831219b340235caded3d27457b",
-"namespacebeman_1_1transpose.html#a57e350881f367d4918a43f34e51ab16d",
-"structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTree_3_01T_00_01tree_1_1Prio65f93616525bb0b96296f6b0c3551888.html",
-"structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4.html",
-"structbeman_1_1transpose_1_1kleisli__fn.html#ac1fcc2daf1116d8d4fca0ef9c96127cc",
-"structbeman_1_1tree__algorithms_1_1ExprFFunctorMap.html"
+"alternative_8hpp.html",
+"classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a29ed66a78ec91965d2acc4f2439d6593",
+"eliminate_8hpp_source.html",
+"namespacebeman_1_1fingertree_1_1tree.html#a12f1f6a893632d8bcac70083fbde6003",
+"structbeman_1_1fingertree_1_1FingerTreeRandomAccessFoldableImpl.html#a4ab9300a57dc0e8e2f27499ed6e5107f",
+"structbeman_1_1transpose_1_1VectorFunctorMap.html",
+"structbeman_1_1transpose_1_1expected__applicative__impl.html#a3bdc94360f38262fd8cd7a0737695795",
+"structbeman_1_1transpose_1_1tuple__monoid.html#a906eb2020ac98cf7e2f1c81b5f9f3162"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

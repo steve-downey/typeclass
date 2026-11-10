@@ -111,24 +111,25 @@ Inheritance diagram for beman::transpose::derive_functor&lt; Impl &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8e77f372e676a3709d396ae8c9bb8721"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class T &gt; <br />
+<tr class="memitem:ad9985c0a8a1f9bb2a44a352b9dbe8da6"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class T &gt; <br />
 requires requires(const Impl &amp;impl) { impl.fmap(std::forward&lt;FUNCTION&gt;(function), std::forward&lt;T&gt;(value)); }</td></tr>
-<tr class="memitem:a8e77f372e676a3709d396ae8c9bb8721"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__functor.html#a8e77f372e676a3709d396ae8c9bb8721">fmap</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, T &amp;&amp;value)</td></tr>
-<tr class="memdesc:a8e77f372e676a3709d396ae8c9bb8721"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <code>function</code> to every element of <code>value</code>.  <br /></td></tr>
-<tr class="separator:a8e77f372e676a3709d396ae8c9bb8721"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c0a763393d4ae94c98f1d7d3bfede25"><td class="memTemplParams" colspan="2">template&lt;class T , class U &gt; <br />
+<tr class="memitem:ad9985c0a8a1f9bb2a44a352b9dbe8da6"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__functor.html#ad9985c0a8a1f9bb2a44a352b9dbe8da6">fmap</a> (this auto &amp;&amp;self, FUNCTION &amp;&amp;function, T &amp;&amp;value) noexcept(noexcept(impl_of(self).fmap(std::forward&lt; FUNCTION &gt;(function), std::forward&lt; T &gt;(value))))</td></tr>
+<tr class="memdesc:ad9985c0a8a1f9bb2a44a352b9dbe8da6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies <code>function</code> to every element of <code>value</code>.  <br /></td></tr>
+<tr class="separator:ad9985c0a8a1f9bb2a44a352b9dbe8da6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d87c2734886d7369e14d4405cc6c864"><td class="memTemplParams" colspan="2">template&lt;class T , class U &gt; <br />
 requires requires(const Impl &amp;impl) { impl.replace(std::forward&lt;T&gt;(value), std::forward&lt;U&gt;(replacement)); } || requires(const Impl &amp;impl) { impl.fmap( detail::constant_function&lt;std::remove_cvref_t&lt;U&gt;&gt;{ std::forward&lt;U&gt;(replacement)}, std::forward&lt;T&gt;(value)); }</td></tr>
-<tr class="memitem:a4c0a763393d4ae94c98f1d7d3bfede25"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__functor.html#a4c0a763393d4ae94c98f1d7d3bfede25">replace</a> (this auto &amp;&amp;self, T &amp;&amp;value, U &amp;&amp;replacement)</td></tr>
-<tr class="memdesc:a4c0a763393d4ae94c98f1d7d3bfede25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces every element of <code>value</code> with <code>replacement</code>, ignoring the original element values.  <br /></td></tr>
-<tr class="separator:a4c0a763393d4ae94c98f1d7d3bfede25"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d87c2734886d7369e14d4405cc6c864"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1derive__functor.html#a1d87c2734886d7369e14d4405cc6c864">replace</a> (this auto &amp;&amp;self, T &amp;&amp;value, U &amp;&amp;replacement) noexcept(replace_nothrow&lt; decltype(self), T, U &gt;())</td></tr>
+<tr class="memdesc:a1d87c2734886d7369e14d4405cc6c864"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replaces every element of <code>value</code> with <code>replacement</code>, ignoring the original element values.  <br /></td></tr>
+<tr class="separator:a1d87c2734886d7369e14d4405cc6c864"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class Impl&gt;<br />
 struct beman::transpose::derive_functor&lt; Impl &gt;</div><p>CRTP base for Functor instances. </p>
-<p><code>Impl</code> must provide <code><a class="el" href="namespacebeman_1_1transpose.html#a35268b4664c5546e8190f5bbfc5e5743" title="Maps a function over a functor: fmap(f, container).">fmap(f, container)</a></code>; <code>replace</code> is derived from it. </p>
+<p><code>Impl</code> must provide <code><a class="el" href="namespacebeman_1_1transpose.html#a35268b4664c5546e8190f5bbfc5e5743" title="Maps a function over a functor: fmap(f, container).">fmap(f, container)</a></code>; <code>replace</code> is derived from it.</p>
+<p>Every operation carries a computed exception specification: <code>fmap</code>'s is <code>Impl</code>'s own, and <code>replace</code>'s is that of the route it takes, spelled from the same requires-expression the body selects the route by (docs/transpose/decisions.md#operation-noexcept). </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8e77f372e676a3709d396ae8c9bb8721" name="a8e77f372e676a3709d396ae8c9bb8721"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e77f372e676a3709d396ae8c9bb8721">&#9670;&#160;</a></span>fmap()</h2>
+<a id="ad9985c0a8a1f9bb2a44a352b9dbe8da6" name="ad9985c0a8a1f9bb2a44a352b9dbe8da6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9985c0a8a1f9bb2a44a352b9dbe8da6">&#9670;&#160;</a></span>fmap()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -167,7 +168,7 @@ requires requires(const Impl &amp;impl) { impl.fmap(std::forward&lt;FUNCTION&gt;
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -176,8 +177,8 @@ requires requires(const Impl &amp;impl) { impl.fmap(std::forward&lt;FUNCTION&gt;
 
 </div>
 </div>
-<a id="a4c0a763393d4ae94c98f1d7d3bfede25" name="a4c0a763393d4ae94c98f1d7d3bfede25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c0a763393d4ae94c98f1d7d3bfede25">&#9670;&#160;</a></span>replace()</h2>
+<a id="a1d87c2734886d7369e14d4405cc6c864" name="a1d87c2734886d7369e14d4405cc6c864"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d87c2734886d7369e14d4405cc6c864">&#9670;&#160;</a></span>replace()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -216,7 +217,7 @@ requires requires(const Impl &amp;impl) { impl.replace(std::forward&lt;T&gt;(val
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

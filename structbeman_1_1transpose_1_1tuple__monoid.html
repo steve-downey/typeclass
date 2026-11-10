@@ -112,10 +112,10 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a261dcdd5afc5b0c5592e6e9d45410b65"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a261dcdd5afc5b0c5592e6e9d45410b65">identity</a> () const -&gt; <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a></td></tr>
-<tr class="separator:a261dcdd5afc5b0c5592e6e9d45410b65"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c7a45a54ce5b543c31813e8129bb874"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a0c7a45a54ce5b543c31813e8129bb874">combine</a> (const <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a> &amp;lhs, const <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a> &amp;rhs) const -&gt; <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a></td></tr>
-<tr class="separator:a0c7a45a54ce5b543c31813e8129bb874"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a906eb2020ac98cf7e2f1c81b5f9f3162"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a906eb2020ac98cf7e2f1c81b5f9f3162">identity</a> () const noexcept((noexcept(std::declval&lt; const M &amp; &gt;().identity()) &amp;&amp;...) &amp;&amp;std::is_nothrow_constructible_v&lt; <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a>, decltype(std::declval&lt; const M &amp; &gt;().identity())... &gt;) -&gt; <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a></td></tr>
+<tr class="separator:a906eb2020ac98cf7e2f1c81b5f9f3162"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6d328c7c7f326a0d8fd31037973241e"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#aa6d328c7c7f326a0d8fd31037973241e">combine</a> (const <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a> &amp;lhs, const <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a> &amp;rhs) const noexcept((noexcept(std::declval&lt; const M &amp; &gt;().combine(std::declval&lt; const <a class="el" href="namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2">monoid_value_t</a>&lt; M &gt; &amp; &gt;(), std::declval&lt; const <a class="el" href="namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2">monoid_value_t</a>&lt; M &gt; &amp; &gt;())) &amp;&amp;...) &amp;&amp;std::is_nothrow_constructible_v&lt; <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a>, decltype(std::declval&lt; const M &amp; &gt;().combine(std::declval&lt; const <a class="el" href="namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2">monoid_value_t</a>&lt; M &gt; &amp; &gt;(), std::declval&lt; const <a class="el" href="namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2">monoid_value_t</a>&lt; M &gt; &amp; &gt;()))... &gt;) -&gt; <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html#a81f85ffcabd93a4d19666338aa62160e">value_type</a></td></tr>
+<tr class="separator:aa6d328c7c7f326a0d8fd31037973241e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -143,8 +143,8 @@ template&lt;class... M&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a261dcdd5afc5b0c5592e6e9d45410b65" name="a261dcdd5afc5b0c5592e6e9d45410b65"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a261dcdd5afc5b0c5592e6e9d45410b65">&#9670;&#160;</a></span>identity()</h2>
+<a id="a906eb2020ac98cf7e2f1c81b5f9f3162" name="a906eb2020ac98cf7e2f1c81b5f9f3162"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a906eb2020ac98cf7e2f1c81b5f9f3162">&#9670;&#160;</a></span>identity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -163,15 +163,15 @@ template&lt;class... M&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a0c7a45a54ce5b543c31813e8129bb874" name="a0c7a45a54ce5b543c31813e8129bb874"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0c7a45a54ce5b543c31813e8129bb874">&#9670;&#160;</a></span>combine()</h2>
+<a id="aa6d328c7c7f326a0d8fd31037973241e" name="aa6d328c7c7f326a0d8fd31037973241e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa6d328c7c7f326a0d8fd31037973241e">&#9670;&#160;</a></span>combine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -201,7 +201,7 @@ template&lt;class... M&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

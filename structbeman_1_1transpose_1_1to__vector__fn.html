@@ -105,17 +105,17 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1to__vector
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a931984919d050174418b5d831d4ab527"><td class="memTemplParams" colspan="2">template&lt;class T , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
+<tr class="memitem:a5cb6dc971facff14acf4d2165b3ce13e"><td class="memTemplParams" colspan="2">template&lt;class T , const auto &amp; TC = foldable&lt;std::remove_cvref_t&lt;T&gt;&gt;&gt; <br />
 requires requires { TC.to_vector(std::declval&lt;T&gt;()); }</td></tr>
-<tr class="memitem:a931984919d050174418b5d831d4ab527"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1to__vector__fn.html#a931984919d050174418b5d831d4ab527">operator()</a> (T &amp;&amp;value) const</td></tr>
-<tr class="memdesc:a931984919d050174418b5d831d4ab527"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collects every element into a <code>std::vector</code> in traversal order.  <br /></td></tr>
-<tr class="separator:a931984919d050174418b5d831d4ab527"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5cb6dc971facff14acf4d2165b3ce13e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1to__vector__fn.html#a5cb6dc971facff14acf4d2165b3ce13e">operator()</a> (T &amp;&amp;value) const noexcept(noexcept(TC.to_vector(std::forward&lt; T &gt;(value))))</td></tr>
+<tr class="memdesc:a5cb6dc971facff14acf4d2165b3ce13e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Collects every element into a <code>std::vector</code> in traversal order.  <br /></td></tr>
+<tr class="separator:a5cb6dc971facff14acf4d2165b3ce13e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for the derived <code>to_vector</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a931984919d050174418b5d831d4ab527" name="a931984919d050174418b5d831d4ab527"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a931984919d050174418b5d831d4ab527">&#9670;&#160;</a></span>operator()()</h2>
+<a id="a5cb6dc971facff14acf4d2165b3ce13e" name="a5cb6dc971facff14acf4d2165b3ce13e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5cb6dc971facff14acf4d2165b3ce13e">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -136,7 +136,7 @@ requires requires { TC.to_vector(std::declval&lt;T&gt;()); }</div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

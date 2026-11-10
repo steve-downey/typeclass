@@ -6,7 +6,7 @@ var monad_8hpp =
     [ "beman::transpose::kleisli_fn< CONTEXT, TC >", "structbeman_1_1transpose_1_1kleisli__fn.html", "structbeman_1_1transpose_1_1kleisli__fn" ],
     [ "beman::transpose::monad_impl", "conceptbeman_1_1transpose_1_1monad__impl.html", null ],
     [ "beman::transpose::monad_object", "conceptbeman_1_1transpose_1_1monad__object.html", null ],
-    [ "mbind", "monad_8hpp.html#ac17f550d3e4236b11d59c51d5d8c9ede", null ],
+    [ "mbind", "monad_8hpp.html#a0b9efe60883f38377fa9b6d07e3ebb20", null ],
     [ "monad", "monad_8hpp.html#add8ff7b719d9f760d9f49fc2523daf64", null ],
     [ "bind", "monad_8hpp.html#a9ce465f427e17e5009fc088ce0db2ef7", null ],
     [ "join", "monad_8hpp.html#a4124f489e3aa893e233c1ad7ad475791", null ],

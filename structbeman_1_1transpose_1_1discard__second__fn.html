@@ -105,17 +105,17 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1discard__s
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adae20556c74e8be015d285ef5ab78991"><td class="memTemplParams" colspan="2">template&lt;class FIRST_ARGUMENT , class SECOND_ARGUMENT , const auto &amp; TC = applicative&lt;std::remove_cvref_t&lt;FIRST_ARGUMENT&gt;&gt;&gt; <br />
+<tr class="memitem:a38e141091829e4492c521084aa172656"><td class="memTemplParams" colspan="2">template&lt;class FIRST_ARGUMENT , class SECOND_ARGUMENT , const auto &amp; TC = applicative&lt;std::remove_cvref_t&lt;FIRST_ARGUMENT&gt;&gt;&gt; <br />
 requires requires { TC.discard_second(std::declval&lt;FIRST_ARGUMENT&gt;(), std::declval&lt;SECOND_ARGUMENT&gt;()); }</td></tr>
-<tr class="memitem:adae20556c74e8be015d285ef5ab78991"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1discard__second__fn.html#adae20556c74e8be015d285ef5ab78991">operator()</a> (FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument) const</td></tr>
-<tr class="memdesc:adae20556c74e8be015d285ef5ab78991"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sequences two in-context values, keeping the first.  <br /></td></tr>
-<tr class="separator:adae20556c74e8be015d285ef5ab78991"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38e141091829e4492c521084aa172656"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1discard__second__fn.html#a38e141091829e4492c521084aa172656">operator()</a> (FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument) const noexcept(noexcept(TC.discard_second(std::forward&lt; FIRST_ARGUMENT &gt;(first_argument), std::forward&lt; SECOND_ARGUMENT &gt;(second_argument))))</td></tr>
+<tr class="memdesc:a38e141091829e4492c521084aa172656"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sequences two in-context values, keeping the first.  <br /></td></tr>
+<tr class="separator:a38e141091829e4492c521084aa172656"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for the derived <code>discard_second</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="adae20556c74e8be015d285ef5ab78991" name="adae20556c74e8be015d285ef5ab78991"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adae20556c74e8be015d285ef5ab78991">&#9670;&#160;</a></span>operator()()</h2>
+<a id="a38e141091829e4492c521084aa172656" name="a38e141091829e4492c521084aa172656"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38e141091829e4492c521084aa172656">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,7 +146,7 @@ requires requires { TC.discard_second(std::declval&lt;FIRST_ARGUMENT&gt;(), std:
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

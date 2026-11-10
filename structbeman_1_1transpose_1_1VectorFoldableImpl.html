@@ -94,6 +94,7 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1VectorFold
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structbeman_1_1transpose_1_1VectorFoldableImpl-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">beman::transpose::VectorFoldableImpl&lt; VALUE_TYPE &gt; Struct Template Reference</div></div>
 </div><!--header-->
@@ -121,12 +122,18 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a06f8c5063978c371297c6edac01aa054"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class MONOID &gt; <br />
+<tr class="memitem:ac2210774082b86a0a72604472252021c"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class MONOID &gt; <br />
 requires monoid_object&lt;MONOID, std::remove_cvref_t&lt;std::invoke_result_t&lt; FUNCTION &amp;, const VALUE_TYPE &amp;&gt;&gt;&gt;</td></tr>
-<tr class="memitem:a06f8c5063978c371297c6edac01aa054"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFoldableImpl.html#a06f8c5063978c371297c6edac01aa054">fold_map</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, const std::vector&lt; VALUE_TYPE &gt; &amp;values, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>) -&gt; std::remove_cvref_t&lt; std::invoke_result_t&lt; FUNCTION &amp;, const VALUE_TYPE &amp; &gt; &gt;</td></tr>
-<tr class="separator:a06f8c5063978c371297c6edac01aa054"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac87e5c8bcfdba80c24ac40cd97f26ec3"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFoldableImpl.html#ac87e5c8bcfdba80c24ac40cd97f26ec3">length</a> (this auto &amp;&amp;, const std::vector&lt; VALUE_TYPE &gt; &amp;values) -&gt; std::size_t</td></tr>
-<tr class="separator:ac87e5c8bcfdba80c24ac40cd97f26ec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2210774082b86a0a72604472252021c"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFoldableImpl.html#ac2210774082b86a0a72604472252021c">fold_map</a> (this auto &amp;&amp;, FUNCTION &amp;&amp;function, const std::vector&lt; VALUE_TYPE &gt; &amp;values, MONOID <a class="el" href="namespacebeman_1_1transpose.html#a1d004074583790d60f7742024e8f3b1f">monoid</a>) noexcept(<a class="el" href="structbeman_1_1transpose_1_1VectorFoldableImpl.html#af068762e13274812cb56ea59b6542704">fold_map_nothrow</a>&lt; FUNCTION, MONOID &gt;) -&gt; std::remove_cvref_t&lt; std::invoke_result_t&lt; FUNCTION &amp;, const VALUE_TYPE &amp; &gt; &gt;</td></tr>
+<tr class="separator:ac2210774082b86a0a72604472252021c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a650f778a3ec6c7d0b76dfd07ff3e3fdf"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFoldableImpl.html#a650f778a3ec6c7d0b76dfd07ff3e3fdf">length</a> (this auto &amp;&amp;, const std::vector&lt; VALUE_TYPE &gt; &amp;values) noexcept -&gt; std::size_t</td></tr>
+<tr class="separator:a650f778a3ec6c7d0b76dfd07ff3e3fdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:af068762e13274812cb56ea59b6542704"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class MONOID &gt; </td></tr>
+<tr class="memitem:af068762e13274812cb56ea59b6542704"><td class="memTemplItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1VectorFoldableImpl.html#af068762e13274812cb56ea59b6542704">fold_map_nothrow</a></td></tr>
+<tr class="separator:af068762e13274812cb56ea59b6542704"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class VALUE_TYPE&gt;<br />
@@ -150,8 +157,8 @@ template&lt;class VALUE_TYPE &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a06f8c5063978c371297c6edac01aa054" name="a06f8c5063978c371297c6edac01aa054"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a06f8c5063978c371297c6edac01aa054">&#9670;&#160;</a></span>fold_map()</h2>
+<a id="ac2210774082b86a0a72604472252021c" name="ac2210774082b86a0a72604472252021c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2210774082b86a0a72604472252021c">&#9670;&#160;</a></span>fold_map()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -197,15 +204,15 @@ requires monoid_object&lt;MONOID, std::remove_cvref_t&lt;std::invoke_result_t&lt
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ac87e5c8bcfdba80c24ac40cd97f26ec3" name="ac87e5c8bcfdba80c24ac40cd97f26ec3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac87e5c8bcfdba80c24ac40cd97f26ec3">&#9670;&#160;</a></span>length()</h2>
+<a id="a650f778a3ec6c7d0b76dfd07ff3e3fdf" name="a650f778a3ec6c7d0b76dfd07ff3e3fdf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a650f778a3ec6c7d0b76dfd07ff3e3fdf">&#9670;&#160;</a></span>length()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -235,11 +242,55 @@ template&lt;class VALUE_TYPE &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="af068762e13274812cb56ea59b6542704" name="af068762e13274812cb56ea59b6542704"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af068762e13274812cb56ea59b6542704">&#9670;&#160;</a></span>fold_map_nothrow</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class VALUE_TYPE &gt; </div>
+<div class="memtemplate">
+template&lt;class FUNCTION , class MONOID &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool <a class="el" href="structbeman_1_1transpose_1_1VectorFoldableImpl.html">beman::transpose::VectorFoldableImpl</a>&lt; VALUE_TYPE &gt;::fold_map_nothrow</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<b>Initial value:</b><div class="fragment"><div class="line">=</div>
+<div class="line">        <span class="keyword">noexcept</span>(std::declval&lt;const MONOID &amp;&gt;().identity()) &amp;&amp;</div>
+<div class="line">        <span class="keyword">noexcept</span>(std::declval&lt;const MONOID &amp;&gt;().combine(</div>
+<div class="line">            std::declval&lt;std::remove_cvref_t&lt;</div>
+<div class="line">                std::invoke_result_t&lt;FUNCTION &amp;, const VALUE_TYPE &amp;&gt;&gt;&gt;(),</div>
+<div class="line">            std::invoke(std::declval&lt;FUNCTION &amp;&gt;(),</div>
+<div class="line">                        std::declval&lt;const VALUE_TYPE &amp;&gt;()))) &amp;&amp;</div>
+<div class="line">        std::is_nothrow_assignable_v&lt;</div>
+<div class="line">            std::remove_cvref_t&lt;</div>
+<div class="line">                std::invoke_result_t&lt;FUNCTION &amp;, const VALUE_TYPE &amp;&gt;&gt; &amp;,</div>
+<div class="line">            <span class="keyword">decltype</span>(std::declval&lt;const MONOID &amp;&gt;().combine(</div>
+<div class="line">                std::declval&lt;std::remove_cvref_t&lt;</div>
+<div class="line">                    std::invoke_result_t&lt;FUNCTION &amp;, const VALUE_TYPE &amp;&gt;&gt;&gt;(),</div>
+<div class="line">                std::invoke(std::declval&lt;FUNCTION &amp;&gt;(),</div>
+<div class="line">                            std::declval&lt;const VALUE_TYPE &amp;&gt;())))&gt; &amp;&amp;</div>
+<div class="line">        std::is_nothrow_move_constructible_v&lt;std::remove_cvref_t&lt;</div>
+<div class="line">            std::invoke_result_t&lt;FUNCTION &amp;, const VALUE_TYPE &amp;&gt;&gt;&gt;</div>
+</div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>

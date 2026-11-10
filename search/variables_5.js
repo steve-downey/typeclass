@@ -4,12 +4,13 @@ var searchData=
   ['fmap_1',['fmap',['../namespacebeman_1_1transpose.html#a35268b4664c5546e8190f5bbfc5e5743',1,'beman::transpose']]],
   ['fold_5fleft_2',['fold_left',['../namespacebeman_1_1transpose.html#a2f8a822a977974223e263f24214c74a8',1,'beman::transpose']]],
   ['fold_5fmap_3',['fold_map',['../namespacebeman_1_1transpose.html#a5e1d10d9e16af348c9d167dd06d8ad24',1,'beman::transpose']]],
-  ['fold_5fright_4',['fold_right',['../namespacebeman_1_1transpose.html#a63c6b13754a8b0c400395b6f98bb02ad',1,'beman::transpose']]],
-  ['foldable_5',['foldable',['../namespacebeman_1_1transpose.html#a57e350881f367d4918a43f34e51ab16d',1,'beman::transpose']]],
-  ['foldable_3c_20tree_20_3e_6',['foldable&lt; Tree &gt;',['../namespacebeman_1_1transpose.html#afa88a395f712daed934f2818e31d51b7',1,'beman::transpose']]],
-  ['fringe_5ftree_5fembed_7',['fringe_tree_embed',['../namespacebeman_1_1tree__algorithms.html#a5a7e9bac3a15e8327d8038edc08244d3',1,'beman::tree_algorithms']]],
-  ['fringe_5ftree_5flayer_5ffold_5fmap_8',['fringe_tree_layer_fold_map',['../namespacebeman_1_1tree__algorithms.html#a9f76337dd2f9967588a2f7d12643583e',1,'beman::tree_algorithms']]],
-  ['fringe_5ftree_5fproject_9',['fringe_tree_project',['../namespacebeman_1_1tree__algorithms.html#a5de92ea1f3c02fd7a3b62fac6bdcb709',1,'beman::tree_algorithms']]],
-  ['functor_10',['functor',['../namespacebeman_1_1transpose.html#a3b57afb258f8b49b3c9b9e56e6302f64',1,'beman::transpose']]],
-  ['functor_3c_20tree_20_3e_11',['functor&lt; Tree &gt;',['../namespacebeman_1_1transpose.html#a60e30cfe7430724066735381e3bd1d64',1,'beman::transpose']]]
+  ['fold_5fmap_5fnothrow_4',['fold_map_nothrow',['../structbeman_1_1transpose_1_1VectorFoldableImpl.html#af068762e13274812cb56ea59b6542704',1,'beman::transpose::VectorFoldableImpl']]],
+  ['fold_5fright_5',['fold_right',['../namespacebeman_1_1transpose.html#a63c6b13754a8b0c400395b6f98bb02ad',1,'beman::transpose']]],
+  ['foldable_6',['foldable',['../namespacebeman_1_1transpose.html#a57e350881f367d4918a43f34e51ab16d',1,'beman::transpose']]],
+  ['foldable_3c_20tree_20_3e_7',['foldable&lt; Tree &gt;',['../namespacebeman_1_1transpose.html#afa88a395f712daed934f2818e31d51b7',1,'beman::transpose']]],
+  ['fringe_5ftree_5fembed_8',['fringe_tree_embed',['../namespacebeman_1_1tree__algorithms.html#a5a7e9bac3a15e8327d8038edc08244d3',1,'beman::tree_algorithms']]],
+  ['fringe_5ftree_5flayer_5ffold_5fmap_9',['fringe_tree_layer_fold_map',['../namespacebeman_1_1tree__algorithms.html#a9f76337dd2f9967588a2f7d12643583e',1,'beman::tree_algorithms']]],
+  ['fringe_5ftree_5fproject_10',['fringe_tree_project',['../namespacebeman_1_1tree__algorithms.html#a5de92ea1f3c02fd7a3b62fac6bdcb709',1,'beman::tree_algorithms']]],
+  ['functor_11',['functor',['../namespacebeman_1_1transpose.html#a3b57afb258f8b49b3c9b9e56e6302f64',1,'beman::transpose']]],
+  ['functor_3c_20tree_20_3e_12',['functor&lt; Tree &gt;',['../namespacebeman_1_1transpose.html#a60e30cfe7430724066735381e3bd1d64',1,'beman::transpose']]]
 ];

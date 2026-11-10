@@ -4,6 +4,8 @@ var apply_8hpp =
     [ "beman::transpose::invoke_fn", "structbeman_1_1transpose_1_1invoke__fn.html", "structbeman_1_1transpose_1_1invoke__fn" ],
     [ "beman::transpose::ap_fn", "structbeman_1_1transpose_1_1ap__fn.html", "structbeman_1_1transpose_1_1ap__fn" ],
     [ "beman::transpose::pure_fn< CONTEXT, TC >", "structbeman_1_1transpose_1_1pure__fn.html", "structbeman_1_1transpose_1_1pure__fn" ],
+    [ "beman::transpose::raise_fn< CONTEXT, TC >", "structbeman_1_1transpose_1_1raise__fn.html", "structbeman_1_1transpose_1_1raise__fn" ],
+    [ "beman::transpose::zero_fn< CONTEXT, TC >", "structbeman_1_1transpose_1_1zero__fn.html", "structbeman_1_1transpose_1_1zero__fn" ],
     [ "beman::transpose::zip_with_fn", "structbeman_1_1transpose_1_1zip__with__fn.html", "structbeman_1_1transpose_1_1zip__with__fn" ],
     [ "beman::transpose::discard_first_fn", "structbeman_1_1transpose_1_1discard__first__fn.html", "structbeman_1_1transpose_1_1discard__first__fn" ],
     [ "beman::transpose::discard_second_fn", "structbeman_1_1transpose_1_1discard__second__fn.html", "structbeman_1_1transpose_1_1discard__second__fn" ],
@@ -17,6 +19,8 @@ var apply_8hpp =
     [ "invoke", "apply_8hpp.html#a66c285a86cc3624bc83fefd648e57df4", null ],
     [ "ap", "apply_8hpp.html#a01fe90066997f5d64ec063d4f6fff430", null ],
     [ "pure", "apply_8hpp.html#ad69281e3689121b8f7f023021d7423d2", null ],
+    [ "raise", "apply_8hpp.html#a85859198f3d71504d907ae4fbb73ac68", null ],
+    [ "zero", "apply_8hpp.html#a93608e8a1bcd6bb715ea5410a906feaa", null ],
     [ "zip_with", "apply_8hpp.html#a6300716ab71ef10e3d8196bb4bba0583", null ],
     [ "discard_first", "apply_8hpp.html#a4222f534c37462e36d6fdb5f392ffe58", null ],
     [ "discard_second", "apply_8hpp.html#a320c19116e618cacf370becbf460dd1d", null ]

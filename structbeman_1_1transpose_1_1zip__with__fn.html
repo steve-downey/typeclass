@@ -105,17 +105,17 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1zip__with_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1f1616e19fa6d924aae20fdbc73b3ceb"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST_ARGUMENT , class SECOND_ARGUMENT , const auto &amp; TC = applicative&lt;std::remove_cvref_t&lt;FIRST_ARGUMENT&gt;&gt;&gt; <br />
+<tr class="memitem:ab8cd96a5402d511963ceef7dab63261b"><td class="memTemplParams" colspan="2">template&lt;class FUNCTION , class FIRST_ARGUMENT , class SECOND_ARGUMENT , const auto &amp; TC = applicative&lt;std::remove_cvref_t&lt;FIRST_ARGUMENT&gt;&gt;&gt; <br />
 requires requires { TC.zip_with(std::declval&lt;FUNCTION&gt;(), std::declval&lt;FIRST_ARGUMENT&gt;(), std::declval&lt;SECOND_ARGUMENT&gt;()); }</td></tr>
-<tr class="memitem:a1f1616e19fa6d924aae20fdbc73b3ceb"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zip__with__fn.html#a1f1616e19fa6d924aae20fdbc73b3ceb">operator()</a> (FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument) const</td></tr>
-<tr class="memdesc:a1f1616e19fa6d924aae20fdbc73b3ceb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lifts a binary function over two in-context arguments.  <br /></td></tr>
-<tr class="separator:a1f1616e19fa6d924aae20fdbc73b3ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8cd96a5402d511963ceef7dab63261b"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1zip__with__fn.html#ab8cd96a5402d511963ceef7dab63261b">operator()</a> (FUNCTION &amp;&amp;function, FIRST_ARGUMENT &amp;&amp;first_argument, SECOND_ARGUMENT &amp;&amp;second_argument) const noexcept(noexcept(TC.zip_with(std::forward&lt; FUNCTION &gt;(function), std::forward&lt; FIRST_ARGUMENT &gt;(first_argument), std::forward&lt; SECOND_ARGUMENT &gt;(second_argument))))</td></tr>
+<tr class="memdesc:ab8cd96a5402d511963ceef7dab63261b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Lifts a binary function over two in-context arguments.  <br /></td></tr>
+<tr class="separator:ab8cd96a5402d511963ceef7dab63261b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for the derived <code>zip_with</code>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a1f1616e19fa6d924aae20fdbc73b3ceb" name="a1f1616e19fa6d924aae20fdbc73b3ceb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1f1616e19fa6d924aae20fdbc73b3ceb">&#9670;&#160;</a></span>operator()()</h2>
+<a id="ab8cd96a5402d511963ceef7dab63261b" name="ab8cd96a5402d511963ceef7dab63261b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8cd96a5402d511963ceef7dab63261b">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -152,7 +152,7 @@ requires requires { TC.zip_with(std::declval&lt;FUNCTION&gt;(), std::declval&lt;
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

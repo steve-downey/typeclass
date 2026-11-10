@@ -105,18 +105,18 @@ $(document).ready(function(){initNavTree('structbeman_1_1transpose_1_1bind__fn.h
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab52629a678a9917d91ef21f8e83b05d7"><td class="memTemplParams" colspan="2">template&lt;class MA , class F , const auto &amp; TC = monad&lt;std::remove_cvref_t&lt;MA&gt;&gt;&gt; <br />
+<tr class="memitem:ad008cc620621cdecb46207183022469e"><td class="memTemplParams" colspan="2">template&lt;class MA , class F , const auto &amp; TC = monad&lt;std::remove_cvref_t&lt;MA&gt;&gt;&gt; <br />
 requires requires { TC.bind(std::declval&lt;MA&gt;(), std::declval&lt;F&gt;()); }</td></tr>
-<tr class="memitem:ab52629a678a9917d91ef21f8e83b05d7"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1bind__fn.html#ab52629a678a9917d91ef21f8e83b05d7">operator()</a> (MA &amp;&amp;ma, F &amp;&amp;f) const</td></tr>
-<tr class="memdesc:ab52629a678a9917d91ef21f8e83b05d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sequences a monadic value <code>ma</code> through <code>f</code> (Haskell's <code>&gt;&gt;=</code>).  <br /></td></tr>
-<tr class="separator:ab52629a678a9917d91ef21f8e83b05d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad008cc620621cdecb46207183022469e"><td class="memTemplItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1bind__fn.html#ad008cc620621cdecb46207183022469e">operator()</a> (MA &amp;&amp;ma, F &amp;&amp;f) const noexcept(noexcept(TC.bind(std::forward&lt; MA &gt;(ma), std::forward&lt; F &gt;(f))))</td></tr>
+<tr class="memdesc:ad008cc620621cdecb46207183022469e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sequences a monadic value <code>ma</code> through <code>f</code> (Haskell's <code>&gt;&gt;=</code>).  <br /></td></tr>
+<tr class="separator:ad008cc620621cdecb46207183022469e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Operation object for Monad's <code>bind</code> primitive. </p>
 <p>The context keys the lookup and is deduced from the first argument. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab52629a678a9917d91ef21f8e83b05d7" name="ab52629a678a9917d91ef21f8e83b05d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab52629a678a9917d91ef21f8e83b05d7">&#9670;&#160;</a></span>operator()()</h2>
+<a id="ad008cc620621cdecb46207183022469e" name="ad008cc620621cdecb46207183022469e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad008cc620621cdecb46207183022469e">&#9670;&#160;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -147,7 +147,7 @@ requires requires { TC.bind(std::declval&lt;MA&gt;(), std::declval&lt;F&gt;()); 
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

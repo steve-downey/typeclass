@@ -1,9 +1,11 @@
 var dir_dcca3582e3abd91b3ef0fe1a8f79e9b7 =
 [
     [ "detail", "dir_f2a3eb6db913f831e1ff106000cd0ab6.html", "dir_f2a3eb6db913f831e1ff106000cd0ab6" ],
+    [ "alternative.hpp", "alternative_8hpp.html", "alternative_8hpp" ],
     [ "apply.hpp", "apply_8hpp.html", "apply_8hpp" ],
     [ "array.hpp", "array_8hpp.html", "array_8hpp" ],
     [ "config.hpp", "transpose_2config_8hpp.html", null ],
+    [ "eliminate.hpp", "eliminate_8hpp.html", "eliminate_8hpp" ],
     [ "error_set.hpp", "error__set_8hpp.html", "error__set_8hpp" ],
     [ "expected.hpp", "expected_8hpp.html", "expected_8hpp" ],
     [ "fold.hpp", "fold_8hpp.html", "fold_8hpp" ],

@@ -111,10 +111,10 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af34c59d2ce2d71d41e4c4145179c53d6"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1sum__monoid.html#af34c59d2ce2d71d41e4c4145179c53d6">identity</a> () const -&gt; T</td></tr>
-<tr class="separator:af34c59d2ce2d71d41e4c4145179c53d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab601071f5f7eb286acc2ef1c5eeee0ee"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1sum__monoid.html#ab601071f5f7eb286acc2ef1c5eeee0ee">combine</a> (const T &amp;lhs, const T &amp;rhs) const -&gt; T</td></tr>
-<tr class="separator:ab601071f5f7eb286acc2ef1c5eeee0ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ccd2fc23af79d9fcca226f80f973b73"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1sum__monoid.html#a8ccd2fc23af79d9fcca226f80f973b73">identity</a> () const noexcept(std::is_nothrow_default_constructible_v&lt; T &gt;) -&gt; T</td></tr>
+<tr class="separator:a8ccd2fc23af79d9fcca226f80f973b73"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acdd7fcec2a91a88bfe6dcfefebcdceee"><td class="memItemLeft" align="right" valign="top">constexpr auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1transpose_1_1sum__monoid.html#acdd7fcec2a91a88bfe6dcfefebcdceee">combine</a> (const T &amp;lhs, const T &amp;rhs) const noexcept(noexcept(T(lhs+rhs))) -&gt; T</td></tr>
+<tr class="separator:acdd7fcec2a91a88bfe6dcfefebcdceee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;class T&gt;<br />
@@ -137,8 +137,8 @@ template&lt;class T &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="af34c59d2ce2d71d41e4c4145179c53d6" name="af34c59d2ce2d71d41e4c4145179c53d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af34c59d2ce2d71d41e4c4145179c53d6">&#9670;&#160;</a></span>identity()</h2>
+<a id="a8ccd2fc23af79d9fcca226f80f973b73" name="a8ccd2fc23af79d9fcca226f80f973b73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ccd2fc23af79d9fcca226f80f973b73">&#9670;&#160;</a></span>identity()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -157,15 +157,15 @@ template&lt;class T &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="ab601071f5f7eb286acc2ef1c5eeee0ee" name="ab601071f5f7eb286acc2ef1c5eeee0ee"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab601071f5f7eb286acc2ef1c5eeee0ee">&#9670;&#160;</a></span>combine()</h2>
+<a id="acdd7fcec2a91a88bfe6dcfefebcdceee" name="acdd7fcec2a91a88bfe6dcfefebcdceee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdd7fcec2a91a88bfe6dcfefebcdceee">&#9670;&#160;</a></span>combine()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -195,7 +195,7 @@ template&lt;class T &gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">constexpr</span><span class="mlabel">noexcept</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
