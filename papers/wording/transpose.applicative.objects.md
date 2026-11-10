@@ -25,7 +25,8 @@ inline constexpr $unspecified$ ap;
 [x+5]{.pnum} *Remarks*: The name `ap` denotes an operation object: it is not found by argument-dependent lookup, and no explicit template argument list may be given in a call to it. The context is deduced from the argument in context, not from the callable in context. The exception specification is equivalent to `noexcept(applicative<C>.ap(function, argument))`.
 
 ```cpp
-template<class CONTEXT> inline constexpr $unspecified$ pure;
+template<class CONTEXT>
+  inline constexpr $unspecified$ pure;
 ```
 
 [x+6]{.pnum} *Constraints*: For a call `pure<CONTEXT>(value)`, let `C` be `remove_cvref_t<CONTEXT>`. `applicative<C>.pure(value)` is a valid expression.
@@ -35,7 +36,8 @@ template<class CONTEXT> inline constexpr $unspecified$ pure;
 [x+8]{.pnum} *Remarks*: The name `pure` denotes a family of operation objects, one per context. None is found by argument-dependent lookup, and `CONTEXT` is the only template argument a call gives. The context is named rather than deduced: `pure` builds a context instead of consuming one, so no argument carries it. The exception specification is equivalent to `noexcept(applicative<C>.pure(value))`.
 
 ```cpp
-template<class CONTEXT> inline constexpr $unspecified$ raise;
+template<class CONTEXT>
+  inline constexpr $unspecified$ raise;
 ```
 
 [x+9]{.pnum} *Constraints*: For a call `raise<CONTEXT>(error)`, let `C` be `remove_cvref_t<CONTEXT>`. `applicative<C>.raise(error)` is a valid expression.
@@ -45,7 +47,8 @@ template<class CONTEXT> inline constexpr $unspecified$ raise;
 [x+11]{.pnum} *Remarks*: The name `raise` denotes a family of operation objects, one per context, the dual of `pure`: where `pure` enters the context's success state with a value, `raise` enters its failure state with a witness. The context is named for the reason `pure`'s is: the operation builds a context rather than consuming one. The grade of the result is the object's business; for the error-set model it is the join of the context's grade with the grade `error`'s type alone would carry, spelled lazily. The exception specification is equivalent to `noexcept(applicative<C>.raise(error))`.
 
 ```cpp
-template<class CONTEXT> inline constexpr $unspecified$ zero;
+template<class CONTEXT>
+  inline constexpr $unspecified$ zero;
 ```
 
 [x+12]{.pnum} *Constraints*: For a call `zero<CONTEXT>()`, let `C` be `remove_cvref_t<CONTEXT>`. `applicative<C>.zero()` is a valid expression.

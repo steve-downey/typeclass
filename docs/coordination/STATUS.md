@@ -1,7 +1,33 @@
 # STATUS — cross-repo work board
 
-Updated: 2026-07-17. One line per open item; details live in the owning
-repo's document (linked). Order within each repo is execution order.
+Updated: 2026-11-08. The per-repository entries below retain their historical
+status; the current coherence work is tracked separately here.
+
+## Current coherence work
+
+The [coherence plan](coherence-plan.md) follows the
+[2026-11-08 review](review/2026-11-08-coherence/README.md). Stage 1 correctness
+repairs are complete on `tree-coherence-correctness` (PR #44, stacked on the
+review in #43). Stage 0 implementation contracts are recorded in
+[coherence-contracts.md](coherence-contracts.md), including the supported-interface
+matrix and Rope migration. Stage 2 [primitive constraints and object conformance](coherence-conformance.md)
+is complete on `tree-coherence-conformance`, including Rope's explicit chunk
+route. Stage 3 [configured reconstruction](coherence-reconstruction.md) is complete
+on `tree-coherence-reconstruction`, including payload Functors and concatenation
+monoids. Stage 4 [payload tree adapters](coherence-payload-adapters.md) is complete
+on `tree-coherence-payload-adapters`, including the structural-fold bridge and
+Expr's constant Foldable. Stage 5 optional structural fingertree integration
+is next; stage 6 remains planned.
+
+1. Record the element, reconstruction, Rope, and integration contracts.
+2. Repair monoid-state propagation, duplicate tree effects, and native collection.
+3. Align constraints, callable categories, metadata, and deep concepts.
+4. Preserve reconstruction state and move fresh result values.
+5. Complete the applicable payload typeclass adapters for library trees.
+6. Add optional structural fingertree integration.
+7. Close the cross-component validation, packaging, and documentation gates.
+
+Implementation stages and their dependencies are specified in the plan.
 
 ## Decisions needed from Steve (unblock markers: [S-n])
 

@@ -6,18 +6,16 @@
 
 ```cpp
 template<class VALUE>
-[[nodiscard]] auto pure(this auto&&, VALUE&& value) noexcept(
-    $expected-pure-nothrow$<VALUE_TYPE, VALUE, ERROR_TYPE>)
-    -> $expected-pure-t$<VALUE_TYPE, VALUE, ERROR_TYPE>;
+  [[nodiscard]] auto pure(this auto&&, VALUE&& value) noexcept($expected-pure-nothrow$<VALUE_TYPE, VALUE, ERROR_TYPE>)
+      -> $expected-pure-t$<VALUE_TYPE, VALUE, ERROR_TYPE>;
 ```
 
 [x]{.pnum} *Returns*: An `expected` holding `value`.
 
 ```cpp
 template<class ERROR>
-[[nodiscard]] auto raise(this auto&&, ERROR&& error) noexcept(
-    $raise-nothrow$<VALUE_TYPE, ERROR_TYPE, ERROR>)
-    -> $raise-result-t$<VALUE_TYPE, ERROR_TYPE, ERROR>;
+  [[nodiscard]] auto raise(this auto&&, ERROR&& error) noexcept($raise-nothrow$<VALUE_TYPE, ERROR_TYPE, ERROR>)
+      -> $raise-result-t$<VALUE_TYPE, ERROR_TYPE, ERROR>;
 ```
 
 [x+1]{.pnum} *Constraints*: As for the short-circuit object's `raise`.
@@ -26,18 +24,12 @@ template<class ERROR>
 
 ```cpp
 template<class FUNCTION, class... CARRIERS>
-[[nodiscard]] auto
-invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands) noexcept(
-    $invokes-nothrow-into$<
-        $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>,
-                          ERROR_TYPE>,
-        FUNCTION&, $expected-contained-t$<CARRIERS>...> &&
-    $expected-accumulate-nothrow$<
-        $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>,
-                          ERROR_TYPE>,
-        CARRIERS...>)
-    -> $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>,
-                         ERROR_TYPE>;
+  [[nodiscard]] auto invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands) noexcept(
+      $invokes-nothrow-into$<$expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>, ERROR_TYPE>,
+                           FUNCTION&, $expected-contained-t$<CARRIERS>...> &&
+      $expected-accumulate-nothrow$<
+          $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>, ERROR_TYPE>, CARRIERS...>)
+      -> $expected-result-t$<invoke_result_t<FUNCTION&, $expected-contained-t$<CARRIERS>...>, ERROR_TYPE>;
 ```
 
 [x+3]{.pnum} *Constraints*: `sizeof...(CARRIERS) > 0` is `true` and `$all-declare-v$<ERROR_TYPE, CARRIERS...>` is `true`.
@@ -48,20 +40,13 @@ invoke(this auto&&, FUNCTION&& function, CARRIERS&&... operands) noexcept(
 
 ```cpp
 template<class FUNCTION, class... CARRIERS>
-[[nodiscard]] auto
-invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands) noexcept(
-    $invokes-nothrow-into$<
-        $expected-result-t$<
-            invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
-            ERROR_TYPE>,
-        FUNCTION&, const $carrier-value-t$<CARRIERS>&...> &&
-    $expected-accumulate-nothrow$<
-        $expected-result-t$<
-            invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
-            ERROR_TYPE>,
-        CARRIERS...>)
-    -> $expected-result-t$<
-        invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>;
+  [[nodiscard]] auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands) noexcept(
+      $invokes-nothrow-into$<
+          $expected-result-t$<invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>, FUNCTION&,
+          const $carrier-value-t$<CARRIERS>&...> &&
+      $expected-accumulate-nothrow$<
+          $expected-result-t$<invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>, CARRIERS...>)
+      -> $expected-result-t$<invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>;
 ```
 
 [x+6]{.pnum} *Constraints*: At least one operand is an `expected`; the operands do not all declare `ERROR_TYPE`; and every operand either declares `ERROR_TYPE` or is a bare value.
@@ -70,30 +55,20 @@ invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands) noexcept(
 
 ```cpp
 template<class FUNCTION, class... CARRIERS>
-[[nodiscard]] auto
-invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands) noexcept(
-    $invokes-nothrow-into$<
-        $mixed-result-t$<
-            $grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
-            $expected-result-t$<
-                invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
-                ERROR_TYPE>,
-            CARRIERS...>,
-        FUNCTION&, const $carrier-value-t$<CARRIERS>&...> &&
-    $expected-accumulate-nothrow$<
-        $mixed-result-t$<
-            $grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
-            $expected-result-t$<
-                invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
-                ERROR_TYPE>,
-            CARRIERS...>,
-        CARRIERS...>)
-    -> $mixed-result-t$<
-        $grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
-        $expected-result-t$<
-            invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>,
-            ERROR_TYPE>,
-        CARRIERS...>;
+  [[nodiscard]] auto invoke(this auto&&, FUNCTION&& function, const CARRIERS&... operands) noexcept(
+      $invokes-nothrow-into$<
+          $mixed-result-t$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
+                         $expected-result-t$<invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>,
+                         CARRIERS...>,
+          FUNCTION&, const $carrier-value-t$<CARRIERS>&...> &&
+      $expected-accumulate-nothrow$<
+          $mixed-result-t$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
+                         $expected-result-t$<invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>,
+                         CARRIERS...>,
+          CARRIERS...>)
+      -> $mixed-result-t$<$grade-of-t$<expected<VALUE_TYPE, ERROR_TYPE>>,
+                        $expected-result-t$<invoke_result_t<FUNCTION&, const $carrier-value-t$<CARRIERS>&...>, ERROR_TYPE>,
+                        CARRIERS...>;
 ```
 
 [x+8]{.pnum} *Constraints*: At least one operand is an `expected`; the operands do not all declare `ERROR_TYPE` or a bare value; and every operand's grade belongs to this instance's grade model.

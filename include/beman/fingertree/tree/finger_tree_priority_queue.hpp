@@ -2,10 +2,12 @@
 #ifndef BEMAN_FINGERTREE_TREE_FINGER_TREE_PRIORITY_QUEUE_HPP
 #define BEMAN_FINGERTREE_TREE_FINGER_TREE_PRIORITY_QUEUE_HPP
 
-#include <beman/fingertree/tree/finger_tree.hpp>
+#include <beman/fingertree/tree/finger_tree_functor.hpp>
+#include <beman/fingertree/tree/finger_tree_traversable.hpp>
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/fold.hpp>
 #include <beman/transpose/monoid.hpp>
+#include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
 #include <algorithm>
@@ -91,9 +93,21 @@ template <typename T, typename Tree = FingerTree<T, PriorityMonoid<T>, PriorityM
 class FingerTreePriorityQueue {
     Tree d_tree;
 
+  public:
+    using value_type = T;
+
     explicit FingerTreePriorityQueue(Tree tree) : d_tree(std::move(tree)) {}
 
-  public:
+    /** Read-only access to the configured backing representation. */
+    auto backing_tree() const noexcept -> const Tree& { return d_tree; }
+
+    template <class F>
+    void for_each(F&& function) const
+        requires std::invocable<F&, const T&>
+    {
+        d_tree.for_each([&](const T& value) { std::invoke(function, value); });
+    }
+
     FingerTreePriorityQueue() : d_tree(Tree{}) {}
 
     static auto from_values(std::vector<T> values) -> FingerTreePriorityQueue {
@@ -150,6 +164,35 @@ class FingerTreePriorityQueue {
 
 namespace beman::fingertree {
 
+template <class T, class A, class U>
+    requires(!std::same_as<T, U>) && std::totally_ordered<U> && std::copy_constructible<U> &&
+            std::copy_constructible<A>
+struct finger_tree_rebind<tree::FingerTree<T, tree::PriorityMonoid<T>, tree::PriorityMeasure<T>, A>, U> {
+    using source_type = tree::FingerTree<T, tree::PriorityMonoid<T>, tree::PriorityMeasure<T>, A>;
+    using type        = tree::FingerTree<U, tree::PriorityMonoid<U>, tree::PriorityMeasure<U>, A>;
+
+    static auto make_builder(const source_type& source) {
+        // The extrema monoids are stateless; retain the count component and
+        // allocator while rebinding the two payload-dependent components.
+        auto                    monoid = source.get_monoid();
+        tree::PriorityMonoid<U> rebound{
+            {std::get<0>(monoid.d_inners), tree::optional_min_monoid<U>{}, tree::optional_max_monoid<U>{}}};
+        return detail::configured_tree_builder<type>{source.get_allocator(), std::move(rebound)};
+    }
+};
+
+template <class T, class Tree, class U>
+    requires detail::rebindable<Tree, U>
+struct finger_tree_rebind<tree::FingerTreePriorityQueue<T, Tree>, U> {
+    using source_type = tree::FingerTreePriorityQueue<T, Tree>;
+    using type        = tree::FingerTreePriorityQueue<U, finger_tree_rebind_t<Tree, U>>;
+
+    static auto make_builder(const source_type& source) {
+        auto builder = finger_tree_rebind<Tree, U>::make_builder(source.backing_tree());
+        return detail::wrapped_tree_builder<type, decltype(builder)>{std::move(builder)};
+    }
+};
+
 template <class T, class Tree>
 struct FingerTreePriorityQueueFoldableImpl {
     using element_type = T;
@@ -161,12 +204,17 @@ struct FingerTreePriorityQueueFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                              function,
                   const beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>& queue,
-                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>> {
-        using Result = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
-        return std::ranges::fold_left(
-            queue.to_vector(), Result(monoid.identity()), [&](Result acc, const auto& value) {
-                return monoid.combine(std::move(acc), std::invoke(function, value));
-            });
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>>
+        requires std::invocable<F&, const T&> &&
+                 beman::transpose::monoid_object<RESULT_MONOID,
+                                                 std::remove_cvref_t<std::invoke_result_t<F&, const T&>>>
+    {
+        using Result       = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
+        Result accumulated = monoid.identity();
+        queue.for_each([&](const T& value) {
+            accumulated = monoid.combine(std::move(accumulated), std::invoke(function, value));
+        });
+        return accumulated;
     }
 };
 
@@ -179,6 +227,10 @@ struct FingerTreePriorityQueueFoldableMap
 namespace beman::transpose {
 
 template <class T, class Tree>
+inline constexpr auto functor<beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>> =
+    beman::fingertree::FingerTreeFunctorMap<beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>>{};
+
+template <class T, class Tree>
 inline constexpr auto foldable<beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>> =
     beman::fingertree::FingerTreePriorityQueueFoldableMap<T, Tree>{};
 
@@ -187,41 +239,8 @@ inline constexpr auto foldable<beman::fingertree::tree::FingerTreePriorityQueue<
 namespace beman::fingertree {
 
 template <class T, class Tree>
-struct FingerTreePriorityQueueTraversableImpl {
-    using element_type = T;
-
-    template <class APPLICATIVE, class F>
-    auto traverse(this auto&&,
-                  const APPLICATIVE&                                               applicative,
-                  F&&                                                              function,
-                  const beman::fingertree::tree::FingerTreePriorityQueue<T, Tree>& queue)
-        requires std::invocable<F&, const T&> &&
-                 beman::transpose::applicative_object_for<APPLICATIVE,
-                                                          std::remove_cvref_t<std::invoke_result_t<F&, const T&>>>
-    {
-        using Context = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
-        using U       = beman::transpose::applicative_value_t<Context>;
-
-        auto accumulated = applicative.pure(std::vector<U>{});
-
-        for (const auto& value : queue.to_vector()) {
-            auto lifted = std::invoke(function, value);
-            accumulated = applicative.invoke(
-                [](std::vector<U> values, U element) {
-                    values.push_back(std::move(element));
-                    return values;
-                },
-                std::move(accumulated),
-                std::move(lifted));
-        }
-
-        return applicative.invoke(
-            [](std::vector<U> values) {
-                return beman::fingertree::tree::FingerTreePriorityQueue<U>::from_values(std::move(values));
-            },
-            std::move(accumulated));
-    }
-};
+using FingerTreePriorityQueueTraversableImpl =
+    FingerTreeSequenceTraversableImpl<tree::FingerTreePriorityQueue<T, Tree>>;
 
 template <class T, class Tree>
 struct FingerTreePriorityQueueTraversableMap

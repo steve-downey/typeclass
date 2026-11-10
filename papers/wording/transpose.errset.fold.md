@@ -6,13 +6,10 @@
 
 ```cpp
 template<class ACC, class HANDLER, class... ERRORS>
-[[nodiscard]] constexpr auto fold_witnesses(
-    const error_set_of<ERRORS...>& errors, ACC init,
-    HANDLER&& handler) noexcept((is_nothrow_invocable_r_v<ACC, HANDLER&, ACC&&,
-                                                          const ERRORS&> &&
-                                 ...) &&
-                                is_nothrow_move_constructible_v<ACC> &&
-                                is_nothrow_move_assignable_v<ACC>) -> ACC;
+  [[nodiscard]] constexpr auto fold_witnesses(
+      const error_set_of<ERRORS...>& errors, ACC init,
+      HANDLER&& handler) noexcept((is_nothrow_invocable_r_v<ACC, HANDLER&, ACC&&, const ERRORS&> && ...) &&
+                                  is_nothrow_move_constructible_v<ACC> && is_nothrow_move_assignable_v<ACC>) -> ACC;
 ```
 
 [x]{.pnum} *Mandates*: For every alternative `E` of the set, `handler` is invocable with `(ACC&&, const E&)` and the result converts to `ACC`.

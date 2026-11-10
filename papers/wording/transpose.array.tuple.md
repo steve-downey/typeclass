@@ -6,8 +6,8 @@
 
 ```cpp
 template<size_t N, class... Ts>
-[[nodiscard]] auto transpose_tuple(const tuple<array<Ts, N>...>& soa) noexcept(
-    (is_nothrow_copy_constructible_v<Ts> && ...)) -> array<tuple<Ts...>, N>;
+  [[nodiscard]] auto transpose_tuple(const tuple<array<Ts, N>...>& soa) noexcept((is_nothrow_copy_constructible_v<Ts> &&
+                                                                                  ...)) -> array<tuple<Ts...>, N>;
 ```
 
 [x]{.pnum} *Effects*: Transposes a tuple of arrays into an array of tuples: the element at position `i` of the result is the tuple of the elements at position `i` of each operand array.

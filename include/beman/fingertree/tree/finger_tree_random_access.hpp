@@ -16,9 +16,11 @@
 // (not template-template): different finger tree variants have different
 // template signatures; taking the complete instantiation is robust to drift.
 
-#include <beman/fingertree/tree/finger_tree.hpp>
+#include <beman/fingertree/tree/finger_tree_functor.hpp>
+#include <beman/fingertree/tree/finger_tree_traversable.hpp>
 #include <beman/transpose/apply.hpp>
 #include <beman/transpose/fold.hpp>
+#include <beman/transpose/sequence.hpp>
 #include <beman/transpose/traverse.hpp>
 
 #include <algorithm>
@@ -50,6 +52,18 @@ class FingerTreeRandomAccess {
     Tree d_tree;
 
   public:
+    using value_type = T;
+
+    /** Read-only access to the configured backing representation. */
+    auto backing_tree() const noexcept -> const Tree& { return d_tree; }
+
+    template <class F>
+    void for_each(F&& function) const
+        requires std::invocable<F&, const T&>
+    {
+        d_tree.for_each([&](const T& value) { std::invoke(function, value); });
+    }
+
     /** Constructs an empty sequence. */
     FingerTreeRandomAccess() : d_tree(Tree{}) {}
 
@@ -130,6 +144,18 @@ class FingerTreeRandomAccess {
 
 namespace beman::fingertree {
 
+template <class T, class Tree, class U>
+    requires detail::rebindable<Tree, U>
+struct finger_tree_rebind<tree::FingerTreeRandomAccess<T, Tree>, U> {
+    using source_type = tree::FingerTreeRandomAccess<T, Tree>;
+    using type        = tree::FingerTreeRandomAccess<U, finger_tree_rebind_t<Tree, U>>;
+
+    static auto make_builder(const source_type& source) {
+        auto builder = finger_tree_rebind<Tree, U>::make_builder(source.backing_tree());
+        return detail::wrapped_tree_builder<type, decltype(builder)>{std::move(builder)};
+    }
+};
+
 /** Foldable typeclass implementation for FingerTreeRandomAccess<T, Tree>. */
 template <class T, class Tree>
 struct FingerTreeRandomAccessFoldableImpl {
@@ -142,12 +168,17 @@ struct FingerTreeRandomAccessFoldableImpl {
     auto fold_map(this auto&&,
                   F&&                                                             function,
                   const beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>& sequence,
-                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>> {
-        using Result = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
-        return std::ranges::fold_left(
-            sequence.to_vector(), Result(monoid.identity()), [&](Result acc, const auto& value) {
-                return monoid.combine(std::move(acc), std::invoke(function, value));
-            });
+                  RESULT_MONOID monoid) -> std::remove_cvref_t<std::invoke_result_t<F&, const T&>>
+        requires std::invocable<F&, const T&> &&
+                 beman::transpose::monoid_object<RESULT_MONOID,
+                                                 std::remove_cvref_t<std::invoke_result_t<F&, const T&>>>
+    {
+        using Result       = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
+        Result accumulated = monoid.identity();
+        sequence.for_each([&](const T& value) {
+            accumulated = monoid.combine(std::move(accumulated), std::invoke(function, value));
+        });
+        return accumulated;
     }
 };
 
@@ -160,6 +191,10 @@ struct FingerTreeRandomAccessFoldableMap
 namespace beman::transpose {
 
 template <class T, class Tree>
+inline constexpr auto functor<beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>> =
+    beman::fingertree::FingerTreeFunctorMap<beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>>{};
+
+template <class T, class Tree>
 inline constexpr auto foldable<beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>> =
     beman::fingertree::FingerTreeRandomAccessFoldableMap<T, Tree>{};
 
@@ -167,49 +202,9 @@ inline constexpr auto foldable<beman::fingertree::tree::FingerTreeRandomAccess<T
 
 namespace beman::fingertree {
 
-/** Traversable typeclass implementation for FingerTreeRandomAccess<T, Tree>.
- *
- * The result of traversal is always FingerTreeRandomAccess<U> (using the
- * default -backed type for U), regardless of the source Tree parameter.
- * This is the production-correct choice; callers who need a specific backing
- * tree for traversal results can write their own adapter.
- */
+/** Traversable retains configuration through the declared backing-family rebind. */
 template <class T, class Tree>
-struct FingerTreeRandomAccessTraversableImpl {
-    using element_type = T;
-
-    template <class APPLICATIVE, class F>
-    auto traverse(this auto&&,
-                  const APPLICATIVE&                                              applicative,
-                  F&&                                                             function,
-                  const beman::fingertree::tree::FingerTreeRandomAccess<T, Tree>& sequence)
-        requires std::invocable<F&, const T&> &&
-                 beman::transpose::applicative_object_for<APPLICATIVE,
-                                                          std::remove_cvref_t<std::invoke_result_t<F&, const T&>>>
-    {
-        using Context = std::remove_cvref_t<std::invoke_result_t<F&, const T&>>;
-        using U       = beman::transpose::applicative_value_t<Context>;
-
-        auto accumulated = applicative.pure(std::vector<U>{});
-
-        for (const auto& value : sequence.to_vector()) {
-            auto lifted = std::invoke(function, value);
-            accumulated = applicative.invoke(
-                [](std::vector<U> values, U element) {
-                    values.push_back(std::move(element));
-                    return values;
-                },
-                std::move(accumulated),
-                std::move(lifted));
-        }
-
-        return applicative.invoke(
-            [](std::vector<U> values) {
-                return beman::fingertree::tree::FingerTreeRandomAccess<U>::from_sequence(std::move(values));
-            },
-            std::move(accumulated));
-    }
-};
+using FingerTreeRandomAccessTraversableImpl = FingerTreeSequenceTraversableImpl<tree::FingerTreeRandomAccess<T, Tree>>;
 
 template <class T, class Tree>
 struct FingerTreeRandomAccessTraversableMap

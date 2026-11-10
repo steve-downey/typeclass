@@ -6,10 +6,8 @@
 
 ```cpp
 template<class FUNCTION, class ARGUMENT>
-[[nodiscard]] constexpr auto map(
-    this auto&& self, FUNCTION&& function,
-    ARGUMENT&& argument) noexcept($applicative-map-nothrow$<Impl, decltype(self),
-                                                          FUNCTION, ARGUMENT>);
+  [[nodiscard]] constexpr auto map(this auto&& self, FUNCTION&& function, ARGUMENT&& argument) noexcept(
+      $applicative-map-nothrow$<Impl, decltype(self), FUNCTION, ARGUMENT>);
 ```
 
 [x]{.pnum} *Constraints*: `Impl` provides either a `map` accepting `function` and `argument`, or an `invoke` accepting `function` and `argument`, whether native to `Impl` or derived from `Impl`'s basis.
@@ -20,8 +18,8 @@ template<class FUNCTION, class ARGUMENT>
 
 ```cpp
 template<class VALUE>
-[[nodiscard]] constexpr auto lift(this auto&& self, VALUE&& value) noexcept(
-    $applicative-lift-nothrow$<Impl, decltype(self), VALUE>);
+  [[nodiscard]] constexpr auto lift(this auto&& self,
+                                    VALUE&& value) noexcept($applicative-lift-nothrow$<Impl, decltype(self), VALUE>);
 ```
 
 [x+3]{.pnum} *Constraints*: `Impl` provides either a `lift` accepting `value`, or a `pure` accepting `value`.
@@ -32,12 +30,10 @@ template<class VALUE>
 
 ```cpp
 template<class FUNCTION, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-[[nodiscard]] constexpr auto zip_with(
-    this auto&& self, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
-    SECOND_ARGUMENT&&
-        second_argument) noexcept($applicative-zip-with-nothrow$<Impl, decltype(self),
-                                                               FUNCTION, FIRST_ARGUMENT,
-                                                               SECOND_ARGUMENT>);
+  [[nodiscard]] constexpr auto zip_with(
+      this auto&& self, FUNCTION&& function, FIRST_ARGUMENT&& first_argument,
+      SECOND_ARGUMENT&& second_argument) noexcept($applicative-zip-with-nothrow$<Impl, decltype(self), FUNCTION,
+                                                                               FIRST_ARGUMENT, SECOND_ARGUMENT>);
 ```
 
 [x+6]{.pnum} *Constraints*: `Impl` provides either a `zip_with` accepting `function` and the two arguments, or an `invoke` accepting `function` and the two arguments, whether native to `Impl` or derived from `Impl`'s basis.
@@ -48,13 +44,10 @@ template<class FUNCTION, class FIRST_ARGUMENT, class SECOND_ARGUMENT>
 
 ```cpp
 template<class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-[[nodiscard]] constexpr auto discard_first(
-    this auto&& self, FIRST_ARGUMENT&& first_argument,
-    SECOND_ARGUMENT&&
-        second_argument) noexcept($applicative-discard-first-nothrow$<Impl,
-                                                                    decltype(self),
-                                                                    FIRST_ARGUMENT,
-                                                                    SECOND_ARGUMENT>);
+  [[nodiscard]] constexpr auto discard_first(
+      this auto&& self, FIRST_ARGUMENT&& first_argument,
+      SECOND_ARGUMENT&& second_argument) noexcept($applicative-discard-first-nothrow$<Impl, decltype(self),
+                                                                                    FIRST_ARGUMENT, SECOND_ARGUMENT>);
 ```
 
 [x+9]{.pnum} *Constraints*: `Impl` provides either a `discard_first` accepting `first_argument` and `second_argument`, or an `invoke` accepting a callable that ignores its first parameter and returns its second, together with `first_argument` and `second_argument` -- an `invoke` native to `Impl` or derived from `Impl`'s basis.
@@ -65,13 +58,10 @@ template<class FIRST_ARGUMENT, class SECOND_ARGUMENT>
 
 ```cpp
 template<class FIRST_ARGUMENT, class SECOND_ARGUMENT>
-[[nodiscard]] constexpr auto discard_second(
-    this auto&& self, FIRST_ARGUMENT&& first_argument,
-    SECOND_ARGUMENT&&
-        second_argument) noexcept($applicative-discard-second-nothrow$<Impl,
-                                                                     decltype(self),
-                                                                     FIRST_ARGUMENT,
-                                                                     SECOND_ARGUMENT>);
+  [[nodiscard]] constexpr auto discard_second(
+      this auto&& self, FIRST_ARGUMENT&& first_argument,
+      SECOND_ARGUMENT&& second_argument) noexcept($applicative-discard-second-nothrow$<Impl, decltype(self),
+                                                                                     FIRST_ARGUMENT, SECOND_ARGUMENT>);
 ```
 
 [x+12]{.pnum} *Constraints*: `Impl` provides either a `discard_second` accepting `first_argument` and `second_argument`, or an `invoke` accepting a callable that returns its first parameter and ignores its second, together with `first_argument` and `second_argument` -- an `invoke` native to `Impl` or derived from `Impl`'s basis.

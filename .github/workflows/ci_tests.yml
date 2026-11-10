@@ -63,7 +63,7 @@ jobs:
                   "tests": [
                     { "stdlibs": ["libstdc++"],
                       "tests": [
-                        "Debug.Default", "Release.Default", "Release.TSan",
+                        "Debug.Default", "Release.Default",
                         "Release.MaxSan", "Debug.Werror", "Debug.Coverage"
                       ]
                     }
@@ -86,7 +86,7 @@ jobs:
                   "tests": [
                     { "stdlibs": ["libstdc++"],
                       "tests": [
-                        "Debug.Default", "Release.Default", "Release.TSan",
+                        "Debug.Default", "Release.Default",
                         "Release.MaxSan", "Debug.Werror"
                       ]
                     }
@@ -118,7 +118,7 @@ jobs:
                   "tests": [
                     { "stdlibs": ["libstdc++", "libc++"],
                       "tests": [
-                        "Debug.Default", "Release.Default", "Release.TSan",
+                        "Debug.Default", "Release.Default",
                         "Release.MaxSan", "Debug.Werror"
                       ]
                     }
@@ -142,7 +142,7 @@ jobs:
                   "tests": [
                     { "stdlibs": ["libstdc++", "libc++"],
                       "tests": [
-                        "Debug.Default", "Release.Default", "Release.TSan",
+                        "Debug.Default", "Release.Default",
                         "Release.MaxSan", "Debug.Werror",
                         "Debug.-DBEMAN_TYPECLASS_USE_MODULES=On"
                       ]
@@ -202,6 +202,46 @@ jobs:
           ]
         }
 
+  # Docker's default seccomp profile blocks personality(ADDR_NO_RANDOMIZE).
+  # Current TSan runtimes need it to reserve their shadow address space on
+  # hosted runners. Keep every sanitizer row, with this permission confined
+  # to the TSan containers; the shared workflow has no container-options input.
+  thread-sanitizer:
+    name: "${{ matrix.compiler }} ${{ matrix.version }} ${{ matrix.cxxversion }} ${{ matrix.stdlib }} Release.TSan"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {compiler: gcc, version: '16', cxxversion: '26', stdlib: 'libstdc++', toolchain: gnu}
+          - {compiler: gcc, version: '15', cxxversion: '26', stdlib: 'libstdc++', toolchain: gnu}
+          - {compiler: clang, version: '23', cxxversion: '26', stdlib: 'libstdc++', toolchain: llvm}
+          - {compiler: clang, version: '23', cxxversion: '26', stdlib: 'libc++', toolchain: llvm-libc++}
+          - {compiler: clang, version: '22', cxxversion: '23', stdlib: 'libstdc++', toolchain: llvm}
+          - {compiler: clang, version: '22', cxxversion: '23', stdlib: 'libc++', toolchain: llvm-libc++}
+    container:
+      image: ghcr.io/bemanproject/infra-containers-${{ matrix.compiler }}:${{ matrix.version }}
+      options: --security-opt seccomp=unconfined
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Configure CMake
+        run: >-
+          cmake -B build -S . -G "Ninja Multi-Config"
+          -DCMAKE_CXX_STANDARD=${{ matrix.cxxversion }}
+          -DCMAKE_TOOLCHAIN_FILE=infra/cmake/${{ matrix.toolchain }}-toolchain.cmake
+          -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./infra/cmake/use-fetch-content.cmake
+          -DBEMAN_BUILDSYS_SANITIZER=TSan
+      - name: Build and verify headers
+        run: |
+          cmake --build build --config Release --parallel 2
+          cmake --build build --config Release --target all_verify_interface_header_sets --parallel 2
+      - name: Install
+        run: cmake --install build --config Release --prefix /opt/beman.package
+      - name: Test
+        run: ctest --test-dir build --build-config Release --output-on-failure
+
   vcpkg-ci:
     uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-vcpkg-ci.yml@1.7.4
     with:
@@ -213,6 +253,6 @@ jobs:
         ]
 
   create-issue-when-fault:
-    needs: [preset-test, build-and-test]
+    needs: [preset-test, build-and-test, thread-sanitizer]
     if: failure() && github.event_name == 'schedule'
     uses: bemanproject/infra-workflows/.github/workflows/reusable-beman-create-issue-when-fault.yml@1.7.4

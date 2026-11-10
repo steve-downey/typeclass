@@ -6,9 +6,8 @@
 
 ```cpp
 template<class VALUE>
-[[nodiscard]] constexpr auto fallible(VALUE&& value) noexcept(
-    is_nothrow_constructible_v<remove_cvref_t<VALUE>, VALUE>)
-    -> expected<remove_cvref_t<VALUE>, error_set<>>;
+  [[nodiscard]] constexpr auto fallible(VALUE&& value) noexcept(
+      is_nothrow_constructible_v<remove_cvref_t<VALUE>, VALUE>) -> expected<remove_cvref_t<VALUE>, error_set<>>;
 ```
 
 [x]{.pnum} *Constraints*: `remove_cvref_t<VALUE>` is not a specialization of `expected`.
@@ -19,8 +18,8 @@ template<class VALUE>
 
 ```cpp
 template<class VALUE, class ERROR>
-[[nodiscard]] constexpr auto fallible(expected<VALUE, ERROR> computation) noexcept(
-    is_nothrow_move_constructible_v<expected<VALUE, ERROR>>) -> expected<VALUE, ERROR>;
+  [[nodiscard]] constexpr auto fallible(expected<VALUE, ERROR> computation) noexcept(
+      is_nothrow_move_constructible_v<expected<VALUE, ERROR>>) -> expected<VALUE, ERROR>;
 ```
 
 [x+3]{.pnum} *Returns*: `computation`.

@@ -29,6 +29,9 @@ The design notes under [`docs/`](./) are licensed under
 
 TODO
 
+The [typeclass support guide](typeclass-support.md) describes Foldable and
+Traversable instances and the explicit Rope chunk-traversal route.
+
 Full runnable examples can be found in [`examples/`](../../examples/fingertree/).
 
 ## Dependencies

@@ -922,30 +922,41 @@ class FingerTree {
     // Non-propagating, different resource: rebuild data using this allocator
     //   (O(N)) — allocator coherency is maintained; no cross-resource sharing.
     auto operator=(const FingerTree& other) & -> FingerTree& {
+        if (this == &other)
+            return *this;
         if constexpr (std::allocator_traits<ALLOCATOR>::propagate_on_container_copy_assignment::value) {
             d_alloc = other.d_alloc;
-            d_repr  = other.d_repr;
-        } else if (alloc_equal(d_alloc, other.d_alloc)) {
-            d_repr = other.d_repr;
-        } else {
-            *this = from_sequence(other.flatten(), d_alloc, d_monoid);
+        } else if constexpr (!std::allocator_traits<ALLOCATOR>::is_always_equal::value) {
+            if (!alloc_equal(d_alloc, other.d_alloc)) {
+                auto rebuilt = from_sequence(other.flatten(), d_alloc, other.d_monoid);
+                d_monoid     = other.d_monoid;
+                d_repr       = std::move(rebuilt.d_repr);
+                return *this;
+            }
         }
+        d_monoid = other.d_monoid;
+        d_repr   = other.d_repr;
         return *this;
     }
 
-    // Move assignment.
-    // Non-propagating with different resource: falls back to element-wise
-    // rebuild (cannot move cross-resource and stay coherent).  Not noexcept
-    // in that path; noexcept holds for same-resource and always-equal cases.
+    // Assignment carries the incoming measure law along with its nodes.
+    // A foreign allocator rebuild uses the destination resource and the
+    // incoming monoid, so the stored instance agrees with all cached tags.
     auto operator=(FingerTree&& other) & -> FingerTree& {
+        if (this == &other)
+            return *this;
         if constexpr (std::allocator_traits<ALLOCATOR>::propagate_on_container_move_assignment::value) {
             d_alloc = std::move(other.d_alloc);
-            d_repr  = std::move(other.d_repr);
-        } else if (alloc_equal(d_alloc, other.d_alloc)) {
-            d_repr = std::move(other.d_repr);
-        } else {
-            *this = from_sequence(other.flatten(), d_alloc, d_monoid);
+        } else if constexpr (!std::allocator_traits<ALLOCATOR>::is_always_equal::value) {
+            if (!alloc_equal(d_alloc, other.d_alloc)) {
+                auto rebuilt = from_sequence(other.flatten(), d_alloc, other.d_monoid);
+                d_monoid     = other.d_monoid;
+                d_repr       = std::move(rebuilt.d_repr);
+                return *this;
+            }
         }
+        d_monoid = other.d_monoid;
+        d_repr   = std::move(other.d_repr);
         return *this;
     }
 
@@ -1156,21 +1167,31 @@ class FingerTree {
         for_each_internal(fn);
     }
 
-    // Build from a vector. All node and scaffolding allocations use alloc;
-    // every cached measure is computed under monoid, which the resulting
-    // tree stores. Takes values by const ref so the input vector is not
-    // copied; each element is individually copied into its Leaf node via
-    // make_leaf.
+    // Copy from a persistent vector, or consume fresh values. make_leaf
+    // measures its owned value before moving it into the immutable leaf.
     [[nodiscard]] static auto from_sequence(const std::vector<T>& values,
                                             const ALLOCATOR&      alloc  = ALLOCATOR{},
-                                            const MONOID&         monoid = MONOID{}) -> FingerTree {
-        if (values.empty())
-            return FingerTree(alloc, monoid);
+                                            const MONOID&         monoid = MONOID{}) -> FingerTree
+        requires std::copy_constructible<T>
+    {
         auto  mf = meas_fn();
         EpVec elems{EpAlloc(alloc)};
         elems.reserve(values.size());
-        for (const auto& v : values)
-            elems.push_back(ft::make_leaf<T, MONOID>(alloc, mf, v));
+        for (const auto& value : values)
+            elems.push_back(ft::make_leaf<T, MONOID>(alloc, mf, value));
+        return from_elems_impl(alloc, monoid, std::move(elems));
+    }
+
+    [[nodiscard]] static auto from_sequence(std::vector<T>&& values,
+                                            const ALLOCATOR& alloc  = ALLOCATOR{},
+                                            const MONOID&    monoid = MONOID{}) -> FingerTree
+        requires std::move_constructible<T>
+    {
+        auto  mf = meas_fn();
+        EpVec elems{EpAlloc(alloc)};
+        elems.reserve(values.size());
+        for (auto& value : values)
+            elems.push_back(ft::make_leaf<T, MONOID>(alloc, mf, std::move(value)));
         return from_elems_impl(alloc, monoid, std::move(elems));
     }
 
@@ -1181,9 +1202,11 @@ class FingerTree {
     // d_alloc — no silent cross-resource sharing.  To opt into the O(log N)
     // fast path with a known-safe mixed tree, call app3 directly.
     [[nodiscard]] auto append(const FingerTree& right) const -> FingerTree {
-        if (!alloc_equal(d_alloc, right.d_alloc)) {
-            auto rebuilt = from_sequence(right.flatten(), d_alloc);
-            return app3(d_alloc, d_monoid, *this, {}, rebuilt);
+        if constexpr (!std::allocator_traits<ALLOCATOR>::is_always_equal::value) {
+            if (!alloc_equal(d_alloc, right.d_alloc)) {
+                auto rebuilt = from_sequence(right.flatten(), d_alloc, d_monoid);
+                return app3(d_alloc, d_monoid, *this, {}, rebuilt);
+            }
         }
         return app3(d_alloc, d_monoid, *this, {}, right);
     }

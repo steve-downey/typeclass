@@ -19,20 +19,17 @@ namespace std {
 
 ```cpp
 template<class T>
-[[nodiscard]] constexpr auto operator()(T first, const T&) const
-    noexcept(is_nothrow_move_constructible_v<T>) -> T;
+  [[nodiscard]] constexpr auto operator()(T first, const T&) const noexcept(is_nothrow_move_constructible_v<T>) -> T;
 ```
 
 [x+1]{.pnum} *Returns*: `first`.
 
 ```cpp
-template<class TARGET = void, class HANDLER, class COMBINE = keep_first,
-         class... ERRORS>
-[[nodiscard]] constexpr auto collapse(
-    const error_set_of<ERRORS...>& errors, HANDLER&& handler,
-    COMBINE combine =
-        {}) noexcept($collapse-nothrow$<TARGET, HANDLER, COMBINE, ERRORS...>)
-    -> $collapse-target-t$<TARGET, HANDLER, ERRORS...>;
+template<class TARGET = void, class HANDLER, class COMBINE = keep_first, class... ERRORS>
+  [[nodiscard]] constexpr auto collapse(
+      const error_set_of<ERRORS...>& errors, HANDLER&& handler,
+      COMBINE combine = {}) noexcept($collapse-nothrow$<TARGET, HANDLER, COMBINE, ERRORS...>)
+      -> $collapse-target-t$<TARGET, HANDLER, ERRORS...>;
 ```
 
 [x+2]{.pnum} *Constraints*: `sizeof...(ERRORS) > 0` is `true`.
@@ -46,14 +43,12 @@ template<class TARGET = void, class HANDLER, class COMBINE = keep_first,
 [x+6]{.pnum} *Remarks*: This is the boundary verb: a graded region ends here and one error type leaves. The set is non-empty by invariant, so there is always a result. Pass a combine when a second witness must not be dropped; the default is the left-biased pick of `combined_with`, which is the silent drop `visit`'s precondition refuses, made explicit by the name. The exception specification is `$collapse-nothrow$<TARGET, HANDLER, COMBINE, ERRORS...>`.
 
 ```cpp
-template<class TARGET = void, class VALUE, class... ERRORS, class HANDLER,
-         class COMBINE = keep_first>
-[[nodiscard]] constexpr auto collapse(
-    const expected<VALUE, error_set_of<ERRORS...>>& computation, HANDLER&& handler,
-    COMBINE combine =
-        {}) noexcept($collapse-nothrow$<TARGET, HANDLER, COMBINE, ERRORS...> &&
-                     (is_void_v<VALUE> || is_nothrow_copy_constructible_v<VALUE>))
-    -> expected<VALUE, $collapse-target-t$<TARGET, HANDLER, ERRORS...>>;
+template<class TARGET = void, class VALUE, class... ERRORS, class HANDLER, class COMBINE = keep_first>
+  [[nodiscard]] constexpr auto collapse(
+      const expected<VALUE, error_set_of<ERRORS...>>& computation, HANDLER&& handler,
+      COMBINE combine = {}) noexcept($collapse-nothrow$<TARGET, HANDLER, COMBINE, ERRORS...> &&
+                                     (is_void_v<VALUE> || is_nothrow_copy_constructible_v<VALUE>))
+      -> expected<VALUE, $collapse-target-t$<TARGET, HANDLER, ERRORS...>>;
 ```
 
 [x+7]{.pnum} *Constraints*: `sizeof...(ERRORS) > 0` is `true`.

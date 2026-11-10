@@ -16,6 +16,7 @@ import beman.tree_algorithms;
     #include <beman/transpose/functor.hpp>
 
     #if !BEMAN_TREE_ALGORITHMS_USE_MODULES()
+        #include <concepts>
         #include <functional>
         #include <type_traits>
         #include <utility>
@@ -94,8 +95,15 @@ constexpr auto rose(T value, std::vector<RoseTreeFix<T> > children = {}) -> Rose
 template <typename T, typename A>
 struct RoseFFunctorImpl {
     template <typename Fn>
-    constexpr auto fmap(this auto&&, Fn&& fn, const RoseF<T, A>& layer) {
-        using B = std::remove_cvref_t<std::invoke_result_t<Fn, const A&> >;
+    constexpr auto fmap(this auto&&, Fn&& fn, const RoseF<T, A>& layer)
+        requires std::invocable<Fn&, const A&> &&
+                 transpose::detail::holdable_value<std::invoke_result_t<Fn&, const A&> > &&
+                 std::constructible_from<std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> >,
+                                         std::invoke_result_t<Fn&, const A&> > &&
+                 std::move_constructible<std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> > > &&
+                 std::copy_constructible<T>
+    {
+        using B = std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> >;
         std::vector<B> children;
         children.reserve(layer.children.size());
         for (const A& child : layer.children) {
@@ -115,6 +123,12 @@ struct RoseFFunctorMap : transpose::derive_functor<RoseFFunctorImpl<T, A> > {
 } // namespace beman::tree_algorithms
 
 namespace beman::transpose {
+
+// The structural Functor maps child positions, not the stored payload.
+template <class T, class A>
+struct applicative_value<beman::tree_algorithms::RoseF<T, A> > {
+    using type = A;
+};
 
 /** Registers RoseFFunctorMap as the Functor instance for RoseF<T, A>. */
 template <typename T, typename A>

@@ -4,11 +4,9 @@
 // trees repository (smd::tree::algorithm, fixpoint_tree_algorithm.hpp),
 // reworked against beman::tree_algorithms' expression tree.
 //
-// The library deliberately ships functor-only lookup (docs/tree_algorithms/DECISIONS.md,
-// Decision 1: minimal algorithms core). The Foldable- and
-// Traversable-shaped operations these algorithms compose are therefore
-// EXAMPLE-LOCAL: defined in this translation unit, built on the public
-// fold_fix verb, and not part of the library surface.
+// The constant Foldable comes from the library's payload consumer header.
+// The optional<int> transformation stays local: Expr is a closed expression
+// language and cannot hold arbitrary payload types or units.
 
 // Standard headers precede the library's own: under the module build the
 // library headers are imports, and gcc and msvc cannot include a standard
@@ -21,10 +19,11 @@
 #include <utility>
 #include <variant>
 
+#include <beman/transpose/fold.hpp>
 #include <beman/transpose/functor.hpp>
 #include <beman/transpose/overloaded.hpp>
 
-#include <beman/tree_algorithms/expression.hpp>
+#include <beman/tree_algorithms/tree_typeclasses.hpp>
 #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
 namespace example {
@@ -43,32 +42,12 @@ using beman::tree_algorithms::mul_node;
 
 // a66c0122-f24d-4858-a802-cf76f87969e9
 // ---------------------------------------------------------------------
-// Example-local Foldable / Traversable maps for Expr.
-//
-// EXAMPLE-LOCAL, NOT LIBRARY SURFACE. Each operation is a thin algebra
-// over the public fold_fix verb; the "elements" of an expression tree are
-// its Const leaves. These stand in for the Foldable/Traversable typeclass
-// objects the trees repository looks up; here they are plain stateless
-// structs the algorithm objects inherit from.
+// Integer-only optional transformation for Expr. This is an example
+// operation, not a generic Traversable instance. The Foldable used below
+// is the shared constant-payload adapter.
 // ---------------------------------------------------------------------
 
-struct ExprFoldableMap {
-    /** Number of Const leaves, counted in one fold. */
-    constexpr auto length(const Expr& tree) const -> std::size_t {
-        return fold_fix<std::size_t>(
-            [](const ExprF<std::size_t>& layer) -> std::size_t {
-                return std::visit(overloaded{
-                                      [](const Const<std::size_t>&) -> std::size_t { return 1U; },
-                                      [](const Add<std::size_t>& a) -> std::size_t { return *a.left + *a.right; },
-                                      [](const Mul<std::size_t>& m) -> std::size_t { return *m.left + *m.right; },
-                                  },
-                                  layer);
-            },
-            tree);
-    }
-};
-
-struct ExprTraversableMap {
+struct ExprOptionalTransform {
     using element_type = int;
 
     /** Rebuild the tree elementwise inside optional: @p fn maps each leaf
@@ -103,26 +82,20 @@ struct ExprTraversableMap {
     }
 };
 
-// Example-local lookup, mirroring the shape of transpose::functor: a
-// variable template maps a type to its typeclass object.
+// Lookup for the example's restricted optional transformation.
 template <class T>
-inline constexpr auto example_foldable_typeclass = std::false_type{};
+inline constexpr auto example_optional_transform = std::false_type{};
 template <>
-inline constexpr auto example_foldable_typeclass<Expr> = ExprFoldableMap{};
-
-template <class T>
-inline constexpr auto example_traversable_typeclass = std::false_type{};
-template <>
-inline constexpr auto example_traversable_typeclass<Expr> = ExprTraversableMap{};
+inline constexpr auto example_optional_transform<Expr> = ExprOptionalTransform{};
 // a66c0122-f24d-4858-a802-cf76f87969e9 end
 
 namespace detail {
 
 // 868a8228-44a7-4761-8822-28b622d6b9a0
-// validate_impl: inherits the looked-up Traversable map for T (a stateless
+// validate_impl: inherits the looked-up optional transform for T (a stateless
 // empty struct), so its operations are available as unqualified this->
 // member calls. Ported from smd::tree::algorithm::detail::validate_impl.
-template <class T, const auto& TC = example_traversable_typeclass<std::remove_cvref_t<T>>>
+template <class T, const auto& TC = example_optional_transform<std::remove_cvref_t<T>>>
 struct validate_impl : std::remove_cvref_t<decltype(TC)> {
     template <class Pred>
     constexpr auto call(Pred&& pred, const T& value) const {
@@ -137,13 +110,13 @@ struct validate_impl : std::remove_cvref_t<decltype(TC)> {
 // 868a8228-44a7-4761-8822-28b622d6b9a0 end
 
 // 7226de56-d7ce-44c6-9e99-849da548d3e4
-// transform_if_large_impl: inherits both the Foldable and the Traversable
-// map for T. Multi-typeclass composition — Foldable gives length,
-// Traversable gives for_each. Both bases are empty. Ported from
+// transform_if_large_impl: combines the library Foldable with the local
+// optional transform. Foldable supplies length; the transform supplies
+// for_each. Both bases are empty. Ported from
 // smd::tree::algorithm::detail::transform_if_large_impl.
 template <class T,
-          const auto& FC = example_foldable_typeclass<std::remove_cvref_t<T>>,
-          const auto& TC = example_traversable_typeclass<std::remove_cvref_t<T>>>
+          const auto& FC = beman::transpose::foldable<std::remove_cvref_t<T>>,
+          const auto& TC = example_optional_transform<std::remove_cvref_t<T>>>
 struct transform_if_large_impl : std::remove_cvref_t<decltype(FC)>, std::remove_cvref_t<decltype(TC)> {
     using foldable_base    = std::remove_cvref_t<decltype(FC)>;
     using traversable_base = std::remove_cvref_t<decltype(TC)>;

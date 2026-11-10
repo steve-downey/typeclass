@@ -5,7 +5,8 @@
 ## Observers [transpose.errset.obs]{- .sref} {-}
 
 ```cpp
-template<class ERROR> static constexpr auto contains() noexcept -> bool;
+template<class ERROR>
+  static constexpr auto contains() noexcept -> bool;
 ```
 
 [x]{.pnum} *Returns*: `true` if and only if `ERROR` is one of the alternatives.
@@ -13,7 +14,8 @@ template<class ERROR> static constexpr auto contains() noexcept -> bool;
 [x+1]{.pnum} *Remarks*: This is a type-level question -- what the computation *may* raise -- not a question about the value.
 
 ```cpp
-template<class ERROR> constexpr auto holds() const noexcept -> bool;
+template<class ERROR>
+  constexpr auto holds() const noexcept -> bool;
 ```
 
 [x+2]{.pnum} *Constraints*: `ERROR` is one of the alternatives.
@@ -23,7 +25,8 @@ template<class ERROR> constexpr auto holds() const noexcept -> bool;
 [x+4]{.pnum} *Remarks*: This is a value-level question -- what was actually raised.
 
 ```cpp
-template<class ERROR> constexpr auto witness() const noexcept -> const optional<ERROR>&;
+template<class ERROR>
+  constexpr auto witness() const noexcept -> const optional<ERROR>&;
 ```
 
 [x+5]{.pnum} *Constraints*: `ERROR` is one of the alternatives.
@@ -40,9 +43,9 @@ constexpr auto witness_count() const noexcept -> size_t;
 
 ```cpp
 template<class HANDLER>
-constexpr auto visit(HANDLER&& handler) const
-    noexcept((is_nothrow_copy_constructible_v<ERRORS> && ...) &&
-             (is_nothrow_invocable_v<HANDLER, ERRORS> && ...)) -> decltype(auto);
+  constexpr auto visit(HANDLER&& handler) const
+      noexcept((is_nothrow_copy_constructible_v<ERRORS> && ...) && (is_nothrow_invocable_v<HANDLER, ERRORS> && ...))
+          -> decltype(auto);
 ```
 
 [x+9]{.pnum} *Preconditions*: `witness_count()` is 1.

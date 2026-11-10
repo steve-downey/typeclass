@@ -6,9 +6,8 @@
 
 ```cpp
 template<class VALUE>
-[[nodiscard]] constexpr auto pure(this auto&&, VALUE&& value) noexcept(
-    is_nothrow_constructible_v<optional<remove_cvref_t<VALUE>>, VALUE>)
-    -> optional<remove_cvref_t<VALUE>>;
+  [[nodiscard]] constexpr auto pure(this auto&&, VALUE&& value) noexcept(
+      is_nothrow_constructible_v<optional<remove_cvref_t<VALUE>>, VALUE>) -> optional<remove_cvref_t<VALUE>>;
 ```
 
 [x]{.pnum} *Returns*: An engaged `optional` holding `value`.
@@ -23,11 +22,9 @@ template<class VALUE>
 
 ```cpp
 template<class FUNCTION, class FIRST, class... REST>
-[[nodiscard]] constexpr auto invoke(
-    this auto&&, FUNCTION&& function, FIRST&& first,
-    REST&&... rest) noexcept($optional-invoke-nothrow$<FUNCTION, FIRST, REST...>)
-    -> optional<remove_cvref_t<
-        invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>>>;
+  [[nodiscard]] constexpr auto invoke(this auto&&, FUNCTION&& function, FIRST&& first,
+                                      REST&&... rest) noexcept($optional-invoke-nothrow$<FUNCTION, FIRST, REST...>)
+      -> optional<remove_cvref_t<invoke_result_t<FUNCTION&, $contained-ref-t$<FIRST>, $contained-ref-t$<REST>...>>>;
 ```
 
 [x+3]{.pnum} *Constraints*:

@@ -6,16 +6,14 @@
 
 ```cpp
 template<class TRAVERSABLE_MAP, class T, class F>
-[[nodiscard]] constexpr auto traverse_with(
-    this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& function,
-    T&& value) noexcept(noexcept(traversable_map
-                                     .traverse(
-                                         applicative<remove_cvref_t<
-                                             invoke_result_t<F&,
-
-                                                             $traversal-argument-t$<
-                                                                 TRAVERSABLE_MAP, T>>>>,
-                                         forward<F>(function), forward<T>(value))));
+  [[nodiscard]] constexpr auto traverse_with(
+      this auto&&, const TRAVERSABLE_MAP& traversable_map, F&& function,
+      T&& value) noexcept(noexcept(traversable_map
+                                       .traverse(applicative<remove_cvref_t<
+                                                     invoke_result_t<F&,
+  
+                                                                     $traversal-argument-t$<TRAVERSABLE_MAP, T>>>>,
+                                                 forward<F>(function), forward<T>(value))));
 ```
 
 [x]{.pnum} *Constraints*: Let `C` be the context `function` returns for an argument of type `$traversal-argument-t$<TRAVERSABLE_MAP, T>`. `traversable_map.traverse` accepts the object `applicative<C>` names, `function`, and `value`.
@@ -28,12 +26,9 @@ template<class TRAVERSABLE_MAP, class T, class F>
 
 ```cpp
 template<class TRAVERSABLE_MAP, class APPLICATIVE_MAP, class T, class F>
-[[nodiscard]] constexpr auto traverse_with(
-    this auto&&, const TRAVERSABLE_MAP& traversable_map,
-    const APPLICATIVE_MAP& applicative_map, F&& function,
-    T&& value) noexcept(noexcept(traversable_map.traverse(applicative_map,
-                                                          forward<F>(function),
-                                                          forward<T>(value))));
+  [[nodiscard]] constexpr auto traverse_with(
+      this auto&&, const TRAVERSABLE_MAP& traversable_map, const APPLICATIVE_MAP& applicative_map, F&& function,
+      T&& value) noexcept(noexcept(traversable_map.traverse(applicative_map, forward<F>(function), forward<T>(value))));
 ```
 
 [x+4]{.pnum} *Constraints*: `traversable_map.traverse(applicative_map, function, value)`, with `function` and `value` forwarded, is a valid expression.
@@ -47,10 +42,9 @@ return traversable_map.traverse(applicative_map, forward<F>(function),
 
 ```cpp
 template<class TRAVERSABLE_MAP, class T>
-[[nodiscard]] constexpr auto transpose_with(
-    this auto&& self, const TRAVERSABLE_MAP& traversable_map,
-    T&& value) noexcept(noexcept(self.traverse_with(traversable_map, identity{},
-                                                    forward<T>(value))));
+  [[nodiscard]] constexpr auto transpose_with(
+      this auto&& self, const TRAVERSABLE_MAP& traversable_map,
+      T&& value) noexcept(noexcept(self.traverse_with(traversable_map, identity{}, forward<T>(value))));
 ```
 
 [x+6]{.pnum} *Constraints*: The element type of `TRAVERSABLE_MAP` is a context for which `applicative` names an applicative object, and `self.traverse_with(traversable_map, identity{}, value)`, with `value` forwarded, is a valid expression.

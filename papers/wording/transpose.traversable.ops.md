@@ -5,11 +5,10 @@
 ## Traversal operations [transpose.traversable.ops]{- .sref} {-}
 
 ```cpp
-template<class T, class F>
-constexpr auto for_each(this auto&& self, T&& value, F&& function) noexcept(noexcept(
-    self.traverse(applicative<remove_cvref_t<
-                      invoke_result_t<F&, $traversal-argument-t$<decltype(self), T>>>>,
-                  forward<F>(function), forward<T>(value))));
+template<class T, class F, class SELF>
+  constexpr auto for_each(this SELF&& self, T&& value, F&& function) noexcept(
+      noexcept(self.traverse(applicative<remove_cvref_t<invoke_result_t<F&, $traversal-argument-t$<SELF, T>>>>,
+                             forward<F>(function), forward<T>(value))));
 ```
 
 [x]{.pnum} *Constraints*: Let `C` be the context `function` returns for an argument of type `$traversal-argument-t$<decltype(self), T>`. `self.traverse` accepts the object `applicative<C>` names, `function`, and `value`.
@@ -24,9 +23,8 @@ constexpr auto for_each(this auto&& self, T&& value, F&& function) noexcept(noex
 
 ```cpp
 template<class T>
-[[nodiscard]] constexpr auto transpose(this auto&& self, T&& value) noexcept(
-    noexcept(self.traverse(applicative<typename Impl::element_type>, identity{},
-                           forward<T>(value))));
+  [[nodiscard]] constexpr auto transpose(this auto&& self, T&& value) noexcept(
+      noexcept(self.traverse(applicative<typename Impl::element_type>, identity{}, forward<T>(value))));
 ```
 
 [x+5]{.pnum} *Constraints*: `element_type` is a context for which `applicative` names an applicative object, and `self.traverse` accepts that object, an identity function, and `value`.

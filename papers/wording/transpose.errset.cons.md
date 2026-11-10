@@ -6,9 +6,8 @@
 
 ```cpp
 template<class ERROR>
-constexpr error_set_of(ERROR&& error) noexcept(
-    is_nothrow_constructible_v<remove_cvref_t<ERROR>, ERROR> &&
-    (is_nothrow_move_constructible_v<ERRORS> && ...));
+  constexpr error_set_of(ERROR&& error) noexcept(is_nothrow_constructible_v<remove_cvref_t<ERROR>, ERROR> &&
+                                                 (is_nothrow_move_constructible_v<ERRORS> && ...));
 ```
 
 [x]{.pnum} *Constraints*: `ERROR`, with cv-qualification and references removed, is one of the alternatives.
@@ -19,9 +18,8 @@ constexpr error_set_of(ERROR&& error) noexcept(
 
 ```cpp
 template<class... NARROWER>
-constexpr error_set_of(const error_set_of<NARROWER...>& narrower) noexcept(
-    (is_nothrow_copy_constructible_v<NARROWER> && ...) &&
-    (is_nothrow_move_constructible_v<ERRORS> && ...));
+  constexpr error_set_of(const error_set_of<NARROWER...>& narrower) noexcept(
+      (is_nothrow_copy_constructible_v<NARROWER> && ...) && (is_nothrow_move_constructible_v<ERRORS> && ...));
 ```
 
 [x+3]{.pnum} *Constraints*: `NARROWER` is non-empty, names a different set, and every one of its alternatives is an alternative of `*this`.

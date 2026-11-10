@@ -183,6 +183,24 @@ Decision 4's division is unchanged: the primary verbs take `fmap` explicitly and
 - **`overloaded`** moves to beman.transpose and is proposed in P3200 ([overloaded-home](../coordination/machinery-deduplication.md#overloaded-home)). Paper D's examples use it from there.
 - **DEV-04 still holds.** transpose's derived Functor operations are made `constexpr` before tree_algorithms switches to them ([transpose-constexpr-derivations](../coordination/machinery-deduplication.md#transpose-constexpr-derivations)), so no `static_assert` coverage is lost.
 
+## Amendment 2026-11-08 — consumer element metadata and payload adapters
+
+The requested coherence implementation adopts the contracts in
+[coherence-contracts.md](../coordination/coherence-contracts.md).
+Structural layer Functors map recursive positions; their transpose element
+trait names that position type. Concrete-tree payload instances are a separate
+consumer surface, limited to representations that can supply payload rebinding
+and reconstruction. Binary, fringe and rose payload adapters, and Expr's
+constant Foldable, are implementation evidence in the lookup tier; arbitrary
+Fix payload traversal is not inferred from a structural Functor.
+
+The explicit tier, the proposed algorithm family, language floors, and the
+one-way extraction rule remain unchanged. Adding consumer metadata does not
+add a transpose dependency to Fix. Optional fingertree integration has its own
+target depending on both libraries, as specified in the contract note; neither
+library gains a dependency on the other. Layer declarations constrain the
+lvalue callable invocation and result storage they actually perform.
+
 ## Discrepancies
 
 Points where a cited source does not line up exactly with the decision as recorded, noted rather than silently adjusted:

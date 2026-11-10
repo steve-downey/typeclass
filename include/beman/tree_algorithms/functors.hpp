@@ -19,6 +19,7 @@ import beman.tree_algorithms;
     #include <beman/tree_algorithms/recursion_schemes_lookup.hpp>
 
     #if !BEMAN_TREE_ALGORITHMS_USE_MODULES()
+        #include <concepts>
         #include <functional>
         #include <type_traits>
         #include <utility>
@@ -68,8 +69,14 @@ using Nat = Fix<NatF>;
 template <typename A>
 struct NatFFunctorImpl {
     template <typename Fn>
-    constexpr auto fmap(this auto&&, Fn&& fn, const NatF<A>& layer) {
-        using B = std::remove_cvref_t<std::invoke_result_t<Fn, const A&> >;
+    constexpr auto fmap(this auto&&, Fn&& fn, const NatF<A>& layer)
+        requires std::invocable<Fn&, const A&> &&
+                 transpose::detail::holdable_value<std::invoke_result_t<Fn&, const A&> > &&
+                 std::constructible_from<std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> >,
+                                         std::invoke_result_t<Fn&, const A&> > &&
+                 std::move_constructible<std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> > >
+    {
+        using B = std::remove_cvref_t<std::invoke_result_t<Fn&, const A&> >;
         return std::visit(
             transpose::overloaded{
                 [](const Zero&) -> NatF<B> { return Zero{}; },
@@ -89,6 +96,12 @@ struct NatFFunctorMap : transpose::derive_functor<NatFFunctorImpl<A> > {
 } // namespace beman::tree_algorithms
 
 namespace beman::transpose {
+
+// The structural Functor maps child positions, not the stored payload.
+template <class A>
+struct applicative_value<beman::tree_algorithms::NatF<A> > {
+    using type = A;
+};
 
 /** Registers NatFFunctorMap as the Functor instance for NatF<A>. */
 template <typename A>

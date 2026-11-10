@@ -8,7 +8,7 @@
 inline constexpr $unspecified$ traverse;
 ```
 
-[x]{.pnum} *Constraints*: For a call `traverse(function, value, policy)`, let `F` be `decltype((function))` and `T` be `decltype((value))`. The type of `policy` satisfies `applicative_object_for` for the context that applying `function` to an argument of type `$traverse-element-t$<T>` yields. `policy` may be omitted; see below.
+[x]{.pnum} *Constraints*: For a call `traverse(function, value, policy)`, let `F` be `decltype((function))` and `T` be `decltype((value))`. The type of `policy` satisfies `applicative_object_for` for the context that applying `function` to an argument of type `$traverse-element-t$<T>` yields. The selected traversable object's `traverse(policy, function, value)` is valid with `function` and `value` forwarded. `policy` may be omitted; see below.
 
 [x+1]{.pnum} *Effects*: Applies `function` to each element of `value`, presenting that element through `$traverse-element-t$<T>`, and composes the resulting contextual values with `policy`, preserving the shape of `value`. Elements are visited in the structure's iteration order, and the contextual values are composed in that same order.
 

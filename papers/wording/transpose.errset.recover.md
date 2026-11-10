@@ -6,11 +6,9 @@
 
 ```cpp
 template<class... HANDLED, class VALUE, class... ERRORS, class HANDLER>
-[[nodiscard]] constexpr auto recover(
-    const expected<VALUE, error_set_of<ERRORS...>>& computation,
-    HANDLER&& handler) noexcept($recover-nothrow-v$<HANDLER, VALUE,
-                                                  error_set_of<ERRORS...>, HANDLED...>)
-    -> $see below$;
+  [[nodiscard]] constexpr auto recover(
+      const expected<VALUE, error_set_of<ERRORS...>>& computation,
+      HANDLER&& handler) noexcept($recover-nothrow-v$<HANDLER, VALUE, error_set_of<ERRORS...>, HANDLED...>) -> $see below$;
 ```
 
 [x]{.pnum} *Constraints*: `sizeof...(ERRORS) > 0` is `true`.
@@ -25,11 +23,8 @@ template<class... HANDLED, class VALUE, class... ERRORS, class HANDLER>
 
 ```cpp
 template<class... HANDLED, class VALUE, class HANDLER>
-[[nodiscard]] constexpr auto recover(
-    const expected<VALUE, error_set_of<>>& computation,
-    HANDLER&&) noexcept(is_nothrow_copy_constructible_v<expected<VALUE,
-                                                                 error_set_of<>>>)
-    -> expected<VALUE, error_set_of<>>;
+  [[nodiscard]] constexpr auto recover(const expected<VALUE, error_set_of<>>& computation, HANDLER&&) noexcept(
+      is_nothrow_copy_constructible_v<expected<VALUE, error_set_of<>>>) -> expected<VALUE, error_set_of<>>;
 ```
 
 [x+5]{.pnum} *Constraints*: The computation's grade is the empty error set.

@@ -307,3 +307,19 @@ has; it combines and compares. See
 [allocator-design.md](allocator-design.md) for how those combined trees stay
 coherent across allocators, and `finger_tree.test.cpp` for the exercised
 behavior.
+
+## Rebuilding measured results
+
+Functor and Traversable recompute cached measures under the declared result
+family, using the source allocator and monoid snapshots. Same-payload
+transformation preserves the measure policy type; other payload types need a
+declared rebind. A policy being callable on the new payload does not select a
+new measure law automatically. See the
+[typeclass support guide](typeclass-support.md#configured-reconstruction).
+
+Native append shares cached nodes only within a compatible measure-law and
+monoid-state domain. An explicit configured concatenation Monoid rebuilds both
+operands under its prototype's configuration. Its result measure is the
+prototype monoid's combination of operand measures when those operands belong
+to that domain. Noncommutative tests also pin reversal under the dual monoid:
+reversing the sequence and flipping combine preserves the original full tag.

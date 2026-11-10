@@ -375,7 +375,8 @@ namespace std {
 ::: wording
 
 ```cpp
-template<class T> inline constexpr auto applicative = false_type{};
+template<class T>
+  inline constexpr auto applicative = false_type{};
 ```
 
 [x+12]{.pnum} *Remarks*: This variable template is the lookup point for the Applicative object of a context type. A program may specialize it for a program-defined context. The primary template names no applicative object. The type of each object named by a specialization this document declares is a class type that is not final and models `semiregular`, so a program may derive from it to combine several objects in one algorithm object.
@@ -385,7 +386,8 @@ template<class T> inline constexpr auto applicative = false_type{};
 ::: wording
 
 ```cpp
-template<class T> inline constexpr auto accumulating_applicative = false_type{};
+template<class T>
+  inline constexpr auto accumulating_applicative = false_type{};
 ```
 
 [x+13]{.pnum} *Remarks*: This variable template is a second lookup point, over the same carrier and grade algebra as `applicative`, naming the accumulating Applicative object. Where the object named by `applicative` stops at the first failing operand, this object combines the evidence of every failing operand. Neither object is selected automatically for a carrier: the context type alone does not determine which composition discipline a caller wants. This object has no Monad instance, because sequencing requires a value from a computation that accumulation admits may have failed. The type of each object named by a specialization this document declares is a class type that is not final and models `semiregular`, so a program may derive from it to combine several objects in one algorithm object.

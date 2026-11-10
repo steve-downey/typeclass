@@ -22,6 +22,8 @@ foreach(
         recursion_schemes_lookup
         expression
         functors
+        conformance
+        tree_typeclasses
         binary_tree
         fold_map
         fringe_tree
