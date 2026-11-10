@@ -26,6 +26,30 @@ namespace std {
 
 ```cpp
 namespace std {
+  template<class... TYPES>
+  inline constexpr bool $error-set-nothrow-copy-v$ =
+      (is_nothrow_copy_constructible_v<TYPES> && ...); // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class... TYPES>
+  inline constexpr bool $error-set-nothrow-move-v$ =
+      (is_nothrow_move_constructible_v<TYPES> && ...); // exposition only
+}
+```
+
+```cpp
+namespace std {
+  template<class HANDLER, class... TYPES>
+  inline constexpr bool $error-set-nothrow-invocable-v$ =
+      (is_nothrow_invocable_v<HANDLER, TYPES> && ...); // exposition only
+}
+```
+
+```cpp
+namespace std {
   template<class... ERRORS>
   class error_set_of {
   public:
@@ -37,14 +61,13 @@ namespace std {
       requires($error-set-has-v$<remove_cvref_t<ERROR>, ERRORS...>)
     constexpr error_set_of(ERROR&& error) noexcept(
         is_nothrow_constructible_v<remove_cvref_t<ERROR>, ERROR> &&
-        (is_nothrow_move_constructible_v<ERRORS> && ...));
+        $error-set-nothrow-move-v$<ERRORS...>);
     template<class... NARROWER>
       requires(sizeof...(NARROWER) > 0) &&
               (!is_same_v<error_set_of<NARROWER...>, error_set_of<ERRORS...>>) &&
               ($error-set-has-v$<NARROWER, ERRORS...> && ...)
     constexpr error_set_of(const error_set_of<NARROWER...>& narrower) noexcept(
-        (is_nothrow_copy_constructible_v<NARROWER> && ...) &&
-        (is_nothrow_move_constructible_v<ERRORS> && ...));
+        $error-set-nothrow-copy-v$<NARROWER...> && $error-set-nothrow-move-v$<ERRORS...>);
     // @[transpose.errset.obs]{- .sref}@, observers
     template<class ERROR>
       requires($error-set-has-v$<ERROR, ERRORS...>)
@@ -58,14 +81,14 @@ namespace std {
 
     template<class HANDLER>
     constexpr auto visit(HANDLER&& handler) const
-        noexcept((is_nothrow_copy_constructible_v<ERRORS> && ...) &&
-                 (is_nothrow_invocable_v<HANDLER, ERRORS> && ...)) -> decltype(auto);
+        noexcept($error-set-nothrow-copy-v$<ERRORS...> &&
+                 $error-set-nothrow-invocable-v$<HANDLER, ERRORS...>) -> decltype(auto);
 
     // @[transpose.errset.ops]{- .sref}@, operations
     friend auto operator==(const error_set_of&, const error_set_of&) -> bool = default;
 
     [[nodiscard]] constexpr auto combined_with(const error_set_of& other) const
-        noexcept((is_nothrow_copy_constructible_v<ERRORS> && ...)) -> error_set_of;
+        noexcept($error-set-nothrow-copy-v$<ERRORS...>) -> error_set_of;
 
   private:
     tuple<optional<ERRORS>...> $d-witnesses$; // exposition only

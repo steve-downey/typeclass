@@ -14,7 +14,7 @@ friend auto operator==(const error_set_of&, const error_set_of&) -> bool = defau
 
 ```cpp
 [[nodiscard]] constexpr auto combined_with(const error_set_of& other) const
-    noexcept((is_nothrow_copy_constructible_v<ERRORS> && ...)) -> error_set_of;
+    noexcept($error-set-nothrow-copy-v$<ERRORS...>) -> error_set_of;
 ```
 
 [x+2]{.pnum} *Returns*: A value at the same grade witnessing every alternative either operand witnesses.

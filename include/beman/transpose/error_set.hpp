@@ -175,6 +175,28 @@ inline constexpr bool error_set_names_distinct_v =
 template <class T, class... ERRORS>
 inline constexpr bool error_set_has_v = (std::is_same_v<T, ERRORS> || ...);
 
+/// Whether every one of TYPES copies without throwing. Exposition-only, as
+/// `error_set_has_v` is, and for a second reason: an exception specification
+/// that folds over the class's pack directly is one MSVC fails to match
+/// between a declaration and its out-of-line definition.
+//! \expos
+template <class... TYPES>
+inline constexpr bool error_set_nothrow_copy_v =
+    (std::is_nothrow_copy_constructible_v<TYPES> && ...);
+
+/// Whether every one of TYPES moves without throwing.
+//! \expos
+template <class... TYPES>
+inline constexpr bool error_set_nothrow_move_v =
+    (std::is_nothrow_move_constructible_v<TYPES> && ...);
+
+/// Whether HANDLER is invocable on an rvalue of every one of TYPES without
+/// throwing.
+//! \expos
+template <class HANDLER, class... TYPES>
+inline constexpr bool error_set_nothrow_invocable_v =
+    (std::is_nothrow_invocable_v<HANDLER, TYPES> && ...);
+
 // The order-dependent type. Its witness tuple is laid out in canonical order,
 // so it carries the order's key; see the header comment and
 // docs/transpose/decisions.md#type-order-abi. The namespace closes after the
@@ -218,8 +240,7 @@ class error_set_of {
         requires(error_set_has_v<std::remove_cvref_t<ERROR>, ERRORS...>)
     constexpr error_set_of(ERROR &&error) noexcept(
         std::is_nothrow_constructible_v<std::remove_cvref_t<ERROR>, ERROR> &&
-        (std::is_nothrow_move_constructible_v<ERRORS> &&
-         ...)); /// NOLINT(*-explicit-constructor)
+        error_set_nothrow_move_v<ERRORS...>); /// NOLINT(*-explicit-constructor)
 
     template <class... NARROWER>
         requires(sizeof...(NARROWER) > 0) &&
@@ -227,9 +248,8 @@ class error_set_of {
                                  error_set_of<ERRORS...>>) &&
                 (error_set_has_v<NARROWER, ERRORS...> && ...)
     constexpr error_set_of(const error_set_of<NARROWER...> &narrower) noexcept(
-        (std::is_nothrow_copy_constructible_v<NARROWER> && ...) &&
-        (std::is_nothrow_move_constructible_v<ERRORS> &&
-         ...)); /// NOLINT(*-explicit-*)
+        error_set_nothrow_copy_v<NARROWER...> &&
+        error_set_nothrow_move_v<ERRORS...>); /// NOLINT(*-explicit-*)
 
     // \ref{transpose.errset.obs}, observers
     template <class ERROR>
@@ -244,8 +264,8 @@ class error_set_of {
 
     template <class HANDLER>
     constexpr auto visit(HANDLER &&handler) const
-        noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...) &&
-                 (std::is_nothrow_invocable_v<HANDLER, ERRORS> && ...))
+        noexcept(error_set_nothrow_copy_v<ERRORS...> &&
+                 error_set_nothrow_invocable_v<HANDLER, ERRORS...>)
             -> decltype(auto);
 
     // \ref{transpose.errset.ops}, operations
@@ -260,8 +280,7 @@ class error_set_of {
         -> bool = default;
 
     [[nodiscard]] constexpr auto combined_with(const error_set_of &other) const
-        noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...))
-            -> error_set_of;
+        noexcept(error_set_nothrow_copy_v<ERRORS...>) -> error_set_of;
 
   private:
     //! \omit
@@ -323,7 +342,7 @@ template <class ERROR>
     requires(error_set_has_v<std::remove_cvref_t<ERROR>, ERRORS...>)
 constexpr error_set_of<ERRORS...>::error_set_of(ERROR &&error) noexcept(
     std::is_nothrow_constructible_v<std::remove_cvref_t<ERROR>, ERROR> &&
-    (std::is_nothrow_move_constructible_v<ERRORS> && ...))
+    error_set_nothrow_move_v<ERRORS...>)
     : d_witnesses(detail::witness_slot<ERRORS>(std::forward<ERROR>(error))...) {
 }
 
@@ -345,10 +364,8 @@ template <class... NARROWER>
             (error_set_has_v<NARROWER, ERRORS...> && ...)
 constexpr error_set_of<ERRORS...>::error_set_of(
     const error_set_of<NARROWER...>
-        &narrower) noexcept((std::is_nothrow_copy_constructible_v<NARROWER> &&
-                             ...) &&
-                            (std::is_nothrow_move_constructible_v<ERRORS> &&
-                             ...))
+        &narrower) noexcept(error_set_nothrow_copy_v<NARROWER...> &&
+                            error_set_nothrow_move_v<ERRORS...>)
     : d_witnesses(detail::widen_slot<ERRORS>(narrower)...) {}
 
 // \rSec3[transpose.errset.obs]{Observers}
@@ -411,8 +428,8 @@ constexpr auto error_set_of<ERRORS...>::witness_count() const noexcept
 template <class... ERRORS>
 template <class HANDLER>
 constexpr auto error_set_of<ERRORS...>::visit(HANDLER &&handler) const
-    noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...) &&
-             (std::is_nothrow_invocable_v<HANDLER, ERRORS> && ...))
+    noexcept(error_set_nothrow_copy_v<ERRORS...> &&
+             error_set_nothrow_invocable_v<HANDLER, ERRORS...>)
         -> decltype(auto) {
     return std::visit(std::forward<HANDLER>(handler), to_variant());
 }
@@ -428,8 +445,7 @@ constexpr auto error_set_of<ERRORS...>::visit(HANDLER &&handler) const
 template <class... ERRORS>
 [[nodiscard]] constexpr auto
 error_set_of<ERRORS...>::combined_with(const error_set_of &other) const
-    noexcept((std::is_nothrow_copy_constructible_v<ERRORS> && ...))
-        -> error_set_of<ERRORS...> {
+    noexcept(error_set_nothrow_copy_v<ERRORS...>) -> error_set_of<ERRORS...> {
     return error_set_of(
         combine_witnesses(other, std::index_sequence_for<ERRORS...>{}));
 }

@@ -44,7 +44,7 @@ constexpr auto witness_count() const noexcept -> size_t;
 ```cpp
 template<class HANDLER>
   constexpr auto visit(HANDLER&& handler) const
-      noexcept((is_nothrow_copy_constructible_v<ERRORS> && ...) && (is_nothrow_invocable_v<HANDLER, ERRORS> && ...))
+      noexcept($error-set-nothrow-copy-v$<ERRORS...> && $error-set-nothrow-invocable-v$<HANDLER, ERRORS...>)
           -> decltype(auto);
 ```
 

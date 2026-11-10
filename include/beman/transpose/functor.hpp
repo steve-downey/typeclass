@@ -65,23 +65,9 @@ struct derive_functor : protected Impl {
      * instance supplies one.
      */
     template <class T, class U>
-    [[nodiscard]] constexpr auto replace(this auto &&self, T &&value,
-                                         U &&replacement)
-        noexcept(requires {
-            impl_of(self).replace(std::forward<T>(value),
-                                  std::forward<U>(replacement));
-        } ? requires {
-            {
-                impl_of(self).replace(std::forward<T>(value),
-                                      std::forward<U>(replacement))
-            } noexcept;
-        } : requires {
-            {
-                self.fmap(detail::constant_function<std::remove_cvref_t<U>>{
-                              std::forward<U>(replacement)},
-                          std::forward<T>(value))
-            } noexcept;
-        })
+    [[nodiscard]] constexpr auto
+    replace(this auto &&self, T &&value,
+            U &&replacement) noexcept(replace_nothrow<decltype(self), T, U>())
         requires requires(const Impl &impl) {
             impl.replace(std::forward<T>(value), std::forward<U>(replacement));
         } || requires(const Impl &impl) {
@@ -113,6 +99,23 @@ struct derive_functor : protected Impl {
     template <class SELF>
     static constexpr decltype(auto) impl_of(SELF &&self) noexcept {
         return static_cast<impl_ref_t<Impl, SELF>>(self);
+    }
+
+    //! \omit
+    template <class SELF, class T, class U>
+    static consteval auto replace_nothrow() -> bool {
+        if constexpr (requires {
+                          impl_of(std::declval<SELF &>())
+                              .replace(std::declval<T>(), std::declval<U>());
+                      }) {
+            return noexcept(impl_of(std::declval<SELF &>())
+                                .replace(std::declval<T>(), std::declval<U>()));
+        } else {
+            return noexcept(std::declval<SELF &>().fmap(
+                detail::constant_function<std::remove_cvref_t<U>>{
+                    std::declval<U>()},
+                std::declval<T>()));
+        }
     }
 };
 
