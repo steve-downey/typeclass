@@ -564,24 +564,19 @@ template <class TRAVERSABLE_MAP, class T, class F>
 [[nodiscard]] constexpr auto derive_traversable<Impl>::traverse_with(
     this auto &&, const TRAVERSABLE_MAP &traversable_map, F &&function,
     T &&value) noexcept(noexcept(traversable_map
-                                     .traverse(
-                                         applicative<std::remove_cvref_t<
-                                             std::invoke_result_t<
-                                                 F &,
-                                                 detail::traversal_argument_t<
-                                                     TRAVERSABLE_MAP, T>>>>,
-                                         std::forward<F>(function),
-                                         std::forward<T>(value))))
+                                     .traverse(applicative<
+                                                   detail::traversal_context_t<
+                                                       TRAVERSABLE_MAP, T, F>>,
+                                               std::forward<F>(function),
+                                               std::forward<T>(value))))
     requires requires {
         traversable_map.traverse(
-            applicative<std::remove_cvref_t<std::invoke_result_t<
-                F &, detail::traversal_argument_t<TRAVERSABLE_MAP, T>>>>,
+            applicative<detail::traversal_context_t<TRAVERSABLE_MAP, T, F>>,
             std::forward<F>(function), std::forward<T>(value));
     }
 {
-    using Context = std::remove_cvref_t<std::invoke_result_t<
-        F &, detail::traversal_argument_t<TRAVERSABLE_MAP, T>>>;
-    const auto &applicative_map = applicative<Context>;
+    const auto &applicative_map =
+        applicative<detail::traversal_context_t<TRAVERSABLE_MAP, T, F>>;
     return traversable_map.traverse(applicative_map, std::forward<F>(function),
                                     std::forward<T>(value));
 }
