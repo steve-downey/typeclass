@@ -21,6 +21,7 @@
 #include <cassert>
 #include <concepts>
 #include <cstddef>
+#include <cstdint>
 #include <inplace_vector>
 #include <iterator>
 #include <limits>
@@ -869,6 +870,122 @@ class FingerTree {
                    d_repr);
     }
 
+    // -- LeafCursor: allocation-free forward walk over the leaves ------------
+    //
+    // Visits leaves in sequence order through raw pointers into the tree, so
+    // it takes no ownership and does no reference counting; the tree must
+    // outlive the cursor. Both stacks have fixed capacity: a spine level d
+    // holds Nodes covering at least 2^d leaves, so the spine depth and the
+    // Node height are each below the bit width of size_type.
+
+    class LeafCursor {
+        static constexpr std::size_t k_max_depth = std::numeric_limits<std::size_t>::digits;
+
+        enum class Section : std::uint8_t { LEFT, SPINE, RIGHT };
+
+        struct SpineFrame {
+            const Deep*  deep;
+            Section      section;
+            std::uint8_t index;
+        };
+
+        struct ElemFrame {
+            const E*     elem;
+            std::uint8_t child;
+        };
+
+        std::inplace_vector<SpineFrame, k_max_depth> d_spine;
+        std::inplace_vector<ElemFrame, k_max_depth>  d_elems;
+        const E*                                     d_leaf = nullptr;
+
+        static auto children(const E& e) -> std::uint8_t {
+            if (std::holds_alternative<typename E::Node2>(e.d_data))
+                return 2;
+            if (std::holds_alternative<typename E::Node3>(e.d_data))
+                return 3;
+            return 0;
+        }
+
+        static auto child(const E& e, std::uint8_t i) -> const E* {
+            if (const auto* n2 = std::get_if<typename E::Node2>(&e.d_data))
+                return (i == 0 ? n2->a : n2->b).get();
+            const auto& n3 = std::get<typename E::Node3>(e.d_data);
+            return (i == 0 ? n3.a : i == 1 ? n3.b : n3.c).get();
+        }
+
+        void descend(const E* e) {
+            while (!std::holds_alternative<typename E::Leaf>(e->d_data)) {
+                d_elems.push_back({e, 0});
+                e = child(*e, 0);
+            }
+            d_leaf = e;
+        }
+
+        // Enter a tree at its first leaf, pushing a frame if it is Deep.
+        // Returns false for an empty tree.
+        auto enter(const FingerTree& t) -> bool {
+            if (const auto* s = std::get_if<Single>(&t.d_repr)) {
+                descend(s->d_elem.get());
+                return true;
+            }
+            if (const auto* dp = std::get_if<DeepPtr>(&t.d_repr)) {
+                d_spine.push_back({dp->get(), Section::LEFT, 0});
+                descend((*dp)->d_left[0].get());
+                return true;
+            }
+            return false;
+        }
+
+        void advance_spine() {
+            while (!d_spine.empty()) {
+                auto& top = d_spine.back();
+                switch (top.section) {
+                case Section::LEFT:
+                    if (top.index + 1u < top.deep->d_left.size()) {
+                        descend(top.deep->d_left[++top.index].get());
+                        return;
+                    }
+                    top.section = Section::SPINE;
+                    if (top.deep->d_spine && enter(*top.deep->d_spine))
+                        return;
+                    [[fallthrough]];
+                case Section::SPINE:
+                    top.section = Section::RIGHT;
+                    top.index   = 0;
+                    descend(top.deep->d_right[0].get());
+                    return;
+                case Section::RIGHT:
+                    if (top.index + 1u < top.deep->d_right.size()) {
+                        descend(top.deep->d_right[++top.index].get());
+                        return;
+                    }
+                    d_spine.pop_back();
+                    break;
+                }
+            }
+            d_leaf = nullptr;
+        }
+
+      public:
+        explicit LeafCursor(const FingerTree& t) { enter(t); }
+
+        [[nodiscard]] auto done() const -> bool { return d_leaf == nullptr; }
+
+        [[nodiscard]] auto value() const -> const T& { return std::get<typename E::Leaf>(d_leaf->d_data).d_value; }
+
+        void next() {
+            while (!d_elems.empty()) {
+                auto& top = d_elems.back();
+                if (top.child + 1u < children(*top.elem)) {
+                    descend(child(*top.elem, ++top.child));
+                    return;
+                }
+                d_elems.pop_back();
+            }
+            advance_spine();
+        }
+    };
+
     // ========================================================================
     //                          PUBLIC INTERFACE
     // ========================================================================
@@ -1003,15 +1120,24 @@ class FingerTree {
 
     friend void swap(FingerTree& a, FingerTree& b) noexcept { a.swap(b); }
 
-    // element-wise equality; short-circuits on size for unit-measure trees
-    // Hidden friend: element-wise equality via flatten() avoids requiring the
-    // iterator to be complete at class-body parse time.
+    // Element-wise equality: walks both trees in lockstep and stops at the
+    // first unequal pair or at the end of the shorter tree. No allocation,
+    // and T need only be equality comparable. Unit-count trees compare sizes
+    // first in O(1). Shared structure is deliberately not taken as proof of
+    // equality: an element whose == is not reflexive (NaN) must still make
+    // a tree unequal to itself.
     friend auto operator==(const FingerTree& lhs, const FingerTree& rhs) -> bool {
         if constexpr (has_unit_count_measure) {
             if (lhs.measure() != rhs.measure())
                 return false;
         }
-        return lhs.flatten() == rhs.flatten();
+        LeafCursor l(lhs);
+        LeafCursor r(rhs);
+        for (; !l.done() && !r.done(); l.next(), r.next()) {
+            if (!(l.value() == r.value()))
+                return false;
+        }
+        return l.done() && r.done();
     }
 
     // front / back (SequenceContainer-style convenience; no mutation)
