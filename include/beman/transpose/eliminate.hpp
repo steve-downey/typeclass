@@ -105,10 +105,15 @@ concept variant_specialization =
     requires { typename alternatives_of<std::remove_cvref_t<VARIANT>>::type; };
 
 /** How an alternative of `VARIANT` is presented to an arm: with `VARIANT`'s
- * own value category, as `std::visit` presents it. */
+ * own value category, as `std::visit` presents it. Spelled through
+ * `forward_like` rather than `get<ALTERNATIVE>`, which is ill-formed when
+ * the alternative's type occurs more than once -- the case
+ * `eliminate_indexed` exists for -- and which a library whose `get` deduces
+ * its return type rejects even in an unevaluated operand. */
 //! \expos
 template <class VARIANT, class ALTERNATIVE>
-using presented_t = decltype(std::get<ALTERNATIVE>(std::declval<VARIANT>()));
+using presented_t =
+    decltype(std::forward_like<VARIANT>(std::declval<ALTERNATIVE &>()));
 
 //! \expos
 template <class VARIANT, class HANDLER, class ALTERNATIVES>
