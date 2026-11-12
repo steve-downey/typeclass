@@ -31,7 +31,13 @@
 //
 //   unique_ptr     nullable, move-only children. Cheap, but the tree type
 //                  is not copyable — an irregular type. (Traversal is
-//                  unaffected; regularity only bites on copy.)
+//                  unaffected; regularity only bites on copy.) Measured
+//                  twice: built parent-first (preorder allocation, nodes
+//                  in memory in traversal order) and children-first
+//                  (postorder, like every other tree here). The pair
+//                  isolates memory layout, which costs ~2x on this fold,
+//                  more than any representation choice; the postorder
+//                  row is the like-for-like baseline for the Fix trees.
 //   std::indirect  the standard's value-semantic indirection (C++26), the
 //                  closest analog to this library's Box: regular, deep-copy.
 //                  It is not nullable, so an absent child is
@@ -120,6 +126,30 @@ auto build_unique(int depth, std::int64_t& next) -> std::unique_ptr<bench::Uniqu
         node->left  = build_unique(depth - 1, next);
         node->right = build_unique(depth - 1, next);
     }
+    return node;
+}
+
+// The same unique_ptr tree, but each node allocated *after* its children,
+// as every other builder here does: a by-value builder (to_fix, the
+// std::indirect and Fix<unique_ptr> builders, BinaryTree::node) cannot
+// allocate a node until its subtrees exist. build_unique above allocates
+// the parent first, so its nodes sit in memory in exactly the preorder
+// the fold walks; this one lays them out in postorder. Node type and
+// traversal are identical, so the gap between the two rows is purely
+// memory layout, and this row, not build_unique's, is the like-for-like
+// baseline for the Fix trees.
+auto build_unique_postorder(int depth, std::int64_t& next) -> std::unique_ptr<bench::UniqueTree> {
+    std::int64_t                       value = next++;
+    std::unique_ptr<bench::UniqueTree> left;
+    std::unique_ptr<bench::UniqueTree> right;
+    if (depth > 1) {
+        left  = build_unique_postorder(depth - 1, next);
+        right = build_unique_postorder(depth - 1, next);
+    }
+    auto node   = std::make_unique<bench::UniqueTree>();
+    node->value = value;
+    node->left  = std::move(left);
+    node->right = std::move(right);
     return node;
 }
 
@@ -280,6 +310,8 @@ TEST_CASE("fold: sum a very large tree", "[fold][!benchmark]") {
     // numbering differs but the total does not).
     std::int64_t un         = 1;
     auto         unique_    = build_unique(kFoldDepth, un);
+    std::int64_t up         = 1;
+    auto         unique_po  = build_unique_postorder(kFoldDepth, up);
     std::int64_t uf         = 1;
     auto         unique_fix = build_unique_fix(kFoldDepth, uf);
 #ifdef __cpp_lib_indirect
@@ -290,6 +322,7 @@ TEST_CASE("fold: sum a very large tree", "[fold][!benchmark]") {
     // Law first: every route computes the same sum before any timing.
     REQUIRE(sum_hand(native) == expected);
     REQUIRE(bench::sum(*unique_) == expected);
+    REQUIRE(bench::sum(*unique_po) == expected);
     REQUIRE(sum_unique_fix(unique_fix) == expected);
     REQUIRE(sum_direct(native) == expected);
     REQUIRE(sum_direct_inline(native) == expected);
@@ -303,6 +336,7 @@ TEST_CASE("fold: sum a very large tree", "[fold][!benchmark]") {
 
     BENCHMARK("hand recursion (shared_ptr)") { return sum_hand(native); };
     BENCHMARK("hand recursion (unique_ptr)") { return bench::sum(*unique_); };
+    BENCHMARK("hand recursion (unique_ptr, postorder alloc)") { return bench::sum(*unique_po); };
 #ifdef __cpp_lib_indirect
     BENCHMARK("hand recursion (std::indirect)") { return bench::sum(indirect); };
 #endif

@@ -280,14 +280,20 @@ BENCH_CONFIG ?= Bench
 
 _bench_bin_dir := $(_build_path)/benchmarks/tree_algorithms/$(BENCH_CONFIG)
 _bench_ct_src := $(_build_path)/benchmarks/tree_algorithms/ct_*.cpp
+_bench_results := $(_build_path)/bench-results
 
+# Each runtime benchmark reports twice: the console for the reader, and
+# Catch2 XML into $(_bench_results) for bench_report.py.
 .PHONY: bench
 bench: $(_build_path)/CMakeCache.txt ## Build and run the runtime microbenchmarks (Bench config)
 	$(CMAKE) --build $(_build_path) --config $(BENCH_CONFIG) --target bench_runtime_all
+	mkdir -p $(_bench_results)
 	@echo "==== fold: consuming a very large tree ===="
-	$(_bench_bin_dir)/beman.tree_algorithms.benchmarks.fold "[!benchmark]"
+	$(_bench_bin_dir)/beman.tree_algorithms.benchmarks.fold "[!benchmark]" \
+		-r console -r xml::out=$(_bench_results)/fold.xml
 	@echo "==== build: producing / copying / refolding ===="
-	$(_bench_bin_dir)/beman.tree_algorithms.benchmarks.build "[!benchmark]"
+	$(_bench_bin_dir)/beman.tree_algorithms.benchmarks.build "[!benchmark]" \
+		-r console -r xml::out=$(_bench_results)/build.xml
 
 .PHONY: bench-compile
 bench-compile: $(_build_path)/CMakeCache.txt ## Recompile the compile-time benchmark matrix and report per-TU compile time
@@ -298,6 +304,16 @@ bench-compile: $(_build_path)/CMakeCache.txt ## Recompile the compile-time bench
 .PHONY: bench-report
 bench-report: ## Re-print the compile-time report from the existing .trace, without rebuilding
 	$(PYEXEC) benchmarks/compile_trace_report.py --build-dir $(_build_path) --config $(BENCH_CONFIG)
+
+.PHONY: bench-html
+bench-html: ## Render runtime + compile-time results to $(_build_path)/bench-results/report.html
+	$(PYEXEC) benchmarks/bench_report.py --build-dir $(_build_path) --config $(BENCH_CONFIG)
+
+.PHONY: bench-full
+bench-full: ## Run every benchmark, then render the HTML report
+	$(MAKE) bench
+	$(MAKE) bench-compile
+	$(MAKE) bench-html
 
 .PHONY: lint
 lint: venv

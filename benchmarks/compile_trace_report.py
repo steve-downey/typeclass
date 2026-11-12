@@ -115,16 +115,29 @@ def main() -> int:
         )
         prev = size
 
-    # Scaling: compare the largest to the smallest size for each kind.
+    # Scaling: fit time = fixed + per_node * N for each kind. ct_fix
+    # includes the library headers and ct_plain includes none, so a ratio
+    # of raw times (or of largest to smallest size) mixes a constant header
+    # cost into the scaling and makes fix look super-efficient at large N
+    # and expensive at small N. The slopes compare like with like.
     if len(sizes) >= 2:
-        lo, hi = sizes[0], sizes[-1]
         print()
-        print(f"Scaling from {lo} to {hi} nodes ({hi / lo:.0f}x the tree):")
+        print("Fit: compile ms = fixed + per-node * N")
+        fits = {}
         for kind in ("fix", "plain"):
-            a = latest.get((kind, lo))
-            b = latest.get((kind, hi))
-            if a and b and a[0]:
-                print(f"  {kind:<5}: {b[0] / a[0]:>6.1f}x compile time  (linear would be {hi / lo:.0f}x)")
+            pts = [(n, latest[(kind, n)][0]) for n in sizes if (kind, n) in latest]
+            if len(pts) < 2:
+                continue
+            mx = sum(n for n, _ in pts) / len(pts)
+            my = sum(v for _, v in pts) / len(pts)
+            den = sum((n - mx) ** 2 for n, _ in pts)
+            if not den:
+                continue
+            slope = sum((n - mx) * (v - my) for n, v in pts) / den
+            fits[kind] = (my - slope * mx, slope)
+            print(f"  {kind:<5}: {fits[kind][0]:>8.0f} ms fixed + {slope * 1000:>7.1f} us/node")
+        if "fix" in fits and "plain" in fits and fits["plain"][1]:
+            print(f"  per-node cost fix/plain: {fits['fix'][1] / fits['plain'][1]:.2f}  (1.00 = Fix adds nothing per node)")
 
     return 0
 
