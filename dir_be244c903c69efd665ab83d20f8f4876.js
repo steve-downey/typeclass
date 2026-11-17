@@ -1,6 +1,6 @@
 var dir_be244c903c69efd665ab83d20f8f4876 =
 [
-    [ "finger_tree.hpp", "finger__tree_8hpp.html", "finger__tree_8hpp" ],
+    [ "finger_tree.hpp", "fingertree_2tree_2finger__tree_8hpp.html", "fingertree_2tree_2finger__tree_8hpp" ],
     [ "finger_tree_foldable.hpp", "finger__tree__foldable_8hpp.html", "finger__tree__foldable_8hpp" ],
     [ "finger_tree_functor.hpp", "finger__tree__functor_8hpp.html", "finger__tree__functor_8hpp" ],
     [ "finger_tree_interval_index.hpp", "finger__tree__interval__index_8hpp.html", "finger__tree__interval__index_8hpp" ],
@@ -11,5 +11,6 @@ var dir_be244c903c69efd665ab83d20f8f4876 =
     [ "finger_tree_random_access.hpp", "finger__tree__random__access_8hpp.html", "finger__tree__random__access_8hpp" ],
     [ "finger_tree_rebind.hpp", "finger__tree__rebind_8hpp.html", "finger__tree__rebind_8hpp" ],
     [ "finger_tree_rope.hpp", "finger__tree__rope_8hpp.html", "finger__tree__rope_8hpp" ],
+    [ "finger_tree_structure.hpp", "finger__tree__structure_8hpp.html", "finger__tree__structure_8hpp" ],
     [ "finger_tree_traversable.hpp", "finger__tree__traversable_8hpp.html", "finger__tree__traversable_8hpp" ]
 ];

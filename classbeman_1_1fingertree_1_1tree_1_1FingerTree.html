@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('classbeman_1_1fingertree_1_1tree_1_1Fi
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="finger__tree_8hpp_source.html">beman/fingertree/tree/finger_tree.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="fingertree_2tree_2finger__tree_8hpp_source.html">beman/fingertree/tree/finger_tree.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -263,6 +263,12 @@ Friends</h2></td></tr>
 <tr class="memitem:a404c750dae69ab10d3fbbb25d9a16722"><td class="memTemplParams" colspan="2">template&lt;typename , typename , typename , typename &gt; </td></tr>
 <tr class="memitem:a404c750dae69ab10d3fbbb25d9a16722"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a404c750dae69ab10d3fbbb25d9a16722">FingerTreeIterator</a></td></tr>
 <tr class="separator:a404c750dae69ab10d3fbbb25d9a16722"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9629f0a48305fad34f0c61500d7400d"><td class="memTemplParams" colspan="2">template&lt;typename &gt; </td></tr>
+<tr class="memitem:ae9629f0a48305fad34f0c61500d7400d"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#ae9629f0a48305fad34f0c61500d7400d">FingerTreeLevel</a></td></tr>
+<tr class="separator:ae9629f0a48305fad34f0c61500d7400d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6986c396a3c74278bda2692bad48ed97"><td class="memTemplParams" colspan="2">template&lt;typename &gt; </td></tr>
+<tr class="memitem:a6986c396a3c74278bda2692bad48ed97"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a6986c396a3c74278bda2692bad48ed97">FingerTreeStructureBuilder</a></td></tr>
+<tr class="separator:a6986c396a3c74278bda2692bad48ed97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2643280e61724a782870ab359745b096"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a2643280e61724a782870ab359745b096">swap</a> (<a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a> &amp;a, <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a> &amp;b) noexcept</td></tr>
 <tr class="separator:a2643280e61724a782870ab359745b096"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f02504d825f04affe86b371787307ad"><td class="memItemLeft" align="right" valign="top">auto&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a3f02504d825f04affe86b371787307ad">operator==</a> (const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a> &amp;lhs, const <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTree.html">FingerTree</a> &amp;rhs) -&gt; bool</td></tr>
@@ -1871,6 +1877,58 @@ template&lt;typename , typename , typename , typename &gt; </div>
 
 </div>
 </div>
+<a id="ae9629f0a48305fad34f0c61500d7400d" name="ae9629f0a48305fad34f0c61500d7400d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae9629f0a48305fad34f0c61500d7400d">&#9670;&#160;</a></span>FingerTreeLevel</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename MONOID  = beman::transpose::sum_monoid&lt;std::size_t&gt;, typename MEASURE_POLICY  = UnitMeasure&lt;T, ft::tag_t&lt;MONOID&gt;&gt;, typename ALLOCATOR  = std::allocator&lt;std::byte&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeLevel.html">FingerTreeLevel</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6986c396a3c74278bda2692bad48ed97" name="a6986c396a3c74278bda2692bad48ed97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6986c396a3c74278bda2692bad48ed97">&#9670;&#160;</a></span>FingerTreeStructureBuilder</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename MONOID  = beman::transpose::sum_monoid&lt;std::size_t&gt;, typename MEASURE_POLICY  = UnitMeasure&lt;T, ft::tag_t&lt;MONOID&gt;&gt;, typename ALLOCATOR  = std::allocator&lt;std::byte&gt;&gt; </div>
+<div class="memtemplate">
+template&lt;typename &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">friend class <a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeStructureBuilder.html">FingerTreeStructureBuilder</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">friend</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a2643280e61724a782870ab359745b096" name="a2643280e61724a782870ab359745b096"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2643280e61724a782870ab359745b096">&#9670;&#160;</a></span>swap</h2>
 
@@ -1975,7 +2033,7 @@ template&lt;typename T , typename MONOID  = beman::transpose::sum_monoid&lt;std:
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>beman/fingertree/tree/<a class="el" href="finger__tree_8hpp_source.html">finger_tree.hpp</a></li>
+<li>beman/fingertree/tree/<a class="el" href="fingertree_2tree_2finger__tree_8hpp_source.html">finger_tree.hpp</a></li>
 <li>beman/fingertree/tree/<a class="el" href="finger__tree__iterator_8hpp_source.html">finger_tree_iterator.hpp</a></li>
 </ul>
 </div><!-- contents -->

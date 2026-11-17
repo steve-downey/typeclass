@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['val_0',['val',['../structbeman_1_1tree__algorithms_1_1Const.html#acf44b6282fc420789fc1cfc9c0f93f9d',1,'beman::tree_algorithms::Const']]],
-  ['value_1',['value',['../structbeman_1_1tree__algorithms_1_1BinaryTreeF.html#a2b22c15afc8b466f6afedd76a9a28edf',1,'beman::tree_algorithms::BinaryTreeF::value()'],['../structbeman_1_1tree__algorithms_1_1FringeLeaf.html#aa66c7278f2649d95bc4a81c195fd4206',1,'beman::tree_algorithms::FringeLeaf::value()'],['../structbeman_1_1tree__algorithms_1_1RoseF.html#a4938441d11b0bb2088762eac21c1f18d',1,'beman::tree_algorithms::RoseF::value()']]]
+  ['to_5fvector_0',['to_vector',['../namespacebeman_1_1transpose.html#a06d66a6e0df5922c49530d1fc7f0548e',1,'beman::transpose']]],
+  ['transpose_1',['transpose',['../namespacebeman_1_1transpose.html#ae4ec1d59015f2ff0dc53f1a8a182367d',1,'beman::transpose']]],
+  ['traversable_2',['traversable',['../namespacebeman_1_1transpose.html#a49e0c8561d2d876ceaf3ee5b49e5c995',1,'beman::transpose']]],
+  ['traversable_3c_20tree_20_3e_3',['traversable&lt; Tree &gt;',['../namespacebeman_1_1transpose.html#a96cfe5ff2da9734089be194f64721f49',1,'beman::transpose']]],
+  ['traverse_4',['traverse',['../namespacebeman_1_1transpose.html#adca9192380d7c029a8d882576a9c7031',1,'beman::transpose']]]
 ];

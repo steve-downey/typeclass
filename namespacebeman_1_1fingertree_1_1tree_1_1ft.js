@@ -18,5 +18,7 @@ var namespacebeman_1_1fingertree_1_1tree_1_1ft =
     [ "digit_tail", "namespacebeman_1_1fingertree_1_1tree_1_1ft.html#a7c599f1616d56737282c412df8e928fe", null ],
     [ "digit_init", "namespacebeman_1_1fingertree_1_1tree_1_1ft.html#a026318dc14e250c50383a18004d081cc", null ],
     [ "nodes_from", "namespacebeman_1_1fingertree_1_1tree_1_1ft.html#ad4d3f9831219b340235caded3d27457b", null ],
-    [ "elem_to_digit", "namespacebeman_1_1fingertree_1_1tree_1_1ft.html#a5279d2c7510e534e0c6ff99a874d2120", null ]
+    [ "elem_to_digit", "namespacebeman_1_1fingertree_1_1tree_1_1ft.html#a5279d2c7510e534e0c6ff99a874d2120", null ],
+    [ "is_finger_tree", "namespacebeman_1_1fingertree_1_1tree_1_1ft.html#a316b6a6e5e6647941ffa99ebf2833239", null ],
+    [ "is_finger_tree< FingerTree< T, MONOID, MP, ALLOCATOR > >", "namespacebeman_1_1fingertree_1_1tree_1_1ft.html#aa38580632f6b6d47e1f02c27d97dc90c", null ]
 ];

@@ -32,7 +32,8 @@ var NAVTREE =
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
         [ "Variables", "namespacemembers_vars.html", null ],
-        [ "Typedefs", "namespacemembers_type.html", null ]
+        [ "Typedefs", "namespacemembers_type.html", null ],
+        [ "Enumerations", "namespacemembers_enum.html", null ]
       ] ]
     ] ],
     [ "Concepts", "concepts.html", "concepts" ],
@@ -61,13 +62,15 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "alternative_8hpp.html",
-"classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#a29ed66a78ec91965d2acc4f2439d6593",
-"eliminate_8hpp_source.html",
-"namespacebeman_1_1fingertree_1_1tree.html#a12f1f6a893632d8bcac70083fbde6003",
-"structbeman_1_1fingertree_1_1FingerTreeRandomAccessFoldableImpl.html#a4ab9300a57dc0e8e2f27499ed6e5107f",
-"structbeman_1_1transpose_1_1VectorFunctorMap.html",
-"structbeman_1_1transpose_1_1expected__applicative__impl.html#a3bdc94360f38262fd8cd7a0737695795",
-"structbeman_1_1transpose_1_1tuple__monoid.html#a906eb2020ac98cf7e2f1c81b5f9f3162"
+"classbeman_1_1fingertree_1_1tree_1_1FingerTreeLevel.html#a09219008b5346a57c5e8e95b62f61405",
+"classbeman_1_1tree__algorithms_1_1BinaryTree.html#a569f722a91806a6cd210b7c0a4b1eb51",
+"finger__tree__structure_8hpp.html#a52b4a6acc41554cb5337c0b91c600cc1a5c19bc679506425e481a34caff777350",
+"namespacebeman_1_1transpose.html#a57e350881f367d4918a43f34e51ab16d",
+"structbeman_1_1fingertree_1_1finger__tree__rebind_3_01tree_1_1FingerTreePriorityQueue_3_01T_00_01Tree_01_4_00_01U_01_4.html#affead19635b9238486aa88e7b0d490f8",
+"structbeman_1_1transpose_1_1alt__fn.html#aad7b274eac192bf019fdb405010b0a68",
+"structbeman_1_1transpose_1_1fold__map__fn.html#a8539c61ac84204a9fae58ad8c964b32e",
+"structbeman_1_1transpose_1_1zip__list.html#af22d54fea93390bf62c5e47e815dd0b0",
+"tree__typeclasses_8hpp.html#a60e30cfe7430724066735381e3bd1d64"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

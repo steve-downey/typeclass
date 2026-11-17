@@ -1,7 +1,7 @@
 var searchData=
 [
   ['tail_0',['tail',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a7e6dabafd13d30a43ba85f907e8a9e91',1,'beman::fingertree::tree::FingerTree']]],
-  ['to_5ffix_1',['to_fix',['../namespacebeman_1_1tree__algorithms.html#a77c4b26986d3d53d5b20993fcee5b034',1,'beman::tree_algorithms']]],
+  ['to_5ffix_1',['to_fix',['../namespacebeman_1_1tree__algorithms.html#a77c4b26986d3d53d5b20993fcee5b034',1,'beman::tree_algorithms::to_fix()'],['../namespacebeman_1_1typeclass__tree__adapters.html#a9c496a9082f07232d4c78609ad9e3abb',1,'beman::typeclass_tree_adapters::to_fix()']]],
   ['to_5fstring_2',['to_string',['../classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope.html#abc69cfc20ee8c2a1893e635b01b78879',1,'beman::fingertree::tree::FingerTreeRope']]],
   ['to_5fvector_3',['to_vector',['../classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#adcaea0b1a1d7609b5d63e190fc236711',1,'beman::fingertree::tree::FingerTreePriorityQueue::to_vector()'],['../classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html#aec83d2efe5d07e0e851865cf182c747f',1,'beman::fingertree::tree::FingerTreeRandomAccess::to_vector()'],['../structbeman_1_1transpose_1_1derive__foldable.html#ad160f1f0c9a2d39f6e70f60922e64acc',1,'beman::transpose::derive_foldable::to_vector()']]],
   ['transpose_4',['transpose',['../structbeman_1_1transpose_1_1derive__traversable.html#a72c6d1e406e76d78ac881c5ddcf685a8',1,'beman::transpose::derive_traversable']]],

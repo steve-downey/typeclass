@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['nat_0',['Nat',['../namespacebeman_1_1tree__algorithms.html#a5a838e4078052023bfb9b73903052c2e',1,'beman::tree_algorithms']]],
-  ['natf_1',['NatF',['../namespacebeman_1_1tree__algorithms.html#a223b4f8d9c137ad9ce56482a6585b3aa',1,'beman::tree_algorithms']]]
+  ['monoid_5ftype_0',['monoid_type',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#addf1fe0dd212d5b39c2177f8f00d01db',1,'beman::fingertree::tree::FingerTree::monoid_type()'],['../classbeman_1_1fingertree_1_1tree_1_1FingerTreeNode.html#a506c2648a89ef011c7e22c3d2968334e',1,'beman::fingertree::tree::FingerTreeNode::monoid_type()'],['../classbeman_1_1fingertree_1_1tree_1_1FingerTreeLevel.html#aa836770fea2d92ee13e3a0219f78142d',1,'beman::fingertree::tree::FingerTreeLevel::monoid_type()'],['../classbeman_1_1fingertree_1_1tree_1_1FingerTreeStructureBuilder.html#a52fecef69a7e450b8c3ff77907f678b3',1,'beman::fingertree::tree::FingerTreeStructureBuilder::monoid_type()']]],
+  ['monoid_5fvalue_5ft_1',['monoid_value_t',['../namespacebeman_1_1transpose.html#abccfdf725542381b0db7028489ea39c2',1,'beman::transpose']]]
 ];

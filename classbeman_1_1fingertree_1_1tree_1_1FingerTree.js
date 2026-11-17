@@ -67,6 +67,8 @@ var classbeman_1_1fingertree_1_1tree_1_1FingerTree =
     [ "split_at_measure", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a19b6baa5a7ade215443f2a7823b7ef38", null ],
     [ "reversed", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a9f1c883df0c9bc294349a6ec1932deba", null ],
     [ "FingerTreeIterator", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a404c750dae69ab10d3fbbb25d9a16722", null ],
+    [ "FingerTreeLevel", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#ae9629f0a48305fad34f0c61500d7400d", null ],
+    [ "FingerTreeStructureBuilder", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a6986c396a3c74278bda2692bad48ed97", null ],
     [ "swap", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a2643280e61724a782870ab359745b096", null ],
     [ "operator==", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a3f02504d825f04affe86b371787307ad", null ],
     [ "has_unit_count_measure", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#ac2f89af086c01cedc724e969855d08ba", null ]

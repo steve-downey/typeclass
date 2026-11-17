@@ -7,5 +7,6 @@ var searchData=
   ['pmr_4',['pmr',['../namespacebeman_1_1fingertree_1_1tree_1_1pmr.html',1,'beman::fingertree::tree']]],
   ['transpose_5',['transpose',['../namespacebeman_1_1transpose.html',1,'beman']]],
   ['tree_6',['tree',['../namespacebeman_1_1fingertree_1_1tree.html',1,'beman::fingertree']]],
-  ['tree_5falgorithms_7',['tree_algorithms',['../namespacebeman_1_1tree__algorithms.html',1,'beman']]]
+  ['tree_5falgorithms_7',['tree_algorithms',['../namespacebeman_1_1tree__algorithms.html',1,'beman']]],
+  ['typeclass_5ftree_5fadapters_8',['typeclass_tree_adapters',['../namespacebeman_1_1typeclass__tree__adapters.html',1,'beman']]]
 ];

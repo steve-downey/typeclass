@@ -1,0 +1,4 @@
+var structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1typeclass__tree__adapters_1_1FingerTreeF_3_01P_00_01A_01_4_01_4 =
+[
+    [ "type", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1typeclass__tree__adapters_1_1FingerTreeF_3_01P_00_01A_01_4_01_4.html#a7a572f811c936f80906088bfd3907ec5", null ]
+];

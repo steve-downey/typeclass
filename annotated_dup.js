@@ -9,9 +9,12 @@ var annotated_dup =
           [ "FingerTree", "classbeman_1_1fingertree_1_1tree_1_1FingerTree.html", "classbeman_1_1fingertree_1_1tree_1_1FingerTree" ],
           [ "FingerTreeIntervalIndex", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex.html", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeIntervalIndex" ],
           [ "FingerTreeIterator", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeIterator.html", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeIterator" ],
+          [ "FingerTreeLevel", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeLevel.html", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeLevel" ],
+          [ "FingerTreeNode", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeNode.html", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeNode" ],
           [ "FingerTreePriorityQueue", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html", "classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue" ],
           [ "FingerTreeRandomAccess", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess.html", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRandomAccess" ],
           [ "FingerTreeRope", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope.html", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope" ],
+          [ "FingerTreeStructureBuilder", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeStructureBuilder.html", "classbeman_1_1fingertree_1_1tree_1_1FingerTreeStructureBuilder" ],
           [ "Interval", "structbeman_1_1fingertree_1_1tree_1_1Interval.html", "structbeman_1_1fingertree_1_1tree_1_1Interval" ],
           [ "IntervalMeasure", "structbeman_1_1fingertree_1_1tree_1_1IntervalMeasure.html", "structbeman_1_1fingertree_1_1tree_1_1IntervalMeasure" ],
           [ "optional_max_monoid", "structbeman_1_1fingertree_1_1tree_1_1optional__max__monoid.html", "structbeman_1_1fingertree_1_1tree_1_1optional__max__monoid" ],
@@ -66,6 +69,7 @@ var annotated_dup =
         [ "applicative_value< beman::tree_algorithms::FringeTreeF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1FringeTreeF_3_01T_00_01A_01_4_01_4" ],
         [ "applicative_value< beman::tree_algorithms::NatF< A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1NatF_3_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1NatF_3_01A_01_4_01_4" ],
         [ "applicative_value< beman::tree_algorithms::RoseF< T, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1RoseF_3_01T_00_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1tree__algorithms_1_1RoseF_3_01T_00_01A_01_4_01_4" ],
+        [ "applicative_value< beman::typeclass_tree_adapters::FingerTreeF< P, A > >", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1typeclass__tree__adapters_1_1FingerTreeF_3_01P_00_01A_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01beman_1_1typeclass__tree__adapters_1_1FingerTreeF_3_01P_00_01A_01_4_01_4" ],
         [ "applicative_value< std::expected< void, ERROR > >", "structbeman_1_1transpose_1_1applicative__value_3_01std_1_1expected_3_01void_00_01ERROR_01_4_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01std_1_1expected_3_01void_00_01ERROR_01_4_01_4" ],
         [ "applicative_value< T, std::void_t< typename std::remove_cvref_t< T >::value_type > >", "structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c.html", "structbeman_1_1transpose_1_1applicative__value_3_01T_00_01std_1_1void__t_3_01typename_01std_1_1r66707b53579583a753f1357047b2b49c" ],
         [ "applicative_value< tree_algorithms::Expr >", "structbeman_1_1transpose_1_1applicative__value_3_01tree__algorithms_1_1Expr_01_4.html", "structbeman_1_1transpose_1_1applicative__value_3_01tree__algorithms_1_1Expr_01_4" ],
@@ -206,6 +210,24 @@ var annotated_dup =
         [ "RoseLayerFoldMap", "structbeman_1_1tree__algorithms_1_1RoseLayerFoldMap.html", "structbeman_1_1tree__algorithms_1_1RoseLayerFoldMap" ],
         [ "Succ", "structbeman_1_1tree__algorithms_1_1Succ.html", "structbeman_1_1tree__algorithms_1_1Succ" ],
         [ "Zero", "structbeman_1_1tree__algorithms_1_1Zero.html", null ]
+      ] ],
+      [ "typeclass_tree_adapters", "namespacebeman_1_1typeclass__tree__adapters.html", [
+        [ "FingerDeep", "structbeman_1_1typeclass__tree__adapters_1_1FingerDeep.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerDeep" ],
+        [ "FingerEmpty", "structbeman_1_1typeclass__tree__adapters_1_1FingerEmpty.html", null ],
+        [ "FingerLeaf", "structbeman_1_1typeclass__tree__adapters_1_1FingerLeaf.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerLeaf" ],
+        [ "FingerNode2", "structbeman_1_1typeclass__tree__adapters_1_1FingerNode2.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerNode2" ],
+        [ "FingerNode3", "structbeman_1_1typeclass__tree__adapters_1_1FingerNode3.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerNode3" ],
+        [ "FingerPayloadRef", "classbeman_1_1typeclass__tree__adapters_1_1FingerPayloadRef.html", "classbeman_1_1typeclass__tree__adapters_1_1FingerPayloadRef" ],
+        [ "FingerSingle", "structbeman_1_1typeclass__tree__adapters_1_1FingerSingle.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerSingle" ],
+        [ "FingerTreeEmbed", "classbeman_1_1typeclass__tree__adapters_1_1FingerTreeEmbed.html", "classbeman_1_1typeclass__tree__adapters_1_1FingerTreeEmbed" ],
+        [ "FingerTreeF", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeF.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeF" ],
+        [ "FingerTreeFFunctorImpl", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeFFunctorImpl.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeFFunctorImpl" ],
+        [ "FingerTreeFFunctorMap", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeFFunctorMap.html", null ],
+        [ "FingerTreeLayer", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeLayer.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeLayer" ],
+        [ "FingerTreeLayerFoldMap", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeLayerFoldMap.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeLayerFoldMap" ],
+        [ "FingerTreePart", "classbeman_1_1typeclass__tree__adapters_1_1FingerTreePart.html", "classbeman_1_1typeclass__tree__adapters_1_1FingerTreePart" ],
+        [ "FingerTreeProjectFn", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeProjectFn.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeProjectFn" ],
+        [ "FingerTreeProjectOwnedFn", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeProjectOwnedFn.html", "structbeman_1_1typeclass__tree__adapters_1_1FingerTreeProjectOwnedFn" ]
       ] ]
     ] ]
 ];

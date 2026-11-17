@@ -107,6 +107,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone"><code><a class="el" href="namespacebeman_1_1fingertree.html">beman.fingertree</a></code>   </td><td class="markdownTableBodyNone"><code><a class="el" href="namespacebeman_1_1fingertree.html">beman::fingertree</a></code>   </td><td class="markdownTableBodyNone">A persistent measured sequence   </td><td class="markdownTableBodyNone">not yet drafted   </td><td class="markdownTableBodyNone"><a class="el" href="/home/runner/work/typeclass/typeclass/docs/fingertree/README.md#md__home_runner_work_typeclass_typeclass_docs_fingertree_README">`docs/fingertree/`</a>   </td></tr>
 </table>
+<p>An optional fourth target, <code><a class="el" href="namespacebeman_1_1typeclass__tree__adapters.html">beman.typeclass_tree_adapters</a></code>, holds adapters that need two of the libraries at once; today that is the structural adapter that lets the tree algorithms fold and build a finger tree. Neither library depends on it or on the other. See `docs/typeclass_tree_adapters/`.</p>
 <p>How the three relate, and the invariants that keep them coherent, are in `docs/coordination/`.</p>
 <p><b>Status</b>: <a href="https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use">Under development and not yet ready for production use.</a></p>
 <h1><a class="anchor" id="autotoc_md1"></a>
@@ -177,7 +178,7 @@ Using the libraries</h1>
 <p>Each library installs as its own CMake package:</p>
 <div class="fragment"><div class="line">find_package(beman.transpose REQUIRED)</div>
 <div class="line">target_link_libraries(yourlib PUBLIC beman::transpose)</div>
-</div><!-- fragment --><p>and likewise <code><a class="el" href="namespacebeman_1_1tree__algorithms.html">beman.tree_algorithms</a></code> / <code><a class="el" href="namespacebeman_1_1tree__algorithms.html">beman::tree_algorithms</a></code> and <code><a class="el" href="namespacebeman_1_1fingertree.html">beman.fingertree</a></code> / <code><a class="el" href="namespacebeman_1_1fingertree.html">beman::fingertree</a></code>.</p>
+</div><!-- fragment --><p>and likewise <code><a class="el" href="namespacebeman_1_1tree__algorithms.html">beman.tree_algorithms</a></code> / <code><a class="el" href="namespacebeman_1_1tree__algorithms.html">beman::tree_algorithms</a></code> and <code><a class="el" href="namespacebeman_1_1fingertree.html">beman.fingertree</a></code> / <code><a class="el" href="namespacebeman_1_1fingertree.html">beman::fingertree</a></code>. The optional adapters are <code><a class="el" href="namespacebeman_1_1typeclass__tree__adapters.html">beman.typeclass_tree_adapters</a></code> / <code><a class="el" href="namespacebeman_1_1typeclass__tree__adapters.html">beman::typeclass_tree_adapters</a></code>, installed where fingertree is and only from a header build; that package finds the two libraries it joins.</p>
 <h1><a class="anchor" id="autotoc_md10"></a>
 Development</h1>
 <p>See the Contributing Guidelines. </p>

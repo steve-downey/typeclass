@@ -95,6 +95,7 @@ $(document).ready(function(){initNavTree('namespacebeman_1_1fingertree_1_1tree.h
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
+<a href="#enum-members">Enumerations</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">beman::fingertree::tree Namespace Reference</div></div>
 </div><!--header-->
@@ -116,6 +117,12 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeIterator.html">FingerTreeIterator</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeLevel.html">FingerTreeLevel</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">The tree at one level of a finger tree's spine, in its real form: Empty, Single, or Deep with a left digit, the next level, and a right digit.  <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeLevel.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeNode.html">FingerTreeNode</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">One element of a finger tree: a Leaf holding a payload, or a Node2 or Node3 of nodes one lower.  <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeNode.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html">FingerTreePriorityQueue</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent double-ended priority queue backed by a finger tree.  <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreePriorityQueue.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -124,6 +131,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope.html">FingerTreeRope</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Persistent text buffer implemented as a rope over string chunks.  <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeRope.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeStructureBuilder.html">FingerTreeStructureBuilder</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the real forms of a finger tree under one allocator and one monoid instance, computing every cached measure as it goes.  <a href="classbeman_1_1fingertree_1_1tree_1_1FingerTreeStructureBuilder.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeman_1_1fingertree_1_1tree_1_1Interval.html">Interval</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,6 +166,21 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a88266cfee49c4a04bbfe53eb7f543c4a"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a88266cfee49c4a04bbfe53eb7f543c4a"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a88266cfee49c4a04bbfe53eb7f543c4a">PriorityMonoid</a> = <a class="el" href="structbeman_1_1transpose_1_1tuple__monoid.html">beman::transpose::tuple_monoid</a>&lt; <a class="el" href="structbeman_1_1transpose_1_1sum__monoid.html">beman::transpose::sum_monoid</a>&lt; std::size_t &gt;, <a class="el" href="structbeman_1_1fingertree_1_1tree_1_1optional__min__monoid.html">optional_min_monoid</a>&lt; T &gt;, <a class="el" href="structbeman_1_1fingertree_1_1tree_1_1optional__max__monoid.html">optional_max_monoid</a>&lt; T &gt; &gt;</td></tr>
 <tr class="separator:a88266cfee49c4a04bbfe53eb7f543c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a4cb628ea7c67238fb23d66d439d786bc"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a4cb628ea7c67238fb23d66d439d786bc">FingerTreeForm</a> : std::uint8_t { <a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a4cb628ea7c67238fb23d66d439d786bcaba2b45bdc11e2a4a6e86aab2ac693cbb">EMPTY</a>
+, <a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a4cb628ea7c67238fb23d66d439d786bca0679273e201afd0bf57af3961f8a23b8">SINGLE</a>
+, <a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a4cb628ea7c67238fb23d66d439d786bcac7489a84585b023358dc07a421411f45">DEEP</a>
+ }</td></tr>
+<tr class="memdesc:a4cb628ea7c67238fb23d66d439d786bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">The form of the tree at one level of the spine.  <a href="namespacebeman_1_1fingertree_1_1tree.html#a4cb628ea7c67238fb23d66d439d786bc">More...</a><br /></td></tr>
+<tr class="separator:a4cb628ea7c67238fb23d66d439d786bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52b4a6acc41554cb5337c0b91c600cc1"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a52b4a6acc41554cb5337c0b91c600cc1">FingerTreeNodeForm</a> : std::uint8_t { <a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a52b4a6acc41554cb5337c0b91c600cc1a5c19bc679506425e481a34caff777350">LEAF</a>
+, <a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a52b4a6acc41554cb5337c0b91c600cc1ad9e7f01360b7360733bd39dcb419ba18">NODE2</a>
+, <a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a52b4a6acc41554cb5337c0b91c600cc1a4cba15c973da05b44037dac51c506d13">NODE3</a>
+ }</td></tr>
+<tr class="memdesc:a52b4a6acc41554cb5337c0b91c600cc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">The form of one element.  <a href="namespacebeman_1_1fingertree_1_1tree.html#a52b4a6acc41554cb5337c0b91c600cc1">More...</a><br /></td></tr>
+<tr class="separator:a52b4a6acc41554cb5337c0b91c600cc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -215,6 +240,65 @@ template&lt;typename T &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a4cb628ea7c67238fb23d66d439d786bc" name="a4cb628ea7c67238fb23d66d439d786bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cb628ea7c67238fb23d66d439d786bc">&#9670;&#160;</a></span>FingerTreeForm</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a4cb628ea7c67238fb23d66d439d786bc">beman::fingertree::tree::FingerTreeForm</a> : std::uint8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The form of the tree at one level of the spine. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a4cb628ea7c67238fb23d66d439d786bcaba2b45bdc11e2a4a6e86aab2ac693cbb" name="a4cb628ea7c67238fb23d66d439d786bcaba2b45bdc11e2a4a6e86aab2ac693cbb"></a>EMPTY&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a4cb628ea7c67238fb23d66d439d786bca0679273e201afd0bf57af3961f8a23b8" name="a4cb628ea7c67238fb23d66d439d786bca0679273e201afd0bf57af3961f8a23b8"></a>SINGLE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a4cb628ea7c67238fb23d66d439d786bcac7489a84585b023358dc07a421411f45" name="a4cb628ea7c67238fb23d66d439d786bcac7489a84585b023358dc07a421411f45"></a>DEEP&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<a id="a52b4a6acc41554cb5337c0b91c600cc1" name="a52b4a6acc41554cb5337c0b91c600cc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a52b4a6acc41554cb5337c0b91c600cc1">&#9670;&#160;</a></span>FingerTreeNodeForm</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="namespacebeman_1_1fingertree_1_1tree.html#a52b4a6acc41554cb5337c0b91c600cc1">beman::fingertree::tree::FingerTreeNodeForm</a> : std::uint8_t</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The form of one element. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a52b4a6acc41554cb5337c0b91c600cc1a5c19bc679506425e481a34caff777350" name="a52b4a6acc41554cb5337c0b91c600cc1a5c19bc679506425e481a34caff777350"></a>LEAF&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a52b4a6acc41554cb5337c0b91c600cc1ad9e7f01360b7360733bd39dcb419ba18" name="a52b4a6acc41554cb5337c0b91c600cc1ad9e7f01360b7360733bd39dcb419ba18"></a>NODE2&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a52b4a6acc41554cb5337c0b91c600cc1a4cba15c973da05b44037dac51c506d13" name="a52b4a6acc41554cb5337c0b91c600cc1a4cba15c973da05b44037dac51c506d13"></a>NODE3&#160;</td><td class="fielddoc"></td></tr>
+</table>
 
 </div>
 </div>

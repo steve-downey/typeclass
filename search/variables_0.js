@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['a_0',['a',['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node2.html#a32a8edb300221c14e588856df0d3563c',1,'beman::fingertree::tree::ft::Elem::Node2::a()'],['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node3.html#adf987b59b047fcf34572b56b0ac23735',1,'beman::fingertree::tree::ft::Elem::Node3::a()']]],
+  ['a_0',['a',['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node2.html#a32a8edb300221c14e588856df0d3563c',1,'beman::fingertree::tree::ft::Elem::Node2::a()'],['../structbeman_1_1fingertree_1_1tree_1_1ft_1_1Elem_1_1Node3.html#adf987b59b047fcf34572b56b0ac23735',1,'beman::fingertree::tree::ft::Elem::Node3::a()'],['../structbeman_1_1typeclass__tree__adapters_1_1FingerNode2.html#a2e748492ba1e84d6a0c4a18ec5391d93',1,'beman::typeclass_tree_adapters::FingerNode2::a()'],['../structbeman_1_1typeclass__tree__adapters_1_1FingerNode3.html#a04f1c341eb8607bf3d85315482ecac2b',1,'beman::typeclass_tree_adapters::FingerNode3::a()']]],
   ['accumulating_5fapplicative_1',['accumulating_applicative',['../namespacebeman_1_1transpose.html#a32e15c3cb9b99eeac61286bc962b6187',1,'beman::transpose']]],
   ['all_5fof_2',['all_of',['../namespacebeman_1_1transpose.html#a99a66dc7d478d5d36b53d684962bde94',1,'beman::transpose']]],
   ['alt_3',['alt',['../namespacebeman_1_1transpose.html#a658e421e9c5d859845784eefcf0b5289',1,'beman::transpose']]],

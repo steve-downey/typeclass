@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['get_0',['get',['../structbeman_1_1transpose_1_1sender.html#af8b0feb458783c29ee51893e0509352e',1,'beman::transpose::sender']]],
-  ['get_5fallocator_1',['get_allocator',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a4f5e924d4e5b3ef3cc83429935e35bb3',1,'beman::fingertree::tree::FingerTree']]],
-  ['get_5fmonoid_2',['get_monoid',['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#ac1d0200f70ad89e2d7f152117792f51e',1,'beman::fingertree::tree::FingerTree']]],
+  ['get_0',['get',['../classbeman_1_1typeclass__tree__adapters_1_1FingerPayloadRef.html#aa6586df104d2c91d3ca4a1c1fa28b27d',1,'beman::typeclass_tree_adapters::FingerPayloadRef::get()'],['../structbeman_1_1transpose_1_1sender.html#af8b0feb458783c29ee51893e0509352e',1,'beman::transpose::sender::get()']]],
+  ['get_5fallocator_1',['get_allocator',['../classbeman_1_1fingertree_1_1tree_1_1FingerTreeStructureBuilder.html#a739c60247282fbeb210cfd2b54e8ef96',1,'beman::fingertree::tree::FingerTreeStructureBuilder::get_allocator()'],['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#a4f5e924d4e5b3ef3cc83429935e35bb3',1,'beman::fingertree::tree::FingerTree::get_allocator()']]],
+  ['get_5fmonoid_2',['get_monoid',['../classbeman_1_1fingertree_1_1tree_1_1FingerTreeStructureBuilder.html#ac850b6b33b0eaf4962be22cc103f6068',1,'beman::fingertree::tree::FingerTreeStructureBuilder::get_monoid()'],['../classbeman_1_1fingertree_1_1tree_1_1FingerTree.html#ac1d0200f70ad89e2d7f152117792f51e',1,'beman::fingertree::tree::FingerTree::get_monoid()']]],
   ['grade_2ehpp_3',['grade.hpp',['../grade_8hpp.html',1,'']]],
   ['grade_5fbottom_4',['grade_bottom',['../structbeman_1_1transpose_1_1grade__bottom.html',1,'beman::transpose']]],
   ['grade_5fbottom_3c_20error_5fset_5fof_3c_20errors_2e_2e_2e_20_3e_20_3e_5',['grade_bottom&lt; error_set_of&lt; ERRORS... &gt; &gt;',['../structbeman_1_1transpose_1_1grade__bottom_3_01error__set__of_3_01ERRORS_8_8_8_01_4_01_4.html',1,'beman::transpose']]],
