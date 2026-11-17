@@ -18,6 +18,7 @@ foreach(
         conformance
         reconstruction
         finger_tree_monoid
+        finger_tree_structure
         finger_tree_iterator
         finger_tree_pmr
         finger_tree_foldable

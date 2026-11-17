@@ -21,6 +21,9 @@ Each is still its own CMake target, its own installed package, and its own paper
 | `beman.tree_algorithms` | `beman::tree_algorithms` | The fold family over recursive trees: `fold_fix`, `unfold_fix`, `refold`, and the direct verbs `fold_with` / `unfold_with` | D4322, [`papers/algorithms-for-trees.md`](papers/algorithms-for-trees.md) | [`docs/tree_algorithms/`](docs/tree_algorithms/README.md) |
 | `beman.fingertree` | `beman::fingertree` | A persistent measured sequence | not yet drafted | [`docs/fingertree/`](docs/fingertree/README.md) |
 
+An optional fourth target, `beman.typeclass_tree_adapters`, holds adapters that need two of the libraries at once; today that is the structural adapter that lets the tree algorithms fold and build a finger tree.
+Neither library depends on it or on the other. See [`docs/typeclass_tree_adapters/`](docs/typeclass_tree_adapters/README.md).
+
 How the three relate, and the invariants that keep them coherent, are in [`docs/coordination/`](docs/coordination/README.md).
 
 **Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use)
@@ -107,6 +110,7 @@ target_link_libraries(yourlib PUBLIC beman::transpose)
 ```
 
 and likewise `beman.tree_algorithms` / `beman::tree_algorithms` and `beman.fingertree` / `beman::fingertree`.
+The optional adapters are `beman.typeclass_tree_adapters` / `beman::typeclass_tree_adapters`, installed where fingertree is and only from a header build; that package finds the two libraries it joins.
 
 ## Development
 

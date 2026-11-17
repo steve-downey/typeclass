@@ -29,9 +29,9 @@ later stage does not advertise an instance before that stage implements it.
 | RoseTreeFix | payload T (stage 4) | payload T (stage 4) | payload T (stage 4) | existing Fix adapter |
 | Expr | none claimed | integer constants (stage 4) | none claimed | existing Fix adapter |
 | Nat | none claimed | none claimed | none claimed | existing Fix adapter |
-| FingerTree | payload T (stage 3) | payload T | payload T | optional adapter (stage 5) |
-| RandomAccess, PriorityQueue, IntervalIndex | payload (stage 3) | payload | payload | backing representation through optional adapter |
-| Rope | no arbitrary payload mapping | string chunks | use chunks() explicitly | backing representation through optional adapter |
+| FingerTree | payload T (stage 3) | payload T | payload T | optional adapter (stage 5, shipped) |
+| RandomAccess, PriorityQueue, IntervalIndex | payload (stage 3) | payload | payload | `backing_tree()` through the optional adapter |
+| Rope | no arbitrary payload mapping | string chunks | use chunks() explicitly | `backing_tree()` through the optional adapter |
 
 Layer Functors invoke a named callable as an lvalue, even when the caller
 passes a temporary callable. Results must be holdable and constructible in
@@ -215,3 +215,50 @@ These are consumer-side evidence APIs, consistent with the extraction
 compatibility checklist. They change neither structural verb signatures nor
 the proposed paper surface. Evidence repositories retain their independent
 implementations; extraction remains one-way.
+
+## Stage 5 declaration details
+
+The finite-instantiation prototype settled the declarations below. They are
+recorded with the [implementation note](coherence-structural-adapter.md).
+
+Fingertree's access hook is `finger_tree_structure.hpp`, included by the
+library umbrella. `FingerTreeLevel<TREE>` and `FingerTreeNode<T, MONOID>` are
+owning values over the real Empty/Single/Deep and Leaf/Node2/Node3 forms.
+A level reports `form()`, `level()`, `measure()`, `element()`, `left()`,
+`spine()` and `right()`; a node reports `form()`, `height()`, `measure()`,
+`value()`, `share_value()` and `children()`. A Deep that stores no spine
+yields an empty level. `FingerTreeStructureBuilder<TREE>` snapshots an
+allocator and a monoid instance and offers `leaf`, `node2`, `node3`, `empty`,
+`single` and `deep`. Parts combined by one builder share its configuration;
+allocator equality of a spine is asserted, and agreement of the measure law
+is a stated precondition. `FingerTreeLevel::sequence()` requires a level
+that is empty or holds leaves. All four wrappers expose `backing_tree()`.
+
+The adapter header declares, in `beman::typeclass_tree_adapters`:
+
+| Declaration | Role |
+|---|---|
+| `FingerEmpty`, `FingerSingle<A>`, `FingerDeep<A>` | the forms of a spine level |
+| `FingerLeaf<P>`, `FingerNode2<A>`, `FingerNode3<A>` | the forms of an element |
+| `FingerTreeF<P, A>` | the layer: a class derived from the variant of the six |
+| `FingerPayloadRef<T>`, `finger_payload` | a Leaf's shared payload slot, and reading either kind of slot |
+| `FingerTreePart<TREE>` | the tagged position: a level or a node; handle and piece |
+| `FingerTreeLayerOf<TREE>` | the layer a projection yields |
+| `finger_tree_project`, `finger_tree_project_owned` | projections sharing or copying payloads |
+| `FingerTreeEmbed<TREE>` | the configured embedding |
+| `finger_tree_layer_fold_map` | the elementwise layer fold |
+| `FingerTreeLayer<T>`, `FingerTreeFix<T>`, `to_fix`, `from_fix` | the Fix form |
+
+Recursive positions are `child_slot_t<A>`, as in the library's other
+fixed-arity layers, so the same layer serves the direct verbs inline and
+the Fix form boxed. A disengaged spine slot is a Deep that stores no spine.
+`P` is the payload type for an owning layer and `FingerPayloadRef<T>` for a
+projected one. Handles and pieces are one type because a part owns a share
+of what it denotes either way; this removed a second tagged family without
+changing what the contract asked of each.
+
+The registrations are `functor<FingerTreeF<P, A>>` with
+`applicative_value` naming `A`, `layer_fold<FingerTreeF<P, A>>`, and
+`project<FingerTree<T, MONOID, MP, ALLOCATOR>>`. No capability wrapper and no
+Fix form is registered: a wrapper's structure is reached by naming its
+`backing_tree()`, as the interface matrix above now says.

@@ -30,7 +30,8 @@ The design notes under [`docs/`](./) are licensed under
 TODO
 
 The [typeclass support guide](typeclass-support.md) describes Foldable and
-Traversable instances and the explicit Rope chunk-traversal route.
+Traversable instances, the explicit Rope chunk-traversal route, and
+structural access to the tree's representation.
 
 Full runnable examples can be found in [`examples/`](../../examples/fingertree/).
 

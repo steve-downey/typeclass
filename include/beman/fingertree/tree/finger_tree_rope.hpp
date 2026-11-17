@@ -77,6 +77,9 @@ class FingerTreeRope {
   public:
     using value_type = std::string;
 
+    /** Read-only access to the configured backing representation. */
+    auto backing_tree() const noexcept -> const Tree& { return d_tree; }
+
     /** Constructs an empty rope. */
     FingerTreeRope() : d_tree(Tree{}) {}
 

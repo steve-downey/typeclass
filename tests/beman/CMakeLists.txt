@@ -8,3 +8,7 @@ add_subdirectory(tree_algorithms)
 if(TARGET beman.fingertree)
     add_subdirectory(fingertree)
 endif()
+# The optional adapters are tested where they are built.
+if(TARGET beman.typeclass_tree_adapters)
+    add_subdirectory(typeclass_tree_adapters)
+endif()

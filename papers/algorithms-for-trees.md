@@ -410,9 +410,13 @@ Trees are one instance of P3200's "structure" axis, exactly as
 `optional`, senders, and SIMD lanes are instances of its "context" axis;
 the tree instances demonstrated in the reference repositories are
 examples, not wording.
-Like `fold_map`, `traverse` for any fixed-point tree is derivable
-through the layer's mapping function — one more derived operation over
-the same primitive layer, on the other side of the papers' division of
+`traverse` for a fixed-point tree is not derivable from the layer's
+mapping function alone, as `fold_fix` is.
+Mapping a layer's children does not order their effects, and it says
+nothing about where a layer keeps its payload or how to rebuild it at
+another type.
+The reference implementation supplies `traverse` for the tree families
+that declare those things, on the other side of the papers' division of
 labor.
 
 # Naming

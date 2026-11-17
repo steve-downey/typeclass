@@ -91,6 +91,56 @@ prototype's compatible measure-law domain. Native append may share cached
 nodes only when the operands' measure laws and monoid state are compatible;
 allocator equality alone does not establish that compatibility.
 
+## Structural access
+
+The sequence interface hides the tree's shape, and its operations are free
+to rebalance it. `finger_tree_structure.hpp`, included by the library
+umbrella, exposes the shape as it is. It names no algorithm library.
+
+`FingerTreeLevel<Tree>` is the tree at one level of the spine, in its real
+form: `EMPTY`, `SINGLE`, or `DEEP` with a left digit, the next level, and a
+right digit. Level 0 is the sequence; the nodes held at level d have height
+d. `FingerTreeNode<T, Monoid>` is one element: a `LEAF` holding a payload, or
+a `NODE2` or `NODE3` of nodes one lower. Both report their cached measure.
+
+```cpp
+#include <beman/fingertree.hpp>
+
+namespace ft = beman::fingertree::tree;
+
+const auto tree = ft::FingerTree<int>::from_sequence({0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+const ft::FingerTreeLevel<ft::FingerTree<int>> root(tree);
+// root.form() is DEEP; root.left() and root.right() hold two leaves each;
+// root.spine() is level 1 and holds two Node3 elements.
+```
+
+Levels and nodes are owning values that share the immutable structure.
+Copying one is O(1), reading copies no payload, and a part remains valid
+after the tree it was read from is destroyed. `share_value()` returns a
+`shared_ptr<const T>` to a leaf's payload on the same terms.
+
+`FingerTreeStructureBuilder<Tree>` constructs the same forms under one
+allocator and one monoid instance, taken from a prototype tree or given
+directly, and computes every cached measure. `leaf`, `node2` and `node3` make
+nodes; `empty`, `single` and `deep` make levels. The builder's preconditions
+are the representation's invariants: digits of one to four nodes of one
+height, a spine one level below its digits, node children of one height.
+They are checked by `assert`. Parts combined by one builder must share its
+configuration; a cached measure is valid only under the monoid that computed
+it.
+
+An inner spine level is not a sequence, and no interface hands one out as a
+tree. `FingerTreeLevel::sequence()` is the only conversion, and it requires a
+level that is empty or holds leaves.
+
+All four capability wrappers expose `backing_tree()`, a const reference to
+the tree they are built on, which is how structural access reaches them.
+
+The recursive algorithms of beman.tree_algorithms are connected to this
+access by the optional
+[structural adapter](../typeclass_tree_adapters/README.md). Fingertree itself
+does not depend on that library.
+
 ## Migrating Rope traversal
 
 Rope stores string chunks and has no representation for arbitrary mapped

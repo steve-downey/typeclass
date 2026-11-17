@@ -148,6 +148,11 @@ story Paper D should tell, in prose plus one worked example:
   the layer Functor — worth stating in the paper, with the example code
   living in `examples/`, not in `include/` (it consumes P3200 surface
   that this repo does not vendor).
+  *Corrected 2026-11-17:* this was wrong and the paper no longer says it.
+  A layer Functor maps child positions; it does not sequence their
+  effects and does not know the payload. Payload `traverse` is supplied
+  per tree family in `tree_typeclasses.hpp`; see the
+  [payload typeclass guide](../typeclass-support.md).
 
 **Coordination hazard**: beman.transpose already carries its own
 `examples/transpose/binary_tree.hpp` with Foldable/Applicative/Traversable

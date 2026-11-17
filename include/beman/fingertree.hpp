@@ -12,12 +12,13 @@ import beman.fingertree;
 #else
 
     // Persistent measured sequence (Paper C): the container, its
-    // iterator/container and PMR/AllocatorAware layers, the typeclass
-    // adapters, and the four capability wrappers.
+    // iterator/container and PMR/AllocatorAware layers, structural access,
+    // the typeclass adapters, and the four capability wrappers.
     #include <beman/fingertree/tree/finger_tree.hpp>
     #include <beman/fingertree/tree/finger_tree_iterator.hpp>
     #include <beman/fingertree/tree/finger_tree_pmr.hpp>
     #include <beman/fingertree/tree/finger_tree_rebind.hpp>
+    #include <beman/fingertree/tree/finger_tree_structure.hpp>
     #include <beman/fingertree/tree/finger_tree_functor.hpp>
     #include <beman/fingertree/tree/finger_tree_monoid.hpp>
     #include <beman/fingertree/tree/finger_tree_foldable.hpp>

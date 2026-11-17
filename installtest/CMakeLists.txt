@@ -1,7 +1,7 @@
 # installtest/CMakeLists.txt                                        -*-CMake-*-
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #
-# Consumes the three libraries as a downstream project would: find_package on
+# Consumes the libraries as a downstream project would: find_package on
 # the installed packages, nothing from this source tree. Point
 # CMAKE_PREFIX_PATH at the install prefix; the default is the Makefile's
 # .install/ beside the repository root. `make testinstall` configures, builds
@@ -27,4 +27,16 @@ if(beman.fingertree_FOUND)
     add_subdirectory(fingertree)
 else()
     message(STATUS "installtest: beman.fingertree not installed, skipped")
+endif()
+
+# The optional adapters are installed only where fingertree is, and only
+# from a header build.
+find_package(beman.typeclass_tree_adapters QUIET CONFIG)
+if(beman.typeclass_tree_adapters_FOUND)
+    add_subdirectory(typeclass_tree_adapters)
+else()
+    message(
+        STATUS
+        "installtest: beman.typeclass_tree_adapters not installed, skipped"
+    )
 endif()
