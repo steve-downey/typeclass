@@ -289,6 +289,14 @@ struct UnitMeasure {
 template <typename T, typename MONOID, typename MP, typename Alloc = std::allocator<std::byte>>
 class FingerTreeIterator;
 
+// Structural access, defined in finger_tree_structure.hpp: a read-only view
+// of one spine level in its real Empty/Single/Deep form, and a builder that
+// constructs those forms under a tree's allocator and monoid.
+template <typename TREE>
+class FingerTreeLevel;
+template <typename TREE>
+class FingerTreeStructureBuilder;
+
 // MONOID is a monoid instance type over the measure value type (the tag);
 // MEASURE_POLICY maps an element to a tag. The default is the element count:
 // every element measures 1 under addition. A tree with a different monoid
@@ -303,6 +311,10 @@ class FingerTree {
     template <typename, typename, typename, typename>
     friend class FingerTreeIterator; // iterator needs access to Deep, Repr,
                                      // etc.
+    template <typename>
+    friend class FingerTreeLevel; // reads the representation
+    template <typename>
+    friend class FingerTreeStructureBuilder; // constructs it
 
     using Tag  = ft::tag_t<MONOID>;
     using Meas = MEASURE_POLICY;

@@ -25,7 +25,10 @@ reconstruction, payload Functors and concatenation monoids are complete on
 Stage 4 payload adapters and the monoid-object fold bridge are complete on
 `tree-coherence-payload-adapters`; see the
 [payload implementation note](coherence-payload-adapters.md).
-Stages 5–6 remain outstanding.
+Stage 5, the optional structural fingertree adapter, is complete on
+`tree-coherence-structural-adapter`; see the
+[structural adapter note](coherence-structural-adapter.md).
+Stage 6 remains outstanding.
 
 ## Target contracts
 

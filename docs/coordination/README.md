@@ -19,6 +19,8 @@ sdowney.org / the transpose blog) is the citable acknowledgment.
 - [`coherence-plan.md`](coherence-plan.md) — proposed implementation stages
   for the [2026-11-08 coherence review](review/2026-11-08-coherence/README.md),
   including reconstruction, typeclass conformance, and structural adapters.
+- [`review/`](review/) — dated reviews with their probes, most recently the
+  [2026-11-16 layer coherence review](review/2026-11-16-layer-coherence/README.md).
 - `STATUS.md` — the cross-repo work board: every open coordination item,
   its owning repo, and its blocking decision. This is the scheduler.
 - `SYNC.md` — ledger pinning each repo's SHA at each coordination

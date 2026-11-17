@@ -61,6 +61,7 @@ target_sources(
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree_iterator.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree_pmr.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree_rebind.hpp
+    ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree_structure.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree_functor.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree_monoid.hpp
     ${PROJECT_SOURCE_DIR}/include/beman/fingertree/tree/finger_tree_foldable.hpp

@@ -1,6 +1,6 @@
 # STATUS — cross-repo work board
 
-Updated: 2026-11-08. The per-repository entries below retain their historical
+Updated: 2026-11-17. The per-repository entries below retain their historical
 status; the current coherence work is tracked separately here.
 
 ## Current coherence work
@@ -16,8 +16,16 @@ route. Stage 3 [configured reconstruction](coherence-reconstruction.md) is compl
 on `tree-coherence-reconstruction`, including payload Functors and concatenation
 monoids. Stage 4 [payload tree adapters](coherence-payload-adapters.md) is complete
 on `tree-coherence-payload-adapters`, including the structural-fold bridge and
-Expr's constant Foldable. Stage 5 optional structural fingertree integration
-is next; stage 6 remains planned.
+Expr's constant Foldable. Stage 5 [optional structural fingertree integration](coherence-structural-adapter.md)
+is complete on `tree-coherence-structural-adapter`: the access hook in
+fingertree and the opt-in `beman::typeclass_tree_adapters` target. Stage 6
+remains planned.
+
+The [2026-11-16 layer coherence review](review/2026-11-16-layer-coherence/README.md)
+re-read the three layers after stage 4. Stage 5 closes its
+[fingertree-structural-adapter](review/2026-11-16-layer-coherence/README.md#fingertree-structural-adapter)
+finding. Its other findings are open, and four of them need a ruling; see
+its [decisions needed](review/2026-11-16-layer-coherence/README.md#decisions-needed).
 
 1. Record the element, reconstruction, Rope, and integration contracts.
 2. Repair monoid-state propagation, duplicate tree effects, and native collection.

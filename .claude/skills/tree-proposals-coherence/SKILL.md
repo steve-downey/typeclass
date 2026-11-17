@@ -41,7 +41,10 @@ separate checkouts.
   of the typeclass mechanism in code. tree_algorithms (its lookup tier)
   and fingertree link `beman::transpose` and use its names
   (`functor<T>`, `foldable<T>`, `monoid<T>`, `derive_*`); they never
-  carry copies. Neither links the other. Plan and rulings:
+  carry copies. Neither links the other. The one place both are linked
+  is the opt-in `beman::typeclass_tree_adapters` target
+  (`include/beman/typeclass_tree_adapters/`), which neither library
+  includes or links. Plan and rulings:
   `docs/coordination/machinery-deduplication.md`.
 - **Paper D proposes the fold family, both structural and elementwise**:
   `fold_fix`/`unfold_fix`/`refold` plus `fold_map` (decided 2026-07-13).

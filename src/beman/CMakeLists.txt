@@ -41,3 +41,17 @@ else()
         "beman.fingertree: skipped, std::inplace_vector is not available at C++26"
     )
 endif()
+
+# The optional adapters join beman.tree_algorithms to beman.fingertree, so
+# they are built only where fingertree is. A module build is left out: the
+# adapter header includes fingertree's standard headers textually and would
+# then import beman.tree_algorithms, an order the module configurations do
+# not yet support for a header that also specializes the module's templates.
+if(BEMAN_TYPECLASS_BUILD_FINGERTREE AND NOT BEMAN_TYPECLASS_USE_MODULES)
+    add_subdirectory(typeclass_tree_adapters)
+else()
+    message(
+        STATUS
+        "beman.typeclass_tree_adapters: skipped, needs beman.fingertree and a header build of beman.tree_algorithms"
+    )
+endif()
