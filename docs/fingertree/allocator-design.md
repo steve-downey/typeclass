@@ -263,3 +263,29 @@ and const-reference payload walks. Interval reconstruction snapshots endpoint
 pairs independently of the effects. The [typeclass support guide](typeclass-support.md)
 describes supported rebindings, explicit custom declarations, and Rope's
 chunk-vector route.
+
+## Structural construction
+
+`FingerTreeStructureBuilder` (`finger_tree_structure.hpp`) builds the tree's
+real forms node by node, where `from_sequence` and the reconstruction builder
+above build a whole tree from a flat sequence. It follows the same rules.
+
+The builder snapshots one allocator and one monoid instance, from a prototype
+tree or given directly, and every node it makes is allocated from that
+allocator: leaves, Node2 and Node3 elements, Deep nodes, and the spine shells
+between levels. Nothing is taken from the default resource. A spine handed to
+`deep` must have been allocated by an equal allocator; the builder asserts
+this, because the coherency rebuild that repairs a mismatch elsewhere would
+flatten an inner spine level into leaves and build the wrong tree.
+
+Measures are computed by the tree's measure policy for leaves and combined
+by the builder's monoid instance for everything above them. A cached measure
+is valid only under the monoid state that computed it, so parts combined by
+one builder must share its measure law. The builder cannot check that; it is
+a precondition. Rebuilding a tree through a builder with other monoid state
+gives a tree with the same elements and different measures, which is the
+supported way to change that state.
+
+Reading the structure allocates nothing. `FingerTreeLevel` and
+`FingerTreeNode` share the nodes they describe, and the shared control
+blocks were allocated with the nodes.

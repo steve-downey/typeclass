@@ -22,6 +22,57 @@ on.
 This is implementation evidence, like the payload typeclass adapters. No
 paper proposes it, and neither library's proposal depends on it.
 
+## Support across the libraries
+
+Every structure below registers Functor, Foldable and Traversable over its
+payload, and each instance satisfies the deep object concept of its
+typeclass. The last column is how a structural fold reaches it.
+
+| Structure | Library | Payload order | Structural fold |
+|---|---|---|---|
+| `std::vector<T>` | transpose | index order | none; it is not a tree |
+| `FingerTree<T>` | fingertree | left to right | `fold_map(f, tree, monoid)`, with this adapter |
+| `FingerTreeRandomAccess<T>` | fingertree | left to right | `backing_tree()`, with this adapter |
+| `FingerTreePriorityQueue<T>` | fingertree | stored sequence, not priority | `backing_tree()`, with this adapter |
+| `FingerTreeIntervalIndex<T>` | fingertree | stored sequence | `backing_tree()`, payload is `Interval<T>` |
+| `BinaryTree<T>`, `BinaryTreeFix<T>` | tree_algorithms | in-order | `fold_map(f, tree, monoid)` |
+| `FringeTree<T>` | tree_algorithms | left to right | `fold_map(f, tree, monoid)` |
+| `RoseTreeFix<T>` | tree_algorithms | pre-order | `fold_map(f, tree, monoid)` |
+
+`FingerTreeRope` registers Foldable over its string chunks only, and `Expr`
+registers Foldable over its integer constants only; neither has a payload
+that can change type. Their guides say what to use instead:
+[fingertree](../fingertree/typeclass-support.md) and
+[tree_algorithms](../tree_algorithms/typeclass-support.md).
+
+For every row, and with the same code for each:
+
+- Folds, and the effects of a traversal, follow the payload order above.
+  Each effect is composed once.
+- `traverse` works with `optional`, `expected`, a graded `expected` under
+  both the short-circuit and the accumulating policy, a void-valued effect
+  (the result holds units), and a lanewise context such as `zip_list`, where
+  reconstruction runs once per lane.
+- A policy's native `collect` is used once when it has one, including a
+  policy whose composition changes carrier type; a policy without one is
+  sequenced pairwise.
+- `fmap` obeys identity and composition, `traverse` with a pure lift is
+  `fmap`, and `transpose` is the identity traversal.
+- Where there is a structural fold, it agrees with the Foldable for a
+  noncommutative monoid.
+- An interval index keeps every interval's endpoints through all of the
+  above, and a PMR finger tree keeps its resource.
+
+These are the columns of
+[`coherence_matrix.test.cpp`](../../tests/beman/typeclass_tree_adapters/coherence_matrix.test.cpp),
+which instantiates one set of checks for every row. The test lives with this
+component because it is the one target that links all three libraries.
+
+Genuine `std::execution` senders are exercised by transpose's opt-in P2300
+evidence, over `std::vector`. The matrix covers the same sequencing route
+for every row with a generic collecting context, which needs no external
+dependency.
+
 ## The structural fingertree adapter
 
 ```cpp

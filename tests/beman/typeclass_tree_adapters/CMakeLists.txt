@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 # Catch2-based unit tests: one executable per component.
-foreach(test IN ITEMS finger_tree conformance)
+foreach(test IN ITEMS finger_tree conformance coherence_matrix)
     add_executable(beman.typeclass_tree_adapters.tests.${test})
     target_sources(
         beman.typeclass_tree_adapters.tests.${test}

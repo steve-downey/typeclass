@@ -19,13 +19,16 @@ on `tree-coherence-payload-adapters`, including the structural-fold bridge and
 Expr's constant Foldable. Stage 5 [optional structural fingertree integration](coherence-structural-adapter.md)
 is complete on `tree-coherence-structural-adapter`: the access hook in
 fingertree and the opt-in `beman::typeclass_tree_adapters` target. Stage 6
-remains planned.
+[closes the plan](coherence-maintained.md) on `tree-coherence-maintained`
+with a cross-component matrix test, the public support matrix, and the
+correction to Paper D's traversal claim.
 
 The [2026-11-16 layer coherence review](review/2026-11-16-layer-coherence/README.md)
 re-read the three layers after stage 4. Stage 5 closes its
 [fingertree-structural-adapter](review/2026-11-16-layer-coherence/README.md#fingertree-structural-adapter)
-finding. Its other findings are open, and four of them need a ruling; see
-its [decisions needed](review/2026-11-16-layer-coherence/README.md#decisions-needed).
+finding. Its other findings are open and belong to no plan yet. Four of
+them need a ruling from Steve before any code; see its
+[decisions needed](review/2026-11-16-layer-coherence/README.md#decisions-needed).
 
 1. Record the element, reconstruction, Rope, and integration contracts.
 2. Repair monoid-state propagation, duplicate tree effects, and native collection.
